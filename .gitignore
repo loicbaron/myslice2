@@ -1,0 +1,4 @@
+*.pic
+__pycache__
+.idea
+myslice.egg-info

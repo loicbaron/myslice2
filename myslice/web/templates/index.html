@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block head %}
+<script src="/static/js/websocket.js"></script>
+<script type="text/jsx" src="/static/js/resources.jsx"></script>
+{% end %}
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div id="content"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div id="connection"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div id="log"></div>
+        </div>
+    </div>
+</div>
+{% end %}
