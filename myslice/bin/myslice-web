@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3.5
 
 '''
     MySlice version 2
@@ -16,9 +16,8 @@ from myslice.web import server
 #print os.path.realpath(os.path.dirname(__file__) + '/..')
 
 import logging
-from myslice.web import Application
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("myslice-web")
 
 if __name__ == '__main__':
 
@@ -27,9 +26,9 @@ if __name__ == '__main__':
     IOLoop.current().run_sync(server)
 
     try :
-        IOLoop.IOLoop.instance().start()
+        IOLoop.instance().start()
     except KeyboardInterrupt:
-        IOLoop.IOLoop.instance().stop()
+        IOLoop.instance().stop()
     except Exception as e:
         print(e)
         exit(1)

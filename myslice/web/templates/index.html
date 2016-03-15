@@ -1,24 +1,44 @@
 {% extends "layout.html" %}
 {% block head %}
-<script src="/static/js/websocket.js"></script>
-<script type="text/jsx" src="/static/js/resources.jsx"></script>
+<script type="text/babel" src="/static/js/actions/slice.js"></script>
+<script type="text/babel" src="/static/js/components/slice.jsx"></script>
+<script type="text/babel" src="/static/js/test.js"></script>
 {% end %}
 {% block body %}
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-12">
-            <div id="content"></div>
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="panel-title">
+                        <h1>Experiments</h1>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="panel-actions" id="slice-add">
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="slice-list"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-12">
+                    <select>
+                        <option>bla bla bla</option>
+                    </select>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div id="connection"></div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div id="log"></div>
-        </div>
-    </div>
+
 </div>
+<script>
+
+</script>
 {% end %}

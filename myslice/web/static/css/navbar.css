@@ -1,0 +1,79 @@
+.navbar-default {
+    font-weight:100;
+    border:0;
+    margin:0;
+    min-height:40px;
+    background-color: #2C2C2C;
+    border-radius:0;
+    box-shadow: 0 2px 2px #1b1b1b inset, 0 -2px 2px #1b1b1b inset;
+}
+.navbar-default .navbar-nav {
+}
+
+.navbar-default .navbar-brand:hover,
+.navbar-default .navbar-brand:focus {
+}
+
+.navbar-default .navbar-text {
+}
+
+.navbar-default .navbar-nav > li > a {
+    padding:5px 15px 5px 15px;
+    margin:10px 15px 0px 0;
+    color:white;
+}
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:focus {
+    border-top-left-radius:5px;
+    border-top-right-radius:5px;
+    color:#2C2C2C;
+    background-color:#F6F6F6;
+    box-shadow: 2px -2px 2px #1b1b1b;
+}
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:hover,
+.navbar-default .navbar-nav > .active > a:focus {
+    font-weight:400;
+    border-top-left-radius:3px;
+    border-top-right-radius:3px;
+    color: #2C2C2C;
+    background-color: #F6F6F6;
+    box-shadow: 2px -2px 2px #1b1b1b;
+}
+.navbar-default .navbar-nav > .open > a,
+.navbar-default .navbar-nav > .open > a:hover,
+.navbar-default .navbar-nav > .open > a:focus {
+    padding:0;
+}
+.navbar-default .navbar-toggle {
+    padding:0;
+}
+.navbar-default .navbar-toggle:hover,
+.navbar-default .navbar-toggle:focus {
+}
+.navbar-default .navbar-toggle .icon-bar {
+}
+.navbar-default .navbar-collapse {
+    padding:0;
+
+}
+.navbar-default .navbar-form {
+    background-color: #2C2C2C;
+}
+.navbar-default .navbar-link {
+    color:red;
+}
+.navbar-default .navbar-link:hover {
+}
+
+@media (max-width: 767px) {
+  .navbar-default .navbar-nav .open .dropdown-menu > li > a {
+  }
+  .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover,
+  .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
+  }
+  .navbar-default .navbar-nav .open .dropdown-menu > .active > a,
+  .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover,
+  .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
+  }
+}

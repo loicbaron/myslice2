@@ -2,8 +2,9 @@ import os, logging
 
 from tornado import web, gen, httpserver
 from rethinkdb import r
-from myslice import settings as s
+import myslice.db as db
 from myslice.web.rest.resource import ResourceHandler
+from myslice.web.rest.slice import SliceHandler
 from myslice.web.controllers import home, jobs
 
 logger = logging.getLogger(__name__)
@@ -11,16 +12,15 @@ logger = logging.getLogger(__name__)
 @gen.coroutine
 def server():
     """ Async main method. It needed to be async due to r.connect is async . """
-    logger.info("Connecting to db {} on {}:{}".format(s.db.name,s.db.host,s.db.port))
-    try :
-        r.set_loop_type("tornado")
-        dbconnection = yield r.connect(host=s.db.host, port=s.db.port, db=s.db.name)
-    except r.RqlDriverError :
-        logger.error("Can't connect to RethinkDB")
-        raise SystemExit("Can't connect to RethinkDB")
+    r.set_loop_type("tornado")
+    db_connection = yield db.connect()
 
-    http_server = httpserver.HTTPServer(Application(dbconnection))
+    http_server = httpserver.HTTPServer(Application(db_connection))
     http_server.listen(8111)
+    #http_server.start(num_processes=None)
+
+    # drop root privileges
+    # TODO
 
 class Application(web.Application):
 
@@ -31,13 +31,18 @@ class Application(web.Application):
         handlers = [
             (r'/', home.Index),
             (r'/static/(.*)', web.StaticFileHandler, {'path': self.static}),
-            (r'/jobs', jobs.Log),
 
-            (r'/api/resource', ResourceHandler),
-            (r'/api/resource/(.*)', ResourceHandler),
+            # REST API
+            (r'/api/v1/resource', ResourceHandler),
+            (r'/api/v1/resource/(.*)', ResourceHandler),
+
+            (r'/api/v1/slice', SliceHandler),
+            (r'/api/v1/slice/(.*)', SliceHandler),
+
+            # WEBSOCKET
         ]
 
-        settings = dict(cookie_secret="_asdfasdaasdfasfas",
+        settings = dict(cookie_secret="x&7G1d2!5MhG9SWkXu",
                         template_path=self.templates,
                         static_path=self.static,
                         xsrf_cookies=True,
