@@ -33,11 +33,11 @@ class Application(web.Application):
             (r'/static/(.*)', web.StaticFileHandler, {'path': self.static}),
 
             # REST API
-            (r'/api/v1/resource', ResourceHandler),
-            (r'/api/v1/resource/(.*)', ResourceHandler),
+            (r'/api/v1/resources', ResourceHandler),
+            (r'/api/v1/resources/(.*)', ResourceHandler),
 
-            (r'/api/v1/slice', SliceHandler),
-            (r'/api/v1/slice/(.*)', SliceHandler),
+            (r'/api/v1/slices', SliceHandler),
+            (r'/api/v1/slices/(.*)', SliceHandler),
 
             # WEBSOCKET
         ]
