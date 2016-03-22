@@ -9,7 +9,7 @@ class ExperimentActions {
         return (dispatch) => {
             // we dispatch an event here so we can have "loading" state.
             dispatch();
-            axios.get('http://localhost:8111/api/v1/slice', {
+            axios.get('http://localhost:8111/api/v1/slices', {
                 params: {
                     ID: 12345
                 }
