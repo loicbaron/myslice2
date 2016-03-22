@@ -1,44 +1,74 @@
 {% extends "layout.html" %}
 {% block head %}
-<script type="text/babel" src="/static/js/actions/slice.js"></script>
-<script type="text/babel" src="/static/js/components/slice.jsx"></script>
-<script type="text/babel" src="/static/js/test.js"></script>
+<script type="text/babel" src="/static/js/actions/experiment.js"></script>
+<script type="text/babel" src="/static/js/stores/experiment.js"></script>
+<script type="text/babel" src="/static/js/components/experiment.jsx"></script>
+
+<script type="text/babel" src="/static/js/components/experimentForm.jsx"></script>
 {% end %}
 {% block body %}
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-6">
-            <div class="row">
-                <div class="col-sm-6">
-                    <div class="panel-title">
-                        <h1>Experiments</h1>
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="panel-actions" id="slice-add">
 
+        <div class="col-sm-6">
+
+            <div class="p-header">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="p-title">
+                                        <h1>Experiments</h1>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="p-action" id="slice-add">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <div id="slice-list"></div>
+
+            <div class="p-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div id="experiment-list" class="p-list"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
+
         </div>
-        <div class="col-md-6">
-            <div class="row">
-                <div class="col-md-12">
-                    <select>
-                        <option>bla bla bla</option>
-                    </select>
+
+        <div class="col-sm-6">
+            <div class="p-view-header">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <h1>New Experiment</h1>
+                        </div>
+                    </div>
                 </div>
             </div>
+
+            <div class="p-view-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div id="experiment-form"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
+
     </div>
-
 </div>
-<script>
 
-</script>
+
 {% end %}

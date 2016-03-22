@@ -5,7 +5,7 @@ from rethinkdb import r
 import myslice.db as db
 from myslice.web.rest.resource import ResourceHandler
 from myslice.web.rest.slice import SliceHandler
-from myslice.web.controllers import home, jobs
+from myslice.web.controllers import home
 
 logger = logging.getLogger(__name__)
 

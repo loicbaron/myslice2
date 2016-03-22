@@ -78,6 +78,8 @@ def slices(c=None, data=None):
     if (data):
         r.db(s.db.name).table('slices').insert(data, conflict='update').run(c)
 
+    return r.db(s.db.name).table('slices').run(c)
+
 def resources(c=None, filter=None):
 
     if not c:
@@ -109,23 +111,20 @@ def resource(c, resource=None):
         return r.table('resources').run(c)
 
 
-def select(id=None, filter=None, c=None):
+def delete(c=None, table=None, id=None):
     if not c:
         c = connect()
-    x = r.db(Config.rethinkdb["db"]).table('resources')
-    if id:
-        x = r.get(id)
-    if filter:
-        pass
-    return x.run(c)
 
+    if id and table:
+        return r.db(s.db.name).table(table).get(id).delete().run(c)
 
-def update(data, c=None):
+    return False
+
+def changes(c=None, table=None):
     if not c:
         c = connect()
-    r.db(Config.rethinkdb["db"]).table('resources').insert(data, conflict='update').run(c)
 
-def changes(c=None):
-    if not c:
-        c = connect()
-    return r.db(Config.rethinkdb["db"]).table('resources').changes().run(c)
+    if table:
+        return r.db(s.db.name).table(table).changes().run(c)
+
+    return False

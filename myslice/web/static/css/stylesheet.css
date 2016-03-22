@@ -1,14 +1,22 @@
 body {
     font-family: 'Roboto', sans-serif;
     letter-spacing:0.6px;
+    height: 100%;
     color:#2C2C2C;
     background-color:#F6F6F6;
+    margin-top:140px;
 }
 
 header {
-    padding:15px 0;
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    z-index:100;
+    padding-top:15px;
     background-color:#FFFFFF;
 }
+
 a {
     color:#2C2C2C;
 }
@@ -49,20 +57,91 @@ h4 {
     margin-top:1px;
 }
 
-.panel-title {
-    border-right:solid 1px #2C2C2C;
+.p-left {
+    position:relative;
 }
-.bar {
+.p-header {
+    position:fixed;
+    right:50%;
+    left:0;
+    background-color:#F6F6F6;
+    z-index:90;
+}
+.p-title {
+}
+
+.p-action {
+    z-index:91;
+    text-align:right;
+}
+.p-body {
+    position:fixed;
+    left:0;
+    bottom:15px;
+    top:212px;
+    width:50%;
+    overflow-y: auto;
+    border-right:1px solid gray;
 
 }
-
-.panel-actions h4 {
-    margin-top:35px;
-}
-
-.panel-actions .link-action {
+.p-list {
 
 }
-.panel-actions .link-action:hover {
-    border-bottom:solid 1px #2C2C2C;
+.p-view-header {
+    position:fixed;
+    left:50%;
+    right:0;
+    background-color:#F6F6F6;
+    z-index:90;
+}
+.p-view-body {
+    position:fixed;
+    left:50%;
+    right:0;
+    top:212px;
+    background-color:#F6F6F6;
+    z-index:90;
+}
+
+
+
+
+.elementList {
+    overflow-y: scroll;
+}
+.elementAdd {
+    border:none;
+    border-left:1px solid #333333;
+    background-color:transparent;
+    padding:10px;
+    margin:18px 0 0 0;
+}
+.elementAdd:hover, .elementAdd.active {
+    background-color:#2C2C2C;
+    box-shadow: 0 0 2px #1b1b1b;
+    color:white;
+}
+.elementAdd:hover:after, .elementAdd.active:hover:after {
+    content:"\A";
+    border-style: solid;
+    border-width: 20px 0 20px 20px;
+    border-color: transparent transparent transparent #2C2C2C;
+    filter: drop-shadow(3px 0 1px rgba(0,0,0,0.2));
+    position: absolute;
+    top:0;
+    right:-5px;
+    margin:18px 0 0 0;
+}
+
+
+.elementLabel {
+    font-size:14pt;
+}
+.elementId {
+    font-style:italic;
+    font-size:9pt;
+    color:gray;
+}
+.elementDate {
+    font-size:9pt;
 }

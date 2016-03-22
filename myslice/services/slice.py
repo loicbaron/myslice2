@@ -1,14 +1,16 @@
 ##
-# Slices worker: will keep the list of slices configured in sync
+# Slice service: will keep the list of slices configured in sync
+# and manages slice creation, deletetion, status etc.
 
 import logging
-from datetime import datetime
 import myslice.db as db
+from myslice.lib import Status
+from myslice.lib.util import format_date
 
 from myslicelib.model.slice import Slice
 from myslicelib.query import q
 
-logger = logging.getLogger('myslice.worker.slices')
+logger = logging.getLogger('myslice.service.slices')
 
 def run():
     """
@@ -25,8 +27,27 @@ def run():
     MySliceLib Query Slices
     """
     slices = q(Slice).get()
-    db.slices(dbconnection, slices.dict())
 
+    """
+    update local slice table
+    """
+    lslices = db.slices(dbconnection, slices.dict())
+
+    for ls in lslices :
+        if not slices.has(ls['id']) and ls['status'] is not Status.PENDING:
+            # delete slices that have been deleted elsewhere
+            db.delete(dbconnection, 'slices', ls['id'])
+            logger.info("Slice {} deleted".format(ls['id']))
+
+        # add status if not present and update on db
+        if not 'status' in ls:
+            ls['status'] = Status.ENABLED
+            ls['enabled'] = format_date()
+            db.slices(dbconnection, ls)
+
+
+    # update slice table
+    #lslices = db.slices(dbconnection, slices.dict())
 
     # while True:
     #
