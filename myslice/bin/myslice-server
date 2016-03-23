@@ -23,7 +23,7 @@ from myslice import settings as s
 import myslice.db as db
 
 # workers
-import myslice.services.slice
+import myslice.services.experiments
 
 #from myslice.monitor.workers.resources import sync, queue
 
@@ -101,10 +101,12 @@ if __name__ == '__main__':
     """
     Process: slices
     """
-    p = multiprocessing.Process(target=myslice.services.slice.run)
+    p = multiprocessing.Process(target=myslice.services.experiments.run)
     processes.append(p)
     p.start()
 
+    for proc in processes:
+        proc.join()
 
     # """
     # Thread: Endpoints

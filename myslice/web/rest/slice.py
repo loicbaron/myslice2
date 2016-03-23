@@ -24,6 +24,8 @@ class SliceHandler(Api):
         #data = {"id": id, "value" : value}
 
         #self.write({"resources": resources})
+
+        self.set_header('Content-Type','application/json')
         self.write(json.dumps({"slices": resources}, cls=DecimalEncoder, default=DateEncoder))
 
         #for c in cl:

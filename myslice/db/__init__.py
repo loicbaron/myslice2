@@ -19,9 +19,17 @@ tables = [
             'pkey' : 'id'
         },
         {
+            'name' : 'projects',
+            'pkey' : 'id'
+        },
+        {
             'name' : 'users',
             'pkey' : 'id'
-        }
+        },
+        {
+            'name' : 'events',
+            'pkey' : 'id'
+        },
     ]
 
 def connect():
@@ -80,10 +88,18 @@ def slices(c=None, data=None):
 
     return r.db(s.db.name).table('slices').run(c)
 
+def projects(c=None, data=None):
+    if not c:
+        c = connect()
+
+    if (data):
+        r.db(s.db.name).table('projects').insert(data, conflict='update').run(c)
+
+    return r.db(s.db.name).table('projects').run(c)
+
 def resources(c=None, filter=None):
 
     if not c:
-        #print("connecting")
         c = connect()
 
     if filter:
