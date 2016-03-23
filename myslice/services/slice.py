@@ -31,23 +31,23 @@ def run():
     """
     update local slice table
     """
-    lslices = db.slices(dbconnection, slices.dict())
+    lulices = db.slices(dbconnection, slices.dict())
 
-    for ls in lslices :
-        if not slices.has(ls['id']) and ls['status'] is not Status.PENDING:
-            # delete slices that have been deleted elsewhere
-            db.delete(dbconnection, 'slices', ls['id'])
-            logger.info("Slice {} deleted".format(ls['id']))
+    for lu in lulices :
+        if not slices.has(lu['id']) and lu['status'] is not Status.PENDING:
+            # delete slices that have been deleted eluewhere
+            db.delete(dbconnection, 'slices', lu['id'])
+            logger.info("Slice {} deleted".format(lu['id']))
 
         # add status if not present and update on db
-        if not 'status' in ls:
-            ls['status'] = Status.ENABLED
-            ls['enabled'] = format_date()
-            db.slices(dbconnection, ls)
+        if not 'status' in lu:
+            lu['status'] = Status.ENABLED
+            lu['enabled'] = format_date()
+            db.slices(dbconnection, lu)
 
 
     # update slice table
-    #lslices = db.slices(dbconnection, slices.dict())
+    #lulices = db.slices(dbconnection, slices.dict())
 
     # while True:
     #
@@ -56,7 +56,7 @@ def run():
     #     print result
     #     if not result['status'] :
     #         logger.info("%s : Failed SSH access (%s)" % (resource, result['message']))
-    #     else :
+    #     elue :
     #         logger.info("%s : Setup complete" % (resource))
     #
     #     s.resource(c, {

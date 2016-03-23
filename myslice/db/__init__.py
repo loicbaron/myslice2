@@ -21,7 +21,12 @@ tables = [
         {
             'name' : 'users',
             'pkey' : 'id'
+        },
+        {   
+            'name' : 'projects',
+            'pkey' : 'id'
         }
+
     ]
 
 def connect():
@@ -70,6 +75,25 @@ def testbeds(testbeds=None):
         }, conflict='update').run(c)
 
     c.close()
+
+def users(c=None, data=None):
+    if not c:
+        c = connect()
+
+    if data:
+        r.db(s.db.name).table('users').insert(data, conflict='update').run(c)
+
+    return r.db(s.db.name).table('users').run(c)
+
+def projects(c=None, data=None):
+    if not c:
+        c = connect()
+
+    if data:
+        r.db(s.db.name).table('projects').insert(data, conflict='update').run(c)
+
+    return r.db(s.db.name).table('projects').run(c)
+
 
 def slices(c=None, data=None):
     if not c:

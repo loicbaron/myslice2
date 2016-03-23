@@ -5,6 +5,7 @@ from rethinkdb import r
 import myslice.db as db
 from myslice.web.rest.resource import ResourceHandler
 from myslice.web.rest.slice import SliceHandler
+from myslice.web.rest.user import UserHandler
 from myslice.web.controllers import home
 
 logger = logging.getLogger(__name__)
@@ -16,13 +17,15 @@ def server():
     db_connection = yield db.connect()
 
     http_server = httpserver.HTTPServer(Application(db_connection))
-    http_server.listen(8111)
+    http_server.listen(80)
     #http_server.start(num_processes=None)
 
     # drop root privileges
     # TODO
 
 class Application(web.Application):
+
+    _rest_handlers = ['user', 'project', 'slice']
 
     def __init__(self, dbconnection):
         self.templates = os.path.join(os.path.dirname(__file__), "templates")
@@ -31,21 +34,38 @@ class Application(web.Application):
         handlers = [
             (r'/', home.Index),
             (r'/static/(.*)', web.StaticFileHandler, {'path': self.static}),
+        ]
 
-            # REST API
-            (r'/api/v1/resources', ResourceHandler),
-            (r'/api/v1/resources/(.*)', ResourceHandler),
+        # REST API
+        for entity in self._rest_handlers:
+            HandlerModule = "myslice.web.rest.{}".format(entity)
+            module = __import__(HandlerModule, fromlist=["{}Handler".format(entity.title())])
+            Handler = getattr(module, "{}Handler".format(entity.title()))
+            
+            handlers += [
 
-            (r'/api/v1/slices', SliceHandler),
-            (r'/api/v1/slices/(.*)', SliceHandler),
+            (r'/api/v1/{}s'.format(entity), Handler),
+            (r'/api/v1/{}s/(.*)'.format(entity), Handler)
+
+            ]
+            
+            
+
+            # (r'/api/v1/slices', SliceHandler),
+            # (r'/api/v1/slices/(.*)', SliceHandler),
+
+            # (r'/api/v1/users', UserHandler),
+            # (r'/api/v1/users/(.*)', UserHandler),
+
+            # (r'/api/v1/users', ProjectHandler),
+            # (r'/api/v1/users/(.*)', UserHandler),
 
             # WEBSOCKET
-        ]
 
         settings = dict(cookie_secret="x&7G1d2!5MhG9SWkXu",
                         template_path=self.templates,
                         static_path=self.static,
-                        xsrf_cookies=True,
+                        #xsrf_cookies=True,
                         debug=True)
 
 
