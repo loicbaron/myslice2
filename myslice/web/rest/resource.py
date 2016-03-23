@@ -9,22 +9,21 @@ from myslice.web.rest import Api, DecimalEncoder, DateEncoder
 class ResourceHandler(Api):
 
     @gen.coroutine
-    def get(self, *args):
+    def get(self, resource_id):
         resources = []
+        if resource_id:
+            item = yield r.table('resources').get(resource_id).run(self.dbconnection)
 
-        cursor = yield r.table('resources').run(self.dbconnection)
+            if item is None:
+                self.set_status(404)
+                self.finish({"reason": "Slices not found, Please check the URI."})
+            else:
+                resources.append(item)
+        else:
+            cursor = yield r.table('resources').run(self.dbconnection)
 
-        while (yield cursor.fetch_next()):
-            item = yield cursor.next()
-            resources.append(item)
+            while (yield cursor.fetch_next()):
+                item = yield cursor.next()
+                resources.append(item)
 
-        #self.finish()
-        #id = self.get_argument("id")
-        #value = self.get_argument("value")
-        #data = {"id": id, "value" : value}
-
-        #self.write({"resources": resources})
         self.write(json.dumps({"resources": resources}, cls=DecimalEncoder, default=DateEncoder))
-
-        #for c in cl:
-        #    c.write_message(data)

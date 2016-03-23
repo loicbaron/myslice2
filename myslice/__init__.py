@@ -50,11 +50,12 @@ myslicelibsetup.endpoints = [
             #Endpoint(url="https://sfa-fed4fire.pl.sophia.inria.fr:443",type="Reg")
         ]
 
-credential_path = "/Users/moray/Sites/upmc/"
-credential_pkey = credential_path + "cscognamiglio_onelab.pkey"
-credential_hrn = "onelab.upmc.cscognamiglio"
-credential_email = "cscognamiglio@gmail.com"
-credential_cert = credential_path + "cscognamiglio_onelab.cert"
+
+credential_path = "/root/.sfi/"
+credential_pkey = credential_path + "onelab.upmc.loic_baron.pkey"
+credential_hrn = "onelab.upmc.loic_baron"
+credential_email = "loic.baron@lip6.fr"
+credential_cert = credential_path + "onelab.upmc.loic_baron.user.gid"
 
 myslicelibsetup.credential = Credential(hrn=credential_hrn, email=credential_email, certificate=credential_cert, private_key=credential_pkey)
 ##

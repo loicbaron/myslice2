@@ -19,10 +19,6 @@ tables = [
             'pkey' : 'id'
         },
         {
-            'name' : 'projects',
-            'pkey' : 'id'
-        },
-        {
             'name' : 'users',
             'pkey' : 'id'
         },
@@ -79,6 +75,25 @@ def testbeds(testbeds=None):
 
     c.close()
 
+def users(c=None, data=None):
+    if not c:
+        c = connect()
+
+    if data:
+        r.db(s.db.name).table('users').insert(data, conflict='update').run(c)
+
+    return r.db(s.db.name).table('users').run(c)
+
+def projects(c=None, data=None):
+    if not c:
+        c = connect()
+
+    if data:
+        r.db(s.db.name).table('projects').insert(data, conflict='update').run(c)
+
+    return r.db(s.db.name).table('projects').run(c)
+
+
 def slices(c=None, data=None):
     if not c:
         c = connect()
@@ -87,15 +102,6 @@ def slices(c=None, data=None):
         r.db(s.db.name).table('slices').insert(data, conflict='update').run(c)
 
     return r.db(s.db.name).table('slices').run(c)
-
-def projects(c=None, data=None):
-    if not c:
-        c = connect()
-
-    if (data):
-        r.db(s.db.name).table('projects').insert(data, conflict='update').run(c)
-
-    return r.db(s.db.name).table('projects').run(c)
 
 def resources(c=None, filter=None):
 

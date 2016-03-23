@@ -1,49 +1,48 @@
 ##
-# Slice service: will keep the list of slices configured in sync
-# and manages slice creation, deletetion, status etc.
+#   MySlice version 2
+#
+#   Experiments process service: will keep the list of slices and projects configured in sync
+#   Will also manage slice/project creation, deletetion, status etc.
+#
+#   (c) 2016 Ciro Scognamiglio <ciro.scognamiglio@lip6.fr>
+##
 
 import logging
-import myslice.db as db
-from myslice.lib import Status
-from myslice.lib.util import format_date
+import threading
+from myslice.db import changes
+from myslice.services.workers.projects import sync as syncProjects
+from myslice.services.workers.slices import sync as syncSlices
 
-from myslicelib.model.slice import Slice
-from myslicelib.query import q
-
-logger = logging.getLogger('myslice.service.slices')
+logger = logging.getLogger('myslice.service.experiments')
 
 def run():
     """
     A thread that will check resource availability and information
     """
-    logger.info("Process slices starting")
+    logger.info("Service experiments starting")
 
-    """
-    DB connection
-    """
-    dbconnection = db.connect()
 
-    """
-    MySliceLib Query Slices
-    """
-    slices = q(Slice).get()
+    lock = threading.Lock()
 
-    """
-    update local slice table
-    """
-    lslices = db.slices(dbconnection, slices.dict())
+    # threads
+    threads = []
 
-    for ls in lslices :
-        if not slices.has(ls['id']) and ls['status'] is not Status.PENDING:
-            # delete slices that have been deleted elsewhere
-            db.delete(dbconnection, 'slices', ls['id'])
-            logger.info("Slice {} deleted".format(ls['id']))
+    # projects sync
+    t = threading.Thread(target=syncProjects, args=(lock,))
+    t.daemon = True
+    threads.append(t)
+    t.start()
 
-        # add status if not present and update on db
-        if not 'status' in ls:
-            ls['status'] = Status.ENABLED
-            ls['enabled'] = format_date()
-            db.slices(dbconnection, ls)
+    # slices sync
+    t = threading.Thread(target=syncSlices, args=(lock,))
+    t.daemon = True
+    threads.append(t)
+    t.start()
+
+    feed = changes(table='events')
+    for change in feed:
+        with lock:
+            print(change)
 
 
     # update slice table
