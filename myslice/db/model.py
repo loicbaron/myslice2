@@ -6,8 +6,9 @@
 #   (c) 2016 Ciro Scognamiglio <ciro.scognamiglio@lip6.fr>
 ##
 
-from enum import Enum
 import json
+from enum import Enum
+from myslice.lib.util import format_date
 
 class EventStatus(Enum):
     SUCCESS = 'success'
@@ -28,6 +29,8 @@ class Event(object):
             object: {}
             changes: {}
             user: <id>
+            created: <date>
+            updated: <date>
         }
 
     """
@@ -54,6 +57,16 @@ class Event(object):
 
         if 'changes' in event:
             self.changes = event['changes']
+
+        if 'created' in event:
+            self.e['created'] = format_date(event['created'])
+        else:
+            self.e['created'] = format_date()
+
+        if 'updated' in event:
+            self.updated(format_date(event['updated']))
+
+
 
     def __str__(self):
         return json.dumps(self.e)
@@ -120,3 +133,10 @@ class Event(object):
             raise ValueError('Changes must have at least type')
 
         self.e['changes'] = value
+
+    def updated(self, value=None):
+        if value:
+            self.e['updated'] = value
+        else:
+            self.e['updated'] = format_date()
+

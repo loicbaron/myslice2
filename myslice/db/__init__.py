@@ -138,6 +138,9 @@ def events(c=None, event=None, user=None, status=None, action=None):
         c = connect()
 
     if isinstance(event, Event):
+        # update date of the event
+        event.updated()
+        # update event on db
         r.db(s.db.name).table('events').insert(event.dict(), conflict='update').run(c)
 
     req = r.db(s.db.name).table('events')
