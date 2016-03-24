@@ -8,7 +8,6 @@
 
 from enum import Enum
 import json
-import pprint
 
 class EventStatus(Enum):
     SUCCESS = 'success'
@@ -61,7 +60,7 @@ class Event(object):
 
     def dict(self):
         return self.e
-    
+
     @property
     def action(self):
         return self.e['action']
