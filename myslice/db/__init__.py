@@ -2,6 +2,7 @@ import logging
 import rethinkdb as r
 from rethinkdb.errors import RqlRuntimeError, RqlDriverError
 from myslice import settings as s
+from myslice.db.model import Event
 
 logger = logging.getLogger(__name__)
 
@@ -132,6 +133,25 @@ def resource(c, resource=None):
     else:
         return r.table('resources').run(c)
 
+def events(c=None, event=None, user=None, status=None, action=None):
+    if not c:
+        c = connect()
+
+    if isinstance(event, Event):
+        r.db(s.db.name).table('events').insert(event.dict(), conflict='update').run(c)
+
+    req = r.db(s.db.name).table('events')
+
+    if user:
+        req.filter({'user':user})
+
+    if status:
+        req.filter({'user':status})
+
+    if action:
+        req.filter({'user':action})
+
+    return req.run(c)
 
 def delete(c=None, table=None, id=None):
     if not c:
