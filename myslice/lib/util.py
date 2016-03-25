@@ -1,6 +1,8 @@
 import logging
 from datetime import datetime
 import pytz
+import json
+import decimal
 
 log = logging.getLogger('server')
 
@@ -53,7 +55,24 @@ log = logging.getLogger('server')
 #               grp.getgrgid(final_gid)[0]))
 
 def format_date(date=None):
-    tz = pytz.timezone('UTC')
     if not date:
         date = datetime.now()
-    return tz.localize(date)
+    if date.tzinfo is None or date.tzinfo.utcoffset(date) is None:
+        tz = pytz.timezone('UTC')
+        return tz.localize(date)
+    else:
+        return date
+
+
+# handles serialization of datetime in json
+DateEncoder = lambda obj: obj.isoformat() if isinstance(obj, datetime) else None
+
+# support converting decimal in json
+json.encoder.FLOAT_REPR = lambda o: format(o, '.2f')
+
+# handles decimal numbers serialization in json
+class DecimalEncoder(json.JSONEncoder):
+    def _iterencode(self, o, markers=None):
+        if isinstance(o, decimal.Decimal):
+            return (str(o) for o in [o])
+        return super(DecimalEncoder, self)._iterencode(o, markers)
