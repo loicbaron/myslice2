@@ -4,7 +4,7 @@ body {
     height: 100%;
     color:#2C2C2C;
     background-color:#F6F6F6;
-    margin-top:140px;
+    margin-top:130px;
 }
 
 header {
@@ -57,58 +57,55 @@ h4 {
     margin-top:1px;
 }
 
-.p-left {
-    position:relative;
-}
-.p-header {
+.p-left-header {
     position:fixed;
     right:50%;
     left:0;
     background-color:#F6F6F6;
     z-index:90;
 }
+.p-left-body {
+    position:fixed;
+    left:0;
+    bottom:15px;
+    top:198px;
+    width:50%;
+    overflow-y: auto;
+    border-right:1px solid #DCDCF8;
+}
+.p-right-header {
+    position:fixed;
+    left:50%;
+    right:0;
+    background-color:#F6F6F6;
+    z-index:90;
+}
+.p-right-body {
+    position:fixed;
+    left:50%;
+    right:0;
+    top:212px;
+    background-color:#F6F6F6;
+    z-index:90;
+}
 .p-title {
 }
-
+.p-title h1 {
+    padding:0;
+    margin:15px 0;
+    line-height:1em;
+}
 .p-action {
     z-index:91;
     text-align:right;
 }
-.p-body {
-    position:fixed;
-    left:0;
-    bottom:15px;
-    top:212px;
-    width:50%;
-    overflow-y: auto;
-    border-right:1px solid gray;
 
-}
+
 .p-list {
 
 }
-.p-view-header {
-    position:fixed;
-    left:50%;
-    right:0;
-    background-color:#F6F6F6;
-    z-index:90;
-}
-.p-view-body {
-    position:fixed;
-    left:50%;
-    right:0;
-    top:212px;
-    background-color:#F6F6F6;
-    z-index:90;
-}
 
 
-
-
-.elementList {
-    overflow-y: scroll;
-}
 .elementAdd {
     border:none;
     border-left:1px solid #333333;
@@ -132,7 +129,38 @@ h4 {
     right:-5px;
     margin:18px 0 0 0;
 }
+.elementList {
+    margin:0;
+    padding:0 0 0 25px;
+    overflow-y: scroll;
+}
+.elementBox {
+    list-style:none;
+    width:100%;
+    background-color:white;
+    padding:10px 15px 10px 30px;
+    margin-bottom:5px;
+}
+.elementBox:last-child {
+    border:none;
+}
 
+.elementIcon {
+    position:absolute;
+    top:5px;
+    left:-35px;
+    text-align:center;
+    width: 40px;
+    height: 40px;
+    background:#B9B5C7;
+    -moz-border-radius: 20px;
+    -webkit-border-radius: 20px;
+    border-radius: 20px;
+}
+
+.elementIcon img {
+    margin-top:6px;
+}
 
 .elementLabel {
     font-size:14pt;
