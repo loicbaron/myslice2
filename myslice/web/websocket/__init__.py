@@ -1,57 +1,52 @@
 import logging, json
-from tornado import websocket, gen
-import rethinkdb as r
+from tornado import gen, web
+from sockjs.tornado import SockJSConnection
+from rethinkdb import r
+from myslice.lib.util import DecimalEncoder, DateEncoder
+from myslice.db import changes, connect
 
 logger = logging.getLogger('myslice.websocket')
 r.set_loop_type("tornado")
-cl = []
 
-class Api(websocket.WebSocketHandler):
-    def check_origin(self, origin):
-        return True
+class WebsocketsHandler(SockJSConnection):
+    clients = set()
 
-    def open(self):
-        if self not in cl:
-            cl.append(self)
-        logger.info("WebSocket opened (%s)" % self.request.remote_ip)
+    def on_open(self, request):
+        self.clients.add(self)
+        logger.info("WebSocket opened (%s)" % request)
 
     def on_message(self, message):
-        self.write_message(json.dumps({ "message": "Waiting for changes" }))
-        self.jobs()
+        logger.info("Received: {}".format(message))
+        data = json.loads(message)
+        if (data['watch'] == 'activity'):
+            self.events()
 
     def on_close(self):
-        if self in cl:
-            cl.remove(self)
-        logger.info("WebSocket closed (%s)" % self.request.remote_ip)
+        self.clients.remove(self)
+        logger.info("WebSocket closed")
 
     @gen.coroutine
-    def feed(self):
-        conn = None
-        try :
-            conn = yield r.connect(host="localhost", port=28015)
-        except r.RqlDriverError :
-            logger.error("can't connect to RethinkDB")
-            self.write_message(json.dumps({ "ret" : 0, "message" : "connection error" }, ensure_ascii = False))
+    def events(self):
+        dbconnection = yield connect()
+        feed = yield changes(dbconnection, table='events')
 
-        if (conn) :
-            feed = yield r.db("myslice").table("resources").changes().run(conn)
-            while (yield feed.fetch_next()):
-                change = yield feed.next()
-                self.write_message(json.dumps(change, ensure_ascii = False).encode('utf8'))
-                print(change)
+        while (yield feed.fetch_next()):
+            change = yield feed.next()
+            print(change)
+            self.send(json.dumps(change['new_val'], ensure_ascii=False, cls=DecimalEncoder, default=DateEncoder).encode('utf8'))
 
-    @gen.coroutine
-    def jobs(self):
-        conn = None
-        try :
-            conn = yield r.connect(host="localhost", port=28015)
-        except r.RqlDriverError :
-            logger.error("can't connect to RethinkDB")
-            self.write_message(json.dumps({ "ret" : 0, "msg" : "connection error" }, ensure_ascii = False))
-
-        if (conn) :
-            feed = yield r.db("myslice").table("jobs").changes().run(conn)
-            while (yield feed.fetch_next()):
-                change = yield feed.next()
-                #self.write_message(json.dumps(change['new_val'], ensure_ascii = False).encode('utf8'))
-                self.write_message(json.dumps(change['new_val']))
+    # @gen.coroutine
+    # def jobs(self):
+    #     conn = None
+    #     try :
+    #         conn = yield r.connect(host="localhost", port=28015)
+    #     except r.RqlDriverError :
+    #         logger.error("can't connect to RethinkDB")
+    #         self.write_message(json.dumps({ "ret" : 0, "msg" : "connection error" }, ensure_ascii = False))
+    #
+    #     if (conn) :
+    #         feed = yield r.db("myslice").table("jobs").changes().run(conn)
+    #         while (yield feed.fetch_next()):
+    #             change = yield feed.next()
+    #             #self.write_message(json.dumps(change['new_val'], ensure_ascii = False).encode('utf8'))
+    #             self.write_message(json.dumps(change['new_val']))
