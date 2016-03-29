@@ -17,21 +17,18 @@ logger = logging.getLogger("myslice.event")
 
 class EventStatus(Enum):
     """
-        Status Class
+    Status for EventAction.ADD, EventAction.MOD, EventAction.DEL
     """
-    ##
-    # Status for EventAction.ADD, EventAction.MOD, EventAction.DEL
-    #
+    # NEW created event, this will be processed
+    NEW = "NEW"
+    # WAITING for either external input (REQ approval)
+    # or some processing to be done
+    WAITING = "WAITING"
+    # SUCCESSfully terminated
     SUCCESS = "SUCCESS"
+    # an ERROR or WARNING occurred during processing
     ERROR = "ERROR"
     WARNING = "WARNING"
-
-    ##
-    # Status for requests (EventAction.REQ)
-    #
-    PENDING = "PENDING"
-    REFUSED = "REFUSED"
-    APPROVED = "APPROVED"
 
 class EventAction(Enum):
     ADD = "ADD"
@@ -46,6 +43,7 @@ class EventObjectType(Enum):
     USER = "USER"
     RESOURCE = "RESOURCE"
 
+# TODO: when itializing check if object exists in rethinkdb
 class EventObject(object):
 
     def __init__(self, obj):
@@ -111,9 +109,17 @@ class Event(object):
         if 'id' in event:
             self.id = event['id']
 
-        self.action = event['action']
+        if not 'action' in event:
+            raise KeyError('action must be specified')
+        else:
+            self.action = event['action']
 
-        self.status = event['status']
+        ##
+        # Default status when creating the event is NEW
+        if 'status' in event:
+            self.status = event['status']
+        else:
+            self.status = EventStatus.NEW
 
         if 'message' in event:
             self.message = event['message']
@@ -184,7 +190,7 @@ class Event(object):
     def status(self):
         return self.e['status']
 
-    @action.setter
+    @status.setter
     def status(self, value):
         if isinstance(value, EventStatus):
             self.e['status'] = value.value
@@ -273,5 +279,159 @@ class Event(object):
             return False
         elif ret['inserted'] > 0:
             self.id = ret['generated_keys'][0]
+
+        return True
+
+class RequestStatus(Enum):
+    """
+    Status for requests
+    """
+    PENDING = "PENDING"
+    DENIED = "DENIED"
+    APPROVED = "APPROVED"
+    ERROR = "ERROR"
+    WARNING = "WARNING"
+
+class Request(object):
+    """
+        {
+            status: RequestStatus
+            message: String
+            object: {}
+            user: <id>
+            created: <date>
+            updated: <date>
+        }
+
+    """
+
+    def __init__(self, request):
+        self.e = {}
+
+        if 'status' in request:
+            self.status = request['status']
+        else:
+            self.status = RequestStatus.PENDING
+
+        if 'message' in request:
+            self.message = request['message']
+        else:
+            self.message = ''
+
+        ##
+        # User making the request
+        #
+        if 'user' in request:
+            self.user = request['user']
+        else:
+            raise ValueError('User id must be specified')
+
+        if 'event' in request:
+            self.event = request['event']
+        else:
+            raise ValueError('Event ID must be specified')
+
+
+    ##
+    # Status
+    @property
+    def status(self):
+        return self.e['status']
+
+    @status.setter
+    def status(self, value):
+        if isinstance(value, RequestStatus):
+            self.e['status'] = value.value
+        elif value in RequestStatus.__members__:
+            self.e['status'] = value
+        else:
+            raise ValueError('Request Status not valid')
+
+    ##
+    # Message
+    @property
+    def message(self):
+        return self.e['message']
+
+    @message.setter
+    def message(self, value=''):
+        self.e['message'] = value
+
+    ##
+    # User
+    @property
+    def user(self):
+        return self.e['user']
+
+    @user.setter
+    def user(self, value):
+        self.e['user'] = value
+
+    ##
+    # Event: refers to an event
+    @property
+    def event(self):
+        return self.e['event']
+
+    @event.setter
+    def event(self, value):
+        self.e['event'] = value
+
+    def updated(self, value=None):
+        if value:
+            self.e['updated'] = value
+        else:
+            self.e['updated'] = format_date()
+
+
+    # approves the request
+    def approve(self):
+
+        if not self.id:
+            return False
+
+        # update date of the request
+        self.updated()
+
+        # update the status of the request
+        self.status = RequestStatus.APPROVED
+
+        # send to db
+        return self.save()
+
+    # denies the request
+    def deny(self):
+
+        if not self.id:
+            return False
+
+        # update date of the request
+        self.updated()
+
+        # update the status of the request
+        self.status = RequestStatus.DENIED
+
+        # send to db
+        return self.save()
+
+    def save(self):
+        # connect to db
+        logger.info("Connecting to db {} on {}:{}".format(s.db.name, s.db.host, s.db.port))
+        try:
+            c = r.connect(host=s.db.host, port=s.db.port, db=s.db.name)
+        except RqlDriverError:
+            logger.error("Can't connect to RethinkDB")
+            raise SystemExit("Can't connect to RethinkDB")
+
+        ##
+        # updating existing event
+        ret = r.db(s.db.name).table('requests').get(self.id).update(self.dict()).run(c)
+
+        # import pprint
+        # pprint.pprint(ret)
+        if ret['errors'] > 0:
+            self.message = ret['first_error']
+            self.status = RequestStatus.ERROR
+            return False
 
         return True

@@ -27,6 +27,10 @@ tables = [
             'name' : 'events',
             'pkey' : 'id'
         },
+        {
+            'name': 'requests',
+            'pkey': 'id'
+        },
     ]
 
 def connect():
@@ -138,10 +142,8 @@ def events(c=None, event=None, user=None, status=None, action=None):
         c = connect()
 
     if isinstance(event, Event):
-        # update date of the event
-        event.updated()
         # update event on db
-        r.db(s.db.name).table('events').insert(event.dict(), conflict='update').run(c)
+        ret = r.db(s.db.name).table('events').insert(event.dict(), conflict='update').run(c)
 
     req = r.db(s.db.name).table('events')
 
@@ -156,6 +158,16 @@ def events(c=None, event=None, user=None, status=None, action=None):
 
     return req.run(c)
 
+# retrieves an event
+def event(c=None, id=None):
+    if not id:
+        return False
+
+    if not c:
+        c = connect()
+
+    return r.db(s.db.table).table('events').get(id).run()
+
 def delete(c=None, table=None, id=None):
     if not c:
         c = connect()
@@ -165,11 +177,16 @@ def delete(c=None, table=None, id=None):
 
     return False
 
-def changes(c=None, table=None):
+def changes(c=None, table=None, filter=None):
+    if not table:
+        return False
+
     if not c:
         c = connect()
 
-    if table:
-        return r.db(s.db.name).table(table).changes().run(c)
+    changes = r.db(s.db.name).table(table)
 
-    return False
+    if filter:
+        changes.filter(filter)
+
+    return changes.changes().run(c)
