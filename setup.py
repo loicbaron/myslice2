@@ -8,7 +8,7 @@ setup(name='myslice',
       author_email='ciro.scognamiglio@lip6.fr',
       license='MIT',
       packages=['myslice'],
-      scripts=['myslice/bin/myslice-sync', 'myslice/bin/myslice-web'],
+      #scripts=['myslice/bin/myslice-sync', 'myslice/bin/myslice-web'],
       #data_files=[('/etc', ['config/planetlab.cfg-dist']),
       #            ('/etc/init.d', ['init/myslice'])],
       zip_safe=False)
