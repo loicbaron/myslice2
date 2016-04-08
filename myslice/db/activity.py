@@ -1,7 +1,7 @@
 ##
 #   MySlice version 2
 #
-#   Model: defines class models used for the database
+#   Activity model: defines Event and Request classes
 #
 #   (c) 2016 Ciro Scognamiglio <ciro.scognamiglio@lip6.fr>
 ##
@@ -11,7 +11,7 @@ import logging
 from enum import Enum
 from myslice.lib.util import format_date, DecimalEncoder, DateEncoder
 
-logger = logging.getLogger("myslice.event")
+logger = logging.getLogger("myslice.activity")
 
 class ObjectType(Enum):
     AUTHORITY = "AUTHORITY"
@@ -19,17 +19,21 @@ class ObjectType(Enum):
     SLICE = "SLICE"
     USER = "USER"
     RESOURCE = "RESOURCE"
-    KEY = "KEY"
 
-# TODO: when initializing check if object exists in rethinkdb
 class Object(object):
 
     def __init__(self, obj):
         self.e = {}
 
-        self.type = obj['type']
+        try:
+            self.type = obj['type']
+        except KeyError:
+            raise Exception('Object Type not specified')
 
-        self.id = obj['id']
+        try:
+            self.id = obj['id']
+        except KeyError:
+            raise Exception('Object Id not specified')
 
     def __str__(self):
         return json.dumps(self.e, cls=DecimalEncoder, default=DateEncoder)
@@ -50,7 +54,7 @@ class Object(object):
         elif value in ObjectType.__members__:
             self.e['type'] = value
         else:
-            raise ValueError('Object Type {} is not valid'.format(value))
+            raise Exception('Object Type {} not valid'.format(value))
 
     ##
     # ID of the object type
@@ -90,27 +94,14 @@ class EventAction(Enum):
     # create a reqest
     REQ = "REQ"
 
-"""
-{
-"event": {
-	"action":"ADD",
-	"user":"XXXXXX",
-	"object":{
-		"type": "KEY",
-		"key": "YYYYY"
-		}
-	}
-}
-"""
-
 class Event(object):
     """
         {
             action: EventAction
             status: EventStatus
-            message: String
+            messages: [String]
             object: {}
-            changes: {}
+            data: {}
             user: <id>
             created: <date>
             updated: <date>
@@ -121,6 +112,11 @@ class Event(object):
     def __init__(self, event):
         self.e = {}
 
+        if 'message' in event:
+            self.messages = event['messages']
+        else:
+            self.messages = []
+
         ##
         # If ID is present this is a previously
         # created event, or we don't set it
@@ -128,7 +124,8 @@ class Event(object):
             self.id = event['id']
 
         if not 'action' in event:
-            raise KeyError('action must be specified')
+            self.messages = "Event action not specified"
+            raise Exception(self.messages)
         else:
             self.action = event['action']
 
@@ -139,26 +136,37 @@ class Event(object):
         else:
             self.status = EventStatus.NEW
 
-        if 'message' in event:
-            self.messages = event['messages']
-        else:
-            self.messages = []
-
         ##
         # User making the request
         #
         if 'user' in event:
             self.user = event['user']
         else:
-            raise ValueError('User id must be specified')
+            self.messages = "User Id not specified"
+            raise Exception(self.messages)
 
+        ##
+        # Object of the event
+        #
         if 'object' in event:
-            self.object = event['object']
+            try:
+                self.object = event['object']
+            except Exception as e:
+                self.messages = "{0}".format(e)
+                raise Exception(self.messages)
         else:
-            raise ValueError('Object must be specified')
+            self.messages = "Event Object not specified"
+            raise Exception(self.messages)
 
-        if 'changes' in event:
-            self.changes = event['changes']
+        ##
+        # data is a dictionary of changes for the object
+        # action DEL does not need it
+        if 'data' in event:
+            self.data = event['data']
+        else:
+            if not self.action == EventAction.DEL:
+                self.messages = "Data not specified for action {}".format(self.action)
+                raise Exception(self.messages)
 
         if 'created' in event:
             self.e['created'] = format_date(event['created'])
@@ -200,7 +208,8 @@ class Event(object):
         elif value in EventAction.__members__:
             self.e['action'] = value
         else:
-            raise ValueError('Event Action not valid')
+            self.messages = "Event Action not valid"
+            raise Exception(self.messages)
 
     ##
     # Status
@@ -215,7 +224,8 @@ class Event(object):
         elif value in EventStatus.__members__:
             self.e['status'] = value
         else:
-            raise ValueError('Event Status not valid')
+            self.messages = "Event Status not valid"
+            raise Exception(self.messages)
 
     ##
     # Message
@@ -252,18 +262,19 @@ class Event(object):
     def object(self, value):
         self.e['object'] = Object(value).dict()
 
-    # ##
-    # # Changes
-    # @property
-    # def changes(self):
-    #     return self.e['changes']
-    #
-    # @changes.setter
-    # def changes(self, value):
-    #     if not all(k in value for k in ("type")):
-    #         raise ValueError('Changes must have at least type')
-    #
-    #     self.e['changes'] = value
+    ##
+    # Data
+    @property
+    def data(self):
+        return self.e['data']
+
+    @data.setter
+    def data(self, value):
+        if not isinstance(value, dict):
+            self.messages = "Invalid format for data (must be a dict)"
+            raise Exception(self.messages)
+        else:
+            self.e['data'] = value
 
     def updated(self, value=None):
         if value:
@@ -283,48 +294,112 @@ class RequestStatus(Enum):
 
 class Request(object):
     """
-        {
-            status: RequestStatus
-            message: String
-            object: {}
-            user: <id>
-            created: <date>
-            updated: <date>
-        }
+    The Request object can be created in the following ways:
+
+    - req = Request(
+                {
+                    object: <Object>
+                    data: {}
+                    user: <id>
+                }
+            )
+    This is a new request created from scratch. Status will
+    be put on PENDING by default.
+
+    - req = Request(
+                {
+                    status: "STATUS"
+                    message: [Strings]
+                    object: {
+                        type: "OTYPE",
+                        id: <id>
+                    }
+                    data: {
+                        ...
+                    }
+                    user: <id>
+                    created: <date>
+                    updated: <date>
+                }
+            )
+    The argument is a well formed dictionary, f.i. retrieved from db.
+    The request here has been created before, we are retrieving it to
+    perform operations/tasks, we then change state and dispatch it.
+
+    - req = Request(<Event>)
+    Creating a Request from an Event object. This wil create a new
+    request (default status PENDING) and copy over from the event object
+    the following values: object, data, user.
 
     """
 
     def __init__(self, request):
-        self.e = {}
+        self.r = {}
 
-        if 'status' in request:
-            self.status = request['status']
-        else:
+        ##
+        # We can pass an event directly, this will create
+        # a new request based on it, otherwise we can
+        # create a new request from scratch or from a dictionary
+        if isinstance(request, Event):
             self.status = RequestStatus.PENDING
-
-        if 'message' in request:
-            self.messages = request['messages']
+            self.object = request.object
+            self.data = request.data
+            self.user = request.user
+            self.r['created'] = format_date()
         else:
-            self.messages = []
+            if 'status' in request:
+                self.status = request['status']
+            else:
+                self.status = RequestStatus.PENDING
 
-        ##
-        # User making the request
-        #
-        if 'user' in request:
-            self.user = request['user']
-        else:
-            raise ValueError('User id must be specified')
+            if 'message' in request:
+                self.messages = request['messages']
+            else:
+                self.messages = []
 
-        ##
-        # Object
-        @property
-        def object(self):
-            return self.e['object']
+            ##
+            # User making the request
+            #
+            if 'user' in request:
+                self.user = request['user']
+            else:
+                self.messages = "User Id not specified"
+                raise Exception(self.messages)
 
-        @object.setter
-        def object(self, value):
-            self.e['object'] = Object(value).dict()
+            ##
+            # Object of the request
+            #
+            if 'object' in request:
+                try:
+                    self.object = request['object']
+                except Exception as e:
+                    self.messages = "{0}".format(e)
+                    raise Exception(self.messages)
+            else:
+                self.messages = "Request Object not specified"
+                raise Exception(self.messages)
 
+            ##
+            # data is a dictionary of changes for the object
+            # action DEL does not need it
+            if 'data' in request:
+                self.data = request['data']
+            else:
+                if not self.action == EventAction.DEL:
+                    self.messages = "Data not specified for action {}".format(self.action)
+                    raise Exception(self.messages)
+
+            if 'created' in request:
+                self.r['created'] = format_date(request['created'])
+            else:
+                self.r['created'] = format_date()
+
+
+    def __str__(self):
+        return json.dumps(self.r, cls=DecimalEncoder, default=DateEncoder)
+
+    def dict(self):
+        return self.r
 
     ##
     # Status
@@ -335,11 +410,12 @@ class Request(object):
     @status.setter
     def status(self, value):
         if isinstance(value, RequestStatus):
-            self.e['status'] = value.value
+            self.r['status'] = value.value
         elif value in RequestStatus.__members__:
-            self.e['status'] = value
+            self.r['status'] = value
         else:
-            raise ValueError('Request Status not valid')
+            self.messages = "Request Status not valid"
+            raise Exception(self.messages)
 
     ##
     # Message
@@ -347,43 +423,57 @@ class Request(object):
     # the request life (info, error, messages)
     @property
     def messages(self):
-        return self.e['messages']
+        return self.r['messages']
 
     @messages.setter
     def messages(self, value=None):
         if isinstance(value, str):
-            self.e['messages'].append(value)
+            self.r['messages'].append(value)
         else:
-            self.e['messages'] = value
+            self.r['messages'] = value
 
     ##
     # User
     @property
     def user(self):
-        return self.e['user']
+        return self.r['user']
 
     @user.setter
     def user(self, value):
-        self.e['user'] = value
+        self.r['user'] = value
 
     ##
     # Object
     @property
     def object(self):
-        return self.e['object']
+        return self.r['object']
 
     @object.setter
     def object(self, value):
-        self.e['object'] = Object(value).dict()
+        self.r['object'] = Object(value).dict()
+
+    ##
+    # Data
+    @property
+    def data(self):
+        return self.r['data']
+
+    @data.setter
+    def data(self, value):
+        if not isinstance(value, dict):
+            self.messages = "Invalid format for data (must be a dict)"
+            raise Exception(self.messages)
+        else:
+            self.r['data'] = value
 
     def updated(self, value=None):
         if value:
-            self.e['updated'] = value
+            self.r['updated'] = value
         else:
-            self.e['updated'] = format_date()
+            self.r['updated'] = format_date()
 
-
-    # approves the request
+    ##
+    # Approves the request
     def approve(self):
 
         if not self.id:
@@ -395,7 +485,8 @@ class Request(object):
         # update the status of the request
         self.status = RequestStatus.APPROVED
 
-    # denies the request
+    ##
+    # Denies the request
     def deny(self):
 
         if not self.id:
