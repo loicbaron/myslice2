@@ -79,9 +79,26 @@ def testbeds(testbeds=None):
 
     c.close()
 
+def get(c=None, table=None, id=None, filter=None):
+    if not table:
+        raise NotImplementedError('table must be specified')
 def users(dbconnection=None, data=None):
     if not dbconnection:
         dbconnection = connect()
+
+    if not c:
+        c = connect()
+
+    if id:
+        return r.db(s.db.name).table(table).get(id).run(c)
+
+    if filter:
+        pass 
+        # return somthing with filter
+
+    return r.db(s.db.name).table(table).run(c)
+
+
 
     if data:
         r.db(s.db.name).table('users').insert(data, conflict='update').run(dbconnection)

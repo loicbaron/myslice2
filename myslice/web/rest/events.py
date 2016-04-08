@@ -55,4 +55,3 @@ class EventsHandler(Api):
             #data = self.get_argument('event','no data')
             print(event)
 
-            self.finish(json.dumps({"return": {"status":"success","messages":event.messages}}))
