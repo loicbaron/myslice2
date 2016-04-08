@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import json
 
 import rethinkdb as r
@@ -49,3 +50,4 @@ class EventsHandler(Api):
         print(ev)
 
         self.write(json.dumps({"return":"ok"}))
+

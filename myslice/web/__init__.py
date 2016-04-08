@@ -38,36 +38,25 @@ class Application(web.Application):
 
         # REST API
         for entity in self._rest_handlers:
+            # import handler class
             HandlerModule = "myslice.web.rest.{}".format(entity)
-            module = __import__(HandlerModule, fromlist=["{}Handler".format(entity.title())])
-            Handler = getattr(module, "{}Handler".format(entity.title()))
+            HandlerClass = "{}Handler".format(entity.title())
+            module = __import__(HandlerModule, fromlist=[HandlerClass])
+            Handler = getattr(module, HandlerClass)
             
+            # append handler to list of handlers 
             handlers += [
-
-            (r'/api/v1/{}s'.format(entity), Handler),
-            (r'/api/v1/{}s/(.*)'.format(entity), Handler)
-
+                    (r'/api/v1/{}s'.format(entity), Handler),
+                    (r'/api/v1/{}s/(.*)'.format(entity), Handler)
             ]
-            
-            
 
-            # (r'/api/v1/slices', SliceHandler),
-            # (r'/api/v1/slices/(.*)', SliceHandler),
-
-            # (r'/api/v1/users', UserHandler),
-            # (r'/api/v1/users/(.*)', UserHandler),
-
-            # (r'/api/v1/users', ProjectHandler),
-            # (r'/api/v1/users/(.*)', UserHandler),
-
-            # WEBSOCKET
+        # WEBSOCKET
 
         settings = dict(cookie_secret="x&7G1d2!5MhG9SWkXu",
                         template_path=self.templates,
                         static_path=self.static,
                         #xsrf_cookies=True,
                         debug=True)
-
 
         self.dbconnection = dbconnection
 
