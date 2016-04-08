@@ -9,42 +9,20 @@
 import json
 import logging
 from enum import Enum
-from rethinkdb import r, RqlDriverError
-from myslice import settings as s
 from myslice.lib.util import format_date, DecimalEncoder, DateEncoder
 
 logger = logging.getLogger("myslice.event")
 
-class EventStatus(Enum):
-    """
-    Status for EventAction.ADD, EventAction.MOD, EventAction.DEL
-    """
-    # NEW created event, this will be processed
-    NEW = "NEW"
-    # WAITING for either external input (REQ approval)
-    # or some processing to be done
-    WAITING = "WAITING"
-    # SUCCESSfully terminated
-    SUCCESS = "SUCCESS"
-    # an ERROR or WARNING occurred during processing
-    ERROR = "ERROR"
-    WARNING = "WARNING"
-
-class EventAction(Enum):
-    ADD = "ADD"
-    DEL = "DEL"
-    MOD = "MOD"
-    REQ = "REQ"
-
-class EventObjectType(Enum):
+class ObjectType(Enum):
     AUTHORITY = "AUTHORITY"
     PROJECT = "PROJECT"
     SLICE = "SLICE"
     USER = "USER"
     RESOURCE = "RESOURCE"
+    KEY = "KEY"
 
-# TODO: when itializing check if object exists in rethinkdb
-class EventObject(object):
+# TODO: when initializing check if object exists in rethinkdb
+class Object(object):
 
     def __init__(self, obj):
         self.e = {}
@@ -67,12 +45,12 @@ class EventObject(object):
 
     @type.setter
     def type(self, value):
-        if isinstance(value, EventObjectType):
+        if isinstance(value, ObjectType):
             self.e['type'] = value.value
-        elif value in EventObjectType.__members__:
+        elif value in ObjectType.__members__:
             self.e['type'] = value
         else:
-            raise ValueError('Event Object Type is not valid')
+            raise ValueError('Object Type {} is not valid'.format(value))
 
     ##
     # ID of the object type
@@ -84,6 +62,46 @@ class EventObject(object):
     def id(self, value):
         self.e['id'] = value
 
+class EventStatus(Enum):
+    """
+    Event Status: new events will automatically have a NEW status,
+    once dispatched a new event will be treated and its status will change
+    """
+    # NEW created event, this will be processed
+    NEW = "NEW"
+    # WAITING to be processed by an external service
+    WAITING = "WAITING"
+    # SUCCESSfully terminated
+    SUCCESS = "SUCCESS"
+    # ERROR or WARNING occurred during processing
+    ERROR = "ERROR"
+    WARNING = "WARNING"
+
+class EventAction(Enum):
+    """
+
+    """
+    # add an object
+    ADD = "ADD"
+    # delete an object
+    DEL = "DEL"
+    # modify an object
+    MOD = "MOD"
+    # create a reqest
+    REQ = "REQ"
+
+"""
+{
+"event": {
+	"action":"ADD",
+	"user":"XXXXXX",
+	"object":{
+		"type": "KEY",
+		"key": "YYYYY"
+		}
+	}
+}
+"""
 
 class Event(object):
     """
@@ -122,9 +140,9 @@ class Event(object):
             self.status = EventStatus.NEW
 
         if 'message' in event:
-            self.message = event['message']
+            self.messages = event['messages']
         else:
-            self.message = ''
+            self.messages = []
 
         ##
         # User making the request
@@ -201,13 +219,18 @@ class Event(object):
 
     ##
     # Message
+    # This is a list of messages that get added during
+    # the event life (info, error, messages)
     @property
-    def message(self):
-        return self.e['message']
+    def messages(self):
+        return self.e['messages']
 
-    @message.setter
-    def message(self, value=''):
-        self.e['message'] = value
+    @messages.setter
+    def messages(self, value=None):
+        if isinstance(value, str):
+            self.e['messages'].append(value)
+        else:
+            self.e['messages'] = value
 
     ##
     # User
@@ -227,60 +250,26 @@ class Event(object):
 
     @object.setter
     def object(self, value):
-        self.e['object'] = EventObject(value).dict()
+        self.e['object'] = Object(value).dict()
 
-    ##
-    # Changes
-    @property
-    def changes(self):
-        return self.e['changes']
-
-    @changes.setter
-    def changes(self, value):
-        if not all(k in value for k in ("type")):
-            raise ValueError('Changes must have at least type')
-
-        self.e['changes'] = value
+    # ##
+    # # Changes
+    # @property
+    # def changes(self):
+    #     return self.e['changes']
+    #
+    # @changes.setter
+    # def changes(self, value):
+    #     if not all(k in value for k in ("type")):
+    #         raise ValueError('Changes must have at least type')
+    #
+    #     self.e['changes'] = value
 
     def updated(self, value=None):
         if value:
             self.e['updated'] = value
         else:
             self.e['updated'] = format_date()
-
-    ##
-    # Dispatches the event. This uses rethinkdb as backend
-    def dispatch(self):
-        # update date of the event
-        self.updated()
-
-        # connect to db
-        logger.info("Connecting to db {} on {}:{}".format(s.db.name, s.db.host, s.db.port))
-        try:
-            c = r.connect(host=s.db.host, port=s.db.port, db=s.db.name)
-        except RqlDriverError:
-            logger.error("Can't connect to RethinkDB")
-            raise SystemExit("Can't connect to RethinkDB")
-
-        if self.id:
-            ##
-            # updating existing event
-            ret = r.db(s.db.name).table('events').get(self.id).update(self.dict()).run(c)
-        else:
-            ##
-            # dispatching new event
-            ret = r.db(s.db.name).table('events').insert(self.dict()).run(c)
-
-        import pprint
-        pprint.pprint(ret)
-        if ret['errors'] > 0:
-            self.message = ret['first_error']
-            self.status = EventStatus.ERROR
-            return False
-        elif ret['inserted'] > 0:
-            self.id = ret['generated_keys'][0]
-
-        return True
 
 class RequestStatus(Enum):
     """
@@ -314,9 +303,9 @@ class Request(object):
             self.status = RequestStatus.PENDING
 
         if 'message' in request:
-            self.message = request['message']
+            self.messages = request['messages']
         else:
-            self.message = ''
+            self.messages = []
 
         ##
         # User making the request
@@ -326,10 +315,15 @@ class Request(object):
         else:
             raise ValueError('User id must be specified')
 
-        if 'event' in request:
-            self.event = request['event']
-        else:
-            raise ValueError('Event ID must be specified')
+        ##
+        # Object
+        @property
+        def object(self):
+            return self.e['object']
+
+        @object.setter
+        def object(self, value):
+            self.e['object'] = Object(value).dict()
 
 
     ##
@@ -349,13 +343,18 @@ class Request(object):
 
     ##
     # Message
+    # This is a list of messages that get added during
+    # the request life (info, error, messages)
     @property
-    def message(self):
-        return self.e['message']
+    def messages(self):
+        return self.e['messages']
 
-    @message.setter
-    def message(self, value=''):
-        self.e['message'] = value
+    @messages.setter
+    def messages(self, value=None):
+        if isinstance(value, str):
+            self.e['messages'].append(value)
+        else:
+            self.e['messages'] = value
 
     ##
     # User
@@ -368,14 +367,14 @@ class Request(object):
         self.e['user'] = value
 
     ##
-    # Event: refers to an event
+    # Object
     @property
-    def event(self):
-        return self.e['event']
+    def object(self):
+        return self.e['object']
 
-    @event.setter
-    def event(self, value):
-        self.e['event'] = value
+    @object.setter
+    def object(self, value):
+        self.e['object'] = Object(value).dict()
 
     def updated(self, value=None):
         if value:
@@ -396,9 +395,6 @@ class Request(object):
         # update the status of the request
         self.status = RequestStatus.APPROVED
 
-        # send to db
-        return self.save()
-
     # denies the request
     def deny(self):
 
@@ -410,28 +406,3 @@ class Request(object):
 
         # update the status of the request
         self.status = RequestStatus.DENIED
-
-        # send to db
-        return self.save()
-
-    def save(self):
-        # connect to db
-        logger.info("Connecting to db {} on {}:{}".format(s.db.name, s.db.host, s.db.port))
-        try:
-            c = r.connect(host=s.db.host, port=s.db.port, db=s.db.name)
-        except RqlDriverError:
-            logger.error("Can't connect to RethinkDB")
-            raise SystemExit("Can't connect to RethinkDB")
-
-        ##
-        # updating existing event
-        ret = r.db(s.db.name).table('requests').get(self.id).update(self.dict()).run(c)
-
-        # import pprint
-        # pprint.pprint(ret)
-        if ret['errors'] > 0:
-            self.message = ret['first_error']
-            self.status = RequestStatus.ERROR
-            return False
-
-        return True
