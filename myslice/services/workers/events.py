@@ -13,13 +13,13 @@ from myslice.db import changes
 
 logger = logging.getLogger('myslice.service.activity')
 
-def run(c):
+def run(dbconnection):
     """
 
     """
     logger.info("Worker activity events starting")
 
-    feed = changes(c=c, table='events', filter={ 'status': EventStatus.NEW })
+    feed = changes(c=dbconnection, table='events', filter={ 'status': EventStatus.NEW })
     for event in feed:
         print(event)
         try:
@@ -37,11 +37,13 @@ def run(c):
                     'event': ev.id,
                     'status': RequestStatus.PENDING
                 })
-                req.save()
+                req.dispatch(dbconnection)
 
-                # change the status of the event to waiting
-                ev.status = EventStatus.WAITING
+                # event status will be set to success
+                ev.status = EventStatus.SUCCESS
                 ev.dispatch()
             else:
-                # all other types of requests
-                pass
+                # TODO: check userid actually exists
+                # TODO: check object id exists
+                ev.status = EventStatus.WAITING
+                ev.dispatch()
