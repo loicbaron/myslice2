@@ -6,9 +6,10 @@
 #
 #   (c) 2016 Ciro Scognamiglio <ciro.scognamiglio@lip6.fr>
 ##
-
+import pprint
 import logging
 import threading
+from myslice.db.activity import Event, EventStatus
 from myslice.db import changes
 from myslice.services.workers.projects import sync as syncProjects
 from myslice.services.workers.slices import sync as syncSlices
@@ -39,10 +40,20 @@ def run():
     threads.append(t)
     t.start()
 
+    ##
+    ## TOTO: watch for changes to slices and projects
     feed = changes(table='events')
     for change in feed:
         with lock:
             print(change)
+            ev = Event(change['new_val'])
+
+            pprint.pprint(ev)
+
+            #ev.status = EventStatus.APPROVED
+
+            #ev.dispatch()
+
 
 
     # update slice table

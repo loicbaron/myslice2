@@ -23,7 +23,8 @@ from myslice import settings as s
 import myslice.db as db
 
 # workers
-import myslice.services.experiments
+from myslice.services.activity import run as serviceActivity
+from myslice.services.experiments import run as serviceExperiments
 
 #from myslice.monitor.workers.resources import sync, queue
 
@@ -98,12 +99,21 @@ if __name__ == '__main__':
 
     processes = []
 
-    """
-    Process: slices
-    """
-    p = multiprocessing.Process(target=myslice.services.experiments.run)
+    ##
+    # Process: activity
+    #
+    p = multiprocessing.Process(target=serviceActivity)
     processes.append(p)
     p.start()
+
+    ##
+    # Process: experiments
+    #
+    # p = multiprocessing.Process(target=serviceExperiments)
+    # processes.append(p)
+    # p.start()
+
+
 
     for proc in processes:
         proc.join()

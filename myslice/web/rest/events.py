@@ -5,7 +5,8 @@ from tornado import gen, escape
 
 from myslice.web.rest import Api
 from myslice.lib.util import DecimalEncoder, DateEncoder
-from myslice.db.model import Event, EventStatus, EventAction
+from myslice.db import dispatch
+from myslice.db.activity import Event
 
 class EventsHandler(Api):
 
@@ -24,7 +25,7 @@ class EventsHandler(Api):
             self.set_status(404)
             self.finish({"reason": "Not found, Please check the URI."})
         else:
-            self.write(json.dumps({"events": events}, cls=DecimalEncoder, default=DateEncoder))
+            self.finish(json.dumps({"events": events}, cls=DecimalEncoder, default=DateEncoder))
 
     @gen.coroutine
     def post(self):
@@ -36,16 +37,22 @@ class EventsHandler(Api):
 
         # NOTE: checks are done by the service, here we only dispatch the event
 
-        ev = None
+        #print(escape.json_decode(self.request.body))
         try:
-            ev = Event(escape.json_decode(self.request.body)['event'])
+            data = escape.json_decode(self.request.body)['event']
+        except json.decoder.JSONDecodeError as e:
+            self.finish(json.dumps({"return": {"status": "error", "messages": "malformed request"}}))
+            return
+
+        try:
+            event = Event(data)
         except Exception as e:
-            self.write(json.dumps({"return":"error"}))
-            print(e)
+            self.finish(json.dumps({"return": {"status":"error","messages":event.messages}}))
+            import traceback
+            traceback.print_exc()
+        else:
+            result = yield dispatch(self.dbconnection, event)
+            #data = self.get_argument('event','no data')
+            print(event)
 
-        result = yield r.table('events').insert(ev.dict()).run(self.dbconnection)
-        #data = self.get_argument('event','no data')
-
-        print(ev)
-
-        self.write(json.dumps({"return":"ok"}))
+            self.finish(json.dumps({"return": {"status":"success","messages":event.messages}}))
