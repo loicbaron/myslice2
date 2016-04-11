@@ -1,6 +1,4 @@
-from myslice.web.rest.handler import GenericHandler
+from myslice.web.rest import Api
 
-class ProjectHandler(GenericHandler):
-
-    _entity = 'projects'
-
+class ProjectHandler(Api):
+    pass

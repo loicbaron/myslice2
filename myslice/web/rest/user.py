@@ -1,5 +1,4 @@
-from myslice.web.rest.handler import GenericHandler
+from myslice.web.rest import Api
 
-class UserHandler(GenericHandler):
-
-    _entity = 'users'
+class UserHandler(Api):
+    pass

@@ -3,7 +3,8 @@ import json
 import rethinkdb as r
 from tornado import gen
 
-from myslice.web.rest import Api, DecimalEncoder, DateEncoder
+from myslice.web.rest import Api
+from myslice.lib.util import DecimalEncoder, DateEncoder
 
 
 class ResourceHandler(Api):
