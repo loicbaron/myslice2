@@ -94,6 +94,9 @@ class EventAction(Enum):
     # create a reqest
     REQ = "REQ"
 
+    # def __str__(self):
+    #     return str(self.value)
+
 class Event(object):
     """
         {
@@ -204,9 +207,9 @@ class Event(object):
     @action.setter
     def action(self, value):
         if isinstance(value, EventAction):
-            self.e['action'] = value.value
-        elif value in EventAction.__members__:
             self.e['action'] = value
+        elif value in EventAction.__members__:
+            self.e['action'] = EventAction[value]
         else:
             self.messages = "Event Action not valid"
             raise Exception(self.messages)
@@ -220,9 +223,9 @@ class Event(object):
     @status.setter
     def status(self, value):
         if isinstance(value, EventStatus):
-            self.e['status'] = value.value
-        elif value in EventStatus.__members__:
             self.e['status'] = value
+        elif value in EventStatus.__members__:
+            self.e['status'] = EventStatus[value]
         else:
             self.messages = "Event Status not valid"
             raise Exception(self.messages)
@@ -410,9 +413,9 @@ class Request(object):
     @status.setter
     def status(self, value):
         if isinstance(value, RequestStatus):
-            self.r['status'] = value.value
-        elif value in RequestStatus.__members__:
             self.r['status'] = value
+        elif value in RequestStatus.__members__:
+            self.r['status'] = RequestStatus[value]
         else:
             self.messages = "Request Status not valid"
             raise Exception(self.messages)
