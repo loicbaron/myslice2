@@ -9,7 +9,7 @@
 import json
 import logging
 from enum import Enum
-from myslice.lib.util import format_date, DecimalEncoder, DateEncoder
+from myslice.lib.util import format_date, myJSONEncoder
 
 logger = logging.getLogger("myslice.activity")
 
@@ -19,6 +19,9 @@ class ObjectType(Enum):
     SLICE = "SLICE"
     USER = "USER"
     RESOURCE = "RESOURCE"
+
+    def __str__(self):
+        return str(self.value)
 
 class Object(object):
 
@@ -36,7 +39,7 @@ class Object(object):
             raise Exception('Object Id not specified')
 
     def __str__(self):
-        return json.dumps(self.e, cls=DecimalEncoder, default=DateEncoder)
+        return json.dumps(self.e, cls=myJSONEncoder)
 
     def dict(self):
         return self.e
@@ -81,6 +84,9 @@ class EventStatus(Enum):
     ERROR = "ERROR"
     WARNING = "WARNING"
 
+    def __str__(self):
+        return str(self.value)
+
 class EventAction(Enum):
     """
 
@@ -94,8 +100,8 @@ class EventAction(Enum):
     # create a reqest
     REQ = "REQ"
 
-    # def __str__(self):
-    #     return str(self.value)
+    def __str__(self):
+        return str(self.value)
 
 class Event(object):
     """
@@ -182,10 +188,16 @@ class Event(object):
 
 
     def __str__(self):
-        return json.dumps(self.e, cls=DecimalEncoder, default=DateEncoder)
+        return json.dumps(self.e, cls=myJSONEncoder)
 
     def dict(self):
-        return self.e
+        ret = {}
+        for k in self.e:
+            if isinstance(self.e[k], Enum):
+                ret[k] = self.e[k].value
+            else:
+                ret[k] = self.e[k]
+        return ret
 
     ##
     # Id
@@ -399,16 +411,33 @@ class Request(object):
 
 
     def __str__(self):
-        return json.dumps(self.r, cls=DecimalEncoder, default=DateEncoder)
+        return json.dumps(self.r, cls=myJSONEncoder)
 
     def dict(self):
-        return self.r
+        ret = {}
+        for k in self.r:
+            if isinstance(self.r[k], Enum):
+                ret[k] = self.r[k].value
+            else:
+                ret[k] = self.r[k]
+        return ret
+
+    ##
+    # Id
+    @property
+    def id(self):
+        if 'id' in self.r:
+            return self.r['id']
+
+    @id.setter
+    def id(self, value):
+        self.r['id'] = value
 
     ##
     # Status
     @property
     def status(self):
-        return self.e['status']
+        return self.r['status']
 
     @status.setter
     def status(self, value):

@@ -4,7 +4,7 @@ import rethinkdb as r
 from tornado import gen, escape
 
 from myslice.web.rest import Api
-from myslice.lib.util import DecimalEncoder, DateEncoder
+from myslice.lib.util import myJSONEncoder
 from myslice.db import dispatch
 from myslice.db.activity import Event
 
@@ -25,7 +25,7 @@ class EventsHandler(Api):
             self.set_status(404)
             self.finish({"reason": "Not found, Please check the URI."})
         else:
-            self.finish(json.dumps({"events": events}, cls=DecimalEncoder, default=DateEncoder))
+            self.finish(json.dumps({"events": events}, cls=myJSONEncoder))
 
     @gen.coroutine
     def post(self):
@@ -37,7 +37,7 @@ class EventsHandler(Api):
 
         # NOTE: checks are done by the service, here we only dispatch the event
 
-        #print(escape.json_decode(self.request.body))
+        print(escape.json_decode(self.request.body))
         try:
             data = escape.json_decode(self.request.body)['event']
         except json.decoder.JSONDecodeError as e:

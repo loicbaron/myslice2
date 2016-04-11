@@ -3,6 +3,8 @@ from datetime import datetime
 import pytz
 import json
 import decimal
+from enum import Enum
+from json import JSONEncoder
 
 log = logging.getLogger('server')
 
@@ -71,8 +73,27 @@ DateEncoder = lambda obj: obj.isoformat() if isinstance(obj, datetime) else None
 json.encoder.FLOAT_REPR = lambda o: format(o, '.2f')
 
 # handles decimal numbers serialization in json
-class DecimalEncoder(json.JSONEncoder):
+class DecimalEncoder(JSONEncoder):
+
     def _iterencode(self, o, markers=None):
+
         if isinstance(o, decimal.Decimal):
             return (str(o) for o in [o])
+
         return super(DecimalEncoder, self)._iterencode(o, markers)
+
+# handles enum members json encoding
+class myJSONEncoder(JSONEncoder):
+
+    def default(self, o):
+        if isinstance(o, datetime):
+            return o.isoformat()
+
+        if isinstance(o, Enum):
+            return str(o.value)
+
+        if isinstance(o, decimal.Decimal):
+            return (str(o) for o in [o])
+
+        return JSONEncoder.default(self, o)
+

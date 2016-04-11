@@ -23,7 +23,7 @@ def run():
     # db connection is shared between threads
     dbconnection = connect()
 
-    feed = changes(dbconnection=dbconnection, table='requests', filter={ 'status': RequestStatus.PENDING })
+    feed = changes(dbconnection=dbconnection, table='requests')
     for req in feed:
 
         try:
@@ -31,7 +31,7 @@ def run():
         except Exception as e:
             logger.error("Problem with request: {}".format(e))
         finally:
-            logger.info("Processing request from user {}".format(req.user))
+            logger.info("Processing request from user {}".format(request.user))
 
             # get the user
             #user = q(User).id(request.user).get()
