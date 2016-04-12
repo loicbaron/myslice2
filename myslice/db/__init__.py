@@ -24,6 +24,10 @@ tables = [
             'pkey' : 'id'
         },
         {
+            'name': 'activity',
+            'pkey': 'id'
+        },
+        {
             'name' : 'events',
             'pkey' : 'id'
         },
@@ -184,42 +188,27 @@ def event(dbconnection=None, id=None):
 
     return r.db(s.db.table).table('events').get(id).run(dbconnection)
 
-def dispatch(dbconnection=None, event=None):
+def dispatch(dbconnection=None, activity=None):
     """
-    Dispatch an Event or Request
+    Dispatches an Activity (Event or Request object)
     """
+    table = 'activity'
 
-    if isinstance(event, Event):
-        table = 'events'
-    elif isinstance(event, Request):
-        table = 'requests'
-    else:
+    if not isinstance(activity, Event) and not isinstance(activity, Request):
         raise Exception("Only Event or Request can be dispatched")
 
     # connect to db if connection is not specified
     if not dbconnection:
         dbconnection = connect()
 
-    if event.id:
+    if activity.id:
         ##
         # updating existing event/request
-        ret = r.db(s.db.name).table(table).get(event.id).update(event.dict()).run(dbconnection)
+        ret = r.db(s.db.name).table(table).get(activity.id).update(activity.dict()).run(dbconnection)
     else:
         ##
         # dispatching new event/request
-        ret = r.db(s.db.name).table(table).insert(event.dict()).run(dbconnection)
-
-    # # import pprint
-    # # pprint.pprint(ret)
-    # if ret['errors'] > 0:
-    #     event.message = ret['first_error']
-    #     event.status = RequestStatus.ERROR
-    #
-    # if ret['errors'] > 0:
-    #     self.message = ret['first_error']
-    #     self.status = EventStatus.ERROR
-    # elif ret['inserted'] > 0:
-    #     self.id = ret['generated_keys'][0]
+        ret = r.db(s.db.name).table(table).insert(activity.dict()).run(dbconnection)
 
     return ret
 

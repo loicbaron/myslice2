@@ -13,6 +13,13 @@ from myslice.lib.util import format_date, myJSONEncoder
 
 logger = logging.getLogger("myslice.activity")
 
+class Activity(Enum):
+    EVENT = "EVENT"
+    REQUEST = "REQUEST"
+
+    def __str__(self):
+        return str(self.value)
+
 class ObjectType(Enum):
     AUTHORITY = "AUTHORITY"
     PROJECT = "PROJECT"
@@ -120,6 +127,8 @@ class Event(object):
 
     def __init__(self, event):
         self.e = {}
+
+        self.e['type'] = Activity.EVENT
 
         if 'message' in event:
             self.messages = event['messages']
@@ -350,6 +359,8 @@ class Request(object):
 
     def __init__(self, request):
         self.r = {}
+
+        self.r['type'] = Activity.REQUEST
 
         ##
         # We can pass an event directly, this will create

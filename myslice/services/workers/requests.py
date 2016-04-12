@@ -14,20 +14,15 @@ from myslicelib.query import q
 
 logger = logging.getLogger('myslice.service.activity')
 
-def run():
+def run(q):
     """
     Processes requests
     """
     logger.info("Worker activity requests starting")
 
-    # db connection is shared between threads
-    dbconnection = connect()
-
-    feed = changes(dbconnection=dbconnection, table='requests')
-    for req in feed:
-
+    while True:
         try:
-            request = Request(req['new_val'])
+            request = Request(q.get())
         except Exception as e:
             logger.error("Problem with request: {}".format(e))
         finally:
@@ -37,6 +32,11 @@ def run():
             #user = q(User).id(request.user).get()
 
             if request.status == RequestStatus.PENDING:
+                ##
+                # Request is pending, is user is already a PI
+                # we set the statuso to APPROVED, else we wait
+                # for a PI to validate
+
                 print(request)
                 # retrieve the event
                 #ev = Event(event(req.event))
@@ -55,8 +55,3 @@ def run():
                 # # if user is pi we approve the request
                 # if project.authority.isPi():
                 #     req.approve()
-
-
-            elif request.status == RequestStatus.APPROVED:
-                pass
-
