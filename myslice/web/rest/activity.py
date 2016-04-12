@@ -8,24 +8,24 @@ from myslice.lib.util import myJSONEncoder
 from myslice.db import dispatch
 from myslice.db.activity import Event
 
-class EventsHandler(Api):
+class ActivityHandler(Api):
 
     @gen.coroutine
     def get(self):
-        events = []
+        activity = []
 
-        cursor = yield r.table('events').run(self.dbconnection)
+        cursor = yield r.table('activity').run(self.dbconnection)
 
         while (yield cursor.fetch_next()):
             item = yield cursor.next()
-            events.append(item)
+            activity.append(item)
 
         # return status code
-        if not events:
+        if not activity:
             self.set_status(404)
             self.finish({"reason": "Not found, Please check the URI."})
         else:
-            self.finish(json.dumps({"events": events}, cls=myJSONEncoder))
+            self.finish(json.dumps({"activity": activity}, cls=myJSONEncoder))
 
     @gen.coroutine
     def post(self):
@@ -47,7 +47,7 @@ class EventsHandler(Api):
         try:
             event = Event(data)
         except Exception as e:
-            self.finish(json.dumps({"return": {"status":"error","messages":event.messages}}))
+            self.finish(json.dumps({"return": {"status":"error","messages":e.message}}))
             import traceback
             traceback.print_exc()
         else:
