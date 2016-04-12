@@ -21,11 +21,8 @@ class WebsocketsHandler(SockJSConnection):
         logger.info("Received: {}".format(message))
         data = json.loads(message)
 
-        if (data['watch'] == 'events'):
-            self.events()
-
-        elif (data['watch'] == 'requests'):
-            self.requests()
+        if (data['watch'] == 'activity'):
+            self.activity()
 
     def on_close(self):
 
@@ -33,25 +30,14 @@ class WebsocketsHandler(SockJSConnection):
         logger.info("WebSocket closed")
 
     @gen.coroutine
-    def events(self):
+    def activity(self):
 
         dbconnection = yield connect()
-        feed = yield changes(dbconnection, table='events')
+        feed = yield changes(dbconnection, table='activity')
 
         while (yield feed.fetch_next()):
             change = yield feed.next()
-            self.send(json.dumps({'event':change['new_val']}, ensure_ascii=False, cls=myJSONEncoder).encode('utf8'))
-
-    @gen.coroutine
-    def requests(self):
-
-        dbconnection = yield connect()
-        feed = yield changes(dbconnection, table='requests')
-
-        while (yield feed.fetch_next()):
-            change = yield feed.next()
-            print(change)
-            self.send(json.dumps({'request':change['new_val']}, ensure_ascii=False, cls=myJSONEncoder).encode('utf8'))
+            self.send(json.dumps({ 'activity': change['new_val'] }, ensure_ascii=False, cls=myJSONEncoder).encode('utf8'))
 
                     # @gen.coroutine
     # def jobs(self):
