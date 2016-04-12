@@ -14,8 +14,7 @@ import myslice.db as db
 from myslice.web.rest.resource import ResourceHandler
 from myslice.web.rest.slice import SliceHandler
 from myslice.web.rest.user import UserHandler
-from myslice.web.rest.events import EventsHandler
-from myslice.web.rest.requests import RequestsHandler
+from myslice.web.rest.activity import ActivityHandler
 from myslice.web.websocket import WebsocketsHandler
 
 from myslice.web.controllers import login, home, activity
@@ -93,7 +92,9 @@ class Application(web.Application):
                             token_generator=Uuid4())
         provider.add_grant(AuthorizationCodeGrant(site_adapter=TestSiteAdapter()))
 
-        handlers = [
+        ##
+        # Web
+        web_handlers = [
             (provider.authorize_path, OAuth2Handler, dict(provider=provider)),
             (provider.token_path, OAuth2Handler, dict(provider=provider)),
 
@@ -102,30 +103,23 @@ class Application(web.Application):
             (r'/activity', activity.Index),
             (r'/static/(.*)', web.StaticFileHandler, {'path': self.static}),
 
-            (r'/api/v1/events', EventsHandler),
-            (r'/api/v1/requests', RequestsHandler),
+
         ]
 
+        ##
         # REST API
-        for entity in self._rest_handlers:
-            HandlerModule = "myslice.web.rest.{}".format(entity)
-            HandlerClass = "{}Handler".format(entity.title())
-            module = __import__(HandlerModule, fromlist=[HandlerClass])
-            Handler = getattr(module, HandlerClass)
-            
-            handlers += [
-                    (r'/api/v1/{}s'.format(entity), Handler),
-                    (r'/api/v1/{}s/(.*)'.format(entity), Handler)
-            ]
+        rest_handlers = [
+            (r'/api/v1/activity', ActivityHandler),
+        ]
 
-        # WEBSOCKET
-
-            # (r'/api/v1/users', ProjectHandler),
-            # (r'/api/v1/users/(.*)', UserHandler),
-
+        ##
+        # Websockets API
         # SockJSRouter: configure Websocket
         WebsocketRouter = SockJSRouter(WebsocketsHandler, '/api/v1/live')
-        handlers = handlers + WebsocketRouter.urls
+
+        ##
+        # URLs handlers
+        handlers = web_handlers + rest_handlers + WebsocketRouter.urls
 
         settings = dict(cookie_secret="x&7G1d2!5MhG9SWkXu",
                         template_path=self.templates,
