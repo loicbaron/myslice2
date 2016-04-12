@@ -11,7 +11,7 @@ from myslice.db import connect, changes, dispatch
 
 logger = logging.getLogger('myslice.service.activity')
 
-def run():
+def run(q):
     """
     Manages newly created events
     """
@@ -20,17 +20,15 @@ def run():
     # db connection is shared between threads
     dbconnection = connect()
 
-    feed = changes(dbconnection=dbconnection, table='events')
-    for ev in feed:
-
+    while True:
         try:
-            event = Event(ev['new_val'])
+            event = Event(q.get())
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
         else:
             if event.status == EventStatus.NEW and event.action == EventAction.REQ:
                 # events that require a request to be created and processes
-                logger.info("Received event request from user {} status {}".format(event.user, event.status))
+                logger.info("Received event request from user {}".format(event.user))
 
                 # dispatch a new pending request
                 dispatch(dbconnection, Request(event))
