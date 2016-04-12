@@ -4,8 +4,7 @@ import rethinkdb as r
 from tornado import gen, escape
 
 from myslice.web.rest import Api
-from myslice.lib.util import DecimalEncoder, DateEncoder
-from myslice.db.activity import Request, RequestStatus
+from myslice.lib.util import myJSONEncoder
 
 class RequestsHandler(Api):
 
@@ -24,4 +23,4 @@ class RequestsHandler(Api):
             self.set_status(404)
             self.finish({"reason": "Not found, Please check the URI."})
         else:
-            self.write(json.dumps({"requests": requests}, cls=DecimalEncoder, default=DateEncoder))
+            self.write(json.dumps({"requests": requests}, cls=myJSONEncoder))

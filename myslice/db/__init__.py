@@ -235,16 +235,11 @@ def delete(dbconnection=None, table=None, id=None):
 
     return False
 
-def changes(dbconnection=None, table=None, filter=None):
+def changes(dbconnection=None, table=None):
     if not table:
         return False
 
     if not dbconnection:
         dbconnection = connect()
 
-    changes = r.db(s.db.name).table(table)
-
-    if filter:
-        changes.filter(filter)
-
-    return changes.changes().run(dbconnection)
+    return r.db(s.db.name).table(table).changes().run(dbconnection)

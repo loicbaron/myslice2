@@ -20,7 +20,7 @@ def run():
     # db connection is shared between threads
     dbconnection = connect()
 
-    feed = changes(dbconnection=dbconnection, table='events', filter={ 'status': EventStatus.NEW })
+    feed = changes(dbconnection=dbconnection, table='events')
     for ev in feed:
 
         try:
@@ -28,9 +28,9 @@ def run():
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
         else:
-            if event.action == EventAction.REQ:
+            if event.status == EventStatus.NEW and event.action == EventAction.REQ:
                 # events that require a request to be created and processes
-                logger.info("Received event request from user {}".format(event.user))
+                logger.info("Received event request from user {} status {}".format(event.user, event.status))
 
                 # dispatch a new pending request
                 dispatch(dbconnection, Request(event))
@@ -38,7 +38,7 @@ def run():
                 # event status will be set to success
                 event.status = EventStatus.SUCCESS
 
-            else:
+            elif event.status == EventStatus.NEW:
                 # TODO: check userid actually exists
                 # TODO: check object id exists
                 logger.info("Received event {} from user {}".format(event.action, event.user))
