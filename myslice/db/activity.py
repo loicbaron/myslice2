@@ -294,8 +294,8 @@ class Event(object):
 
     @data.setter
     def data(self, value):
-        if not isinstance(value, dict):
-            self.messages = "Invalid format for data (must be a dict)"
+        if not isinstance(value, dict) and not isinstance(value, list):
+            self.messages = "Invalid format for data (must be a dict or a list)"
             raise Exception(self.messages)
         else:
             self.e['data'] = value
