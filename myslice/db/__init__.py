@@ -82,9 +82,6 @@ def testbeds(testbeds=None):
 def get(c=None, table=None, id=None, filter=None):
     if not table:
         raise NotImplementedError('table must be specified')
-def users(dbconnection=None, data=None):
-    if not dbconnection:
-        dbconnection = connect()
 
     if not c:
         c = connect()
@@ -99,7 +96,10 @@ def users(dbconnection=None, data=None):
     return r.db(s.db.name).table(table).run(c)
 
 
-
+def users(dbconnection=None, data=None):
+    if not dbconnection:
+        dbconnection = connect()
+        
     if data:
         r.db(s.db.name).table('users').insert(data, conflict='update').run(dbconnection)
 
