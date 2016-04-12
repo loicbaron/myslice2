@@ -1,10 +1,10 @@
-var EventLabel = React.createClass({
+var ActivityLabel = React.createClass({
 
     label: function() {
         let label = '';
-        switch(this.props.event.action) {
+        switch(this.props.activity.action) {
             case 'REQ':
-                label = 'requested ' + this.props.event.object.type;
+                label = 'requested ' + this.props.activity.object.type;
         }
         return label;
     },
@@ -23,7 +23,7 @@ var EventLabel = React.createClass({
         )
     }
 });
-var EventStatus = React.createClass({
+var ActivityStatus = React.createClass({
     render: function () {
         return (
             <div className="row">
@@ -35,48 +35,44 @@ var EventStatus = React.createClass({
     }
 });
 
-var EventRow = React.createClass({
+var ActivityRow = React.createClass({
 
      render: function() {
          return (
              <li className="elementBox">
-                 <EventLabel event={this.props.event} />
+                 <ActivityLabel activity={this.props.activity} />
                  <div className="row">
                      <div className="col-md-6">
                          <div className="elementId">
-                             {this.props.event.id}
+                             {this.props.activity.id}
                          </div>
                          <div className="elementDate">
-                            Created: { moment(this.props.event.created).format("DD/MM/YYYY H:mm") }
+                            Created: { moment(this.props.activity.created).format("DD/MM/YYYY H:mm") }
                             <br />
-                            Updated: { moment(this.props.event.updated).format("DD/MM/YYYY H:mm") }
+                            Updated: { moment(this.props.activity.updated).format("DD/MM/YYYY H:mm") }
                          </div>
                      </div>
                      <div className="col-md-6">
 
                      </div>
                  </div>
-                 <EventStatus status={this.props.event.status} />
+                 <ActivityStatus status={this.props.activity.status} />
              </li>
          );
      }
  });
 
-var EventList = React.createClass({
+var ActivityList = React.createClass({
 
     getInitialState: function() {
         return activitystore.getState();
     },
 
     componentDidMount: function() {
+        
+
         // listen on state changes
         activitystore.listen(this.onChange);
-
-        // setup activity
-        activityactions.setupActivity();
-
-        // action fetch slices
-        //activitystore.fetchSlices();
     },
 
     componentWillUnmount() {
@@ -87,30 +83,42 @@ var EventList = React.createClass({
         this.setState(state);
     },
 
+    getActivity() {
+        return this.state.activity.filter(function(activity) { return activity.type == this.props.type }.bind(this));
+    },
+
     render: function() {
+
+        let activity = this.getActivity();
+        console.log(activity);
         if (this.state.errorMessage) {
             return (
                 <div>Something is wrong</div>
             );
         }
 
-        if (!this.state.events.length) {
-            return (
-                <div>
-                    Loading...
-                </div>
-            )
-        }
+        // if (!activity.length) {
+        //     return (
+        //         <div>
+        //             Loading...
+        //         </div>
+        //     )
+        // }
 
         return (
             <ul className="elementList">
-            {this.state.events.map(function(event) { return <EventRow key={event.id} event={event}></EventRow>; }) }
+            {activity.map(function(activity) { return <ActivityRow key={activity.id} activity={activity}></ActivityRow>; }) }
             </ul>
         );
     }
 });
 
 ReactDOM.render(
-        <EventList />,
-        document.getElementById('activity-list')
+        <ActivityList type="EVENT" />,
+        document.getElementById('events-list')
+);
+
+ReactDOM.render(
+        <ActivityList type="REQUEST" />,
+        document.getElementById('requests-list')
 );

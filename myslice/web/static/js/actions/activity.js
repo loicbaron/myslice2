@@ -8,8 +8,8 @@
 class ActivityActions {
 
     setupActivity() {
-
-        this.fetchEvents();
+        // fetch activity
+        this.fetchActivity();
 
         var socket = new SockJS('http://localhost:8111/api/v1/live');
 
@@ -18,6 +18,7 @@ class ActivityActions {
                 Open websocket connection and watch for new/changed events
              */
             socket.send(JSON.stringify({'watch': 'activity'}));
+
             console.log("open")
         };
 
@@ -26,8 +27,10 @@ class ActivityActions {
                 Act upon receiving a message
              */
             let data = JSON.parse(e.data);
-            console.log(e.data)
-            this.updateEvent(data);
+
+            console.log(data)
+
+            this.updateActivityElement(data.activity);
 
         }.bind(this);
 
@@ -38,68 +41,39 @@ class ActivityActions {
         return false;
     }
 
-    fetchEvents() {
+    fetchActivity() {
         return (dispatch) => {
             // we dispatch an event here so we can have "loading" state.
             dispatch();
-            axios.get('/api/v1/events', {
+            axios.get('/api/v1/activity', {
                 params: {
                     ID: 12345
                 }
             }).then(function (response) {
-                this.updateEvents(response.data.events);
+                this.updateActivity(response.data.activity);
 
             }.bind(this)).catch(function (response) {
-                this.errorEvent('error');
+                this.errorActivity('error');
             }.bind(this));
 
         }
     }
 
-    updateEvent(event) {
-        return event;
-    }
-    updateEvents(events) {
-        return events;
+    updateActivityElement(activity) {
+        return activity;
     }
 
-    errorEvent(errorMessage) {
+    updateActivity(activity) {
+        return activity;
+    }
+
+    errorActivity(errorMessage) {
         return errorMessage
     }
-
-    fetchRequests() {
-        return (dispatch) => {
-            // we dispatch an event here so we can have "loading" state.
-            dispatch();
-            axios.get('/api/v1/requests', {
-                params: {
-                    ID: 12345
-                }
-            }).then(function (response) {
-                this.updateRequests(response.data.requests)
-
-            }.bind(this)).catch(function (response) {
-                this.errorRequest('error');
-            }.bind(this));
-
-        }
-    }
-
-    updateRequest(request) {
-        return request;
-    }
-
-    updateRequests(requests) {
-        return requests;
-    }
-
-    errorRequest(errorMessage) {
-        return errorMessage
-    }
-
-
-
 
 }
 
 window.activityactions = alt.createActions(ActivityActions);
+
+// setup activity
+activityactions.setupActivity();
