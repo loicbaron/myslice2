@@ -9,10 +9,11 @@
 import pprint
 import logging
 import threading
-from myslice.db.activity import Event, EventStatus
+from queue import Queue
+from myslice.db.activity import Event, ObjectType
 from myslice.db import changes
-from myslice.services.workers.projects import sync as syncProjects
-from myslice.services.workers.slices import sync as syncSlices
+from myslice.services.workers.projects import sync as syncProjects, manageProjects
+from myslice.services.workers.slices import sync as syncSlices, manageSlices
 
 logger = logging.getLogger('myslice.service.experiments')
 
@@ -25,11 +26,20 @@ def run():
 
     lock = threading.Lock()
 
+    qProjects = Queue()
+    qSlices = Queue()
+
     # threads
     threads = []
 
     # projects sync
     t = threading.Thread(target=syncProjects, args=(lock,))
+    t.daemon = True
+    threads.append(t)
+    t.start()
+
+    # projects manager
+    t = threading.Thread(target=manageProjects, args=(lock, qProjects))
     t.daemon = True
     threads.append(t)
     t.start()
@@ -40,13 +50,30 @@ def run():
     threads.append(t)
     t.start()
 
+    # slices manager
+    t = threading.Thread(target=manageSlices, args=(lock, qSlices))
+    t.daemon = True
+    threads.append(t)
+    t.start()
+
     ##
-    ## TOTO: watch for changes to slices and projects
-    feed = changes(table='events')
-    for change in feed:
-        with lock:
-            print(change)
-            ev = Event(change['new_val'])
+    # will watch for incoming events/requests and pass them to
+    # the appropriate thread group
+    feed = changes(table='activity')
+    for activity in feed:
+        try:
+            event = Event(activity['new_val'])
+        except Exception as e:
+            logger.error("Problem with event: {}".format(e))
+        else:
+            if event.isWaiting():
+                if event.object.type == ObjectType.PROJECT:
+                    qProjects.put(event)
+                if event.object.type == ObjectType.SLICE:
+                    qSlices.put(event)
+
+
+
 
             pprint.pprint(ev)
 
@@ -54,26 +81,6 @@ def run():
 
             #ev.dispatch()
 
-
-
-    # update slice table
-    #lslices = db.slices(dbconnection, slices.dict())
-
-    # while True:
-    #
-    #
-    #     result = r.setup(resource)
-    #     print result
-    #     if not result['status'] :
-    #         logger.info("%s : Failed SSH access (%s)" % (resource, result['message']))
-    #     else :
-    #         logger.info("%s : Setup complete" % (resource))
-    #
-    #     s.resource(c, {
-    #         "hostname": node.hostname,
-    #         "state": node.boot_state,
-    #         "access" : result
-    #     })
-
-        # ''' send OML stream '''
-        # oml.availability(node.hostname, availability)
+    # waits for the thread to finish
+    for x in threads:
+        x.join()
