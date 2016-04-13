@@ -2,7 +2,7 @@ import logging
 import rethinkdb as r
 from rethinkdb.errors import RqlRuntimeError, RqlDriverError
 from myslice import settings as s
-from myslice.db.activity import Event, Request
+from myslice.db.activity import Event
 
 logger = logging.getLogger(__name__)
 
@@ -83,31 +83,23 @@ def testbeds(testbeds=None):
 
     c.close()
 
-def get(c=None, table=None, id=None, filter=None):
-    if not table:
-        raise NotImplementedError('table must be specified')
-def users(dbconnection=None, data=None):
+
+def users(dbconnection=None, data=None, id=None):
     if not dbconnection:
         dbconnection = connect()
 
-    if not c:
-        c = connect()
+    if data:
+        r.db(s.db.name).table('users').insert(data, conflict='update').run(dbconnection)
 
     if id:
-        return r.db(s.db.name).table(table).get(id).run(c)
+        return r.db(s.db.name).table('users').get(id).run(dbconnection)
 
     if filter:
         pass 
         # return somthing with filter
 
-    return r.db(s.db.name).table(table).run(c)
-
-
-
-    if data:
-        r.db(s.db.name).table('users').insert(data, conflict='update').run(dbconnection)
-
     return r.db(s.db.name).table('users').run(dbconnection)
+
 
 def projects(dbconnection=None, data=None):
     if not dbconnection:
@@ -163,7 +155,7 @@ def events(dbconnection=None, event=None, user=None, status=None, action=None):
 
     if isinstance(event, Event):
         # update event on db
-        ret = r.db(s.db.name).table('events').insert(event.dict(), conflict='update').run(dbconnection)
+        ret = r.db(s.db.name).table('activity').insert(event.dict(), conflict='update').run(dbconnection)
 
     req = r.db(s.db.name).table('events')
 
@@ -186,7 +178,7 @@ def event(dbconnection=None, id=None):
     if not dbconnection:
         dbconnection = connect()
 
-    return r.db(s.db.table).table('events').get(id).run(dbconnection)
+    return r.db(s.db.table).table('activity').get(id).run(dbconnection)
 
 def dispatch(dbconnection=None, activity=None):
     """
@@ -194,8 +186,8 @@ def dispatch(dbconnection=None, activity=None):
     """
     table = 'activity'
 
-    if not isinstance(activity, Event) and not isinstance(activity, Request):
-        raise Exception("Only Event or Request can be dispatched")
+    if not isinstance(activity, Event):
+        raise Exception("Only Events can be dispatched")
 
     # connect to db if connection is not specified
     if not dbconnection:
