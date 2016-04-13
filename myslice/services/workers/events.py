@@ -6,8 +6,8 @@
 #   (c) 2016 Ciro Scognamiglio <ciro.scognamiglio@lip6.fr>
 ##
 import logging
-from myslice.db.activity import Event, EventStatus, EventAction, Request
-from myslice.db import connect, changes, dispatch
+from myslice.db.activity import Event, EventStatus, EventAction
+from myslice.db import connect, dispatch
 
 logger = logging.getLogger('myslice.service.activity')
 
@@ -30,11 +30,8 @@ def run(q):
                 # events that require a request to be created and processes
                 logger.info("Received event request from user {}".format(event.user))
 
-                # dispatch a new pending request
-                dispatch(dbconnection, Request(event))
-
-                # event status will be set to success
-                event.status = EventStatus.SUCCESS
+                # event is of type request, we put it on PENDING
+                event.status = EventStatus.PENDING
 
             elif event.status == EventStatus.NEW:
                 # TODO: check userid actually exists
