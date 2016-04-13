@@ -9,7 +9,7 @@
 import logging
 import signal
 import threading
-from multiprocessing import Queue
+from queue import Queue
 from myslice.db import connect, changes
 from myslice.services.workers.events import run as manageEvents
 from myslice.services.workers.requests import run as manageRequests

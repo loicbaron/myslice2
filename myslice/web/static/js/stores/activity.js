@@ -5,67 +5,41 @@
 class ActivityStore {
 
     constructor() {
-        this.events = []
-        this.requests = []
+        this.activity = []
         this.errorMessage = null;
 
         this.bindListeners({
-            updateEvent: activityactions.updateEvent,
-            updateEvents: activityactions.updateEvents,
-            updateRequest: activityactions.updateRequest,
-            updateRequests: activityactions.updateRequests,
+            updateActivityElement: activityactions.updateActivityElement,
+            updateActivity: activityactions.updateActivity,
+
         });
 
 
     }
 
-    updateEvent(event) {
-        console.log("STORAGE UPD EVENT:" + event.id)
+    updateActivityElement(activity) {
+        console.log("STORAGE UPD ACTIVITY:" + activity.id)
         // Check if we already have this activity in the state
-        let index = this.events.findIndex(function(eventElement) {
-            if (eventElement.id === event.id) {
+        let index = this.activity.findIndex(function(activityElement) {
+            if (activityElement.id === activity.id) {
                 return true;
             }
             return false;
-        })
+        });
         /*  If we do we update it, otherwise we add a new
             activity event to the state (at the top of the array) */
         if (index !== -1) {
-            this.events[index] = event;
+            this.activity[index] = activity;
         } else {
-            this.events.unshift(event);
-        }
-
-        this.errorMessage = null;
-        // optionally return false to suppress the store change event
-    }
-    updateEvents(events) {
-        this.events = events;
-    }
-
-    updateRequest(request) {
-        console.log("STORAGE UPD REQUEST:" + request.id)
-        // Check if we already have this activity in the state
-        let index = this.requests.findIndex(function(requestElement) {
-            if (requestElement.id === request.id) {
-                return true;
-            }
-            return false;
-        })
-        /*  If we do we update it, otherwise we add a new
-            activity event to the state (at the top of the array) */
-        if (index !== -1) {
-            this.requests[index] = request;
-        } else {
-            this.requests.unshift(request);
+            this.activity.unshift(activity);
         }
 
         this.errorMessage = null;
         // optionally return false to suppress the store change event
     }
 
-    updateRequests(requests) {
-        this.requests = requests;
+    updateActivity(activity) {
+        this.activity = activity;
     }
 
 }
