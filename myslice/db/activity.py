@@ -38,11 +38,18 @@ class Object(object):
         except KeyError:
             raise Exception('Object Id not specified')
 
+
     def __str__(self):
-        return json.dumps(self.e, cls=myJSONEncoder)
+        return json.dumps(self.dict(), cls=myJSONEncoder)
 
     def dict(self):
-        return self.e
+        ret = {}
+        for k in self.e:
+            if isinstance(self.e[k], Enum):
+                ret[k] = self.e[k].value
+            else:
+                ret[k] = self.e[k]
+        return ret
 
     ##
     # Object Type
@@ -53,9 +60,9 @@ class Object(object):
     @type.setter
     def type(self, value):
         if isinstance(value, ObjectType):
-            self.e['type'] = value.value
-        elif value in ObjectType.__members__:
             self.e['type'] = value
+        elif value in ObjectType.__members__:
+            self.e['type'] = ObjectType[value]
         else:
             raise Exception('Object Type {} not valid'.format(value))
 
@@ -214,13 +221,15 @@ class Event(object):
 
 
     def __str__(self):
-        return json.dumps(self.e, cls=myJSONEncoder)
+        return json.dumps(self.dict(), cls=myJSONEncoder)
 
     def dict(self):
         ret = {}
         for k in self.e:
             if isinstance(self.e[k], Enum):
                 ret[k] = self.e[k].value
+            elif isinstance(self.e[k], Object):
+                ret[k] = self.e[k].dict()
             else:
                 ret[k] = self.e[k]
         return ret
@@ -345,7 +354,7 @@ class Event(object):
 
     @object.setter
     def object(self, value):
-        self.e['object'] = Object(value).dict()
+        self.e['object'] = Object(value)
 
     ##
     # Data
@@ -427,6 +436,18 @@ class Event(object):
     def isDenied(self):
         return self._checkRequestStatus(EventRequest.DENIED)
 
+    ##
+    # Ready for being processed
+    def isReady(self):
+        if (self.isRequest() and self.isApproved()):
+            return True
+
+        if (not self.isRequest() and self.isWaiting()):
+            return True
+
+        return False
+
+
     def waiting(self):
         '''
         Set the event to waiting
@@ -476,8 +497,6 @@ class Event(object):
         Set the event request to pending
         :return:
         '''
-        if not self.id:
-            raise Exception('Missing required Id')
 
         self.request = EventRequest.PENDING
 

@@ -33,10 +33,10 @@ def run():
     threads = []
 
     # projects sync
-    t = threading.Thread(target=syncProjects, args=(lock,))
-    t.daemon = True
-    threads.append(t)
-    t.start()
+    # t = threading.Thread(target=syncProjects, args=(lock,))
+    # t.daemon = True
+    # threads.append(t)
+    # t.start()
 
     # projects manager
     t = threading.Thread(target=manageProjects, args=(lock, qProjects))
@@ -45,10 +45,10 @@ def run():
     t.start()
 
     # slices sync
-    t = threading.Thread(target=syncSlices, args=(lock,))
-    t.daemon = True
-    threads.append(t)
-    t.start()
+    # t = threading.Thread(target=syncSlices, args=(lock,))
+    # t.daemon = True
+    # threads.append(t)
+    # t.start()
 
     # slices manager
     t = threading.Thread(target=manageSlices, args=(lock, qSlices))
@@ -66,20 +66,11 @@ def run():
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
         else:
-            if event.isWaiting():
+            if event.isReady():
                 if event.object.type == ObjectType.PROJECT:
-                    qProjects.put(event)
+                    qProjects.put(event.dict())
                 if event.object.type == ObjectType.SLICE:
-                    qSlices.put(event)
-
-
-
-
-            pprint.pprint(ev)
-
-            #ev.status = EventStatus.APPROVED
-
-            #ev.dispatch()
+                    qSlices.put(event.dict())
 
     # waits for the thread to finish
     for x in threads:
