@@ -13,27 +13,6 @@ from myslice.lib.util import format_date, myJSONEncoder
 
 logger = logging.getLogger("myslice.activity")
 
-def activity(activity):
-    """
-    Factory function will return an Event or Request according
-    to the Type. activity is a dictionary
-    :param activity:
-    :return:
-    """
-    if activity['type'] == 'EVENT':
-        return Event(activity)
-    elif activity['type'] == 'REQUEST':
-        return Request(activity)
-
-    return None
-
-class Activity(Enum):
-    EVENT = "EVENT"
-    REQUEST = "REQUEST"
-
-    def __str__(self):
-        return str(self.value)
-
 class ObjectType(Enum):
     AUTHORITY = "AUTHORITY"
     PROJECT = "PROJECT"
@@ -106,8 +85,13 @@ class EventStatus(Enum):
     # ERROR or WARNING occurred during processing
     ERROR = "ERROR"
     WARNING = "WARNING"
+
+    def __str__(self):
+        return str(self.value)
+
+class EventRequest(Enum):
     ##
-    # If EventType is REQ (Request)
+    # If Event is REQ (Request)
     PENDING = "PENDING"
     DENIED = "DENIED"
     APPROVED = "APPROVED"
@@ -177,6 +161,15 @@ class Event(object):
             self.status = event['status']
         else:
             self.status = EventStatus.NEW
+
+        ##
+        # Event Request status
+        if 'request' in event:
+            self.request = event['request']
+        elif self.isRequest():
+            self.pending()
+        else:
+            self.request = None
 
         ##
         # User making the request
@@ -275,11 +268,34 @@ class Event(object):
         else:
             raise Exception("Event Status not valid")
 
-        if (self.action != EventAction.REQ) and (status in [EventStatus.APPROVED, EventStatus.DENIED, EventStatus.PENDING]):
-            raise Exception('Only Event of type REQUEST can have a PENDING/APPROVED/DENIED status')
+        # update date of the request
+        self.updated()
 
         self.e['status'] = status
 
+    ##
+    # Request Status
+    @property
+    def request(self):
+        return self.e['request']
+
+    @request.setter
+    def request(self, value):
+
+        if not self.isRequest():
+            raise Exception('Only Event of type REQUEST can have a PENDING/APPROVED/DENIED status')
+
+        if isinstance(value, EventRequest):
+            request_status = value
+        elif value in EventRequest.__members__:
+            request_status = EventRequest[value]
+        else:
+            raise Exception("Event Request Status not valid")
+
+        # update date of the request
+        self.updated()
+
+        self.e['request'] = request_status
 
 
     ##
@@ -351,30 +367,139 @@ class Event(object):
         else:
             self.e['updated'] = format_date()
 
-    # Approves the request
-    def approve(self):
+    ##
+    # Action
+    def _checkAction(self, action):
+        if (self.action == action):
+            return True
+        return False
 
+    def isRequest(self):
+        return self._checkAction(EventAction.REQ)
+
+    def addingObject(self):
+        return self._checkAction(EventAction.ADD)
+
+    def modifyingObject(self):
+        return self._checkAction(EventAction.MOD)
+
+    def removingObject(self):
+        return self._checkAction(EventAction.DEL)
+
+    ##
+    # Status
+    def _checkStatus(self, status):
+        if self.status == status:
+            return True
+        return False
+
+    def isNew(self):
+        return self._checkStatus(EventStatus.NEW)
+
+    def isWaiting(self):
+        return self._checkStatus(EventStatus.WAITING)
+
+    def isRunning(self):
+        return self._checkStatus(EventStatus.RUNNING)
+
+    def isSuccess(self):
+        return self._checkStatus(EventStatus.SUCCESS)
+
+    def hasErrors(self):
+        return self._checkStatus(EventStatus.ERROR)
+
+    def hasWarnings(self):
+        return self._checkStatus(EventStatus.WARNING)
+
+    ##
+    # RequestStatus
+    def _checkRequestStatus(self, status):
+        if self.request == status:
+            return True
+        return False
+
+    def isPending(self):
+        return self._checkRequestStatus(EventRequest.PENDING)
+
+    def isApproved(self):
+        return self._checkRequestStatus(EventRequest.APPROVED)
+
+    def isDenied(self):
+        return self._checkRequestStatus(EventRequest.DENIED)
+
+    def waiting(self):
+        '''
+        Set the event to waiting
+        :return:
+        '''
         if not self.id:
             raise Exception('Missing required Id')
 
-        # update date of the request
-        self.updated()
+        self.status = EventStatus.WAITING
 
-        # update the status of the request
-        self.status = EventStatus.APPROVED
+    def running(self):
+        '''
+        Set the event to running
+        :return:
+        '''
+        if not self.id:
+            raise Exception('Missing required Id')
+
+        self.status = EventStatus.RUNNING
+
+    def success(self):
+        '''
+        Set the event to success
+        :return:
+        '''
+        if not self.id:
+            raise Exception('Missing required Id')
+
+        self.status = EventStatus.SUCCESS
+
+    def error(self):
+        '''
+        Set the event to error
+        :return:
+        '''
+        self.status = EventStatus.ERROR
+
+    def warning(self):
+        '''
+        Set the event to warning
+        :return:
+        '''
+        self.status = EventStatus.WARNING
+
+    def pending(self):
+        '''
+        Set the event request to pending
+        :return:
+        '''
+        if not self.id:
+            raise Exception('Missing required Id')
+
+        self.request = EventRequest.PENDING
+
+    # Approves the request
+    def approve(self):
+        '''
+        Set the event request to approved
+        :return:
+        '''
+        if not self.id:
+            raise Exception('Missing required Id')
+
+        self.request = EventRequest.APPROVED
 
     ##
     # Denies the request
     def deny(self):
-
+        '''
+        Set the event request to denied
+        :return:
+        '''
         if not self.id:
             raise Exception('Missing required Id')
 
-        if not self.action == EventAction.REQ:
-            raise Exception('Only Event of type Request can be denied')
-
-        # update date of the request
-        self.updated()
-
-        # update the status of the request
-        self.status = EventStatus.DENIED
+        self.request = EventRequest.DENIED

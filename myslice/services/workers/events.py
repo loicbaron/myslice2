@@ -6,7 +6,7 @@
 #   (c) 2016 Ciro Scognamiglio <ciro.scognamiglio@lip6.fr>
 ##
 import logging
-from myslice.db.activity import Event, EventStatus, EventAction
+from myslice.db.activity import Event
 from myslice.db import connect, dispatch
 
 logger = logging.getLogger('myslice.service.activity')
@@ -26,18 +26,23 @@ def run(q):
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
         else:
-            if event.status == EventStatus.NEW and event.action == EventAction.REQ:
+            if event.isRequest():
                 # events that require a request to be created and processes
                 logger.info("Received event request from user {}".format(event.user))
 
                 # event is of type request, we put it on PENDING
-                event.status = EventStatus.PENDING
+                event.pending()
 
-            elif event.status == EventStatus.NEW:
+                # set the event status on waiting
+                event.waiting()
+
+            else:
                 # TODO: check userid actually exists
                 # TODO: check object id exists
                 logger.info("Received event {} from user {}".format(event.action, event.user))
-                event.status = EventStatus.WAITING
+
+                # event will wait to be processed by the appropriate service
+                event.waiting()
 
             # dispatch the updated event
             dispatch(dbconnection, event)
