@@ -10,7 +10,7 @@ import logging
 import signal
 import threading
 from queue import Queue
-#from myslice.db.activity import Event, EventStatus, EventAction, Request, RequestStatus
+from myslice.db.activity import Event, ObjectType
 from myslice.db import connect, changes
 from myslice.services.workers.users import events_run as manageUsersEvents
 from myslice.services.workers.users import requests_run as manageUsersRequests
@@ -41,7 +41,7 @@ def run():
 
     threads = []
     for y in range(1):
-        t = threading.Thread(target=manageUsersEvents, args=(qUserEvents, ))
+        t = threading.Thread(target=manageUsersEvents, args=(lock, qUserEvents ))
         t.daemon = True
         threads.append(t)
         t.start()
@@ -60,19 +60,14 @@ def run():
 
     feed = changes(table='activity')
     for activity in feed:
-       
-        if activity['new_val']['type'] == 'EVENT' and \
-            activity['new_val']['object']['type'] == 'USER' and \
-            activity['new_val']['status'] == 'WAITING':
-            
-            qUserEvents.put(activity['new_val'])
-
-
-        elif activity['new_val']['type'] == 'REQUEST' and  \
-            activity['new_val']['object']['type'] == 'USER' and \
-            activity['new_val']['status'] == 'APPROVED':
-
-            qUserRequests.put(activity['new_val'])
+        try:
+            event = Event(activity['new_val'])
+        except Exception as e:
+            logger.error("Problem with event: {}".format(e)) 
+        else:
+            if event.isReady():
+                if event.object.type == ObjectType.USER:
+                    qUserEvents.put(event)
 
     for x in threads:
         x.join()

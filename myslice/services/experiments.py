@@ -13,7 +13,7 @@ from queue import Queue
 from myslice.db.activity import Event, ObjectType
 from myslice.db import changes
 from myslice.services.workers.projects import sync as syncProjects, manageProjects
-from myslice.services.workers.slices import sync as syncSlices, manageSlices
+from myslice.services.workers.slices import sync as syncSlices
 
 logger = logging.getLogger('myslice.service.experiments')
 
@@ -51,10 +51,10 @@ def run():
     # t.start()
 
     # slices manager
-    t = threading.Thread(target=manageSlices, args=(lock, qSlices))
-    t.daemon = True
-    threads.append(t)
-    t.start()
+    # t = threading.Thread(target=manageSlices, args=(lock, qSlices))
+    # t.daemon = True
+    # threads.append(t)
+    # t.start()
 
     ##
     # will watch for incoming events/requests and pass them to
@@ -68,9 +68,9 @@ def run():
         else:
             if event.isReady():
                 if event.object.type == ObjectType.PROJECT:
-                    qProjects.put(event.dict())
+                    qProjects.put(event)
                 if event.object.type == ObjectType.SLICE:
-                    qSlices.put(event.dict())
+                    qSlices.put(event)
 
     # waits for the thread to finish
     for x in threads:

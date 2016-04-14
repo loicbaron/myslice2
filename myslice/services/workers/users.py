@@ -20,17 +20,12 @@ from myslicelib.query import q
 logger = logging.getLogger('myslice.service.users')
 
 
-def events_run(qUserEvents):
+def events_run(lock, qUserEvents):
     """
     Process the user request directly
     """
 
     logger.info("Worker users events starting") 
-
-    # feed = changes(c=c, table='events')
-    # for ev in feed:
-        
-    #     event = Event(ev['new_val'])
 
     # db connection is shared between threads
     dbconnection = connect()
@@ -43,43 +38,41 @@ def events_run(qUserEvents):
             logger.error("Problem with event: {}".format(e))
         finally:
             logger.info("Processing event from user {}".format(event.user))
-                
-            result = None
-
-            try:
-                if event.action == EventAction.MOD:
-                    
-                    result = event.data
-
-                if event.action == EventAction.ADD:
-
-                    user = User(db.get(dbconnection, table='users', id=event.user))
-                    
-                    if event.data['type'] == 'KEY':
-                        user.keys = ['!@#$%^']
-                        user.addKey(event.data['key'])
-
-                        result = user.save()
-
-                if event.action == EventAction.DEL:
-
-                    user = User(db.get(dbconnection, table='users', id=event.user))
-                    
-                    if event.data['type'] == 'KEY':
-                        user.delKey(event.data['key'])
-                        result = user.save()
-
-
-            except Exception as e:
-                logger.error("Problem with event: {}".format(e))
-                event.status = EventStatus.ERROR
-                 
-            if result:
-                print(result)
-                db.users(dbconnection, result)
-                event.status = EventStatus.SUCCESS
             
-            db.dispatch(dbconnection, event)
+            with lock:
+                try:
+                    result = None
+
+                    if event.modifyingObject():
+                        
+                        result = event.data
+
+                    if event.addingObject():
+
+                        user = User(db.get(dbconnection, table='users', id=event.user))
+                        
+                        if event.data['type'] == 'KEY':
+                            user.addKey(event.data['key'])
+                            result = user.save()
+
+                    if event.removingObject():
+
+                        user = User(db.get(dbconnection, table='users', id=event.user))
+                        
+                        if event.data['type'] == 'KEY':
+                            user.delKey(event.data['key'])
+                            result = user.save()
+
+
+                except Exception as e:
+                    logger.error("Problem with event: {}".format(e))
+                    event.error()
+                     
+                if result:
+                    db.users(dbconnection, result)
+                    event.success()
+                
+                db.dispatch(dbconnection, event)
 
 
 def requests_run(q):
@@ -116,7 +109,7 @@ def sync(lock):
     while True:
         # acquires lock
         with lock:
-            logger.info("Worker users starting synchronization")
+            logger.info("Worker users starting period synchronization")
 
             users = q(User).get()
 
@@ -126,16 +119,20 @@ def sync(lock):
             lusers = db.users(dbconnection, users.dict())
 
             for ls in lusers :
-                if not users.has(ls['id']) and ls['status'] is not Status.PENDING:
-                    # delete resourc that have been deleted elsewhere
-                    db.delete(dbconnection, 'users', ls['id'])
-                    logger.info("User {} deleted".format(ls['id']))
-
                 # add status if not present and update on db
                 if not 'status' in ls:
                     ls['status'] = Status.ENABLED
                     ls['enabled'] = format_date()
                     db.users(dbconnection, ls)
 
+                if not users.has(ls['id']) and ls['status'] is not Status.PENDING:
+                    # delete resourc that have been deleted elsewhere
+                    db.delete(dbconnection, 'users', ls['id'])
+                    logger.info("User {} deleted".format(ls['id']))
+
+ 
+
+            logger.info("Worker users finished period synchronization") 
+        
         # sleep
         time.sleep(86400)

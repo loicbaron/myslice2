@@ -52,7 +52,7 @@ def run():
             logger.error("Problem with event: {}".format(e))
         else:
             if event.isNew():
-                qEvents.put(activity['new_val'])
+                qEvents.put(event)
 
     # waits for the thread to finish
     for x in threads:

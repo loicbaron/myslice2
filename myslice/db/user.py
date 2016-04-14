@@ -29,7 +29,7 @@ class User(myslicelibUser):
             # SFA check the keys from left to right
             # only keys in the front of list can raise a key convert in 
 
-            self.keys.append(key)
+            self.keys.insert(0, key)
             return self
 
     def delKey(self, key):
@@ -39,19 +39,19 @@ class User(myslicelibUser):
             self.keys.remove(key)
             return self
 
-    # def save(self):
-    #     result = super(myslicelibUser, self).save()
+    def save(self):
+        result = super(myslicelibUser, self).save()
 
-    #     print("===========wired ========")
-    #     print(result)
-        # if result['errors']:
-        #     print(result['errors'])
-        #     if len(result['errors']) == 2 \
-        #         and isinstance(result['errors'][0]['exception'], SFAError) \
-        #         and result['errors'][0]['exception'].faultCode == 7:
+        if result['errors']:
+            if len(result['errors']) == 2 \
+                and isinstance(result['errors'][1]['exception'], SFAError) \
+                and result['errors'][1]['exception'].faultCode == 7:
                 
-        #         return result['data']
+                return result['data']
 
-        #     raise Exception('errors: %s' % result['errors'] )
-        # else:
-        #     return result['data']
+            raise Exception('errors: %s' % result['errors'] )
+        else:
+            return result['data']
+
+
+

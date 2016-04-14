@@ -23,59 +23,6 @@ class ObjectType(Enum):
     def __str__(self):
         return str(self.value)
 
-class Object(object):
-
-    def __init__(self, obj):
-        self.e = {}
-
-        try:
-            self.type = obj['type']
-        except KeyError:
-            raise Exception('Object Type not specified')
-
-        try:
-            self.id = obj['id']
-        except KeyError:
-            raise Exception('Object Id not specified')
-
-
-    def __str__(self):
-        return json.dumps(self.dict(), cls=myJSONEncoder)
-
-    def dict(self):
-        ret = {}
-        for k in self.e:
-            if isinstance(self.e[k], Enum):
-                ret[k] = self.e[k].value
-            else:
-                ret[k] = self.e[k]
-        return ret
-
-    ##
-    # Object Type
-    @property
-    def type(self):
-        return self.e['type']
-
-    @type.setter
-    def type(self, value):
-        if isinstance(value, ObjectType):
-            self.e['type'] = value
-        elif value in ObjectType.__members__:
-            self.e['type'] = ObjectType[value]
-        else:
-            raise Exception('Object Type {} not valid'.format(value))
-
-    ##
-    # ID of the object type
-    @property
-    def id(self):
-        return self.e['id']
-
-    @id.setter
-    def id(self, value):
-        self.e['id'] = value
-
 class EventStatus(Enum):
     """
     Event Status: new events will automatically have a NEW status,
@@ -122,7 +69,69 @@ class EventAction(Enum):
     def __str__(self):
         return str(self.value)
 
-class Event(object):
+class Dict(dict):
+    '''
+    A Base Dict class which support slice
+
+    ''' 
+    def __getattr__(self, key):
+        try:
+            return self[key]
+        except KeyError:
+            raise AttributeError("Dict object has no attribute '%s'" % key)
+
+class Object(Dict):
+
+    def __init__(self, obj):
+        try:
+            self.type = obj['type']
+        except KeyError:
+            raise Exception('Object Type not specified')
+
+        try:
+            self.id = obj['id']
+        except KeyError:
+            raise Exception('Object Id not specified')
+    
+    ##
+    # ID of the object type
+    @property
+    def id(self):
+        return self['id']
+
+    @id.setter
+    def id(self, value):
+        self['id'] = value
+
+    @property
+    def type(self):
+        return self['type']
+
+    @type.setter
+    def type(self, value):
+        if isinstance(value, ObjectType):
+            self['type'] = value
+        elif value in ObjectType.__members__:
+            self['type'] = ObjectType[value]
+        else:
+            raise Exception('Object Type {} not valid'.format(value))
+
+    def __str__(self):
+        return json.dumps(self, cls=myJSONEncoder)
+
+    def dict(self):
+        ret = {}
+        for k in self.keys():
+            if isinstance(self[k], Enum):
+                ret[k] = self[k].value
+            elif isinstance(self[k], Object):
+                ret[k] = self[k].dict()
+            else:
+                ret[k] = self[k]
+        return ret
+
+
+class Event(Dict):
     """
         {
             action: EventAction
@@ -138,23 +147,14 @@ class Event(object):
     """
 
     def __init__(self, event):
-        self.e = {}
+    
+        self.messages = event.get('messages', [])        
 
-        if 'message' in event:
-            self.messages = event['messages']
-        else:
-            self.messages = []
-
-        if 'log' in event:
-            self.log = event['log']
-        else:
-            self.log = []
-
+        self.log = event.get('log', [])
+        
         ##
-        # If ID is present this is a previously
-        # created event, or we don't set it
-        if 'id' in event:
-            self.id = event['id']
+        # Default status when creating the event is NEW
+        self.status = event.get('status', EventStatus.NEW)
 
         if not 'action' in event:
             self.messages = "Event action not specified"
@@ -163,11 +163,10 @@ class Event(object):
             self.action = event['action']
 
         ##
-        # Default status when creating the event is NEW
-        if 'status' in event:
-            self.status = event['status']
-        else:
-            self.status = EventStatus.NEW
+        # If ID is present this is a previously
+        # created event, or we don't set it
+        if 'id' in event:
+            self.id = event['id']
 
         ##
         # Event Request status
@@ -211,52 +210,40 @@ class Event(object):
                 raise Exception(self.messages)
 
         if 'created' in event:
-            self.e['created'] = format_date(event['created'])
+            self.created = format_date(event['created'])
         else:
-            self.e['created'] = format_date()
+            self.created = format_date()
 
         if 'updated' in event:
             self.updated(format_date(event['updated']))
 
 
-
     def __str__(self):
-        return json.dumps(self.dict(), cls=myJSONEncoder)
-
-    def dict(self):
-        ret = {}
-        for k in self.e:
-            if isinstance(self.e[k], Enum):
-                ret[k] = self.e[k].value
-            elif isinstance(self.e[k], Object):
-                ret[k] = self.e[k].dict()
-            else:
-                ret[k] = self.e[k]
-        return ret
+        return json.dumps(self, cls=myJSONEncoder)
 
     ##
     # Id
     @property
     def id(self):
-        if 'id' in self.e:
-            return self.e['id']
+        if 'id' in self:
+            return self['id']
 
     @id.setter
     def id(self, value):
-        self.e['id'] = value
+        self['id'] = value
 
     ##
     # Action
     @property
     def action(self):
-        return self.e['action']
+        return self['action']
 
     @action.setter
     def action(self, value):
         if isinstance(value, EventAction):
-            self.e['action'] = value
+            self['action'] = value
         elif value in EventAction.__members__:
-            self.e['action'] = EventAction[value]
+            self['action'] = EventAction[value]
         else:
             self.messages = "Event Action not valid"
             raise Exception(self.messages)
@@ -265,7 +252,7 @@ class Event(object):
     # Status
     @property
     def status(self):
-        return self.e['status']
+        return self['status']
 
     @status.setter
     def status(self, value):
@@ -280,16 +267,20 @@ class Event(object):
         # update date of the request
         self.updated()
 
-        self.e['status'] = status
+        self['status'] = status
 
     ##
     # Request Status
     @property
     def request(self):
-        return self.e['request']
+        return self['request']
 
     @request.setter
     def request(self, value):
+
+        if value is None:
+            self['request'] = None
+            return
 
         if not self.isRequest():
             raise Exception('Only Event of type REQUEST can have a PENDING/APPROVED/DENIED status')
@@ -304,7 +295,8 @@ class Event(object):
         # update date of the request
         self.updated()
 
-        self.e['request'] = request_status
+
+        self['request'] = request_status
 
 
     ##
@@ -313,14 +305,14 @@ class Event(object):
     # the event life (info, error, messages)
     @property
     def messages(self):
-        return self.e['messages']
+        return self['messages']
 
     @messages.setter
     def messages(self, value=None):
         if isinstance(value, str):
-            self.e['messages'].append(value)
+            self['messages'].append(value)
         else:
-            self.e['messages'] = value
+            self['messages'] = value
 
     ##
     # Log
@@ -328,39 +320,39 @@ class Event(object):
     # the event life (info, error, messages)
     @property
     def log(self):
-        return self.e['log']
+        return self['log']
 
     @log.setter
     def log(self, value=None):
         if isinstance(value, str):
-            self.e['log'].append(value)
+            self['log'].append(value)
         else:
-            self.e['log'] = value
+            self['log'] = value
     ##
     # User creating the Event
     @property
     def user(self):
-        return self.e['user']
+        return self['user']
 
     @user.setter
     def user(self, value):
-        self.e['user'] = value
+        self['user'] = value
 
     ##
     # Object
     @property
     def object(self):
-        return self.e['object']
+        return self['object']
 
     @object.setter
     def object(self, value):
-        self.e['object'] = Object(value)
+        self['object'] = Object(value)
 
     ##
     # Data
     @property
     def data(self):
-        return self.e['data']
+        return self['data']
 
     @data.setter
     def data(self, value):
@@ -368,13 +360,24 @@ class Event(object):
             self.messages = "Invalid format for data (must be a dict or a list)"
             raise Exception(self.messages)
         else:
-            self.e['data'] = value
+            self['data'] = value
 
     def updated(self, value=None):
         if value:
-            self.e['updated'] = value
+            self['updated'] = value
         else:
-            self.e['updated'] = format_date()
+            self['updated'] = format_date()
+
+    def dict(self):
+        ret = {}
+        for k in self.keys():
+            if isinstance(self[k], Enum):
+                ret[k] = self[k].value
+            elif isinstance(self[k], Object):
+                ret[k] = self[k].dict()
+            else:
+                ret[k] = self[k]
+        return ret
 
     ##
     # Action
