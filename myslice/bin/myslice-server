@@ -25,6 +25,7 @@ import myslice.db as db
 # workers
 from myslice.services.activity import run as serviceActivity
 from myslice.services.experiments import run as serviceExperiments
+from myslice.services.users import run as serviceUsers
 
 #from myslice.monitor.workers.resources import sync, queue
 
@@ -113,6 +114,12 @@ if __name__ == '__main__':
     # processes.append(p)
     # p.start()
 
+    ##
+    #Process: users
+    
+    p = multiprocessing.Process(target=serviceUsers)
+    processes.append(p)
+    p.start()
 
 
     for proc in processes:

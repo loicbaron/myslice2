@@ -1,6 +1,6 @@
 import sys, os, logging
 from configparser import SafeConfigParser, NoSectionError, NoOptionError, Error
-from myslicelib.util import Credential, Endpoint
+from myslicelib.util import Authentication, Endpoint
 from myslicelib import setup as myslicelibsetup
 
 ## paths
@@ -57,7 +57,7 @@ credential_hrn = "onelab.upmc.loic_baron"
 credential_email = "loic.baron@lip6.fr"
 credential_cert = credential_path + "onelab.upmc.loic_baron.user.gid"
 
-myslicelibsetup.credential = Credential(hrn=credential_hrn, email=credential_email, certificate=credential_cert, private_key=credential_pkey)
+myslicelibsetup.credential = Authentication(hrn=credential_hrn, email=credential_email, certificate=credential_cert, private_key=credential_pkey)
 ##
 
 class settings(object):
