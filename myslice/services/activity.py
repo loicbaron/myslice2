@@ -11,8 +11,8 @@ import signal
 import threading
 from queue import Queue
 from myslice.db import connect, changes
+from myslice.db.activity import Event
 from myslice.services.workers.events import run as manageEvents
-from myslice.services.workers.requests import run as manageRequests
 
 logger = logging.getLogger('myslice.service.activity')
 
@@ -31,7 +31,6 @@ def run():
     logger.info("Service activity starting")
 
     qEvents = Queue()
-    qRequests = Queue()
 
     threads = []
     for y in range(1):
@@ -40,23 +39,20 @@ def run():
         threads.append(t)
         t.start()
 
-    for y in range(1):
-        t = threading.Thread(target=manageRequests, args=(qRequests,))
-        t.daemon = True
-        threads.append(t)
-        t.start()
-
     ##
     # Watch for changes on the activity table and send the event/request
-    # to the corresponding threads (via Queue).
+    # to the running threads (via Queue).
     # A global watch feed is needed to permit spawning more threads to manage
     # events and requests
     feed = changes(table='activity')
     for activity in feed:
-        if activity['new_val']['type'] == 'EVENT':
-            qEvents.put(activity['new_val'])
-        elif activity['new_val']['type'] == 'REQUEST':
-            qRequests.put(activity['new_val'])
+        try:
+            event = Event(activity['new_val'])
+        except Exception as e:
+            logger.error("Problem with event: {}".format(e))
+        else:
+            if event.isNew():
+                qEvents.put(activity['new_val'])
 
     # waits for the thread to finish
     for x in threads:
