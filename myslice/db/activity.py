@@ -6,10 +6,9 @@
 #   (c) 2016 Ciro Scognamiglio <ciro.scognamiglio@lip6.fr>
 ##
 
-import json
 import logging
 from enum import Enum
-from myslice.lib.util import format_date, myJSONEncoder
+from myslice.lib.util import format_date
 
 logger = logging.getLogger("myslice.activity")
 
@@ -116,9 +115,6 @@ class Object(Dict):
         else:
             raise Exception('Object Type {} not valid'.format(value))
 
-    # def __str__(self):
-    #     return json.dumps(self, cls=myJSONEncoder)
-
     def dict(self):
         ret = {}
         for k in self.keys():
@@ -213,10 +209,6 @@ class Event(Dict):
             self.updated(format_date(event['updated']))
         except KeyError:
             pass
-
-
-    # def __str__(self):
-    #     return json.dumps(self, cls=myJSONEncoder)
 
     ##
     # Id
