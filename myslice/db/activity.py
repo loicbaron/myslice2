@@ -78,7 +78,7 @@ class Dict(dict):
         try:
             return self[key]
         except KeyError:
-            raise AttributeError("Dict object has no attribute '%s'" % key)
+            raise AttributeError("Dict object has no attribute {}".format(key))
 
 class Object(Dict):
 
@@ -116,8 +116,8 @@ class Object(Dict):
         else:
             raise Exception('Object Type {} not valid'.format(value))
 
-    def __str__(self):
-        return json.dumps(self, cls=myJSONEncoder)
+    # def __str__(self):
+    #     return json.dumps(self, cls=myJSONEncoder)
 
     def dict(self):
         ret = {}
@@ -148,78 +148,75 @@ class Event(Dict):
 
     def __init__(self, event):
     
-        self.messages = event.get('messages', [])        
+        self['messages'] = event.get('messages', [])
 
-        self.log = event.get('log', [])
+        self['log'] = event.get('log', [])
         
         ##
         # Default status when creating the event is NEW
         self.status = event.get('status', EventStatus.NEW)
 
-        if not 'action' in event:
-            self.messages = "Event action not specified"
-            raise Exception(self.messages)
-        else:
+        try:
             self.action = event['action']
+        except KeyError:
+            raise Exception("Event action not specified")
 
         ##
         # If ID is present this is a previously
         # created event, or we don't set it
-        if 'id' in event:
+        try:
             self.id = event['id']
+        except KeyError:
+            pass
 
         ##
         # Event Request status
-        if 'request' in event:
-            self.request = event['request']
-        elif self.isRequest():
-            self.pending()
-        else:
-            self.request = None
+        if self.isRequest():
+            try:
+                self.request = event['request']
+            except KeyError:
+                self.pending()
 
         ##
         # User making the request
         #
-        if 'user' in event:
+        try:
             self.user = event['user']
-        else:
-            self.messages = "User Id not specified"
-            raise Exception(self.messages)
+        except KeyError:
+            raise Exception("User Id not specified")
 
         ##
         # Object of the event
         #
-        if 'object' in event:
-            try:
-                self.object = event['object']
-            except Exception as e:
-                self.messages = "{0}".format(e)
-                raise Exception(self.messages)
-        else:
-            self.messages = "Event Object not specified"
-            raise Exception(self.messages)
+        try:
+            self.object = event['object']
+        except KeyError:
+            raise Exception("Event Object not specified")
+        except Exception as e:
+            raise Exception("{0}".format(e))
 
         ##
         # data is a dictionary of changes for the object
         # action DEL does not need it
-        if 'data' in event:
-            self.data = event['data']
-        else:
-            if not self.action == EventAction.DEL:
-                self.messages = "Data not specified for action {}".format(self.action)
-                raise Exception(self.messages)
+        if not self.removingObject():
+            try:
+                self.data = event['data']
+            except KeyError:
+                raise Exception("Data not specified for action {}".format(self.action))
 
-        if 'created' in event:
+        try:
             self.created = format_date(event['created'])
-        else:
+        except KeyError:
             self.created = format_date()
 
-        if 'updated' in event:
+        try:
             self.updated(format_date(event['updated']))
+        except KeyError:
+            pass
 
 
-    def __str__(self):
-        return json.dumps(self, cls=myJSONEncoder)
+    # def __str__(self):
+    #     return json.dumps(self, cls=myJSONEncoder)
 
     ##
     # Id
@@ -234,6 +231,7 @@ class Event(Dict):
 
     ##
     # Action
+    # This is only set at event creation
     @property
     def action(self):
         return self['action']
@@ -245,18 +243,17 @@ class Event(Dict):
         elif value in EventAction.__members__:
             self['action'] = EventAction[value]
         else:
-            self.messages = "Event Action not valid"
-            raise Exception(self.messages)
+            raise Exception("Event Action not valid")
 
     ##
     # Status
+    # Can change during the life of the event
     @property
     def status(self):
         return self['status']
 
     @status.setter
     def status(self, value):
-
         if isinstance(value, EventStatus):
             status = value
         elif value in EventStatus.__members__:
@@ -271,6 +268,7 @@ class Event(Dict):
 
     ##
     # Request Status
+    # Can change during the life of the request
     @property
     def request(self):
         return self['request']
@@ -295,39 +293,8 @@ class Event(Dict):
         # update date of the request
         self.updated()
 
-
         self['request'] = request_status
 
-
-    ##
-    # Message
-    # This is a list of messages that get added during
-    # the event life (info, error, messages)
-    @property
-    def messages(self):
-        return self['messages']
-
-    @messages.setter
-    def messages(self, value=None):
-        if isinstance(value, str):
-            self['messages'].append(value)
-        else:
-            self['messages'] = value
-
-    ##
-    # Log
-    # This is a list of log messages that get added during
-    # the event life (info, error, messages)
-    @property
-    def log(self):
-        return self['log']
-
-    @log.setter
-    def log(self, value=None):
-        if isinstance(value, str):
-            self['log'].append(value)
-        else:
-            self['log'] = value
     ##
     # User creating the Event
     @property
@@ -378,6 +345,44 @@ class Event(Dict):
             else:
                 ret[k] = self[k]
         return ret
+
+    ##
+    # Logging
+    # Private method for managing logs of
+    # the event life (info, error, messages)
+    def _log(self, type='info', message=None):
+        if message:
+            self['log'].append({
+                'type': type,
+                'timestamp': format_date(),
+                'message': message
+            })
+        else:
+            return [el for el in self['log'] if el['type'] == type]
+
+    ##
+    # Log INFO
+    def logInfo(self, message=None):
+        if message:
+            self._log('info', message)
+        else:
+            return self._log('info')
+
+    ##
+    # Log ERROR
+    def logError(self, message=None):
+        if message:
+            self._log('error', message)
+        else:
+            return self._log('error')
+
+    ##
+    # Log DEBUG
+    def logDebug(self, message=None):
+        if message:
+            self._log('debug', message)
+        else:
+            return self._log('debug')
 
     ##
     # Action
