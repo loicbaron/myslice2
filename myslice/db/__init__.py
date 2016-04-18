@@ -101,9 +101,12 @@ def get(dbconnection=None, table=None, id=None, filter=None):
     return r.db(s.db.name).table(table).run(dbconnection)
 
 
-def users(dbconnection=None, data=None):
+def users(dbconnection=None, data=None, id=None):
     if not dbconnection:
         dbconnection = connect()
+
+    if id and data:
+        r.db(s.db.name).table('users').get(id).update(data).run(dbconnection)
         
     if data:
         r.db(s.db.name).table('users').insert(data, conflict='update').run(dbconnection)

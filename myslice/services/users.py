@@ -46,11 +46,11 @@ def run():
         threads.append(t)
         t.start()
 
-    # for y in range(1):
-    #     t = threading.Thread(target=manageUsersRequests, args =(qUserRequests, ))
-    #     t.daemon = True
-    #     threads.append(t)
-    #     t.start()
+    for y in range(1):
+        t = threading.Thread(target=manageUsersRequests, args =(lock, qUserRequests))
+        t.daemon = True
+        threads.append(t)
+        t.start()
 
     for y in range(1):
         t = threading.Thread(target=syncUsers, args=(lock, ))
@@ -65,10 +65,10 @@ def run():
         except Exception as e:
             logger.error("Problem with event: {}".format(e)) 
         else:
-            if event.isReady():
-                if event.object.type == ObjectType.USER:
+            if event.object.type == ObjectType.USER:
+                if event.isReady():
                     qUserEvents.put(event)
-
+                
     for x in threads:
         x.join()
 
