@@ -66,6 +66,7 @@ def run():
             logger.error("Problem with event: {}".format(e)) 
         else:
             if event.object.type == ObjectType.USER:
+                # event.isReady() = Request APPROVED or Event WAITING
                 if event.isReady():
                     qUserEvents.put(event)
                 

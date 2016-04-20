@@ -13,6 +13,7 @@ from queue import Queue
 from myslice.db import connect, changes
 from myslice.db.activity import Event
 from myslice.services.workers.events import run as manageEvents
+from myslice.services.workers.emails import run as manageEmails
 
 logger = logging.getLogger('myslice.service.activity')
 
@@ -31,10 +32,17 @@ def run():
     logger.info("Service activity starting")
 
     qEvents = Queue()
+    qEmails = Queue()
 
     threads = []
     for y in range(1):
         t = threading.Thread(target=manageEvents, args=(qEvents,))
+        t.daemon = True
+        threads.append(t)
+        t.start()
+
+    for y in range(1):
+        t = threading.Thread(target=manageEmails, args=(qEmails,))
         t.daemon = True
         threads.append(t)
         t.start()
@@ -53,6 +61,8 @@ def run():
         else:
             if event.isNew():
                 qEvents.put(event)
+
+            qEmails.put(event)
 
     # waits for the thread to finish
     for x in threads:
