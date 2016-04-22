@@ -392,6 +392,9 @@ class Event(Dict):
         if not self.id:
             raise Exception('Missing required Id')
 
+        if not self.isNew() or not self.isApproved():
+            raise Exception('Event must be in state NEW or APPROVED before WAITING')
+
         self.status = EventStatus.WAITING
 
     def isRunning(self):
@@ -404,6 +407,9 @@ class Event(Dict):
         '''
         if not self.id:
             raise Exception('Missing required Id')
+
+        if not self.isWaiting():
+            raise Exception('Event must be in WAITING state before RUNNING')
 
         self.status = EventStatus.RUNNING
 
@@ -447,18 +453,20 @@ class Event(Dict):
         self.status = EventStatus.WARNING
 
     def isPending(self):
-        return self._checkRequestStatus(EventStatus.PENDING)
+        return self._checkStatus(EventStatus.PENDING)
 
     def setPending(self):
         '''
         Set the event request to pending
         :return:
         '''
+        if not self.isNew():
+            raise Exception('Event must be in state NEW before PENDING')
 
-        self.request = EventStatus.PENDING
+        self.status = EventStatus.PENDING
 
     def isApproved(self):
-        return self._checkRequestStatus(EventStatus.APPROVED)
+        return self._checkStatus(EventStatus.APPROVED)
 
     # Approves the request
     def setApproved(self):
@@ -469,10 +477,13 @@ class Event(Dict):
         if not self.id:
             raise Exception('Missing required Id')
 
-        self.request = EventStatus.APPROVED
+        if not self.isPending():
+            raise Exception('Event must be in PENDING state before APPROVED')
+
+        self.status = EventStatus.APPROVED
 
     def isDenied(self):
-        return self._checkRequestStatus(EventStatus.DENIED)
+        return self._checkStatus(EventStatus.DENIED)
 
     ##
     # Denies the request
@@ -484,7 +495,10 @@ class Event(Dict):
         if not self.id:
             raise Exception('Missing required Id')
 
-        self.request = EventStatus.DENIED
+        if not self.isPending():
+            raise Exception('Event must be in PENDING state before DENIED')
+
+        self.status = EventStatus.DENIED
 
     ##
     # Ready for being processed
