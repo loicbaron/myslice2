@@ -87,3 +87,6 @@ def manageProjects(lock, q):
                     if event.object.type == ObjectType.USER:
                         # removing user from project
                         pass
+                    if event.object.type == ObjectType.PROJECT:
+                        # delete project
+                        pass

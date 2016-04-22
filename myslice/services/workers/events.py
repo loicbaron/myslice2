@@ -33,9 +33,8 @@ def run(q):
                 # event is of type request, we put it on PENDING
                 event.pending()
 
-                # set the event status on waiting
+                # event will wait to be processed by the appropriate service
                 event.waiting()
-
             else:
                 # TODO: check userid actually exists
                 # TODO: check object id exists
