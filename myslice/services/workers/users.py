@@ -41,10 +41,9 @@ def events_run(lock, qUserEvents):
             
             with lock:
                 try:
-                    result = None
+                    event.setRunning()
 
-                    if event.modifyingObject():
-                        
+                    if event.updatingObject():
                         result = event.data
 
                     if event.addingObject():
@@ -63,14 +62,15 @@ def events_run(lock, qUserEvents):
                             user.delKey(event.data['key'])
                             result = user.save()
 
-
                 except Exception as e:
                     logger.error("Problem with event: {}".format(e))
-                    event.error()
+                    result = None
+                    event.logError(str(e))
+                    event.setError()
                      
                 if result:
                     db.users(dbconnection, result)
-                    event.success()
+                    event.setSuccess()
                 
                 db.dispatch(dbconnection, event)
 

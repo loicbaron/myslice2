@@ -13,7 +13,7 @@ from queue import Queue
 from myslice.db.activity import Event, ObjectType
 from myslice.db import connect, changes
 from myslice.services.workers.users import events_run as manageUsersEvents
-from myslice.services.workers.users import requests_run as manageUsersRequests
+# from myslice.services.workers.users import requests_run as manageUsersRequests
 from myslice.services.workers.users import sync as syncUsers
 
 logger = logging.getLogger('myslice.service.activity')
@@ -35,8 +35,6 @@ def run():
 
     # db connection is shared between threads
     qUserEvents = Queue()
-    qUserRequests = Queue()
-
     lock = threading.Lock()
 
     threads = []
@@ -46,11 +44,11 @@ def run():
         threads.append(t)
         t.start()
 
-    for y in range(1):
-        t = threading.Thread(target=manageUsersRequests, args =(lock, qUserRequests))
-        t.daemon = True
-        threads.append(t)
-        t.start()
+    # for y in range(1):
+    #     t = threading.Thread(target=manageUsersRequests, args =(lock, qUserRequests))
+    #     t.daemon = True
+    #     threads.append(t)
+    #     t.start()
 
     for y in range(1):
         t = threading.Thread(target=syncUsers, args=(lock, ))
