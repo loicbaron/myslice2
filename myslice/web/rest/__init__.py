@@ -1,12 +1,8 @@
-from myslice import settings as s
-import json, time, decimal, logging
-from datetime import date, datetime
+import logging
 import tornado_cors as cors
 from tornado import web
-import rethinkdb as r
 
 logger = logging.getLogger(__name__)
-
 
 class Api(cors.CorsMixin, web.RequestHandler):
 
@@ -17,3 +13,11 @@ class Api(cors.CorsMixin, web.RequestHandler):
         # Allow CORS
         self.set_header("Access-Control-Allow-Origin", "*")
         self.set_header("Content-Type", "application/json")
+
+    def userError(self, message):
+        self.set_status(400)
+        self.finish({"error": message})
+
+    def serverError(self, message):
+        self.set_status(500)
+        self.finish({"error": message})
