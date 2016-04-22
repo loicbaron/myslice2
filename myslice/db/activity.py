@@ -424,6 +424,9 @@ class Event(Dict):
         if not self.id:
             raise Exception('Missing required Id')
 
+        if not self.isRunning():
+            raise Exception('Event must be in RUNNING state before SUCCESS')
+
         self.status = EventStatus.SUCCESS
 
     def hasErrors(self):
@@ -437,6 +440,10 @@ class Event(Dict):
         Set the event to error
         :return:
         '''
+
+        if not self.isRunning():
+            raise Exception('Event must be in RUNNING state before ERROR')
+
         self.status = EventStatus.ERROR
 
     def hasWarnings(self):
@@ -450,6 +457,10 @@ class Event(Dict):
         Set the event to warning
         :return:
         '''
+
+        if not self.isRunning():
+            raise Exception('Event must be in RUNNING state before WARNING')
+
         self.status = EventStatus.WARNING
 
     def isPending(self):
