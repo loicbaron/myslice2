@@ -5,12 +5,15 @@ import rethinkdb as r
 from myslice.lib.util import myJSONEncoder
 from myslice.web.rest import Api
 
+from myslice.db.activity import Event, EventAction, ObjectType
+from myslice.db import dispatch
+
 from tornado import gen, escape
 
 class ProjectsHandler(Api):
 
     @gen.coroutine
-    def get(self):
+    def get(self, id):
         """
         GET /projects/[<id>]
 
@@ -38,9 +41,34 @@ class ProjectsHandler(Api):
     def post(self):
         """
         POST /projects
+        { data: { name: string, label: string, description: string } }
         :return:
         """
-        pass
+
+        try:
+            data = escape.json_decode(self.request.body)['data']
+        except json.decoder.JSONDecodeError as e:
+            self.userError("malformed request", e.message)
+            return
+
+        try:
+            event = Event({
+                'action': EventAction.CREATE,
+                'user': 'user_id_todo_from_auth',
+                'object': {
+                    'type': ObjectType.PROJECT,
+                    'id': 'generated id from data name'
+                },
+                'data': data
+            })
+        except Exception as e:
+            self.userError("problem with request", e.message)
+            return
+        else:
+            result = yield dispatch(self.dbconnection, event)
+            # data = self.get_argument('event','no data')
+            self.write(json.dumps({"result": "ok"}, cls=myJSONEncoder))
+            print(event)
 
     @gen.coroutine
     def put(self):

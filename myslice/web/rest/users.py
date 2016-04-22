@@ -10,7 +10,7 @@ from tornado import gen, escape
 class UsersHandler(Api):
 
     @gen.coroutine
-    def get(self):
+    def get(self, id):
         """
         GET /users/[<id>]
 
