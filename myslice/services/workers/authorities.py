@@ -34,7 +34,7 @@ def events_run(lock, qAuthorityEvents):
     while True:
 
         try:
-            event = Event(qAuthoritiesEvents.get())
+            event = Event(qAuthorityEvents.get())
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
         else:
@@ -82,18 +82,19 @@ def events_run(lock, qAuthorityEvents):
                 db.dispatch(dbconnection, event)
 
 
-def pendings_run(lock, qUserPendings):
+def pendings_run(lock, qAuthorityPendings):
     """
     Process the user request directly
     """
-    event = Event(qUserPendings.get())
-    if event.user == event.object.id:
-        event.setApproved()
+    event = Event(qAuthorityPendings.get())
     
     dbconnection = connect()
     user = User(db.get(dbconnection, table='users', id=event.user))
-    authority = Authority(db.get(dbconnection, table='authorities', id=user.authority))
-    upper_authority = Authority(db.get(dbconnection, table='authorities', id=authority.authority))
+    authority = Authority(db.get(dbconnection, table='authorities', id=event.object.id))
+    if authority:
+        upper_authority = Authority(db.get(dbconnection, table='authorities', id=authority.authority))
+    else:
+        upper_authority = Authority(db.get(dbconnection, table='authorities', id=event.object.id))
 
     if event.user in authority.pi_users or event.user in upper_authority.pi_users:
         event.setApproved()
@@ -125,7 +126,7 @@ def sync(lock):
                     ls['enabled'] = format_date()
                     db.authorities(dbconnection, ls)
 
-                if not users.has(ls['id']) and ls['status'] is not Status.PENDING:
+                if not authorities.has(ls['id']) and ls['status'] is not Status.PENDING:
                     # delete resourc that have been deleted elsewhere
                     db.delete(dbconnection, 'authorities', ls['id'])
                     logger.info("Authority {} deleted".format(ls['id']))

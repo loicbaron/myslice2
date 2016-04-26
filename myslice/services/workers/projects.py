@@ -38,7 +38,7 @@ def sync(lock):
             lprojects = projects(dbconnection, p.dict())
 
             for lp in lprojects :
-                if not projects.has(lp['id']) and lp['status'] is not Status.PENDING:
+                if not p.has(lp['id']) and lp['status'] is not Status.PENDING:
                     # delete slices that have been deleted elsewhere
                     delete(dbconnection, 'projects', lp['id'])
                     logger.info("Project {} deleted".format(lp['id']))
