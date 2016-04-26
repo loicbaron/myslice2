@@ -69,7 +69,9 @@ def events_run(lock, qUserEvents):
                     event.setError()
                      
                 if result:
-                    db.users(dbconnection, result)
+                    print(result)
+                    db.users(dbconnection, result, event.user)
+                    print(db.get(dbconnection, table='users', id=event.user))
                     event.setSuccess()
                 
                 db.dispatch(dbconnection, event)

@@ -29,6 +29,10 @@ class EventStatus(Enum):
     """
     # NEW created event, this will be processed
     NEW = "NEW"
+    # If the event needs an external interaction
+    PENDING = "PENDING"
+    DENIED = "DENIED"
+    APPROVED = "APPROVED"
     # WAITING to be processed by an external service
     WAITING = "WAITING"
     # RUNNING the operation is running
@@ -42,28 +46,23 @@ class EventStatus(Enum):
     def __str__(self):
         return str(self.value)
 
-class EventRequest(Enum):
-    ##
-    # If Event is REQ (Request)
-    PENDING = "PENDING"
-    DENIED = "DENIED"
-    APPROVED = "APPROVED"
-
-    def __str__(self):
-        return str(self.value)
-
 class EventAction(Enum):
     """
+    Action definitions for the event entity
+
+    CREATE / DELETE / UPDATE for the object
+    ADD / REMOVE reference/link to another object
+    (e.g. add/remove user to/from slice )
 
     """
-    # add an object
+    # CRUD operations on objects
+    CREATE = "CREATE"
+    UPDATE = "UPDATE"
+    DELETE = "DELETE"
+
+    # Modifications on objects
     ADD = "ADD"
-    # delete an object
-    DEL = "DEL"
-    # modify an object
-    MOD = "MOD"
-    # event will be a request
-    REQ = "REQ"
+    REMOVE = "REMOVE"
 
     def __str__(self):
         return str(self.value)
@@ -130,11 +129,16 @@ class Object(Dict):
 class Event(Dict):
     """
         {
-            action: EventAction
-            status: EventStatus
+            action: <EventAction>
+            status: <EventStatus>
+            log: [{
+                timestamp: <timestamp>
+                message: <String>
+                type: <info|warning|error|debug>
+            }]
             messages: [String]
-            object: {}
-            data: {}
+            object: <Object>
+            data: { [<mixed>] }
             user: <id>
             created: <date>
             updated: <date>
@@ -166,14 +170,6 @@ class Event(Dict):
             pass
 
         ##
-        # Event Request status
-        if self.isRequest():
-            try:
-                self.request = event['request']
-            except KeyError:
-                self.pending()
-
-        ##
         # User making the request
         #
         try:
@@ -193,12 +189,11 @@ class Event(Dict):
 
         ##
         # data is a dictionary of changes for the object
-        # action DEL does not need it
-        if not self.removingObject():
-            try:
-                self.data = event['data']
-            except KeyError:
-                raise Exception("Data not specified for action {}".format(self.action))
+        #
+        try:
+            self.data = event['data']
+        except KeyError:
+            self.data = []
 
         try:
             self.created = format_date(event['created'])
@@ -259,35 +254,6 @@ class Event(Dict):
         self['status'] = status
 
     ##
-    # Request Status
-    # Can change during the life of the request
-    @property
-    def request(self):
-        return self['request']
-
-    @request.setter
-    def request(self, value):
-
-        if value is None:
-            self['request'] = None
-            return
-
-        if not self.isRequest():
-            raise Exception('Only Event of type REQUEST can have a PENDING/APPROVED/DENIED status')
-
-        if isinstance(value, EventRequest):
-            request_status = value
-        elif value in EventRequest.__members__:
-            request_status = EventRequest[value]
-        else:
-            raise Exception("Event Request Status not valid")
-
-        # update date of the request
-        self.updated()
-
-        self['request'] = request_status
-
-    ##
     # User creating the Event
     @property
     def user(self):
@@ -316,8 +282,7 @@ class Event(Dict):
     @data.setter
     def data(self, value):
         if not isinstance(value, dict) and not isinstance(value, list):
-            self.messages = "Invalid format for data (must be a dict or a list)"
-            raise Exception(self.messages)
+            raise Exception("Invalid format for data (must be a dict or a list)")
         else:
             self['data'] = value
 
@@ -361,6 +326,14 @@ class Event(Dict):
             return self._log('info')
 
     ##
+    # Log WARNING
+    def logWarning(self, message=None):
+        if message:
+            self._log('warning', message)
+        else:
+            return self._log('warning')
+
+    ##
     # Log ERROR
     def logError(self, message=None):
         if message:
@@ -383,17 +356,20 @@ class Event(Dict):
             return True
         return False
 
-    def isRequest(self):
-        return self._checkAction(EventAction.REQ)
+    def creatingObject(self):
+        return self._checkAction(EventAction.CREATE)
+
+    def updatingObject(self):
+        return self._checkAction(EventAction.UPDATE)
+
+    def deletingObject(self):
+        return self._checkAction(EventAction.DELETE)
 
     def addingObject(self):
         return self._checkAction(EventAction.ADD)
 
-    def modifyingObject(self):
-        return self._checkAction(EventAction.MOD)
-
     def removingObject(self):
-        return self._checkAction(EventAction.DEL)
+        return self._checkAction(EventAction.REMOVE)
 
     ##
     # Status
@@ -408,47 +384,7 @@ class Event(Dict):
     def isWaiting(self):
         return self._checkStatus(EventStatus.WAITING)
 
-    def isRunning(self):
-        return self._checkStatus(EventStatus.RUNNING)
-
-    def isSuccess(self):
-        return self._checkStatus(EventStatus.SUCCESS)
-
-    def hasErrors(self):
-        return self._checkStatus(EventStatus.ERROR)
-
-    def hasWarnings(self):
-        return self._checkStatus(EventStatus.WARNING)
-
-    ##
-    # RequestStatus
-    def _checkRequestStatus(self, status):
-        if self.request == status:
-            return True
-        return False
-
-    def isPending(self):
-        return self._checkRequestStatus(EventRequest.PENDING)
-
-    def isApproved(self):
-        return self._checkRequestStatus(EventRequest.APPROVED)
-
-    def isDenied(self):
-        return self._checkRequestStatus(EventRequest.DENIED)
-
-    ##
-    # Ready for being processed
-    def isReady(self):
-        if (self.isRequest() and self.isApproved()):
-            return True
-
-        if (not self.isRequest() and self.isWaiting()):
-            return True
-
-        return False
-
-
-    def waiting(self):
+    def setWaiting(self):
         '''
         Set the event to waiting
         :return:
@@ -456,9 +392,15 @@ class Event(Dict):
         if not self.id:
             raise Exception('Missing required Id')
 
-        self.status = EventStatus.WAITING
+        if self.isNew() or self.isApproved():
+            self.status = EventStatus.WAITING
+        else:
+            raise Exception('Event must be in state NEW or APPROVED before WAITING')
 
-    def running(self):
+    def isRunning(self):
+        return self._checkStatus(EventStatus.RUNNING)
+
+    def setRunning(self):
         '''
         Set the event to running
         :return:
@@ -466,9 +408,15 @@ class Event(Dict):
         if not self.id:
             raise Exception('Missing required Id')
 
+        if not self.isWaiting():
+            raise Exception('Event must be in WAITING state before RUNNING')
+
         self.status = EventStatus.RUNNING
 
-    def success(self):
+    def isSuccess(self):
+        return self._checkStatus(EventStatus.SUCCESS)
+
+    def setSuccess(self):
         '''
         Set the event to success
         :return:
@@ -476,32 +424,63 @@ class Event(Dict):
         if not self.id:
             raise Exception('Missing required Id')
 
+        if not self.isRunning():
+            raise Exception('Event must be in RUNNING state before SUCCESS')
+
         self.status = EventStatus.SUCCESS
 
-    def error(self):
+    def hasErrors(self):
+        return self._checkStatus(EventStatus.ERROR)
+
+    def isError(self):
+        return self._checkStatus(EventStatus.ERROR)
+
+    def setError(self):
         '''
         Set the event to error
         :return:
         '''
+
+        if not self.isRunning():
+            raise Exception('Event must be in RUNNING state before ERROR')
+
         self.status = EventStatus.ERROR
 
-    def warning(self):
+    def hasWarnings(self):
+        return self._checkStatus(EventStatus.WARNING)
+
+    def isWarning(self):
+        return self._checkStatus(EventStatus.WARNING)
+
+    def setWarning(self):
         '''
         Set the event to warning
         :return:
         '''
+
+        if not self.isRunning():
+            raise Exception('Event must be in RUNNING state before WARNING')
+
         self.status = EventStatus.WARNING
 
-    def pending(self):
+    def isPending(self):
+        return self._checkStatus(EventStatus.PENDING)
+
+    def setPending(self):
         '''
         Set the event request to pending
         :return:
         '''
+        if not self.isNew():
+            raise Exception('Event must be in state NEW before PENDING')
 
-        self.request = EventRequest.PENDING
+        self.status = EventStatus.PENDING
+
+    def isApproved(self):
+        return self._checkStatus(EventStatus.APPROVED)
 
     # Approves the request
-    def approve(self):
+    def setApproved(self):
         '''
         Set the event request to approved
         :return:
@@ -509,11 +488,17 @@ class Event(Dict):
         if not self.id:
             raise Exception('Missing required Id')
 
-        self.request = EventRequest.APPROVED
+        if not self.isPending():
+            raise Exception('Event must be in PENDING state before APPROVED')
+
+        self.status = EventStatus.APPROVED
+
+    def isDenied(self):
+        return self._checkStatus(EventStatus.DENIED)
 
     ##
     # Denies the request
-    def deny(self):
+    def setDenied(self):
         '''
         Set the event request to denied
         :return:
@@ -521,4 +506,15 @@ class Event(Dict):
         if not self.id:
             raise Exception('Missing required Id')
 
-        self.request = EventRequest.DENIED
+        if not self.isPending():
+            raise Exception('Event must be in PENDING state before DENIED')
+
+        self.status = EventStatus.DENIED
+
+    ##
+    # Ready for being processed
+    def isReady(self):
+        if self.isApproved() or self.isWaiting():
+            return True
+
+        return False

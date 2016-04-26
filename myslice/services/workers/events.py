@@ -30,14 +30,11 @@ def run(q):
                 # events that require a request to be created and processes
                 logger.info("Received event request from user {}".format(event.user))
 
-                # event is of type request, we put it on PENDING
                 event.setPending()
-
             else:
                 # TODO: check userid actually exists
                 # TODO: check object id exists
                 logger.info("Received event {} from user {}".format(event.action, event.user))
-
                 # event will wait to be processed by the appropriate service
                 event.setWaiting()
 
