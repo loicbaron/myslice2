@@ -20,6 +20,15 @@ tables = [
             'pkey' : 'id'
         },
         {
+            'name' : 'authorities',
+            'pkey' : 'id'
+        },
+        {
+            'name' : 'projects',
+            'pkey' : 'id'
+        },
+
+        {
             'name' : 'users',
             'pkey' : 'id'
         },
@@ -112,6 +121,15 @@ def users(dbconnection=None, data=None, id=None):
         r.db(s.db.name).table('users').insert(data, conflict='update').run(dbconnection)
 
     return r.db(s.db.name).table('users').run(dbconnection)
+
+def authorities(dbconnection=None, data=None):
+    if not dbconnection:
+        dbconnection = connect()
+
+    if data:
+        r.db(s.db.name).table('authorities').insert(data, conflict='update').run(dbconnection)
+
+    return r.db(s.db.name).table('authorities').run(dbconnection)
 
 
 def projects(dbconnection=None, data=None):
