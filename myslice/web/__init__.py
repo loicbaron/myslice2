@@ -11,9 +11,9 @@ from oauth2.web.tornado import OAuth2Handler
 from sockjs.tornado import SockJSRouter
 from rethinkdb import r
 import myslice.db as db
-from myslice.web.rest.resource import ResourceHandler
-from myslice.web.rest.slice import SliceHandler
-from myslice.web.rest.user import UserHandler
+from myslice.web.rest.resources import ResourcesHandler
+from myslice.web.rest.slices import SlicesHandler
+from myslice.web.rest.users import UsersHandler
 from myslice.web.rest.activity import ActivityHandler
 from myslice.web.websocket import WebsocketsHandler
 
@@ -98,7 +98,7 @@ class Application(web.Application):
             (provider.authorize_path, OAuth2Handler, dict(provider=provider)),
             (provider.token_path, OAuth2Handler, dict(provider=provider)),
 
-            (r"/login", login.Index),
+            #(r"/login", login.Index),
             (r'/', home.Index),
             (r'/activity', activity.Index),
             (r'/static/(.*)', web.StaticFileHandler, {'path': self.static}),
