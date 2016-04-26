@@ -32,10 +32,10 @@ def sync(lock):
             logger.info("Worker projects starting synchronization")
 
             # MySliceLib Query Slices
-            projects = q(Project).get()
+            p = q(Project).get()
 
             # update local projects table
-            lprojects = projects(dbconnection, projects.dict())
+            lprojects = projects(dbconnection, p.dict())
 
             for lp in lprojects :
                 if not projects.has(lp['id']) and lp['status'] is not Status.PENDING:

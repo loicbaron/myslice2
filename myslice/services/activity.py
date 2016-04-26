@@ -41,11 +41,12 @@ def run():
         threads.append(t)
         t.start()
 
-    for y in range(1):
-        t = threading.Thread(target=manageEmails, args=(qEmails,))
-        t.daemon = True
-        threads.append(t)
-        t.start()
+            # 
+    #for y in range(1):
+    #    t = threading.Thread(target=manageEmails, args=(qEmails,))
+    #    t.daemon = True
+    #    threads.append(t)
+    #    t.start()
 
     ##
     # Watch for changes on the activity table and send the event/request

@@ -1,9 +1,9 @@
 ##
 #   MySlice version 2
 #
-#   Users thread workers
+#   Authoritiess thread workers
 #
-#   (c) 2016 Ciro Scognamiglio <ciro.scognamiglio@lip6.fr>
+#   (c) 2016 Ciro Scognamiglio <ciro.scognamiglio@lip6.fr>, Loïc Baron <loic.baron@lip6.fr>
 ##
 
 import logging
@@ -15,17 +15,18 @@ from myslice.lib.util import format_date
 from myslice.db.activity import Event, EventAction, EventStatus, Object, ObjectType 
 from myslice.db import changes, connect
 from myslice.db.user import User
+from myslice.db.authority import Authority
 from myslicelib.query import q
 
-logger = logging.getLogger('myslice.service.users')
+logger = logging.getLogger('myslice.service.authorities')
 
 
-def events_run(lock, qUserEvents):
+def events_run(lock, qAuthorityEvents):
     """
-    Process the user after approval 
+    Process the authority after approval 
     """
 
-    logger.info("Worker users events starting") 
+    logger.info("Worker authorities events starting") 
 
     # db connection is shared between threads
     dbconnection = connect()
@@ -33,16 +34,16 @@ def events_run(lock, qUserEvents):
     while True:
 
         try:
-            event = Event(qUserEvents.get())
+            event = Event(qAuthoritiesEvents.get())
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
-        finally:
+        else:
             logger.info("Processing event from user {}".format(event.user))
             
             with lock:
                 try:
                     event.setRunning()
-                    
+
                     # TODO: CREATE & DELETE
                     # if event.creatingObject():
                     # if event.deletingObject():
@@ -52,17 +53,17 @@ def events_run(lock, qUserEvents):
 
                     if event.addingObject():
 
-                        user = User(db.get(dbconnection, table='users', id=event.object.id))
+                        authority = Authority(db.get(dbconnection, table='authorities', id=event.object.id))
                         
-                        if event.data['type'] == 'KEY':
+                        if event.data['type'] == 'USER':
                             user.addKey(event.data['key'])
                             result = user.save()
 
                     if event.removingObject():
 
-                        user = User(db.get(dbconnection, table='users', id=event.object.id))
+                        user = User(db.get(dbconnection, table='authorities', id=event.object.id))
                         
-                        if event.data['type'] == 'KEY':
+                        if event.data['type'] == 'USER':
                             user.delKey(event.data['key'])
                             result = user.save()
 
@@ -75,7 +76,7 @@ def events_run(lock, qUserEvents):
                 if result:
                     print(result)
                     db.users(dbconnection, result, event.user)
-                    print(db.get(dbconnection, table='users', id=event.object.id))
+                    print(db.get(dbconnection, table='authorities', id=event.object.id))
                     event.setSuccess()
                 
                 db.dispatch(dbconnection, event)
@@ -110,28 +111,28 @@ def sync(lock):
         with lock:
             logger.info("Worker users starting period synchronization")
 
-            users = q(User).get()
+            authorities = q(Authority).get()
 
             """
-            update local user table
+            update local slice table
             """
-            lusers = db.users(dbconnection, users.dict())
+            lauthorities = db.authorities(dbconnection, authorities.dict())
 
-            for ls in lusers :
+            for ls in lauthorities :
                 # add status if not present and update on db
                 if not 'status' in ls:
                     ls['status'] = Status.ENABLED
                     ls['enabled'] = format_date()
-                    db.users(dbconnection, ls)
+                    db.authorities(dbconnection, ls)
 
                 if not users.has(ls['id']) and ls['status'] is not Status.PENDING:
                     # delete resourc that have been deleted elsewhere
-                    db.delete(dbconnection, 'users', ls['id'])
-                    logger.info("User {} deleted".format(ls['id']))
+                    db.delete(dbconnection, 'authorities', ls['id'])
+                    logger.info("Authority {} deleted".format(ls['id']))
 
  
 
-            logger.info("Worker users finished period synchronization") 
+            logger.info("Worker authorities finished period synchronization") 
         
         # sleep
         time.sleep(86400)

@@ -33,10 +33,10 @@ def run():
     threads = []
 
     # projects sync
-    # t = threading.Thread(target=syncProjects, args=(lock,))
-    # t.daemon = True
-    # threads.append(t)
-    # t.start()
+    t = threading.Thread(target=syncProjects, args=(lock,))
+    t.daemon = True
+    threads.append(t)
+    t.start()
 
     # projects manager
     t = threading.Thread(target=manageProjects, args=(lock, qProjects))

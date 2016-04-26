@@ -29,8 +29,16 @@ def run(q):
             if event.creatingObject():
                 # events that require a request to be created and processes
                 logger.info("Received event request from user {}".format(event.user))
-
                 event.setPending()
+            # TODO: check that 
+            # user has the rights to do the action -> waiting
+            # Check in local DB 
+            #    Slice -> if user in users
+            #    Authority & Project -> if event.user in pi_users of event.object.id or an upper authority
+            #    User -> if event.user == event.object.id
+            #            or if event.user in pi_users of authority of event.object.id or an upper authority
+            #
+            # event.setWaiting()
             else:
                 # TODO: check userid actually exists
                 # TODO: check object id exists

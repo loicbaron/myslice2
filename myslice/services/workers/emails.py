@@ -12,7 +12,7 @@ import time
 from myslice.db.activity import Event 
 from myslice.db import changes, connect
 from myslice.db.user import User
-from myslice.db.email import Email
+#from myslice.db.email import Email
 
 logger = logging.getLogger('myslice.service.emails')
 
