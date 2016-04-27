@@ -12,49 +12,61 @@ import threading
 from queue import Queue
 from myslice.db.activity import Event, ObjectType
 from myslice.db import changes
-from myslice.services.workers.projects import sync as syncProjects, manageProjects
-from myslice.services.workers.slices import sync as syncSlices
+from myslice.services.workers.projects import events_run as manageProjects, sync as syncProjects
+from myslice.services.workers.slices import events_run as manageSlices, sync as syncSlices
 
 logger = logging.getLogger('myslice.service.experiments')
 
+def receive_signal(signum, stack):
+    logger.info('Received signal %s', signum)
+
+    raise SystemExit('Exiting')
+
 def run():
     """
-    A thread that will check resource availability and information
+    A Process that will manage Projects and Slices 
     """
+    signal.signal(signal.SIGINT, receive_signal)
+    signal.signal(signal.SIGTERM, receive_signal)
+    signal.signal(signal.SIGHUP, receive_signal)
+
     logger.info("Service experiments starting")
 
-
-    lock = threading.Lock()
-
+    # db connection is shared between threads
     qProjects = Queue()
     qSlices = Queue()
+    lock = threading.Lock()
 
     # threads
     threads = []
 
-    # projects sync
-    t = threading.Thread(target=syncProjects, args=(lock,))
-    t.daemon = True
-    threads.append(t)
-    t.start()
-
     # projects manager
-    t = threading.Thread(target=manageProjects, args=(lock, qProjects))
-    t.daemon = True
-    threads.append(t)
-    t.start()
+    for y in range(1):
+        t = threading.Thread(target=manageProjects, args=(lock, qProject))
+        t.daemon = True
+        threads.append(t)
+        t.start()
 
-    # slices sync
-    # t = threading.Thread(target=syncSlices, args=(lock,))
-    # t.daemon = True
-    # threads.append(t)
-    # t.start()
+    # projects sync
+    for y in range(1):
+        t = threading.Thread(target=syncProjects, args=(lock,))
+        t.daemon = True
+        threads.append(t)
+        t.start()
 
     # slices manager
-    # t = threading.Thread(target=manageSlices, args=(lock, qSlices))
-    # t.daemon = True
-    # threads.append(t)
-    # t.start()
+    for y in range(1):
+        t = threading.Thread(target=manageSlices, args=(lock, qSlices))
+        t.daemon = True
+        threads.append(t)
+        t.start()
+
+    # slices sync
+    for y in range(1):
+        t = threading.Thread(target=syncSlices, args=(lock,))
+        t.daemon = True
+        threads.append(t)
+        t.start()
 
     ##
     # will watch for incoming events/requests and pass them to

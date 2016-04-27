@@ -17,6 +17,8 @@ class ObjectType(Enum):
     PROJECT = "PROJECT"
     SLICE = "SLICE"
     USER = "USER"
+    PI = "PI"
+    KEY = "KEY"
     RESOURCE = "RESOURCE"
 
     def __str__(self):
