@@ -14,7 +14,7 @@ from myslice.lib.util import format_date
 
 from myslice.db.activity import Event, ObjectType
 from myslice.db import changes, connect
-from myslice.db.lease import Lease
+from myslicelib.model.lease import Lease
 from myslice.db.project import Project
 from myslice.db.slice import Slice
 from myslice.db.user import User

@@ -56,8 +56,10 @@ def events_run(lock, qUserEvents):
                         user.id = event.object.id
                             
                         result = user.delete()
-                        db.delete(dbconnection, table='users', id=event.object.id)
-                        event.setSuccess()
+                        # no error , successfuly delted
+                        if result is None:
+                            db.delete(dbconnection, table='users', id=event.object.id)
+                            event.setSuccess()
 
                     if event.updatingObject():
                         

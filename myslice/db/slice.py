@@ -1,17 +1,10 @@
-from myslicelib.model.user import User as myslicelibUser
+from myslicelib.model.slice import Slice as myslicelibSlice
 from xmlrpc.client import Fault as SFAError
 
-class User(myslicelibUser):
-
-    remote_fields = ['email', 'keys']
-
-    # def isRemoteUpdate(self):
-    #     if set(self.attributes()) & set(self.remote_fields):
-    #         return True
-    #     return False
+class Slice(myslicelibSlice):
 
     def save(self):
-        result = super(myslicelibUser, self).save()
+        result = super(myslicelibSlice, self).save()
         #print(self.attributes())
         #print(result['data'][0])
         if result['errors']:
@@ -26,7 +19,7 @@ class User(myslicelibUser):
             return { **(self.attributes()), **result['data'][0]}
 
     def delete(self):
-        result = super(myslicelibUser, self).delete()
+        result = super(myslicelibSlice, self).delete()
         
         if result['errors']:
             raise Exception('errors: %s' % result['errors'])

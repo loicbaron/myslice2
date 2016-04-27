@@ -8,6 +8,7 @@
 ##
 import pprint
 import logging
+import signal
 import threading
 from queue import Queue
 from myslice.db.activity import Event, ObjectType
@@ -42,7 +43,7 @@ def run():
 
     # projects manager
     for y in range(1):
-        t = threading.Thread(target=manageProjects, args=(lock, qProject))
+        t = threading.Thread(target=manageProjects, args=(lock, qProjects))
         t.daemon = True
         threads.append(t)
         t.start()
