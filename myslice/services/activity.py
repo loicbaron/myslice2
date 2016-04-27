@@ -62,8 +62,8 @@ def run():
         else:
             if event.isNew():
                 qEvents.put(event)
-
-            qEmails.put(event)
+            if event.isPending():
+                qEmails.put(event)
 
     # waits for the thread to finish
     for x in threads:

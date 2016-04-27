@@ -44,7 +44,9 @@ def events_run(lock, qUserEvents):
                     event.setRunning()
                     
                     # TODO: CREATE & DELETE
-                    # if event.creatingObject():
+                    if event.creatingObject():
+                    
+
                     # if event.deletingObject():
 
                     if event.updatingObject():
@@ -75,27 +77,9 @@ def events_run(lock, qUserEvents):
                 if result:
                     print(result)
                     db.users(dbconnection, result, event.user)
-                    print(db.get(dbconnection, table='users', id=event.object.id))
                     event.setSuccess()
                 
                 db.dispatch(dbconnection, event)
-
-
-def pendings_run(lock, qUserPendings):
-    """
-    Process the user request directly
-    """
-    event = Event(qUserPendings.get())
-    if event.user == event.object.id:
-        event.setApproved()
-    
-    dbconnection = connect()
-    user = User(db.get(dbconnection, table='users', id=event.user))
-    authority = Authority(db.get(dbconnection, table='authorities', id=user.authority))
-    upper_authority = Authority(db.get(dbconnection, table='authorities', id=authority.authority))
-
-    if event.user in authority.pi_users or event.user in upper_authority.pi_users:
-        event.setApproved()
 
 def sync(lock):
     """

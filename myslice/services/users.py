@@ -13,7 +13,6 @@ from queue import Queue
 from myslice.db.activity import Event, ObjectType
 from myslice.db import connect, changes
 from myslice.services.workers.users import events_run as manageUsersEvents
-from myslice.services.workers.users import pendings_run as manageUsersPendings
 from myslice.services.workers.users import sync as syncUsers
 
 logger = logging.getLogger('myslice.service.activity')
@@ -35,18 +34,11 @@ def run():
 
     # db connection is shared between threads
     qUserEvents = Queue()
-    qUserPendings = Queue()
     lock = threading.Lock()
 
     threads = []
     for y in range(1):
         t = threading.Thread(target=manageUsersEvents, args=(lock, qUserEvents))
-        t.daemon = True
-        threads.append(t)
-        t.start()
-
-    for y in range(1):
-        t = threading.Thread(target=manageUsersPendings, args =(lock, qUserPendings))
         t.daemon = True
         threads.append(t)
         t.start()
@@ -68,8 +60,6 @@ def run():
                 # event.isReady() = Request APPROVED or Event WAITING
                 if event.isReady():
                     qUserEvents.put(event)
-                elif event.isPending():
-                    qUserPendings.put(event)
                 
     for x in threads:
         x.join()

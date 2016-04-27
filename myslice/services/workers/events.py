@@ -6,10 +6,26 @@
 #   (c) 2016 Ciro Scognamiglio <ciro.scognamiglio@lip6.fr>
 ##
 import logging
-from myslice.db.activity import Event
+from pprint import pprint
+import myslice.db as db
 from myslice.db import connect, dispatch
+from myslice.db.activity import Event, ObjectType 
+from myslice.db.user import User
 
 logger = logging.getLogger('myslice.service.activity')
+
+def check_user_rights(user, event):
+    if event.object.type == ObjectType.SLICE:
+        for s in user.slices:
+            if s == event.object.id:
+                return True
+    elif event.user == event.object.id:
+        return True
+    else:
+        for a in user.pi_authorities:
+            if event.object.id.split('+')[1].startswith(a.split('+')[1]):
+                return True
+    return False
 
 def run(q):
     """
@@ -26,10 +42,6 @@ def run(q):
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
         else:
-            if event.creatingObject():
-                # events that require a request to be created and processes
-                logger.info("Received event request from user {}".format(event.user))
-                event.setPending()
             # TODO: check that 
             # user has the rights to do the action -> waiting
             # Check in local DB 
@@ -39,12 +51,17 @@ def run(q):
             #            or if event.user in pi_users of authority of event.object.id or an upper authority
             #
             # event.setWaiting()
-            else:
-                # TODO: check userid actually exists
-                # TODO: check object id exists
-                logger.info("Received event {} from user {}".format(event.action, event.user))
-                # event will wait to be processed by the appropriate service
+            # Only NEW events here
+            # if event.isNew():
+            try:
+                user = User(db.get(dbconnection, table='users', id=event.user))
+            except Exception as e:
+                logger.error("Unable to fetch the user from db {}".format(e))
+
+            if check_user_rights(user,event):
                 event.setWaiting()
+            else:
+                event.setPending()
 
             # dispatch the updated event
             dispatch(dbconnection, event)
