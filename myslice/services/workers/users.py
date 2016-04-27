@@ -34,39 +34,63 @@ def events_run(lock, qUserEvents):
 
         try:
             event = Event(qUserEvents.get())
+            print(event)
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
         finally:
             logger.info("Processing event from user {}".format(event.user))
             
             with lock:
-                try:
-                    event.setRunning()
-                    
-                    # TODO: CREATE & DELETE
+                
+                event.setRunning()
+                try:    
                     if event.creatingObject():
-                    
+                        logger.info("creating the user {}".format(event.object.id))
+                        user = User(event.data)
+                        user.id = event.object.id
+                        result = user.save()
 
-                    # if event.deletingObject():
+                    if event.deletingObject():
+                        logger.info("delete the object to user {}".format(event.object.id))
+                        user = User()
+                        user.id = event.object.id
+                            
+                        result = user.delete()
+                        db.delete(dbconnection, table='users', id=event.object.id)
+                        event.setSuccess()
 
                     if event.updatingObject():
-                        result = event.data
-
-                    if event.addingObject():
-
-                        user = User(db.get(dbconnection, table='users', id=event.object.id))
                         
-                        if event.data['type'] == 'KEY':
-                            user.addKey(event.data['key'])
-                            result = user.save()
+                        # if user.isRemoteUpdate():
+                        #     logger.info("updating remotely the user {}".format(event.object.id))
+                        #     user.id = event.object.id
+                        #     # update both remote fileds and local fields(if exists)                           
+                        #     result = event.data.update(user.save().first().dict())
+                        # else:
+                        #     logger.info("updating locally the user {}".format(event.object.id))
+                        #     result = event.data
 
-                    if event.removingObject():
+                        logger.info("updating the user {}".format(event.object.id))
+                        user = User(event.data)
+                        user.id = event.object.id
+                        result = user.save()
 
-                        user = User(db.get(dbconnection, table='users', id=event.object.id))
+                    # if event.addingObject():
+                    #     logger.info("adding the object to user {}".format(event.object.id))
+
+                    #     user = User(db.get(dbconnection, table='users', id=event.object.id))                        
                         
-                        if event.data['type'] == 'KEY':
-                            user.delKey(event.data['key'])
-                            result = user.save()
+                    #     if event.data['type'] == 'KEY':
+                    #         user.addKey(event.data['value'])
+                    #         result = user.save()
+
+                    # if event.removingObject():
+                    #     logger.info("remove the object from user {}".format(event.object.id))
+
+                    #     user = User(db.get(dbconnection, table='users', id=event.object.id))
+                    #     if event.data['type'] == 'KEY':
+                    #         user.delKey(event.data['value'])
+                    #         result = user.save()
 
                 except Exception as e:
                     logger.error("Problem with event: {}".format(e))
@@ -76,7 +100,8 @@ def events_run(lock, qUserEvents):
                      
                 if result:
                     print(result)
-                    db.users(dbconnection, result, event.user)
+                    logger.info("Success with event from user {}".format(event.user))
+                    db.users(dbconnection, result, event.object.id)
                     event.setSuccess()
                 
                 db.dispatch(dbconnection, event)
