@@ -41,15 +41,17 @@ class ActivityHandler(Api):
         try:
             data = escape.json_decode(self.request.body)['event']
         except json.decoder.JSONDecodeError as e:
+            self.set_status(500)
             self.finish(json.dumps({"return": {"status": "error", "messages": "malformed request"}}))
             return
 
         try:
             event = Event(data)
         except Exception as e:
+            self.set_status(500)
             self.finish(json.dumps({"return": {"status":"error","messages":e.message}}))
-            import traceback
-            traceback.print_exc()
+            #import traceback
+            #traceback.print_exc()
         else:
             result = yield dispatch(self.dbconnection, event)
             #data = self.get_argument('event','no data')

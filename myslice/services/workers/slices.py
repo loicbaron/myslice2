@@ -114,6 +114,9 @@ def sync(lock):
     # DB connection
     dbconnection = db.connect()
 
+    # XXX ATTENTION !!!
+    # TODO: How to synchronize the resources for each Slice???
+
     while True:
         with lock:
             logger.info("Worker slices starting synchronization")

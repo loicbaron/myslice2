@@ -101,19 +101,19 @@ def sync(lock):
             p = q(Project).get()
 
             # update local projects table
-            lprojects = projects(dbconnection, p.dict())
+            lprojects = db.projects(dbconnection, p.dict())
 
-            for lp in lprojects :
-                if not p.has(lp['id']) and lp['status'] is not Status.PENDING:
-                    # delete slices that have been deleted elsewhere
-                    delete(dbconnection, 'projects', lp['id'])
-                    logger.info("Project {} deleted".format(lp['id']))
-
+            for ls in lsrojects :
                 # add status if not present and update on db
-                if not 'status' in lp:
-                    lp['status'] = Status.ENABLED
-                    lp['enabled'] = format_date()
-                    projects(dbconnection, lp)
+                if not 'status' in ls:
+                    ls['status'] = Status.ENABLED
+                    ls['enabled'] = format_date()
+                    db.projects(dbconnection, ls)
+
+                if not p.has(ls['id']) and ls['status'] is not Status.PENDING:
+                    # delete projects that have been deleted elsewhere
+                    db.delete(dbconnection, 'projects', ls['id'])
+                    logger.info("Project {} deleted".format(ls['id']))
 
         # sleep
         time.sleep(86400)
