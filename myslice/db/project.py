@@ -1,11 +1,11 @@
-from myslicelib.model.authority import Authority as myslicelibAuthority
+from myslicelib.model.project import Project as myslicelibProject
 from myslice.db.activity import Object, ObjectType
 from xmlrpc.client import Fault as SFAError
 
-class Authority(myslicelibAuthority):
+class Project(myslicelibProject):
 
     def save(self):
-        result = super(myslicelibAuthority, self).save()
+        result = super(myslicelibProject, self).save()
 
         if result['errors']:
             if len(result['errors']) == 2 \
