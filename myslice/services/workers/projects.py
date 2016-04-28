@@ -105,7 +105,7 @@ def sync(lock):
             # update local projects table
             lprojects = db.projects(dbconnection, p.dict())
 
-            for ls in lsrojects :
+            for ls in lprojects :
                 # add status if not present and update on db
                 if not 'status' in ls:
                     ls['status'] = Status.ENABLED
