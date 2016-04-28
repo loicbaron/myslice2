@@ -49,12 +49,14 @@ def events_run(lock, qSliceEvents):
                     if event.creatingObject() or event.updatingObject():
                         s = Slice(event.object.data)
                         s.id = event.object.id 
-                        # TODO: Registry Only
+                        # TODO: Registry Only???
+                        # Don't take into account the Resources on Create or Update???
+                        # expiration_date = Renew at AMs
                         # TODO: Do we add the event.user to the slice???
                         result = s.save()
 
                     if event.deletingObject():
-                        # TODO: Registry Only
+                        # TODO: Registry Only???
                         result = q(Slice).id(event.object.id).delete()
 
                     if event.addingObject():
@@ -68,6 +70,7 @@ def events_run(lock, qSliceEvents):
                             result = s.save()
 
                         # TODO: AMs Only / Filter list of AMs based on the resources
+                        # TODO: MySliceLib with User's Credentials
                         if event.data['type'] == ObjectType.RESOURCE:
                             # "values": [{id:"YYYYYY",lease:{start_time:xxxx, end_time:xxxx}}, {id:“ZZZZZZ”}]
                             for val in event.data['values']:
@@ -90,6 +93,7 @@ def events_run(lock, qSliceEvents):
                             result = s.save()
 
                         # TODO: AMs Only / Filter list of AMs based on the resources
+                        # TODO: MySliceLib with User's Credentials
                         if event.data['type'] == ObjectType.RESOURCE:
                             # "values": [{id:"YYYYYY",lease:{start_time:xxxx, end_time:xxxx}}, {id:“ZZZZZZ”}]
                             for val in event.data['values']:
