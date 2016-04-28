@@ -15,6 +15,7 @@ from myslice.lib.util import format_date
 from myslice.db.activity import Event, ObjectType
 from myslice.db import changes, connect
 from myslicelib.model.lease import Lease
+from myslicelib.model.resource import Resource
 from myslice.db.project import Project
 from myslice.db.slice import Slice
 from myslice.db.user import User
@@ -48,20 +49,25 @@ def events_run(lock, qSliceEvents):
                     if event.creatingObject() or event.updatingObject():
                         s = Slice(event.object.data)
                         s.id = event.object.id 
+                        # TODO: Registry Only
+                        # TODO: Do we add the event.user to the slice???
                         result = s.save()
 
                     if event.deletingObject():
+                        # TODO: Registry Only
                         result = q(Slice).id(event.object.id).delete()
 
                     if event.addingObject():
                         s = Slice(db.get(dbconnection, table='slices', id=event.object.id))
 
+                        # TODO: Registry Only
                         if event.data['type'] == ObjectType.USER:
                             for val in event.data['values']:
                                 u = User(db.get(dbconnection, table='users', id=val))
                                 s.addUser(u)
                             result = s.save()
 
+                        # TODO: AMs Only / Filter list of AMs based on the resources
                         if event.data['type'] == ObjectType.RESOURCE:
                             # "values": [{id:"YYYYYY",lease:{start_time:xxxx, end_time:xxxx}}, {id:“ZZZZZZ”}]
                             for val in event.data['values']:
@@ -76,12 +82,14 @@ def events_run(lock, qSliceEvents):
                     if event.removingObject():
                         s = Slice(db.get(dbconnection, table='slices', id=event.object.id))
 
+                        # TODO: Registry Only
                         if event.data['type'] == ObjectType.USER:
                             for val in event.data['values']:
                                 u = User(db.get(dbconnection, table='users', id=val))
                                 s.removeUser(u)
                             result = s.save()
 
+                        # TODO: AMs Only / Filter list of AMs based on the resources
                         if event.data['type'] == ObjectType.RESOURCE:
                             # "values": [{id:"YYYYYY",lease:{start_time:xxxx, end_time:xxxx}}, {id:“ZZZZZZ”}]
                             for val in event.data['values']:

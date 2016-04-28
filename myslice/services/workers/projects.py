@@ -46,6 +46,8 @@ def events_run(lock, qProjectEvents):
                     if event.creatingObject() or event.updatingObject():
                         a = Project(event.object.data)
                         a.id = event.object.id 
+                        # TODO: Registry Only
+                        # TODO: Do we add the event.user to the project???
                         result = a.save()
 
                     if event.deletingObject():
