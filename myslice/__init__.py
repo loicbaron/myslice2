@@ -54,10 +54,10 @@ myslicelibsetup.endpoints = [
 
 if os.path.exists("/root/.sfi/"):
     path = "/root/.sfi/"
-    pkey = credential_path + "onelab.upmc.loic_baron.pkey"
+    pkey = path + "onelab.upmc.loic_baron.pkey"
     hrn = "onelab.upmc.loic_baron"
     email = "loic.baron@lip6.fr"
-    cert = credential_path + "onelab.upmc.loic_baron.user.gid"
+    cert = path + "onelab.upmc.loic_baron.user.gid"
 else:
     path = "/root/"
     pkey = path + "myslice.pkey"
