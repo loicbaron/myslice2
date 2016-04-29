@@ -442,9 +442,8 @@ class Event(Dict):
         Set the event to error
         :return:
         '''
-
-        if not self.isRunning():
-            raise Exception('Event must be in RUNNING state before ERROR')
+        #if not self.isRunning():
+        #    raise Exception('Event must be in RUNNING state before ERROR')
 
         self.status = EventStatus.ERROR
 
