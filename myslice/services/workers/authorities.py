@@ -6,8 +6,10 @@
 #   (c) 2016 Ciro Scognamiglio <ciro.scognamiglio@lip6.fr>, Loïc Baron <loic.baron@lip6.fr>
 ##
 
+import json
 import logging
 import time
+from pprint import pprint
 import myslice.db as db
 from myslice.lib import Status
 from myslice.lib.util import format_date
@@ -45,7 +47,7 @@ def events_run(lock, qAuthorityEvents):
                     event.setRunning()
 
                     if event.creatingObject() or event.updatingObject():
-                        a = Authority(event.object.data)
+                        a = Authority(event.data)
                         a.id = event.object.id 
                         result = a.save()
 
@@ -79,9 +81,13 @@ def events_run(lock, qAuthorityEvents):
                     event.setError()
                      
                 if result:
-                    print(result)
-                    db.authorities(dbconnection, result, event.object.id)
-                    event.setSuccess()
+                    if 'errors' in result and len(result['errors'])>0:
+                        logger.error("Error: ".format(result['errors']))
+                        event.logError(str(result['errors']))
+                        event.setError()
+                    else:
+                        db.authorities(dbconnection, result, event.object.id)
+                        event.setSuccess()
                 
                 db.dispatch(dbconnection, event)
 

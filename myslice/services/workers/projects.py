@@ -6,6 +6,7 @@
 #   (c) 2016 Ciro Scognamiglio <ciro.scognamiglio@lip6.fr>
 ##
 
+import json
 import logging
 import time
 import myslice.db as db
@@ -44,7 +45,7 @@ def events_run(lock, qProjectEvents):
                     event.setRunning()
 
                     if event.creatingObject() or event.updatingObject():
-                        a = Project(event.object.data)
+                        a = Project(event.data)
                         a.id = event.object.id 
                         # TODO: Registry Only
                         # TODO: Do we add the event.user to the project???
@@ -80,9 +81,13 @@ def events_run(lock, qProjectEvents):
                     event.setError()
                      
                 if result:
-                    print(result)
-                    db.projects(dbconnection, result, event.object.id)
-                    event.setSuccess()
+                    if 'errors' in result and len(result['errors'])>0:
+                        logger.error("Error: ".format(result['errors']))
+                        event.logError(str(result['errors']))
+                        event.setError()
+                    else:
+                        db.projects(dbconnection, result, event.object.id)
+                        event.setSuccess()
                 
                 db.dispatch(dbconnection, event)
 

@@ -44,20 +44,8 @@ def run(q):
             event.setError()
             logger.error("Problem with event: {}".format(e))
         else:
-            # TODO: check that 
-            # user has the rights to do the action -> waiting
-            # Check in local DB 
-            #    Slice -> if user in users
-            #    Authority & Project -> if event.user in pi_users of event.object.id or an upper authority
-            #    User -> if event.user == event.object.id
-            #            or if event.user in pi_users of authority of event.object.id or an upper authority
-            #
-            # event.setWaiting()
-            # Only NEW events here
-            # if event.isNew():
             try:
                 db_user = db.get(dbconnection, table='users', id=event.user)
-                print("db_user = %s" % db_user)
                 print(event)
                 if db_user:
                     user = User(db_user)

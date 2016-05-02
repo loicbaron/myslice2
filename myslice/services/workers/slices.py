@@ -6,6 +6,7 @@
 #   (c) 2016 Ciro Scognamiglio <ciro.scognamiglio@lip6.fr>
 ##
 
+import json
 import logging
 import time
 import myslice.db as db
@@ -47,7 +48,7 @@ def events_run(lock, qSliceEvents):
                     event.setRunning()
 
                     if event.creatingObject() or event.updatingObject():
-                        s = Slice(event.object.data)
+                        s = Slice(event.data)
                         s.id = event.object.id 
                         # TODO: Registry Only???
                         # Don't take into account the Resources on Create or Update???
@@ -112,15 +113,19 @@ def events_run(lock, qSliceEvents):
                     event.setError()
                      
                 if result:
-                    print(result)
-                    db.projects(dbconnection, result, event.object.id)
-                    event.setSuccess()
+                    if 'errors' in result and len(result['errors'])>0:
+                        logger.error("Error: ".format(result['errors']))
+                        event.logError(str(result['errors']))
+                        event.setError()
+                    else:
+                        db.slices(dbconnection, result, event.object.id)
+                        event.setSuccess()
                 
                 db.dispatch(dbconnection, event)
 
 def sync(lock):
     """
-    A thread that will sync projects with the local rethinkdb
+    A thread that will sync slices with the local rethinkdb
     """
 
     # DB connection
