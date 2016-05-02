@@ -39,12 +39,13 @@ class ActivityHandler(Api):
 
         # NOTE: checks are done by the service, here we only dispatch the event
 
-        pprint(self.request)
-        pprint(self.request.body)
         #print(escape.json_decode(self.request.body))
         try:
             data = escape.json_decode(self.request.body)['event']
         except json.decoder.JSONDecodeError as e:
+            pprint(self.request.body)
+            import traceback
+            traceback.print_exc()
             self.set_status(400)
             self.finish(json.dumps({"return": {"status": "error", "messages": "malformed request"}}))
             return
@@ -52,10 +53,11 @@ class ActivityHandler(Api):
         try:
             event = Event(data)
         except Exception as e:
+            pprint(self.request.body)
+            import traceback
+            traceback.print_exc()
             self.set_status(500)
             self.finish(json.dumps({"return": {"status":"error","messages":e.message}}))
-            #import traceback
-            #traceback.print_exc()
         else:
             try:
                 # XXX If watching all events, is scalability an issue?
@@ -73,6 +75,7 @@ class ActivityHandler(Api):
                     if ev.id == event_id:
                         if ev.status == EventStatus.ERROR or ev.status == EventStatus.WARNING:
                             self.set_status(500)
+                            print(ev)
                             # XXX trying to cleanup the Cursor, but it is not Working
                             # <class 'rethinkdb.net_tornado.TornadoCursor'>
                             # https://github.com/rethinkdb/rethinkdb/blob/next/drivers/python/rethinkdb/tornado_net/net_tornado.py
@@ -85,8 +88,9 @@ class ActivityHandler(Api):
                             self.finish(json.dumps({"return": {"status":ev.status,"messages":ev}}, cls=myJSONEncoder))
 
             except Exception as e:
-               import traceback
-               traceback.print_exc()
-               self.set_status(500)
-               #yield feed.close()
-               self.finish(json.dumps({"return": {"status":EventStatus.ERROR,"messages":e.message}}, cls=myJSONEncoder))
+                pprint(self.request.body)
+                import traceback
+                traceback.print_exc()
+                self.set_status(500)
+                #yield feed.close()
+                self.finish(json.dumps({"return": {"status":EventStatus.ERROR,"messages":e.message}}, cls=myJSONEncoder))
