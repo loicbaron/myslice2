@@ -66,7 +66,7 @@ else:
     cert = path + "myslice.cert"
 
 
-myslicelibsetup.credential = Authentication(hrn=hrn, email=email, certificate=cert, private_key=pkey)
+myslicelibsetup.authentication = Authentication(hrn=hrn, email=email, certificate=cert, private_key=pkey)
 ##
 
 class settings(object):
