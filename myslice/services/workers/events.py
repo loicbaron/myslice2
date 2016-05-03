@@ -45,19 +45,27 @@ def run(q):
             logger.error("Problem with event: {}".format(e))
         else:
             try:
-                db_user = db.get(dbconnection, table='users', id=event.user)
-                print(event)
-                if db_user:
-                    user = User(db_user)
-                    if check_user_rights(user,event):
-                        event.setWaiting()
-                    else:
-                        event.setPending()
+
+                # TODO: if event.creatingObject() 
+                # Check if the event.object.id already exists or not
+                # if it exists -> add a numer to the id & hrn to make it unique
+
+                # Register a new user
+                if event.user is None and event.creatingObject():
+                    event.setPending()
                 else:
-                    event.setError()
-                    logger.error("User %s not found" % event.user)
-                    # raising an Exception here, blocks the REST API
-                    #raise Exception("User %s not found" % event.user)
+                    db_user = db.get(dbconnection, table='users', id=event.user)
+                    if db_user:
+                        user = User(db_user)
+                        if check_user_rights(user,event):
+                            event.setWaiting()
+                        else:
+                            event.setPending()
+                    else:
+                        event.setError()
+                        logger.error("User %s not found" % event.user)
+                        # raising an Exception here, blocks the REST API
+                        #raise Exception("User %s not found" % event.user)
             except Exception as e:
                 event.setError()
                 logger.error("Unable to fetch the user from db {}".format(e))
