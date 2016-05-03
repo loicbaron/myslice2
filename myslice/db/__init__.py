@@ -16,6 +16,11 @@ tables = [
             'pkey' : 'id'
         },
         {
+            'name' : 'leases',
+            'pkey' : 'id'
+        },
+
+        {
             'name' : 'slices',
             'pkey' : 'id'
         },
@@ -122,9 +127,12 @@ def users(dbconnection=None, data=None, id=None):
 
     return r.db(s.db.name).table('users').run(dbconnection)
 
-def authorities(dbconnection=None, data=None):
+def authorities(dbconnection=None, data=None, id=None):
     if not dbconnection:
         dbconnection = connect()
+
+    if id and data:
+        r.db(s.db.name).table('authorities').get(id).update(data).run(dbconnection)
 
     if data:
         r.db(s.db.name).table('authorities').insert(data, conflict='update').run(dbconnection)
@@ -132,9 +140,12 @@ def authorities(dbconnection=None, data=None):
     return r.db(s.db.name).table('authorities').run(dbconnection)
 
 
-def projects(dbconnection=None, data=None):
+def projects(dbconnection=None, data=None, id=None):
     if not dbconnection:
         dbconnection = connect()
+
+    if id and data:
+        r.db(s.db.name).table('projects').get(id).update(data).run(dbconnection)
 
     if data:
         r.db(s.db.name).table('projects').insert(data, conflict='update').run(dbconnection)
@@ -142,43 +153,41 @@ def projects(dbconnection=None, data=None):
     return r.db(s.db.name).table('projects').run(dbconnection)
 
 
-def slices(dbconnection=None, data=None):
+def slices(dbconnection=None, data=None, id=None):
     if not dbconnection:
         dbconnection = connect()
+
+    if id and data:
+        r.db(s.db.name).table('slices').get(id).update(data).run(dbconnection)
 
     if (data):
         r.db(s.db.name).table('slices').insert(data, conflict='update').run(dbconnection)
 
     return r.db(s.db.name).table('slices').run(dbconnection)
 
-def resources(dbconnection=None, filter=None):
-
+def resources(dbconnection=None, data=None, id=None):
     if not dbconnection:
         dbconnection = connect()
 
-    if filter:
-        # not yet implemented
-        pass
-    else:
-        for res in r.table('resources').run(dbconnection):
-            pass
-            #print res
-        return {"hello":"bye"}
+    if id and data:
+        r.db(s.db.name).table('resources').get(id).update(data).run(dbconnection)
 
+    if (data):
+        r.db(s.db.name).table('resources').insert(data, conflict='update').run(dbconnection)
 
-def resource(dbconnection, resource=None):
+    return r.db(s.db.name).table('resources').run(dbconnection)
 
-    if resource:
-        # updating
+def leases(dbconnection=None, data=None):
+    if not dbconnection:
+        dbconnection = connect()
 
-        # timestamp is stored as a rethinkdb expression,
-        # will be retrieved as a native python dateobject
-        #resource['timestamp'] = r.expr(datetime.now())
-        resource['timestamp'] = r.now()
+    if id and data:
+        r.db(s.db.name).table('leases').get(id).update(data).run(dbconnection)
 
-        r.table('resources').insert(resource, conflict='update').run(dbconnection)
-    else:
-        return r.table('resources').run(dbconnection)
+    if (data):
+        r.db(s.db.name).table('leases').insert(data, conflict='update').run(dbconnection)
+
+    return r.db(s.db.name).table('leases').run(dbconnection)
 
 def events(dbconnection=None, event=None, user=None, status=None, action=None):
     if not dbconnection:

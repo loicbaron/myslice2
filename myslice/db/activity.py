@@ -192,10 +192,16 @@ class Event(Dict):
         ##
         # data is a dictionary of changes for the object
         #
-        try:
+        if 'data' in event:
             self.data = event['data']
-        except KeyError:
-            self.data = []
+        else:
+            self.data = {}
+        #try:
+        #    self.data = event['data']
+        #except KeyError as e:
+        #    import traceback
+        #    traceback.print_exc()
+        #    self.data = {}
 
         try:
             self.created = format_date(event['created'])
@@ -442,9 +448,8 @@ class Event(Dict):
         Set the event to error
         :return:
         '''
-
-        if not self.isRunning():
-            raise Exception('Event must be in RUNNING state before ERROR')
+        #if not self.isRunning():
+        #    raise Exception('Event must be in RUNNING state before ERROR')
 
         self.status = EventStatus.ERROR
 

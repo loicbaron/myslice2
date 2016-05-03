@@ -6,6 +6,7 @@
 #   (c) 2016 Ciro Scognamiglio <ciro.scognamiglio@lip6.fr>
 ##
 
+import json
 import logging
 import time
 import myslice.db as db
@@ -99,12 +100,15 @@ def events_run(lock, qUserEvents):
                     result = None
                     event.logError(str(e))
                     event.setError()
-                     
+
                 if result:
-                    print(result)
-                    logger.info("Success with event from user {}".format(event.user))
-                    db.users(dbconnection, result, event.object.id)
-                    event.setSuccess()
+                    if 'errors' in result and len(result['errors'])>0:
+                        logger.error("Error: ".format(result['errors']))
+                        event.logError(str(result['errors']))
+                        event.setError()
+                    else:
+                        db.users(dbconnection, result, event.object.id)
+                        event.setSuccess()
                 
                 db.dispatch(dbconnection, event)
 
