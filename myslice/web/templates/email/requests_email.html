@@ -1,0 +1,26 @@
+{% extends "body.html" %}
+{% block content %}
+<table class="row"><tbody><tr> <!-- Email Content -->
+  <th class="small-12 large-12 columns first last">
+    <table class =""><tr>
+      <th>
+
+        {% if type == 'user' %}
+            {% include request/user_request_email.html %}
+        
+        {% elif type == 'slice' %}
+            {% include request/slice_request_email.html %}
+            
+        {% elif type == 'project' %}
+            {% include request/project_request_email.html %}
+
+        {% elif type == 'authority' %}
+            {% include request/authority_request_email.html %}
+
+        {% end %}
+      </th>
+        <th class="expander"></th>
+      </tr></table>
+    </th></tr></tbody>
+  </table>
+{% end %}

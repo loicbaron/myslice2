@@ -1,0 +1,91 @@
+{% extends base.html %}
+{% block body %}
+  <table class="body">
+    <tr>
+      <td class="center" align="center" valign="top">
+        <center data-parsed="">
+          
+        <!-- This container adds the gap at the top of the email -->
+        <table class="container text-center">
+          <tbody><tr><td>
+            <table class="row grey">
+              <tbody><tr>
+                <th class="small-12 large-12 columns first last">
+                  <table><tr>
+                    <th>&#xA0;</th>
+                    <th class="expander"></th>
+                  </tr></table>
+                </th>
+              </tr></tbody>
+            </table>
+          </td></tr></tbody>
+        </table>
+            
+        <!-- Main email content -->
+        <table class="container text-center">
+          <tbody><tr><td>
+            <!-- Logo -->
+            <table class="row">
+              <tbody><tr> 
+                <th class="small-12 large-12 columns first last">
+                  <table><tr><th>
+                    <center data-parsed="">
+                      <a href="http://onelab.eu" align="center" class="text-center">
+                        <img src="https://onelab.eu/static/images/onelab.png"  class="swu-logo" alt="Logo Image">
+                      </a>
+                    </center>
+                  </th><th class="expander"></th>
+                </tr></table>
+                </th>
+              </tr></tbody>
+            </table>
+              
+            <!-- Masthead -->
+            <table class="row masthead">
+              <tbody><tr> 
+                <th class="small-12 large-12 columns first last">
+                  <table><tr><th>
+                    <h1 class="text-center">{{title}}</h1>
+                    <center data-parsed="">
+                      <img src="https://onelab.eu/static/images/gfx/scientist3.png" valign="bottom" alt="Masthead Image" align="center" class="text-center">
+                    </center>
+                  </th><th class="expander"></th></tr></table>
+                </th>
+              </tr></tbody>
+            </table>
+                    
+            <!--This row adds the gap between masthead and digest content -->
+            <table class="row"><tbody><tr> 
+              <th class="small-12 large-12 columns first last">
+                <table>
+                  <tr><th>&#xA0;</th><th class="expander"></th></tr>
+                </table>
+              </th></tr></tbody>
+            </table>
+
+             <!-- / real content  -->
+            {% block content %}{% end %}
+
+          </td></tr></tbody>
+        </table> <!-- / End main email content -->
+
+        <table class="container text-center"><tbody><tr><td>
+          <table class="row grey"><tbody><tr>
+            <th class="small-12 large-12 columns first last">
+              <table>
+                <tr>
+                  <th><p class="text-center footercopy">&#xA9; Copyright {{theme}}. All Rights Reserved.</p>
+                  </th>
+                  <th class="expander"></th>
+                </tr>
+              </table>
+            </th>
+          </tr></tbody></table>
+        </td></tr></tbody></table>
+
+        </center>
+      </td>
+    </tr>
+  </table>
+{% end %}
+

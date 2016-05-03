@@ -73,18 +73,14 @@ class settings(object):
         port = 28015
         name = "myslice"
 
-    # class email(object):
-    #     host = "localhost"
-    #     port = 25
     class email(object):
+        dirpath = '/root/intern/myslice/myslice/web/templates/email'
+        theme = 'onelab'
         host = 'smtp.gmail.com'
         port = 587
         ssl = True
         user = 'zhouquantest16@gmail.com'
         password = 'zqtest123'
-
-            
-
 
 ## override with configuration file
 #parser = SafeConfigParser()

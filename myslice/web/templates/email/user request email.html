@@ -1,0 +1,20 @@
+{% extends "body.html" %}
+{% block content %}
+<table class="row"><tbody><tr> <!-- Email Content -->
+  <th class="small-12 large-12 columns first last">
+    <table class =""><tr>
+      <th><p>Dear {{first_name}} {{last_name}},</p>
+        <p></p>
+        <p>You are receiving this request because we have you listed as a manager at an organization that uses our test.</p> 
+        <p>If you believe that you have received this message in error, or if you have any questions, kindly contact support@{{theme}}.eu.</p>
+
+        {% include user_request.html %}
+        
+        <p>Yours sincerely,</p>
+        <p>The OneLab team</p>
+
+        <th class="expander"></th>
+      </tr></table>
+    </th></tr></tbody>
+  </table>
+{% end %}
