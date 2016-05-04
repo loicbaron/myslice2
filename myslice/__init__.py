@@ -47,19 +47,19 @@ myslicelibsetup.endpoints = [
             # Endpoint(url="https://fuseco.fokus.fraunhofer.de/api/sfa/am/v3",type="AM"),
             # Endpoint(url="https://griffin.ipv6.lip6.fr:8001/RPC2",type="AM"),
             #Endpoint(url="https://portal.onelab.eu:6080",type="Reg"),
-            Endpoint(url="https://localhost:12345",type="Reg", timeout=10, name="OneLab Registry"),
+            Endpoint(url="https://localhost:6080",type="Reg", timeout=10, name="OneLab Registry"),
             #Endpoint(url="https://sfa-fed4fire.pl.sophia.inria.fr:443",type="Reg")
         ]
 
 
-if os.path.exists("/root/.sfi/"):
-    path = "/root/.sfi/"
+if os.path.exists(os.path.expanduser("~/.sfi/")):
+    path = os.path.expanduser("~/.sfi/")
     pkey = path + "onelab.upmc.loic_baron.pkey"
     hrn = "onelab.upmc.loic_baron"
     email = "loic.baron@lip6.fr"
     cert = path + "onelab.upmc.loic_baron.user.gid"
 else:
-    path = "/root/"
+    path = os.path.expanduser("~/")
     pkey = path + "myslice.pkey"
     hrn = "onelab.myslice"
     email = "support@myslice.info"
