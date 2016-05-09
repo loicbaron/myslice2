@@ -6,6 +6,7 @@
 #   (c) 2016 Ciro Scognamiglio <ciro.scognamiglio@lip6.fr>
 ##
 import logging
+import time
 from pprint import pprint
 import myslice.db as db
 from myslice.db import connect, dispatch
@@ -40,28 +41,34 @@ def run(q):
         try:
             event = Event(q.get())
         except Exception as e:
+            event.setError()
             logger.error("Problem with event: {}".format(e))
         else:
-            # TODO: check that 
-            # user has the rights to do the action -> waiting
-            # Check in local DB 
-            #    Slice -> if user in users
-            #    Authority & Project -> if event.user in pi_users of event.object.id or an upper authority
-            #    User -> if event.user == event.object.id
-            #            or if event.user in pi_users of authority of event.object.id or an upper authority
-            #
-            # event.setWaiting()
-            # Only NEW events here
-            # if event.isNew():
             try:
-                user = User(db.get(dbconnection, table='users', id=event.user))
-            except Exception as e:
-                logger.error("Unable to fetch the user from db {}".format(e))
 
-            if check_user_rights(user,event):
-                event.setWaiting()
-            else:
-                event.setPending()
+                # TODO: if event.creatingObject() 
+                # Check if the event.object.id already exists or not
+                # if it exists -> add a numer to the id & hrn to make it unique
+
+                # Register a new user
+                if event.user is None and event.creatingObject():
+                    event.setPending()
+                else:
+                    db_user = db.get(dbconnection, table='users', id=event.user)
+                    if db_user:
+                        user = User(db_user)
+                        if check_user_rights(user,event):
+                            event.setWaiting()
+                        else:
+                            event.setPending()
+                    else:
+                        event.setError()
+                        logger.error("User %s not found" % event.user)
+                        # raising an Exception here, blocks the REST API
+                        #raise Exception("User %s not found" % event.user)
+            except Exception as e:
+                event.setError()
+                logger.error("Unable to fetch the user from db {}".format(e))
 
             # dispatch the updated event
             dispatch(dbconnection, event)

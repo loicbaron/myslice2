@@ -41,24 +41,32 @@ config_file = config_path
 
 ## Setup MySliceLib
 myslicelibsetup.endpoints = [
-            Endpoint(url="https://sfa3.planet-lab.eu:12346",type="AM"),
+            Endpoint(url="https://sfa3.planet-lab.eu:12346",type="AM", timeout=30, name="PLE"),
             # Endpoint(url="https://194.199.16.164:12346",type="AM"),
             # Endpoint(url="https://www.wilab2.ilabt.iminds.be:12369/protogeni/xmlrpc/am/3.0",type="AM"),
             # Endpoint(url="https://fuseco.fokus.fraunhofer.de/api/sfa/am/v3",type="AM"),
             # Endpoint(url="https://griffin.ipv6.lip6.fr:8001/RPC2",type="AM"),
             #Endpoint(url="https://portal.onelab.eu:6080",type="Reg"),
-            Endpoint(url="https://localhost:12345",type="Reg", timeout=30),
+            Endpoint(url="https://localhost:6080",type="Reg", timeout=10, name="OneLab Registry"),
             #Endpoint(url="https://sfa-fed4fire.pl.sophia.inria.fr:443",type="Reg")
         ]
 
 
-credential_path = "/root/.sfi/"
-credential_pkey = credential_path + "onelab.upmc.loic_baron.pkey"
-credential_hrn = "onelab.upmc.loic_baron"
-credential_email = "loic.baron@lip6.fr"
-credential_cert = credential_path + "onelab.upmc.loic_baron.user.gid"
+if os.path.exists(os.path.expanduser("~/.sfi/")):
+    path = os.path.expanduser("~/.sfi/")
+    pkey = path + "onelab.upmc.loic_baron.pkey"
+    hrn = "onelab.upmc.loic_baron"
+    email = "loic.baron@lip6.fr"
+    cert = path + "onelab.upmc.loic_baron.user.gid"
+else:
+    path = os.path.expanduser("~/")
+    pkey = path + "myslice.pkey"
+    hrn = "onelab.myslice"
+    email = "support@myslice.info"
+    cert = path + "myslice.cert"
 
-myslicelibsetup.credential = Authentication(hrn=credential_hrn, email=credential_email, certificate=credential_cert, private_key=credential_pkey)
+
+myslicelibsetup.authentication = Authentication(hrn=hrn, email=email, certificate=cert, private_key=pkey)
 ##
 
 class settings(object):
@@ -73,18 +81,14 @@ class settings(object):
         port = 28015
         name = "myslice"
 
-    # class email(object):
-    #     host = "localhost"
-    #     port = 25
     class email(object):
+        dirpath = '/root/intern/myslice/myslice/web/templates/email'
+        theme = 'onelab'
         host = 'smtp.gmail.com'
         port = 587
         ssl = True
         user = 'zhouquantest16@gmail.com'
         password = 'zqtest123'
-
-            
-
 
 ## override with configuration file
 #parser = SafeConfigParser()

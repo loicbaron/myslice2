@@ -1,0 +1,27 @@
+{% extends "body.html" %}
+{% block content %}
+<table class="row"><tbody><tr> <!-- Email Content -->
+  <th class="small-12 large-12 columns first last">
+    <table class =""><tr>
+        <th>
+
+        {% if entity == 'user' %}
+            {% include deny/user_request_denied.html %}
+        
+        {% elif entity == 'slice' %}
+            {% include deny/slice_request_denied.html %}
+            
+        {% elif entity == 'project' %}
+            {% include deny/project_request_denied.html %}
+
+        {% elif entity == 'authority' %}
+            {% include deny/authority_request_denied.html %}
+
+        {% end %}
+        </th>
+        
+        <th class="expander"></th>
+      </tr></table>
+    </th></tr></tbody>
+  </table>
+{% end %}
