@@ -3,14 +3,14 @@ import smtplib
 from time import mktime
 
 from tornado import template
-from myslice.email import settings as s
 
 from datetime import datetime
 from email.utils import formataddr, formatdate
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-from utils import MessageID
+from myslice.email import settings as s
+from myslice.email.utils import MessageID
 
 '''
 {
@@ -142,6 +142,7 @@ def build_subject_and_template( action,
                                 entity,
                                 path=s.email.dir_path,
                                 theme=s.email.theme):
+    action, entity = str(action), str(entity)
 
     if action == 'request':
         subject =  'NEW {} REQUEST'.format(entity.upper())
@@ -170,8 +171,8 @@ class Mailer(object):
         self.server.quit()
 
 if __name__ == '__main__':
-    entity = 'user'
-    subject, temp = build_subject_and_template('request', 'user')
+    action, entity = 'request', 'USER'
+    subject, temp = build_subject_and_template(action, entity)
     rich = temp.generate(
                                 title = subject,
                                 entity = entity,
