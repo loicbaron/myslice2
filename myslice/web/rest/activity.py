@@ -32,7 +32,7 @@ class ActivityHandler(Api):
     @gen.coroutine
     def post(self):
         """
-        Creates new event
+        ONLY FOR DEBUG
         """
 
         # TODO: get user id from user logged in

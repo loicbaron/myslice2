@@ -5,16 +5,16 @@
     <table class =""><tr>
       <th>
 
-        {% if entity == 'user' %}
+        {% if entity == 'USER' %}
             {% include request/user_request_email.html %}
         
-        {% elif entity == 'slice' %}
+        {% elif entity == 'SLICE' %}
             {% include request/slice_request_email.html %}
             
-        {% elif entity == 'project' %}
+        {% elif entity == 'PROJECT' %}
             {% include request/project_request_email.html %}
 
-        {% elif entity == 'authority' %}
+        {% elif entity == 'AUTHORITY' %}
             {% include request/authority_request_email.html %}
 
         {% end %}

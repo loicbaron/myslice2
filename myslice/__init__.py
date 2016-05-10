@@ -18,7 +18,7 @@ if not os.path.exists(logging_path):
         exit("Can't create directory {}".format(logging_path))
 logging_file = logging_path + "/myslice-web.log"
 try:
-    logging.basicConfig(level=logging.INFO,
+    logging.basicConfig(level=logging.DEBUG,
                     format="%(asctime)s %(levelname)s [%(name)s] %(message)s",
                     datefmt="%Y-%m-%d %H:%M:%S",
                     filename=logging_file, filemode="a")
