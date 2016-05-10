@@ -3,3 +3,9 @@ tornado_cors
 SockJS-tornado
 rethinkdb
 requests
+pycryptodome
+rethinkdb
+pytz
+python-dateutil
+premailer
+python-oauth2

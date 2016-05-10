@@ -35,6 +35,7 @@ class TestUser(unittest.TestCase):
                         "bio": "...",
                         "url": "http://onelab.eu",
                         "password": "...",
+                        "generate_keys": True,
                         "keys": []
                     }
                 }
@@ -58,11 +59,13 @@ class TestUser(unittest.TestCase):
                         "bio": "...",
                         "url": "http://onelab.eu",
                         "password": "...",
+                        "generate_keys": True,
                         "keys": []
                     }
                 }
             }
         r = requests.post("http://localhost:8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
+        pprint(r.text)
         self.assertEqual(r.status_code, 200)
         result = json.loads(r.text)
         self.assertEqual(result['return']['messages']['object'], payload['event']['object'])
@@ -86,7 +89,7 @@ class TestUser(unittest.TestCase):
                         "bio": "...",
                         "url": "http://onelab.eu",
                         "password": "...",
-                        "keys": ['ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCXE8DJbz/WZxDG1w3McxipIBSdL8FHNmCFFlWPB3mWzujK1LPR0fzLpf+jD30aXmppB4O3WUr7qtuhPWsj2DQGvH5PxtX70hf0ehJeqHFCEn9n0+dt0+LLanuQHsPZQujp7tDkPTc5nz2b4xKn4MbZfpGQ8bwTPWfJ130felrFMsYOWlT2y/0u2pkvmUO9wxwSZxe/giqe9XlJ38rwy+V/Jt7iCR+VSHB5vqv/Hi8FBFKhqydtTSlEeY9X9f90GXKPCHEqmH0g37Vdy2V9LC4CQVECSrqQjBo31BAfdwsmKKsXzaK5sBOva3Y9rFHPlfDaf2beiMibjU5pjNDGVOLJ root@theseus']
+                        #"keys": ['ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCXE8DJbz/WZxDG1w3McxipIBSdL8FHNmCFFlWPB3mWzujK1LPR0fzLpf+jD30aXmppB4O3WUr7qtuhPWsj2DQGvH5PxtX70hf0ehJeqHFCEn9n0+dt0+LLanuQHsPZQujp7tDkPTc5nz2b4xKn4MbZfpGQ8bwTPWfJ130felrFMsYOWlT2y/0u2pkvmUO9wxwSZxe/giqe9XlJ38rwy+V/Jt7iCR+VSHB5vqv/Hi8FBFKhqydtTSlEeY9X9f90GXKPCHEqmH0g37Vdy2V9LC4CQVECSrqQjBo31BAfdwsmKKsXzaK5sBOva3Y9rFHPlfDaf2beiMibjU5pjNDGVOLJ root@theseus']
                     }
                 }
             }

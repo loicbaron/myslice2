@@ -93,4 +93,5 @@ class ActivityHandler(Api):
                 traceback.print_exc()
                 self.set_status(500)
                 #yield feed.close()
-                self.finish(json.dumps({"return": {"status":EventStatus.ERROR,"messages":e.message}}, cls=myJSONEncoder))
+                pprint(e)
+                self.finish(json.dumps({"return": {"status":EventStatus.ERROR,"messages":e}}, cls=myJSONEncoder))
