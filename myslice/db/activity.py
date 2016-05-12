@@ -1,4 +1,4 @@
-##
+#
 #   MySlice version 2
 #
 #   Activity model: defines Event and Request classes
@@ -79,6 +79,35 @@ class Dict(dict):
             return self[key]
         except KeyError:
             raise AttributeError("Dict object has no attribute {}".format(key))
+
+class Action(Enum):
+    # Approve/Deny operations
+    APPROVE = "APPROVE"
+    DENY = "DENY"
+
+    def __str__(self):
+        return str(self.value)
+
+class PiAction(dict):
+    
+    def __init__(self, obj):
+        try:
+            self.action = obj['action']
+        except KeyError:
+            raise Exception('Object Type not specified')
+
+    ##
+    # action of PI
+    @property
+    def action(self):
+        return self['action']
+
+    @action.setter
+    def action(self, value):
+        if value in Action.__members__:
+            self['action'] = PiAction[value]
+        else:
+            raise Exception('Object Type {} not valid'.format(value))
 
 class Object(Dict):
 
