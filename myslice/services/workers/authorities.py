@@ -55,9 +55,9 @@ def events_run(lock, qAuthorityEvents):
                         result = q(Authority).id(event.object.id).delete()
 
                     if event.addingObject():
-                        if event.data['type'] == ObjectType.USER:
+                        if event.data['type'] == str(ObjectType.USER):
                             raise Exception("Please use CREATE USER instead")
-                        if event.data['type'] == ObjectType.PI:
+                        if event.data['type'] == str(ObjectType.PI):
                             a = Authority(db.get(dbconnection, table='authorities', id=event.object.id))
                             for val in event.data['values']:
                                 pi = User(db.get(dbconnection, table='users', id=val))
@@ -65,9 +65,9 @@ def events_run(lock, qAuthorityEvents):
                             result = a.save()
 
                     if event.removingObject():
-                        if event.data['type'] == ObjectType.USER:
+                        if event.data['type'] == str(ObjectType.USER):
                             raise Exception("Please use DELETE USER instead")
-                        if event.data['type'] == ObjectType.PI:
+                        if event.data['type'] == str(ObjectType.PI):
                             a = Authority(db.get(dbconnection, table='authorities', id=event.object.id))
                             for val in event.data['values']:
                                 pi = User(db.get(dbconnection, table='users', id=val))
@@ -75,6 +75,8 @@ def events_run(lock, qAuthorityEvents):
                             result = a.save()
 
                 except Exception as e:
+                    import traceback
+                    traceback.print_exc()
                     logger.error("Problem with event: {}".format(e))
                     result = None
                     event.logError(str(e))

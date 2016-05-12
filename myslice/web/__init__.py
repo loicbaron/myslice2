@@ -11,6 +11,8 @@ from oauth2.web.tornado import OAuth2Handler
 from sockjs.tornado import SockJSRouter
 from rethinkdb import r
 import myslice.db as db
+from myslice.web.rest.authorities import AuthoritiesHandler
+from myslice.web.rest.projects import ProjectsHandler
 from myslice.web.rest.resources import ResourcesHandler
 from myslice.web.rest.slices import SlicesHandler
 from myslice.web.rest.users import UsersHandler
@@ -110,6 +112,11 @@ class Application(web.Application):
         # REST API
         rest_handlers = [
             (r'/api/v1/activity', ActivityHandler),
+            (r'/api/v1/resources', ResourcesHandler),
+            (r'/api/v1/users', UsersHandler),
+            (r'/api/v1/slices', SlicesHandler),
+            (r'/api/v1/authorities', AuthoritiesHandler),
+            (r'/api/v1/projects', ProjectsHandler),
         ]
 
         ##

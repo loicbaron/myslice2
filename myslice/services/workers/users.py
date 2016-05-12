@@ -11,7 +11,10 @@ import logging
 import time
 import myslice.db as db
 from myslice.lib import Status
-from myslicelib import Setup
+
+from myslice.lib.authentication import UserSetup
+from myslice import myslicelibsetup
+
 from myslice.lib.util import format_date
 from myslicelib.util import Endpoint, Authentication
 
@@ -49,13 +52,13 @@ def events_run(lock, qUserEvents):
                 event.setRunning()
                 try:    
                     if event.creatingObject():
-                        logger.info("creating the user {}".format(event.object.id))
+                        logger.info("creating the object user {}".format(event.object.id))
                         user = User(event.data)
                         user.id = event.object.id
                         result = user.save()
 
                     if event.deletingObject():
-                        logger.info("delete the object to user {}".format(event.object.id))
+                        logger.info("delete the object user {}".format(event.object.id))
                         user = User()
                         user.id = event.object.id
                             
@@ -99,6 +102,8 @@ def events_run(lock, qUserEvents):
                     #         result = user.save()
 
                 except Exception as e:
+                    import traceback
+                    traceback.print_exc()
                     logger.error("Problem with event: {}".format(e))
                     result = None
                     event.logError(str(e))
@@ -121,14 +126,10 @@ def update_credentials(users):
         # We can only get credentials for users that have a private key stored in db
         if 'private_key' in u_db:
             for u in users:
+                u_db_object = User(u_db)
                 if u.id == u_db['id']:
-                    user_setup = Setup()
-                    user_setup.endpoints = [
-                        Endpoint(url="https://localhost:6080",type="Reg", name="OneLab Reg"),
-                        #Endpoint(url="https://portal.onelab.eu:6080",type="Reg", name="OneLab Reg"),
-                    ]
-                    user_setup.authentication = Authentication(hrn=u_db['hrn'], email=u_db['email'], certificate=u_db['certificate'], private_key=u_db['private_key'])
-                    u.getCredentials(setup=user_setup)
+                    user_setup = UserSetup(u_db_object, myslicelibsetup.endpoints)
+                    c = u.getCredentials(setup=user_setup)
     return users
 
 def sync(lock):

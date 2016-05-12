@@ -31,12 +31,16 @@ def has_privilege(user, obj):
     # user is Pi of the obj he wants to update
     if user.id == obj.id:
         return True    
-    if obj.id == ObjectType.SLICE and obj.id in user.slices:
+    if obj.type == ObjectType.SLICE and obj.id in user.slices:
         return True
     
     obj_auth = get_authority(obj.id, obj.type)[0]
-    print(obj_auth, user.pi_authorities)
     if obj_auth in user.pi_authorities:
         return True
+
+    for a in user.pi_authorities:
+        if object.id.split('+')[1].startswith(a.split('+')[1]):
+            return True
+
     return False
 
