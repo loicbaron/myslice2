@@ -5,16 +5,16 @@
     <table class =""><tr>
         <th>
 
-        {% if entity == 'user' %}
+        {% if entity == 'USER' %}
             {% include deny/user_request_denied.html %}
         
-        {% elif entity == 'slice' %}
+        {% elif entity == 'SLICE' %}
             {% include deny/slice_request_denied.html %}
             
-        {% elif entity == 'project' %}
+        {% elif entity == 'PROJECT' %}
             {% include deny/project_request_denied.html %}
 
-        {% elif entity == 'authority' %}
+        {% elif entity == 'AUTHORITY' %}
             {% include deny/authority_request_denied.html %}
 
         {% end %}

@@ -11,12 +11,16 @@ import logging
 import time
 import myslice.db as db
 from myslice.lib import Status
+from myslicelib import Setup
 from myslice.lib.util import format_date
+from myslicelib.util import Endpoint, Authentication
 
 from myslice.db.activity import Event, EventAction, EventStatus, Object, ObjectType 
 from myslice.db import changes, connect
 from myslice.db.user import User
 from myslicelib.query import q
+
+from pprint import pprint
 
 logger = logging.getLogger('myslice.service.users')
 
@@ -35,7 +39,6 @@ def events_run(lock, qUserEvents):
 
         try:
             event = Event(qUserEvents.get())
-            print(event)
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
         finally:
@@ -112,6 +115,22 @@ def events_run(lock, qUserEvents):
                 
                 db.dispatch(dbconnection, event)
 
+def update_credentials(users):
+    # Get users in RethinkDB
+    for u_db in db.users():
+        # We can only get credentials for users that have a private key stored in db
+        if 'private_key' in u_db:
+            for u in users:
+                if u.id == u_db['id']:
+                    user_setup = Setup()
+                    user_setup.endpoints = [
+                        Endpoint(url="https://localhost:6080",type="Reg", name="OneLab Reg"),
+                        #Endpoint(url="https://portal.onelab.eu:6080",type="Reg", name="OneLab Reg"),
+                    ]
+                    user_setup.authentication = Authentication(hrn=u_db['hrn'], email=u_db['email'], certificate=u_db['certificate'], private_key=u_db['private_key'])
+                    u.getCredentials(setup=user_setup)
+    return users
+
 def sync(lock):
     """
     A thread that will sync users with the local rethinkdb
@@ -126,7 +145,7 @@ def sync(lock):
             logger.info("Worker users starting period synchronization")
 
             users = q(User).get()
-
+            users = update_credentials(users)
             """
             update local user table
             """
