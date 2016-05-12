@@ -1,6 +1,5 @@
 import sys, os, logging
 
-
 class settings(object):
 
     class email(object):
@@ -11,3 +10,4 @@ class settings(object):
         user = 'zhouquantest16@gmail.com'
         password = 'zqtest123'
         domain = theme + '.eu'
+        dir_path = os.path.expanduser("~/intern/myslice/myslice/email/templates")
