@@ -8,24 +8,34 @@ from pprint import pprint
 from myslice.web.rest import Api
 from myslice.lib.util import myJSONEncoder
 from myslice.db import dispatch, changes
-from myslice.db.activity import Event, EventStatus
+from myslice.db.activity import Event, EventStatus, PiAction, Action
+
+'''
+    API practice follows 
+    https://github.com/WhiteHouse/api-standards#responses
+'''
+
 
 class ActivityHandler(Api):
 
+
     @gen.coroutine
-    def get(self):
+    def get(self, id=None):
         activity = []
 
-        cursor = yield r.table('activity').run(self.dbconnection)
+        if id:
+            result = yield r.table('activity').get(id).run(self.dbconnection)
+            activity.append(result)
+        else:
+            cursor = yield r.table('activity').run(self.dbconnection)
 
-        while (yield cursor.fetch_next()):
-            item = yield cursor.next()
-            activity.append(item)
+            while (yield cursor.fetch_next()):
+                item = yield cursor.next()
+                activity.append(item)
 
         # return status code
         if not activity:
-            self.set_status(404)
-            self.finish({"reason": "Not found, Please check the URI."})
+            self.NotFoundError('No such activity is found')
         else:
             self.finish(json.dumps({"activity": activity}, cls=myJSONEncoder))
 
@@ -48,8 +58,7 @@ class ActivityHandler(Api):
             traceback.print_exc()
             self.set_status(400)
             self.finish(json.dumps({"return": {"status": "error", "messages": "malformed request"}}))
-            return
-
+            
         try:
             event = Event(data)
         except Exception as e:
@@ -95,3 +104,50 @@ class ActivityHandler(Api):
                 #yield feed.close()
                 pprint(e)
                 self.finish(json.dumps({"return": {"status":EventStatus.ERROR,"messages":e}}, cls=myJSONEncoder))
+
+    @gen.coroutine
+    def put(self, id=None):
+        '''
+        This method is only used for internal use
+        
+        {
+            action: APPROVE/ DENY
+        }
+
+        '''
+        if id is None:
+            self.BadRequest('Bad Request')
+
+        # retrieve the event from db, and see if it is in pending status
+        ev = yield r.table('activity').get(id).run(self.dbconnection)
+        if not ev:
+            self.NotFoundError("activity not found {}".format(id))
+
+        event = Event(ev)
+        if not event.isPending():
+            self.BadRequest("malformed request")
+
+        # 
+        try:
+            data = escape.json_decode(self.request.body)
+            action = PiAction(data)
+            if action == Action.APPROVE:
+                event.setApproved()
+            if action == Action.DENY:
+                event.setDenied()
+        except Exception as e:
+            self.BadRequest(str(e))
+
+        yield dispatch(self.dbconnection, event)
+
+
+
+
+
+
+
+
+
+
+
+
