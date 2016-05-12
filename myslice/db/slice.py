@@ -3,8 +3,8 @@ from xmlrpc.client import Fault as SFAError
 
 class Slice(myslicelibSlice):
 
-    def save(self):
-        result = super(myslicelibSlice, self).save()
+    def save(self, setup=None):
+        result = super(myslicelibSlice, self).save(setup)
         #print(self.attributes())
         #print(result['data'][0])
         if result['errors']:

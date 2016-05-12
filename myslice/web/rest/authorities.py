@@ -19,6 +19,9 @@ class AuthoritiesHandler(Api):
         :return:
         """
 
+        self.write(json.dumps({"result": self.get_current_user()}, cls=myJSONEncoder))
+
+        return
         authorities = []
 
         # TODO: id must be a valid URN

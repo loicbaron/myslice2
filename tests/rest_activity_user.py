@@ -60,7 +60,7 @@ class TestUser(unittest.TestCase):
                         "url": "http://onelab.eu",
                         "password": "...",
                         "generate_keys": True,
-                        "keys": []
+                        #"keys": []
                     }
                 }
             }

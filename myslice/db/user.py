@@ -23,25 +23,38 @@ def generate_RSA(bits=2048):
     return private_key, public_key
 
 class User(myslicelibUser):
+    
+    def __init__(self, data=None):
+        super(User, self).__init__(data)
+        if data is None:
+            data['generate_keys'] = False
+            data['keys'] = []
+            data['credentials'] = []
+        else:
+            if not 'generate_keys' in data:
+                data['generate_keys'] = False
+            if not 'keys' in data:
+                data['keys'] = []
+            if not 'credentials' in data:
+                data['credentials'] = []
 
-    remote_fields = ['email', 'keys']
-    private_key = None
-    public_key = None
-    generate_keys = False
+    #private_key = None
+    #public_key = None
+    #generate_keys = False
 
     # def isRemoteUpdate(self):
     #     if set(self.attributes()) & set(self.remote_fields):
     #         return True
     #     return False
 
-    def save(self):
+    def save(self, setup=None):
         if self.generate_keys:
             private_key, public_key = generate_RSA()
             self.private_key = private_key.decode('utf-8')
             self.public_key = public_key.decode('utf-8')
             self.keys.append(self.public_key)
 
-        result = super(myslicelibUser, self).save()
+        result = super(myslicelibUser, self).save(setup)
         #print(self.attributes())
         #print(result['data'][0])
         if result['errors']:

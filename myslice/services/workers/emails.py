@@ -8,6 +8,8 @@
 
 import logging
 
+from pprint import pprint
+
 from myslice import db
 from myslice import settings as s
 from myslice.db import connect, dispatch
@@ -40,7 +42,9 @@ def request_run(qRequests):
                 # Find the authoirty of the event object
                 # Then according the authority, put the pi_emails in pis_email
                 auth_id, entity = get_authority(event.object.id, event.object.type)
-                authority = Authority(db.get(dbconnection, table=entity, id=auth_id))            
+                authority = Authority(db.get(dbconnection, table=entity, id=auth_id))
+                #print("---- workers/requests ----")
+                #pprint(authority)
                 for pi_user in authority.pi_users:
                     pis = User(db.get(dbconnection, table='users', id=pi_user))
                     pis_email.append(pis.email)
@@ -67,7 +71,7 @@ def request_run(qRequests):
 
             except Exception as e:
                 import traceback
-                print(traceback.print_exc(e))
+                traceback.print_exc()
                 event.setError()
                 event.logError(str(e))
                 logger.error("There is something wrong with email system {}".format(e))
@@ -90,10 +94,7 @@ def approve_run(qApproved):
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
         else:
-            try:
-                
-
-
+            pass
 
 def deny_run(qDenied):
     pass

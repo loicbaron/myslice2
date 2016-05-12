@@ -1,29 +1,41 @@
 import os, logging
 
 from tornado import web, gen, httpserver
+
 from oauth2 import Provider
-from oauth2.grant import ClientCredentialsGrant
+from oauth2.web.tornado import OAuth2Handler
+from oauth2.grant import ImplicitGrant
 from oauth2.tokengenerator import Uuid4
 from oauth2.store.memory import ClientStore, TokenStore
+
 from sockjs.tornado import SockJSRouter
 from rethinkdb import r
 import myslice.db as db
-from myslice.web.authentication import OAuth2Handler, AuthHandler
-from myslice.web.rest.resource import ResourceHandler
-from myslice.web.rest.slice import SliceHandler
-from myslice.web.rest.user import UserHandler
+
+##
+# Authenticaction handler
+from myslice.web.controllers.login import Authentication
+
+##
+# REST handlers
+from myslice.web.rest.authentication import AuthenticationHandler
+from myslice.web.rest.authorities import AuthoritiesHandler
+from myslice.web.rest.projects import ProjectsHandler
+from myslice.web.rest.slices import SlicesHandler
+from myslice.web.rest.users import UsersHandler
+from myslice.web.rest.resources import ResourcesHandler
+
 from myslice.web.rest.activity import ActivityHandler
+
+##
+# WebSocket handler
 from myslice.web.websocket import WebsocketsHandler
 
+##
+# Web controllers
 from myslice.web.controllers import login, home, activity
-
-import json
-
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-
-class FooHandler(AuthHandler):
-    def get(self):
-        self.finish(json.dumps({'msg': 'This is Foo!'}))
 
 @gen.coroutine
 def run():
@@ -42,6 +54,10 @@ def run():
     # drop root privileges
     # TODO
 
+
+#
+# http://localhost:8111/authorize?response_type=token&client_id=abc&redirect_uri=http%3A%2F%2Flocalhost%3A8111%2Fevents&scope=scope_write
+
 class Application(web.Application):
 
     def __init__(self, dbconnection):
@@ -57,7 +73,7 @@ class Application(web.Application):
         client_store = ClientStore()
         client_store.add_client(client_id="abc",
                                 client_secret="xyz",
-                                redirect_uris=["http://localhost:8081/callback"])
+                                redirect_uris=["http://localhost:8111/events"])
 
         ##
         # OAuth Token Store (in memory)
@@ -65,31 +81,34 @@ class Application(web.Application):
 
         # Generator of tokens
         token_generator = Uuid4()
-        token_generator.expires_in[ClientCredentialsGrant.grant_type] = 3600
+        #token_generator.expires_in[ClientCredentialsGrant.grant_type] = 3600
 
         ##
         # OAuth Provider
-        provider = Provider(access_token_store=token_store,
-                            auth_code_store=token_store,
-                            client_store=client_store,
-                            token_generator=token_generator)
-        provider.token_path = '/oauth/token'
-        provider.add_grant(ClientCredentialsGrant())
+        provider = Provider(
+            access_token_store=token_store,
+            auth_code_store=token_store,
+            client_store=client_store,
+            token_generator=token_generator
+        )
 
+        #provider.token_path = '/oauth/token'
+        provider.add_grant(
+            ImplicitGrant(site_adapter=Authentication())
+        )
+
+        logger.debug(provider.authorize_path)
+        logger.debug(provider.token_path)
         ##
         # Auth handlers
         auth_handlers = [
-            #(provider.authorize_path, OAuth2Handler, dict(provider=provider)),
-            #(provider.token_path, OAuth2Handler, dict(provider=provider)),
-
-            (r'/oauth/token', OAuth2Handler, dict(controller=provider)),
-            (r'/foo', FooHandler, dict(controller=provider))
+            (provider.authorize_path, OAuth2Handler, dict(provider=provider)),
+            (provider.token_path, OAuth2Handler, dict(provider=provider))
         ]
 
         ##
         # Web
         web_handlers = [
-
             (r"/login", login.Index),
             (r'/', home.Index),
             (r'/activity', activity.Index),
@@ -103,8 +122,12 @@ class Application(web.Application):
         rest_handlers = [
             (r'/api/v1/activity', ActivityHandler),
 
-            (r'/api/v1/project', ProjectHandler),
+            (r'/api/v1/authentication', AuthenticationHandler),
+            (r'/api/v1/authorities', AuthoritiesHandler),
             (r'/api/v1/projects', ProjectsHandler),
+            (r'/api/v1/slices', SlicesHandler),
+            (r'/api/v1/users', UsersHandler),
+            (r'/api/v1/resources', ResourcesHandler),
         ]
 
         ##
@@ -117,6 +140,7 @@ class Application(web.Application):
         handlers = auth_handlers + web_handlers + rest_handlers + WebsocketRouter.urls
 
         settings = dict(cookie_secret="x&7G1d2!5MhG9SWkXu",
+                        login_url="/login",
                         template_path=self.templates,
                         static_path=self.static,
                         #xsrf_cookies=True,

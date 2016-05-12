@@ -10,10 +10,7 @@
 ##
 
 from tornado.ioloop import IOLoop
-from myslice.web import server
-
-#sys.path.append(os.path.realpath(os.path.dirname(__file__) + '/..'))
-#print os.path.realpath(os.path.dirname(__file__) + '/..')
+from myslice.web.server import run as WebServer
 
 import logging
 
@@ -23,7 +20,7 @@ if __name__ == '__main__':
 
     logger.info("Starting web thread")
 
-    IOLoop.current().run_sync(server)
+    IOLoop.current().run_sync(WebServer)
 
     try :
         IOLoop.instance().start()

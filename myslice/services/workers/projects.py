@@ -9,6 +9,9 @@
 import json
 import logging
 import time
+
+from pprint import pprint
+
 import myslice.db as db
 from myslice.lib import Status
 from myslice.lib.util import format_date
@@ -31,6 +34,8 @@ def events_run(lock, qProjectEvents):
     # db connection is shared between threads
     dbconnection = connect()
 
+    result = None
+
     while True:
 
         try:
@@ -39,7 +44,7 @@ def events_run(lock, qProjectEvents):
             logger.error("Problem with event: {}".format(e))
         else:
             logger.info("Processing event from user {}".format(event.user))
-            
+
             with lock:
                 try:
                     event.setRunning()
@@ -55,9 +60,9 @@ def events_run(lock, qProjectEvents):
                         result = q(Project).id(event.object.id).delete()
 
                     if event.addingObject():
-                        if event.data['type'] == ObjectType.USER:
+                        if event.data['type'] == str(ObjectType.USER):
                             logger.info("Project only supports PI at the moment, need new feature in SFA Reg")
-                        if event.data['type'] == ObjectType.PI or event.data['type'] == ObjectType.USER:
+                        if event.data['type'] == str(ObjectType.PI) or event.data['type'] == str(ObjectType.USER):
                             a = Project(db.get(dbconnection, table='projects', id=event.object.id))
                             for val in event.data['values']:
                                 pi = User(db.get(dbconnection, table='users', id=val))
@@ -65,9 +70,9 @@ def events_run(lock, qProjectEvents):
                             result = a.save()
 
                     if event.removingObject():
-                        if event.data['type'] == ObjectType.USER:
+                        if event.data['type'] == str(ObjectType.USER):
                             logger.info("Project only supports PI at the moment, need new feature in SFA Reg")
-                        if event.data['type'] == ObjectType.PI or event.data['type'] == ObjectType.USER:
+                        if event.data['type'] == str(ObjectType.PI) or event.data['type'] == str(ObjectType.USER):
                             a = Project(db.get(dbconnection, table='projects', id=event.object.id))
                             for val in event.data['values']:
                                 pi = User(db.get(dbconnection, table='users', id=val))
@@ -75,6 +80,8 @@ def events_run(lock, qProjectEvents):
                             result = a.save()
 
                 except Exception as e:
+                    import traceback
+                    traceback.print_exc()
                     logger.error("Problem with event: {}".format(e))
                     result = None
                     event.logError(str(e))
