@@ -1,0 +1,81 @@
+#!/bin/sh
+#
+# (c) 2016 Ciro Scognamiglio <c.scognamiglio@cslash.net>
+
+### BEGIN INIT INFO
+# Provides:          mooc
+# Required-Start: rethinkdb
+# Required-Stop: rethinkdb
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: This starts the mooc service.
+# Description:       needs rethinkdb
+### END INIT INFO
+
+. /lib/lsb/init-functions
+
+DIR=/root/mooc/rest-api/myops2/bin
+DAEMON=$DIR/myops2-mooc
+DAEMON_NAME=mooc
+
+DAEMONW=$DIR/myops2-web
+DAEMONW_NAME=moocweb
+
+# Add any command line options for your daemon here
+DAEMON_OPTS=""
+DAEMONW_OPTS=""
+
+# This next line determines what user the script runs as.
+# Root generally not recommended but necessary if you are using the Raspberry Pi GPIO from Python.
+DAEMON_USER=root
+
+# The process ID of the script when it runs is stored here:
+PIDFILE=/var/run/$DAEMON_NAME.pid
+PIDFILEW=/var/run/$DAEMONW_NAME.pid
+
+do_start()
+{
+    log_daemon_msg "Starting $DAEMON_NAME service"
+    start-stop-daemon --start --background --pidfile $PIDFILE --make-pidfile --user $DAEMON_USER --chuid $DAEMON_USER --startas $DAEMON -- $DAEMON_OPTS
+    log_end_msg $?
+
+    log_daemon_msg "Starting $DAEMONW_NAME service"
+    start-stop-daemon --start --background --pidfile $PIDFILEW --make-pidfile --user $DAEMON_USER --chuid $DAEMON_USER --startas $DAEMONW -- $DAEMONW_OPTS
+    log_end_msg $?
+}
+
+do_stop()
+{
+    log_daemon_msg "Stopping $DAEMON_NAME service"
+    start-stop-daemon --stop --pidfile $PIDFILE --retry 10
+    log_end_msg $?
+
+    log_daemon_msg "Stopping $DAEMONW_NAME service"
+    start-stop-daemon --stop --pidfile $PIDFILEW --retry 10
+    log_end_msg $?
+}
+
+
+case "$1" in
+
+    start|stop)
+        do_${1}
+        ;;
+
+    restart|reload|force-reload)
+        do_stop
+        do_start
+        ;;
+
+    status)
+        status_of_proc "$DAEMON_NAME" "$DAEMON" && exit 0 || exit $?
+        ;;
+
+    *)
+        echo "Usage: /etc/init.d/$DAEMON_NAME {start|stop|restart|status}"
+        exit 1
+        ;;
+
+esac
+
+exit 0
