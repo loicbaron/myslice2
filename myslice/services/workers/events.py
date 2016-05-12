@@ -12,21 +12,10 @@ import myslice.db as db
 from myslice.db import connect, dispatch
 from myslice.db.activity import Event, ObjectType 
 from myslice.db.user import User
+from myslice.lib.sfa import has_privilege
 
 logger = logging.getLogger('myslice.service.activity')
 
-def check_user_rights(user, event):
-    if event.object.type == ObjectType.SLICE:
-        for s in user.slices:
-            if s == event.object.id:
-                return True
-    elif event.user == event.object.id:
-        return True
-    else:
-        for a in user.pi_authorities:
-            if event.object.id.split('+')[1].startswith(a.split('+')[1]):
-                return True
-    return False
 
 def run(q):
     """
@@ -51,23 +40,25 @@ def run(q):
                 # if it exists -> add a numer to the id & hrn to make it unique
 
                 # Register a new user
-                if event.user is None and event.creatingObject():
-                    event.setPending()
-                else:
-                    db_user = db.get(dbconnection, table='users', id=event.user)
-                    if db_user:
-                        user = User(db_user)
-                        if check_user_rights(user,event):
-                            event.setWaiting()
-                        else:
-                            event.setPending()
+                if event.user is None:
+                    if event.creatingObject():
+                        event.setPending()
                     else:
-                        event.setError()
-                        logger.error("User %s not found" % event.user)
-                        # raising an Exception here, blocks the REST API
-                        #raise Exception("User %s not found" % event.user)
+                        raise Exception('User must be specified unless creating Object')
+                else:
+                    db_user = db.get(dbconnection, table='users', id=event.user)  
+                    if not db_user:
+                        raise Exception("User %s not found" % event.user)
+                    
+                    user = User(db_user)
+                    if has_privilege(user, event.object):
+                        event.setWaiting()
+                    else:
+                        event.setPending()
+
             except Exception as e:
                 event.setError()
+                event.logError(str(e))
                 logger.error("Unable to fetch the user from db {}".format(e))
 
             # dispatch the updated event

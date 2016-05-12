@@ -1,10 +1,10 @@
-import premailer
 import smtplib
+import premailer
+
 from time import mktime
+from datetime import datetime
 
 from tornado import template
-
-from datetime import datetime
 from email.utils import formataddr, formatdate
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -26,7 +26,7 @@ class Message(object):
     Email message object with html, text and attachements.
     '''
 
-    def __init__(self, mail_from=None, mail_to=None, subject=None, plain=None, rich=None,return_path=None, **kw):
+    def __init__(self, mail_from=None, mail_to=None, subject=None, plain=None, rich=None, return_path=None, **kw):
 
         # Default values
         self.mail_from = mail_from
@@ -187,7 +187,6 @@ if __name__ == '__main__':
                                                             name = 'TEST'
                                                         )
                                 )
-
 
     m = Message(mail_from=('OneLab Support', 'zhouquantest16@gmail.com'),
                 mail_to = ['joshzhou16@gmail.com'],
