@@ -28,6 +28,7 @@ from myslice.services.authorities import run as serviceAuthorities
 from myslice.services.experiments import run as serviceExperiments
 from myslice.services.users import run as serviceUsers
 from myslice.services.resources import run as serviceResources
+from myslice.services.emails import run as serviceEmails
 
 #from myslice.monitor.workers.resources import sync, queue
 
@@ -134,6 +135,10 @@ if __name__ == '__main__':
     #Process: resources
     #
     p = multiprocessing.Process(target=serviceResources)
+    processes.append(p)
+    p.start()
+
+    p = multiprocessing.Process(target=serviceEmails)
     processes.append(p)
     p.start()
 

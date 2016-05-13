@@ -30,7 +30,7 @@ def server():
     dbconnection = yield db.connect()
 
     http_server = httpserver.HTTPServer(Application(dbconnection))
-    http_server.listen(8111)
+    http_server.listen(80)
     #http_server.start(num_processes=None)
 
     # drop root privileges
@@ -111,11 +111,19 @@ class Application(web.Application):
         ##
         # REST API
         rest_handlers = [
-            (r'/api/v1/activity', ActivityHandler),
-            (r'/api/v1/resources', ResourcesHandler),
+
+            (r'/api/v1/activity$', ActivityHandler),
+            (r'/api/v1/activity/([a-z0-9\-]*)$', ActivityHandler),
+            
+            (r'/api/v1/resources$', ResourcesHandler),
+            (r'/api/v1/resources/()$', ResourcesHandler),
+            
             (r'/api/v1/users', UsersHandler),
+            
             (r'/api/v1/slices', SlicesHandler),
+            
             (r'/api/v1/authorities', AuthoritiesHandler),
+            
             (r'/api/v1/projects', ProjectsHandler),
         ]
 

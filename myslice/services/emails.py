@@ -1,7 +1,7 @@
 #
 #   MySlice version 2
 #
-#   Activity process service: manages events and requests
+#   Activity process service: manages emails
 #
 #   (c) 2016 Ciro Scognamiglio <ciro.scognamiglio@lip6.fr>
 ##
@@ -12,7 +12,9 @@ import threading
 from queue import Queue
 from myslice.db import connect, changes
 from myslice.db.activity import Event
-from myslice.services.workers.events import run as manageEvents
+from myslice.services.workers.emails import request_run as manageRequests
+from myslice.services.workers.emails import approve_run as manageApproved
+from myslice.services.workers.emails import deny_run as manageDenied
 
 logger = logging.getLogger('myslice.service.activity')
 
@@ -30,20 +32,29 @@ def run():
 
     logger.info("Service activity starting")
 
-    qEvents = Queue()
+    qRequests = Queue()
+    qApproved = Queue()
+    qDenied = Queue()
 
     threads = []
     for y in range(1):
-        t = threading.Thread(target=manageEvents, args=(qEvents,))
+        t = threading.Thread(target=manageRequests, args=(qRequests,))
+        t.daemon = True
+        threads.append(t)
+        t.start()
+    
+    for y in range(1):
+        t = threading.Thread(target=manageApproved, args=(qApproved,))
+        t.daemon = True
+        threads.append(t)
+        t.start()
+    
+    for y in range(1):
+        t = threading.Thread(target=manageDenied, args=(qDenied,))
         t.daemon = True
         threads.append(t)
         t.start()
 
-    ##
-    # Watch for changes on the activity table and send the event/request
-    # to the running threads (via Queue).
-    # A global watch feed is needed to permit spawning more threads to manage
-    # events and requests
     feed = changes(table='activity')
     for activity in feed:
         try:
@@ -51,8 +62,12 @@ def run():
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
         else:
-            if event.isNew():
-                qEvents.put(event)
+            if event.isPending():
+                qRequests.put(event)
+            if event.isApproved():
+                qApproved.put(event)
+            if event.isDenied():
+                qDenied.put(event)
 
     # waits for the thread to finish
     for x in threads:
