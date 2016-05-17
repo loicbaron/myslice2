@@ -33,8 +33,9 @@ def run():
     logger.info("Service activity starting")
 
     qRequests = Queue()
-    qApproved = Queue()
     qDenied = Queue()
+    qApproved = Queue()
+    sApproving = set()
 
     threads = []
     for y in range(1):
@@ -62,12 +63,19 @@ def run():
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
         else:
+            print(event)
             if event.isPending():
                 qRequests.put(event)
-            if event.isApproved():
-                qApproved.put(event)
             if event.isDenied():
+                logger.info("event {} is denied".format(event.id))
                 qDenied.put(event)
+            if event.isApproved():
+                sApproving.add(event.id)
+            if event.id in sApproving:
+                if event.isSuccess():
+                    qApproved.put(event)
+                else:
+                    logger.error("Somethong Wrong with the approved event during the process".format(event.id))
 
     # waits for the thread to finish
     for x in threads:

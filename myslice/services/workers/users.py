@@ -23,7 +23,6 @@ from myslice.db import changes, connect
 from myslice.db.user import User
 from myslicelib.query import q
 
-from pprint import pprint
 
 logger = logging.getLogger('myslice.service.users')
 
@@ -70,36 +69,11 @@ def events_run(lock, qUserEvents):
 
                     if event.updatingObject():
                         
-                        # if user.isRemoteUpdate():
-                        #     logger.info("updating remotely the user {}".format(event.object.id))
-                        #     user.id = event.object.id
-                        #     # update both remote fileds and local fields(if exists)                           
-                        #     result = event.data.update(user.save().first().dict())
-                        # else:
-                        #     logger.info("updating locally the user {}".format(event.object.id))
-                        #     result = event.data
-
                         logger.info("updating the user {}".format(event.object.id))
                         user = User(event.data)
                         user.id = event.object.id
                         result = user.save()
 
-                    # if event.addingObject():
-                    #     logger.info("adding the object to user {}".format(event.object.id))
-
-                    #     user = User(db.get(dbconnection, table='users', id=event.object.id))                        
-                        
-                    #     if event.data['type'] == 'KEY':
-                    #         user.addKey(event.data['value'])
-                    #         result = user.save()
-
-                    # if event.removingObject():
-                    #     logger.info("remove the object from user {}".format(event.object.id))
-
-                    #     user = User(db.get(dbconnection, table='users', id=event.object.id))
-                    #     if event.data['type'] == 'KEY':
-                    #         user.delKey(event.data['value'])
-                    #         result = user.save()
 
                 except Exception as e:
                     import traceback

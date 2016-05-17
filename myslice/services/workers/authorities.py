@@ -44,11 +44,39 @@ def events_run(lock, qAuthorityEvents):
             
             with lock:
                 try:
+                    if event.isApproved() and event.creatingObject():
+                        
+                        if event.user is None:     
+                            event.user =  "urn:publicid:IDN+onelab:{}+user+{}".format(
+                                                                    event.data['shortname'], 
+                                                                    event.data['pi']['shortname'])
+                            pi_dict = event.data['pi']
+                            pi_dict['id'] = event.user
+                            del event.data['pi']
+
                     event.setRunning()
 
-                    if event.creatingObject() or event.updatingObject():
+                    if event.creatingObject():
                         a = Authority(event.data)
                         a.id = event.object.id 
+
+                        pi_local_dict = db.get(dbconnection, table='users', id=event.user)
+                        if pi_local_dict:
+                            u = User(pi_local_dict)
+                            a.addPi(u)
+                            result = a.save()
+                        else:
+                            a.save()
+                            u = User(pi_dict)
+                            u.id = event.user
+                            res = u.save()
+                            db.users(dbconnection, res, event.object.id)
+                            a.addPi(u)
+                            result = a.save()
+
+                    if event.updatingObject():
+                        a = Authority(event.data)
+                        a.id = event.object.id
                         result = a.save()
 
                     if event.deletingObject():
