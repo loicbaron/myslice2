@@ -24,20 +24,13 @@ def generate_RSA(bits=2048):
 
 class User(myslicelibUser):
     
-    def __init__(self, data=None):
+    def __init__(self, data = {}):
         super(User, self).__init__(data)
-        if data is None:
-            data['generate_keys'] = False
-            data['keys'] = []
-            data['credentials'] = []
-        else:
-            if not 'generate_keys' in data:
-                data['generate_keys'] = False
-            if not 'keys' in data:
-                data['keys'] = []
-            if not 'credentials' in data:
-                data['credentials'] = []
 
+        self.generate_keys = data.get('generate_keys', False)
+        self.keys = data.get('keys', [])
+        self.credentials = data.get('credentials', [])
+    
     #private_key = None
     #public_key = None
     #generate_keys = False

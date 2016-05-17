@@ -4,7 +4,7 @@ from xmlrpc.client import Fault as SFAError
 
 class Authority(myslicelibAuthority):
 
-    def save(self, setup):
+    def save(self, setup=None):
         result = super(myslicelibAuthority, self).save(setup)
 
         if result['errors']:
