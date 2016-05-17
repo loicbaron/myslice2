@@ -42,7 +42,7 @@ config_file = config_path
 ## Setup MySliceLib
 myslicelibsetup.endpoints = [
             Endpoint(url="https://sfa3.planet-lab.eu:12346",type="AM", timeout=30, name="PLE"),
-            # Endpoint(url="https://194.199.16.164:12346",type="AM"),
+            ## Endpoint(url="https://194.199.16.164:12346",type="AM"),
             # Endpoint(url="https://www.wilab2.ilabt.iminds.be:12369/protogeni/xmlrpc/am/3.0",type="AM"),
             # Endpoint(url="https://fuseco.fokus.fraunhofer.de/api/sfa/am/v3",type="AM"),
             # Endpoint(url="https://griffin.ipv6.lip6.fr:8001/RPC2",type="AM"),
