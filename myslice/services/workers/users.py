@@ -16,10 +16,9 @@ from myslice.lib.authentication import UserSetup
 from myslice import myslicelibsetup
 
 from myslice.lib.util import format_date
-from myslicelib.util import Endpoint, Authentication
 
-from myslice.db.activity import Event, EventAction, EventStatus, Object, ObjectType 
-from myslice.db import changes, connect
+from myslice.db.activity import Event
+from myslice.db import connect
 from myslice.db.user import User
 from myslicelib.query import q
 
@@ -73,7 +72,6 @@ def events_run(lock, qUserEvents):
                         user = User(event.data)
                         user.id = event.object.id
                         result = user.save()
-
 
                 except Exception as e:
                     import traceback

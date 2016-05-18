@@ -26,7 +26,8 @@ class User(myslicelibUser):
     
     def __init__(self, data = {}):
         super(User, self).__init__(data)
-
+        if data is None:
+            data = {}
         self.generate_keys = data.get('generate_keys', False)
         self.keys = data.get('keys', [])
         self.credentials = data.get('credentials', [])

@@ -17,12 +17,20 @@ class ObjectType(Enum):
     PROJECT = "PROJECT"
     SLICE = "SLICE"
     USER = "USER"
-    PI = "PI"
-    KEY = "KEY"
     RESOURCE = "RESOURCE"
 
     def __str__(self):
         return str(self.value)
+
+class DataType(Enum):
+    USER = "USER"
+    RESOURCE = "RESOURCE"
+    PI = "PI"
+    KEY = "KEY"
+
+    def __str__(self):
+        return str(self.value)
+    
 
 class EventStatus(Enum):
     """
@@ -109,6 +117,51 @@ class PiAction(Dict):
             self['action'] = Action[value]
         else:
             raise Exception('Object Type {} not valid'.format(value))
+
+
+class DataObject(Dict):
+
+    def __init__(self, data):
+        try:
+            self.type = data['type']
+        except KeyError:
+            raise Exception('Data Type not specified')
+
+        try:
+            self.values = data['values']
+        except KeyError:
+            raise Exception('Data Values not specified')
+    
+    @property
+    def values(self):
+        return self['values']
+
+    @values.setter
+    def values(self, value):
+        self['values'] = value
+
+    @property
+    def type(self):
+        return self['type']
+
+    @type.setter
+    def type(self, value):
+        if isinstance(value, DataType):
+            self['type'] = value
+        elif value in DataType.__members__:
+            self['type'] = DataType[value]
+        else:
+            raise Exception('Object Type {} not valid'.format(value))
+
+    def dict(self):
+        ret = {}
+        for k in self.keys():
+            if isinstance(self[k], Enum):
+                ret[k] = self[k].value
+            else:
+                ret[k] = self[k]
+        return ret
+
 
 class Object(Dict):
 
@@ -390,6 +443,9 @@ class Event(Dict):
     def data(self, value):
         if not isinstance(value, dict) and not isinstance(value, list):
             raise Exception("Invalid format for data (must be a dict or a list)")
+
+        if 'type' in value:
+            self['data'] = DataObject(value)
         else:
             self['data'] = value
 
@@ -405,6 +461,8 @@ class Event(Dict):
             if isinstance(self[k], Enum):
                 ret[k] = self[k].value
             elif isinstance(self[k], Object):
+                ret[k] = self[k].dict()
+            elif isinstance(self[k], DataObject):
                 ret[k] = self[k].dict()
             else:
                 ret[k] = self[k]

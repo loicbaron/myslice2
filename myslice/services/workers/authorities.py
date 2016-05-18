@@ -14,7 +14,7 @@ import myslice.db as db
 from myslice.lib import Status
 from myslice.lib.util import format_date
 
-from myslice.db.activity import Event, ObjectType
+from myslice.db.activity import Event, ObjectType, DataType
 from myslice.db import changes, connect
 from myslice.db.user import User
 from myslice.db.authority import Authority
@@ -51,7 +51,6 @@ def events_run(lock, qAuthorityEvents):
                                                                     event.data['shortname'], 
                                                                     event.data['pi']['shortname'])
                             pi_dict = event.data['pi']
-                            pi_dict['id'] = event.user
                             del event.data['pi']
 
                     event.setRunning()
@@ -83,24 +82,26 @@ def events_run(lock, qAuthorityEvents):
                         result = q(Authority).id(event.object.id).delete()
 
                     if event.addingObject():
-                        if event.data['type'] == str(ObjectType.USER):
+                        if event.data.type == DataType.USER:
                             raise Exception("Please use CREATE USER instead")
-                        if event.data['type'] == str(ObjectType.PI):
+                        if event.data.type == DataType.PI:
                             a = Authority(db.get(dbconnection, table='authorities', id=event.object.id))
-                            for val in event.data['values']:
+                            for val in event.data.values:
                                 pi = User(db.get(dbconnection, table='users', id=val))
                                 a.addPi(pi)
                             result = a.save()
+                            # XXX : Update the user in local db also
 
                     if event.removingObject():
-                        if event.data['type'] == str(ObjectType.USER):
+                        if event.data.type == DataType.USER:
                             raise Exception("Please use DELETE USER instead")
-                        if event.data['type'] == str(ObjectType.PI):
+                        if event.data.type == DataType.PI:
                             a = Authority(db.get(dbconnection, table='authorities', id=event.object.id))
-                            for val in event.data['values']:
+                            for val in event.data.values:
                                 pi = User(db.get(dbconnection, table='users', id=val))
                                 a.removePi(pi)
                             result = a.save()
+                            # XXX : Update the user in local db also
 
                 except Exception as e:
                     import traceback
