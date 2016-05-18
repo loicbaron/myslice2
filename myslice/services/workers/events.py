@@ -40,14 +40,15 @@ def run(q):
                 # Check if the event.object.id already exists or not
                 # if it exists -> add a numer to the id & hrn to make it unique
 
-                # Register a new user
+                # Register a new object for a new user
+                # id should be generated into the web to avoid duplicates
                 if event.user is None and event.creatingObject():
                     event.setPending()
                 else:
                     db_user = db.get(dbconnection, table='users', id=event.user)
                     if db_user:
                         user = User(db_user)
-                        if has_privilege(user,event.object):
+                        if has_privilege(user, event.object):
                             event.setWaiting()
                         else:
                             event.setPending()

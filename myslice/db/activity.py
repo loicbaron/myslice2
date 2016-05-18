@@ -105,6 +105,13 @@ class PiAction(Dict):
         except KeyError:
             raise Exception('Object Type not specified')
 
+        ##
+        # User making the request
+        #
+        try:
+            self.user = obj['user']
+        except KeyError:
+            raise Exception("User Id not specified")
     ##
     # action of PI
     @property

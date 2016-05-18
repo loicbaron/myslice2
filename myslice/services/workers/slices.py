@@ -59,6 +59,7 @@ def events_run(lock, qSliceEvents):
                     if event.creatingObject() or event.updatingObject():
                         s = Slice(event.data)
                         s.id = event.object.id
+                        s.addUser(u)
                         if 'users' in event.data and 'geni_users' not in event.data:
                             for u_id in event.data['users']:
                                 u = User(db.get(dbconnection, table='users', id=u_id))

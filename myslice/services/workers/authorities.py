@@ -44,63 +44,61 @@ def events_run(lock, qAuthorityEvents):
             
             with lock:
                 try:
-                    if event.isApproved() and event.creatingObject():
-                        
-                        if event.user is None:     
-                            event.user =  "urn:publicid:IDN+onelab:{}+user+{}".format(
-                                                                    event.data['shortname'], 
-                                                                    event.data['pi']['shortname'])
-                            pi_dict = event.data['pi']
-                            del event.data['pi']
-
                     event.setRunning()
 
                     if event.creatingObject():
-                        a = Authority(event.data)
-                        a.id = event.object.id 
 
-                        pi_local_dict = db.get(dbconnection, table='users', id=event.user)
-                        if pi_local_dict:
-                            u = User(pi_local_dict)
-                            a.addPi(u)
-                            result = a.save()
-                        else:
-                            a.save()
-                            u = User(pi_dict)
-                            u.id = event.user
-                            res = u.save()
-                            db.users(dbconnection, res, event.object.id)
-                            a.addPi(u)
-                            result = a.save()
+                        auth = Authority(event.data)
+                        auth.id = event.object.id
+                        auth.save()
+                        
+                        u = User(event.data['pi'])
+
+                        auth_head = '+'.join(event.object.id.split('+')[:-2])
+                        u.id = auth_head + "+user+{}".format(event.data['pi']['shortname'])
+                        res = u.save()
+                        db.users(dbconnection, res, event.user)
+                        auth.addPi(u)
+
+                        #    # if user is admin, add him as PI of the Authority
+                        #    # XXX Do we want that?
+                        #    pi_local_dict = db.get(dbconnection, table='users', id=event.user)
+                        #    u = User(pi_local_dict)
+
+                        result = auth.save()
 
                     if event.updatingObject():
-                        a = Authority(event.data)
-                        a.id = event.object.id
-                        result = a.save()
+                        auth = Authority(event.data)
+                        auth.id = event.object.id
+                        result = auth.save()
 
                     if event.deletingObject():
-                        result = q(Authority).id(event.object.id).delete()
+                        auth = Authority(db.get(dbconnection, table='authorities', id=event.object.id))
+                        if not auth:
+                            raise Exception("Authority doesn't exist")
+                        print(auth)
+                        result = auth.delete()
 
                     if event.addingObject():
                         if event.data.type == DataType.USER:
                             raise Exception("Please use CREATE USER instead")
                         if event.data.type == DataType.PI:
-                            a = Authority(db.get(dbconnection, table='authorities', id=event.object.id))
+                            auth = Authority(db.get(dbconnection, table='authorities', id=event.object.id))
                             for val in event.data.values:
                                 pi = User(db.get(dbconnection, table='users', id=val))
-                                a.addPi(pi)
-                            result = a.save()
+                                auth.addPi(pi)
+                            result = auth.save()
                             # XXX : Update the user in local db also
 
                     if event.removingObject():
                         if event.data.type == DataType.USER:
                             raise Exception("Please use DELETE USER instead")
                         if event.data.type == DataType.PI:
-                            a = Authority(db.get(dbconnection, table='authorities', id=event.object.id))
+                            auth = Authority(db.get(dbconnection, table='authorities', id=event.object.id))
                             for val in event.data.values:
                                 pi = User(db.get(dbconnection, table='users', id=val))
-                                a.removePi(pi)
-                            result = a.save()
+                                auth.removePi(pi)
+                            result = auth.save()
                             # XXX : Update the user in local db also
 
                 except Exception as e:
