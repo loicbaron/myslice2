@@ -41,4 +41,3 @@ def has_privilege(user, obj):
             return True
 
     return False
-

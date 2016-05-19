@@ -93,7 +93,9 @@ def update_credentials(users):
                 u_db_object = User(u_db)
                 if u.id == u_db['id']:
                     user_setup = UserSetup(u_db_object, myslicelibsetup.endpoints)
-                    c = u.getCredentials(setup=user_setup)
+
+                    # XXX the admin user hrn must be a setting
+                    c = u.getCredentials(setup=user_setup, delegate_to="onelab.myslice")
     return users
 
 def sync(lock):
