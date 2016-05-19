@@ -1,6 +1,6 @@
 from myslicelib.model.user import User as myslicelibUser
 from xmlrpc.client import Fault as SFAError
-
+from myslice import db
 from pprint import pprint
 
 def generate_RSA(bits=2048):
@@ -41,32 +41,30 @@ class User(myslicelibUser):
     #         return True
     #     return False
 
-    def save(self, setup=None):
+    def save(self, dbconnection, setup=None):
         if self.generate_keys:
             private_key, public_key = generate_RSA()
             self.private_key = private_key.decode('utf-8')
             self.public_key = public_key.decode('utf-8')
             self.keys.append(self.public_key)
 
-        result = super(myslicelibUser, self).save(setup)
+        result = super(User, self).save(setup)
         #print(self.attributes())
         #print(result['data'][0])
         if result['errors']:
-            if len(result['errors']) == 2 \
-                and isinstance(result['errors'][1]['exception'], SFAError) \
-                and result['errors'][1]['exception'].faultCode == 7:
-                
-                return {**(self.attributes()), **result['data'][0]}
-
             raise Exception('errors: %s' % result['errors'] )
         else:
-            return { **(self.attributes()), **result['data'][0]}
+            result = { **(self.attributes()), **result['data'][0]}
+            db.users(dbconnection, result, self.id)
+            return True
 
-    def delete(self):
-        result = super(myslicelibUser, self).delete()
+    def delete(self, dbconnection, setup=None):
+        result = super(User, self).delete(setup)
         
         if result['errors']:
             raise Exception('errors: %s' % result['errors'])
-        return None
+        else:
+            db.delete(dbconnection, 'users', self.id)
+            return True
 
 

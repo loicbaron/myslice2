@@ -45,41 +45,47 @@ def events_run(lock, qAuthorityEvents):
             with lock:
                 try:
                     event.setRunning()
-
+                    isSuccess = False
+                    
                     if event.creatingObject():
 
                         auth = Authority(event.data)
                         auth.id = event.object.id
-                        auth.save()
-                        
-                        u = User(event.data['pi'])
+                        isOK1 = auth.save(dbconnection)
 
+                        pi = User(event.data['pi'])
                         auth_head = '+'.join(event.object.id.split('+')[:-2])
-                        u.id = auth_head + "+user+{}".format(event.data['pi']['shortname'])
-                        res = u.save()
-                        db.users(dbconnection, res, event.user)
-                        auth.addPi(u)
+                        pi.id = auth_head + "+user+{}".format(event.data['pi']['shortname'])
+                        isOK2 = pi.save(dbconnection)
+
+                        auth.addPi(pi)
+                        isOK3 = auth.save(dbconnection)
+                        isSuccess = isOK1 & isOK2 & isOK3
 
                         #    # if user is admin, add him as PI of the Authority
                         #    # XXX Do we want that?
                         #    pi_local_dict = db.get(dbconnection, table='users', id=event.user)
                         #    u = User(pi_local_dict)
 
-                        result = auth.save()
 
                     if event.updatingObject():
+                        logger.info("updating the object authority {}".format(event.object.id)) 
+                        
                         auth = Authority(event.data)
                         auth.id = event.object.id
-                        result = auth.save()
+                        isSuccess = auth.save(dbconnection)
 
                     if event.deletingObject():
+                        logger.info("deleting the object authority {}".format(event.object.id)) 
+                        
                         auth = Authority(db.get(dbconnection, table='authorities', id=event.object.id))
                         if not auth:
                             raise Exception("Authority doesn't exist")
-                        print(auth)
-                        result = auth.delete()
+                        isSuccess = auth.delete(dbconnection)
 
                     if event.addingObject():
+                        logger.info("adding data to the object authority {}".format(event.object.id)) 
+                        
                         if event.data.type == DataType.USER:
                             raise Exception("Please use CREATE USER instead")
                         if event.data.type == DataType.PI:
@@ -87,10 +93,11 @@ def events_run(lock, qAuthorityEvents):
                             for val in event.data.values:
                                 pi = User(db.get(dbconnection, table='users', id=val))
                                 auth.addPi(pi)
-                            result = auth.save()
-                            # XXX : Update the user in local db also
+                            isSuccess = auth.save(dbconnection)
 
                     if event.removingObject():
+                        logger.info("removing data from the object authority {}".format(event.object.id)) 
+
                         if event.data.type == DataType.USER:
                             raise Exception("Please use DELETE USER instead")
                         if event.data.type == DataType.PI:
@@ -98,25 +105,18 @@ def events_run(lock, qAuthorityEvents):
                             for val in event.data.values:
                                 pi = User(db.get(dbconnection, table='users', id=val))
                                 auth.removePi(pi)
-                            result = auth.save()
-                            # XXX : Update the user in local db also
+                            isSuccess = auth.save(dbconnection)
 
                 except Exception as e:
                     import traceback
                     traceback.print_exc()
                     logger.error("Problem with event: {}".format(e))
-                    result = None
-                    event.logError(str(e))
+                    event.logError(str(e)) 
+                
+                if isSuccess:
+                    event.setSuccess()
+                else:
                     event.setError()
-                     
-                if result:
-                    if 'errors' in result and len(result['errors'])>0:
-                        logger.error("Error: ".format(result['errors']))
-                        event.logError(str(result['errors']))
-                        event.setError()
-                    else:
-                        db.authorities(dbconnection, result, event.object.id)
-                        event.setSuccess()
                 
                 db.dispatch(dbconnection, event)
 
