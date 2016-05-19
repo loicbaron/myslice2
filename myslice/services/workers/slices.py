@@ -19,11 +19,10 @@ from myslice.lib.util import format_date
 from myslice.lib.authentication import UserSetup
 from myslice import myslicelibsetup
 
-from myslice.db.activity import Event, ObjectType
+from myslice.db.activity import Event, ObjectType, DataType
 from myslice.db import changes, connect
 from myslicelib.model.lease import Lease
 from myslicelib.model.resource import Resource
-from myslice.db.project import Project
 from myslice.db.slice import Slice
 from myslice.db.user import User
 from myslicelib.query import q
@@ -60,6 +59,7 @@ def events_run(lock, qSliceEvents):
                     if event.creatingObject() or event.updatingObject():
                         s = Slice(event.data)
                         s.id = event.object.id
+                        s.addUser(u)
                         if 'users' in event.data and 'geni_users' not in event.data:
                             for u_id in event.data['users']:
                                 u = User(db.get(dbconnection, table='users', id=u_id))
@@ -74,15 +74,15 @@ def events_run(lock, qSliceEvents):
                     if event.addingObject():
                         s = Slice(db.get(dbconnection, table='slices', id=event.object.id))
 
-                        if event.data['type'] == str(ObjectType.USER):
-                            for val in event.data['values']:
+                        if event.data.type == DataType.USER:
+                            for val in event.data.values:
                                 u = User(db.get(dbconnection, table='users', id=val))
                                 s.addUser(u)
                             result = s.save(user_setup)
 
-                        if event.data['type'] == str(ObjectType.RESOURCE):
+                        if event.data['type'] == DataType.RESOURCE:
                             # "values": [{id:"YYYYYY",lease:{start_time:xxxx, end_time:xxxx}}, {id:“ZZZZZZ”}]
-                            for val in event.data['values']:
+                            for val in event.data.values:
                                 r = Resource(db.get(dbconnection, table='resources', id=val['id']))
                                 pprint(r)
                                 s.addResource(r)
@@ -97,15 +97,15 @@ def events_run(lock, qSliceEvents):
                     if event.removingObject():
                         s = Slice(db.get(dbconnection, table='slices', id=event.object.id))
 
-                        if event.data['type'] == str(ObjectType.USER):
+                        if event.data.type == DataType.USER:
                             for val in event.data['values']:
                                 u = User(db.get(dbconnection, table='users', id=val))
                                 s.removeUser(u)
                             result = s.save(user_setup)
 
-                        if event.data['type'] == str(ObjectType.RESOURCE):
+                        if event.data.type == DataType.RESOURCE:
                             # "values": [{id:"YYYYYY",lease:{start_time:xxxx, end_time:xxxx}}, {id:“ZZZZZZ”}]
-                            for val in event.data['values']:
+                            for val in event.data.values:
                                 r = Resource(db.get(dbconnection, table='resources', id=val['id']))
                                 pprint(r)
                                 s.removeResource(r)

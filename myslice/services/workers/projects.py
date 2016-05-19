@@ -16,7 +16,7 @@ import myslice.db as db
 from myslice.lib import Status
 from myslice.lib.util import format_date
 
-from myslice.db.activity import Event, ObjectType
+from myslice.db.activity import Event, ObjectType, DataType
 from myslice.db import changes, connect
 from myslice.db.user import User
 from myslice.db.project import Project
@@ -51,30 +51,32 @@ def events_run(lock, qProjectEvents):
 
                     if event.creatingObject() or event.updatingObject():
                         a = Project(event.data)
-                        a.id = event.object.id 
+                        a.id = event.object.id
+                        u = User(db.get(dbconnection, table='users', id=event.user))
+                        a.addPi(u) 
                         # TODO: Registry Only
-                        # TODO: Do we add the event.user to the project???
                         result = a.save()
 
                     if event.deletingObject():
                         result = q(Project).id(event.object.id).delete()
 
                     if event.addingObject():
-                        if event.data['type'] == str(ObjectType.USER):
+                        if event.data.type == DataType.USER:
                             logger.info("Project only supports PI at the moment, need new feature in SFA Reg")
-                        if event.data['type'] == str(ObjectType.PI) or event.data['type'] == str(ObjectType.USER):
+                        # XXX : why or DataType.USER
+                        if event.data.type == DataType.PI or event.data.type == DataType.USER:
                             a = Project(db.get(dbconnection, table='projects', id=event.object.id))
-                            for val in event.data['values']:
+                            for val in event.data.values:
                                 pi = User(db.get(dbconnection, table='users', id=val))
                                 a.addPi(pi)
                             result = a.save()
 
                     if event.removingObject():
-                        if event.data['type'] == str(ObjectType.USER):
+                        if event.data.type == DataType.USER:
                             logger.info("Project only supports PI at the moment, need new feature in SFA Reg")
-                        if event.data['type'] == str(ObjectType.PI) or event.data['type'] == str(ObjectType.USER):
+                        if event.data.type == DataType.PI or event.data.type == DataType.USER:
                             a = Project(db.get(dbconnection, table='projects', id=event.object.id))
-                            for val in event.data['values']:
+                            for val in event.data.values:
                                 pi = User(db.get(dbconnection, table='users', id=val))
                                 a.removePi(pi)
                             result = a.save()

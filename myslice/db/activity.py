@@ -17,12 +17,20 @@ class ObjectType(Enum):
     PROJECT = "PROJECT"
     SLICE = "SLICE"
     USER = "USER"
-    PI = "PI"
-    KEY = "KEY"
     RESOURCE = "RESOURCE"
 
     def __str__(self):
         return str(self.value)
+
+class DataType(Enum):
+    USER = "USER"
+    RESOURCE = "RESOURCE"
+    PI = "PI"
+    KEY = "KEY"
+
+    def __str__(self):
+        return str(self.value)
+    
 
 class EventStatus(Enum):
     """
@@ -69,6 +77,15 @@ class EventAction(Enum):
     def __str__(self):
         return str(self.value)
 
+class Action(Enum):
+    # Approve/Deny operations
+    APPROVE = "APPROVE"
+    DENY = "DENY"
+
+    def __str__(self):
+        return str(self.value)
+
+
 class Dict(dict):
     '''
     A Base Dict class which support slice
@@ -80,15 +97,7 @@ class Dict(dict):
         except KeyError:
             raise AttributeError("Dict object has no attribute {}".format(key))
 
-class Action(Enum):
-    # Approve/Deny operations
-    APPROVE = "APPROVE"
-    DENY = "DENY"
-
-    def __str__(self):
-        return str(self.value)
-
-class PiAction(dict):
+class PiAction(Dict):
     
     def __init__(self, obj):
         try:
@@ -96,6 +105,13 @@ class PiAction(dict):
         except KeyError:
             raise Exception('Object Type not specified')
 
+        ##
+        # User making the request
+        #
+        try:
+            self.user = obj['user']
+        except KeyError:
+            raise Exception("User Id not specified")
     ##
     # action of PI
     @property
@@ -105,9 +121,54 @@ class PiAction(dict):
     @action.setter
     def action(self, value):
         if value in Action.__members__:
-            self['action'] = PiAction[value]
+            self['action'] = Action[value]
         else:
             raise Exception('Object Type {} not valid'.format(value))
+
+
+class DataObject(Dict):
+
+    def __init__(self, data):
+        try:
+            self.type = data['type']
+        except KeyError:
+            raise Exception('Data Type not specified')
+
+        try:
+            self.values = data['values']
+        except KeyError:
+            raise Exception('Data Values not specified')
+    
+    @property
+    def values(self):
+        return self['values']
+
+    @values.setter
+    def values(self, value):
+        self['values'] = value
+
+    @property
+    def type(self):
+        return self['type']
+
+    @type.setter
+    def type(self, value):
+        if isinstance(value, DataType):
+            self['type'] = value
+        elif value in DataType.__members__:
+            self['type'] = DataType[value]
+        else:
+            raise Exception('Object Type {} not valid'.format(value))
+
+    def dict(self):
+        ret = {}
+        for k in self.keys():
+            if isinstance(self[k], Enum):
+                ret[k] = self[k].value
+            else:
+                ret[k] = self[k]
+        return ret
+
 
 class Object(Dict):
 
@@ -156,6 +217,75 @@ class Object(Dict):
                 ret[k] = self[k]
         return ret
 
+class RequestUser(dict):
+    '''
+        id: <SFA urn>
+        email: [String],
+        first_name: [String],
+        last_name: [String],
+        shortname: [String]
+    '''
+    def __init__(self, user):
+        try:
+            self.email = user['email']
+        except KeyError:
+            raise Exception("Request user email not specified")
+
+        try:
+            self.first_name = user['first_name']
+        except KeyError:
+            raise Exception("Request user firstname not specified")
+
+        try:
+            self.last_name = user['last_name']
+        except KeyError:
+            raise Exception("Request user lastname not specified")
+
+        try:
+            self.shortname = user['shortname']
+        except KeyError:
+            raise Exception("Request user shortname not specified")
+
+class RequestAuth(dict):
+
+    '''
+        id: <SFA urn>
+        pi: <RequestUser>
+        shortname: [String]
+        name: [String]
+        city: [String]
+        url:  [String](option)
+        address: [String]
+    '''
+
+    def __init__(self, auth):
+        
+        self.url = auth.get('url', '')
+
+        try:
+            self.pi = RequestUser(auth['pi'])
+        except KeyError:
+            raise Exception("Request auth pi not specified")
+
+        try:
+            self.shortname = auth['shortname']
+        except KeyError:
+            raise Exception("Request auth shortname not specified")
+
+        try:
+            self.name = auth['name']
+        except KeyError:
+            raise Exception("Request auth name not specified")
+
+        try:
+            self.address = auth['address']
+        except KeyError:
+            raise Exception("Request auth address not specified")
+
+        try:
+            self.city = auth['city']
+        except KeyError:
+            raise Exception("Request auth address not specified")
 
 class Event(Dict):
     """
@@ -320,6 +450,9 @@ class Event(Dict):
     def data(self, value):
         if not isinstance(value, dict) and not isinstance(value, list):
             raise Exception("Invalid format for data (must be a dict or a list)")
+
+        if 'type' in value:
+            self['data'] = DataObject(value)
         else:
             self['data'] = value
 
@@ -335,6 +468,8 @@ class Event(Dict):
             if isinstance(self[k], Enum):
                 ret[k] = self[k].value
             elif isinstance(self[k], Object):
+                ret[k] = self[k].dict()
+            elif isinstance(self[k], DataObject):
                 ret[k] = self[k].dict()
             else:
                 ret[k] = self[k]
@@ -445,8 +580,8 @@ class Event(Dict):
         if not self.id:
             raise Exception('Missing required Id')
 
-        if not self.isWaiting():
-            raise Exception('Event must be in WAITING state before RUNNING')
+        if not self.isReady():
+            raise Exception('Event must be in WAITING or APPROVED state before RUNNING')
 
         self.status = EventStatus.RUNNING
 

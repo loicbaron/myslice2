@@ -82,16 +82,15 @@ class ActivityHandler(Api):
                     #print(item)
                     ev = Event(item['new_val'])
                     if ev.id == event_id:
-                        if ev.status == EventStatus.ERROR or ev.status == EventStatus.WARNING:
+                        if ev.isError() or ev.isWarning():
                             self.set_status(500)
-                            print(ev)
                             # XXX trying to cleanup the Cursor, but it is not Working
                             # <class 'rethinkdb.net_tornado.TornadoCursor'>
                             # https://github.com/rethinkdb/rethinkdb/blob/next/drivers/python/rethinkdb/tornado_net/net_tornado.py
                             # https://github.com/rethinkdb/rethinkdb/blob/next/drivers/python/rethinkdb/net.py
                             #yield feed.close()
                             self.finish(json.dumps({"return": {"status":ev.status,"messages":ev}}, cls=myJSONEncoder))
-                        if ev.status == EventStatus.SUCCESS or ev.status == EventStatus.PENDING or ev.status == EventStatus.DENIED:
+                        elif ev.isSuccess() or ev.isPending():
                             self.set_status(200)
                             #yield feed.close()
                             self.finish(json.dumps({"return": {"status":ev.status,"messages":ev}}, cls=myJSONEncoder))
@@ -111,7 +110,8 @@ class ActivityHandler(Api):
         This method is only used for internal use
         
         {
-            action: APPROVE/ DENY
+            user: <id>
+            action: APPROVED/ DENIED
         }
 
         '''
@@ -127,15 +127,18 @@ class ActivityHandler(Api):
         if not event.isPending():
             self.BadRequest("malformed request")
 
-        # 
+        # pi approve it or deny it
         try:
             data = escape.json_decode(self.request.body)
-            action = PiAction(data)
-            if action == Action.APPROVE:
+            act = PiAction(data)
+            if act.action == Action.APPROVE:
                 event.setApproved()
-            if action == Action.DENY:
+            if act.action == Action.DENY:
                 event.setDenied()
+            event.user = act.user
         except Exception as e:
+            import traceback
+            traceback.print_exc()
             self.BadRequest(str(e))
 
         yield dispatch(self.dbconnection, event)
