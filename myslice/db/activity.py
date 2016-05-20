@@ -89,34 +89,6 @@ class Dict(dict):
         except KeyError:
             raise AttributeError("Dict object has no attribute {}".format(key))
 
-class PiAction(Dict):
-    
-    def __init__(self, obj):
-        try:
-            self.action = obj['action']
-        except KeyError:
-            raise Exception('Object Type not specified')
-
-        ##
-        # User making the request
-        #
-        try:
-            self.user = obj['user']
-        except KeyError:
-            raise Exception("User Id not specified")
-    ##
-    # action of PI
-    @property
-    def action(self):
-        return self['action']
-
-    @action.setter
-    def action(self, value):
-        if value in Action.__members__:
-            self['action'] = Action[value]
-        else:
-            raise Exception('Object Type {} not valid'.format(value))
-
 
 class DataObject(Dict):
 
