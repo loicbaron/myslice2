@@ -48,12 +48,12 @@ def run():
         threads.append(t)
         t.start()
 
-    # # projects sync
-    # for y in range(1):
-    #     t = threading.Thread(target=syncProjects, args=(lock,))
-    #     t.daemon = True
-    #     threads.append(t)
-    #     t.start()
+    # projects sync
+    for y in range(1):
+        t = threading.Thread(target=syncProjects, args=(lock,))
+        t.daemon = True
+        threads.append(t)
+        t.start()
 
     # slices manager
     for y in range(1):
@@ -62,12 +62,12 @@ def run():
         threads.append(t)
         t.start()
 
-    # # slices sync
-    # for y in range(1):
-    #     t = threading.Thread(target=syncSlices, args=(lock,))
-    #     t.daemon = True
-    #     threads.append(t)
-    #     t.start()
+    # slices sync
+    for y in range(1):
+        t = threading.Thread(target=syncSlices, args=(lock,))
+        t.daemon = True
+        threads.append(t)
+        t.start()
 
     ##
     # will watch for incoming events/requests and pass them to
