@@ -39,19 +39,19 @@ def run():
     # threads
     threads = []
 
-    # resources sync
-    for y in range(1):
-        t = threading.Thread(target=syncResources, args=(lock,))
-        t.daemon = True
-        threads.append(t)
-        t.start()
+    # # resources sync
+    # for y in range(1):
+    #     t = threading.Thread(target=syncResources, args=(lock,))
+    #     t.daemon = True
+    #     threads.append(t)
+    #     t.start()
 
-    # resources sync
-    for y in range(1):
-        t = threading.Thread(target=syncLeases, args=(lock,))
-        t.daemon = True
-        threads.append(t)
-        t.start()
+    # # resources sync
+    # for y in range(1):
+    #     t = threading.Thread(target=syncLeases, args=(lock,))
+    #     t.daemon = True
+    #     threads.append(t)
+    #     t.start()
 
     # waits for the thread to finish
     for x in threads:

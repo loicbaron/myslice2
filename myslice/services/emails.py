@@ -12,9 +12,7 @@ import threading
 from queue import Queue
 from myslice.db import connect, changes
 from myslice.db.activity import Event
-from myslice.services.workers.emails import request_run as manageRequests
-from myslice.services.workers.emails import approve_run as manageApproved
-from myslice.services.workers.emails import deny_run as manageDenied
+from myslice.services.workers.emails import emails_run as manageEmails
 
 logger = logging.getLogger('myslice.service.activity')
 
@@ -32,29 +30,15 @@ def run():
 
     logger.info("Service activity starting")
 
-    qRequests = Queue()
-    qDenied = Queue()
-    qApproved = Queue()
-    sApproving = set()
+    qEmails = Queue()
 
     threads = []
     for y in range(1):
-        t = threading.Thread(target=manageRequests, args=(qRequests,))
+        t = threading.Thread(target=manageEmails, args=(qEmails,))
         t.daemon = True
         threads.append(t)
         t.start()
-    
-    for y in range(1):
-        t = threading.Thread(target=manageApproved, args=(qApproved,))
-        t.daemon = True
-        threads.append(t)
-        t.start()
-    
-    for y in range(1):
-        t = threading.Thread(target=manageDenied, args=(qDenied,))
-        t.daemon = True
-        threads.append(t)
-        t.start()
+
 
     feed = changes(table='activity')
     for activity in feed:
@@ -64,18 +48,16 @@ def run():
             logger.error("Problem with event: {}".format(e))
         else:
             print(event)
-            if event.isPending():
-                qRequests.put(event)
-            if event.isDenied():
+
+            if event.isPending() and event.notify:
+                qEmails.put(event)
+
+            elif event.isDenied() and event.notify:
                 logger.info("event {} is denied".format(event.id))
-                qDenied.put(event)
-            if event.isApproved():
-                sApproving.add(event.id)
-            if event.id in sApproving:
-                if event.isSuccess():
-                    qApproved.put(event)
-                else:
-                    logger.error("Somethong Wrong with the approved event during the process".format(event.id))
+                qEmails.put(event)
+
+            elif event.isSuccess() and event.notify:
+                qEmails.put(event)
 
     # waits for the thread to finish
     for x in threads:

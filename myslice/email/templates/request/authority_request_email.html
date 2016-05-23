@@ -1,7 +1,14 @@
-<p>Dear {{first_name}} {{last_name}},</p>
+<p>Dear 
+    <% for r in recipients % >
+        {{r.first_name}} {{r.last_name}}, 
+    <% end % >
+</p>
+
 <p></p>
 
-<p>This email is only for admins</p>
+<p>You are receiving this request because a user has requested a new authority.</p>
+
+<p>This email is only for admins, if you have any questions, kindly contact support@{{theme}}.eu.</p>
 
 {% include ../button.html %}
 

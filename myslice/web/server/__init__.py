@@ -19,6 +19,9 @@ from myslice.web.controllers.login import Authentication
 ##
 # REST handlers
 from myslice.web.rest.authentication import AuthenticationHandler
+
+from myslice.web.rest.requests import RequestsHandler
+
 from myslice.web.rest.authorities import AuthoritiesHandler
 from myslice.web.rest.projects import ProjectsHandler
 from myslice.web.rest.slices import SlicesHandler
@@ -120,11 +123,13 @@ class Application(web.Application):
         ##
         # REST API
         rest_handlers = [
+
             (r'/api/v1/activity$', ActivityHandler),
             (r'/api/v1/activity/([a-z0-9\-]*)$', ActivityHandler),
-
-            (r'/api/v1/authentication', AuthenticationHandler),
             
+            (r'/api/v1/requests/([a-fA-F\d]{8}(-[a-fA-F\d]{4}){3}-[a-fA-F\d]{12})?', RequestsHandler),
+            
+            (r'/api/v1/authentication', AuthenticationHandler),
             
             (r'/api/v1/resources$', ResourcesHandler),
             (r'/api/v1/resources/()$', ResourcesHandler),
