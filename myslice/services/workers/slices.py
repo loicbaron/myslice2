@@ -52,84 +52,83 @@ def events_run(lock, qSliceEvents):
             with lock:
                 try:
                     event.setRunning()
+                    isSuccess = False
 
                     u = User(db.get(dbconnection, table='users', id=event.user))
                     user_setup = UserSetup(u, myslicelibsetup.endpoints)
 
                     if event.creatingObject() or event.updatingObject():
-                        s = Slice(event.data)
-                        s.id = event.object.id
-                        s.addUser(u)
+                        sli = Slice(event.data)
+                        sli.id = event.object.id
+                        sli.addUser(u)
                         if 'users' in event.data and 'geni_users' not in event.data:
                             for u_id in event.data['users']:
                                 u = User(db.get(dbconnection, table='users', id=u_id))
-                                s.addUser(u)
+                                sli.addUser(u)
                         # Don't take into account the Resources on Create or Update???
                         # expiration_date = Renew at AMs
-                        result = s.save(user_setup)
+                        isSuccess = sli.save(dbconnection, user_setup)
 
                     if event.deletingObject():
-                        result = q(Slice).id(event.object.id).delete()
+                        sli = Slice(db.get(dbconnection, table='slices', id=event.object.id))
+                        if not sli:
+                            raise Exception("Slices doesn't exist")
+                        isSuccess = sli.delete(dbconnection, user_setup)
 
                     if event.addingObject():
-                        s = Slice(db.get(dbconnection, table='slices', id=event.object.id))
+                        sli = Slice(db.get(dbconnection, table='slices', id=event.object.id))
 
                         if event.data.type == DataType.USER:
                             for val in event.data.values:
                                 u = User(db.get(dbconnection, table='users', id=val))
-                                s.addUser(u)
-                            result = s.save(user_setup)
+                                sli.addUser(u)
+                            isSuccess = sli.save(dbconnection, user_setup)
 
                         if event.data['type'] == DataType.RESOURCE:
                             # "values": [{id:"YYYYYY",lease:{start_time:xxxx, end_time:xxxx}}, {id:“ZZZZZZ”}]
                             for val in event.data.values:
                                 r = Resource(db.get(dbconnection, table='resources', id=val['id']))
                                 pprint(r)
-                                s.addResource(r)
+                                sli.addResource(r)
                                 if 'lease' in val:
                                     l = Lease(val['lease'])
                                     l.addResource(r)
-                                    s.addLease(l)
-                            result = s.save(user_setup)
+                                    sli.addLease(l)
+                            isSuccess = sli.save(dbconnection, user_setup)
 
                     if event.removingObject():
-                        s = Slice(db.get(dbconnection, table='slices', id=event.object.id))
+
+                        sli = Slice(db.get(dbconnection, table='slices', id=event.object.id))
 
                         if event.data.type == DataType.USER:
                             for val in event.data['values']:
                                 u = User(db.get(dbconnection, table='users', id=val))
-                                s.removeUser(u)
-                            result = s.save(user_setup)
+                                sli.removeUser(u)
+                            isSuccess = sli.save(dbconnection, user_setup)
 
                         if event.data.type == DataType.RESOURCE:
                             # "values": [{id:"YYYYYY",lease:{start_time:xxxx, end_time:xxxx}}, {id:“ZZZZZZ”}]
                             for val in event.data.values:
                                 r = Resource(db.get(dbconnection, table='resources', id=val['id']))
                                 pprint(r)
-                                s.removeResource(r)
+                                sli.removeResource(r)
                                 if 'lease' in val:
                                     l = Lease(val['lease'])
                                     l.removeResource(r)
-                                s.addLease(l)
-                            result = s.save(user_setup)
+                                sli.addLease(l)
+                            isSuccess = sli.save(dbconnection, user_setup)
 
                 except Exception as e:
                     import traceback
                     traceback.print_exc()
                     logger.error("Problem with event: {}".format(e))
-                    result = None
                     event.logError(str(e))
-                    event.setError()
                      
-                if result:
-                    if 'errors' in result and len(result['errors'])>0:
-                        logger.error("Error: ".format(result['errors']))
-                        event.logError(str(result['errors']))
-                        event.setError()
-                    else:
-                        db.slices(dbconnection, result, event.object.id)
-                        event.setSuccess()
-                
+                if isSuccess:
+                    event.setSuccess()
+                else:
+                    event.setError()
+
                 db.dispatch(dbconnection, event)
 
 def sync(lock):

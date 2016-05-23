@@ -46,50 +46,43 @@ def events_run(lock, qUserEvents):
             logger.info("Processing event from user {}".format(event.user))
             
             with lock:
-                
                 event.setRunning()
+                
+                # Set event is successful as False 
+                isSuccess = False
+                
                 try:    
                     if event.creatingObject():
                         logger.info("creating the object user {}".format(event.object.id))
                         user = User(event.data)
                         user.id = event.object.id
-                        result = user.save()
+                        isSuccess = user.save(dbconnection)
 
                     if event.deletingObject():
                         logger.info("delete the object user {}".format(event.object.id))
-                        user = User()
+                        user = User(db.get(dbconnection, table='authorities', id=event.object.id))
+                        if not user:
+                            raise Exception("Authority doesn't exist")
                         user.id = event.object.id
-                            
-                        result = user.delete()
-                        # no error , successfuly delted
-                        if result is None:
-                            db.delete(dbconnection, table='users', id=event.object.id)
-                            event.setSuccess()
+                        isSuccess = user.delete(dbconnection)
 
                     if event.updatingObject():
-                        
-                        logger.info("updating the user {}".format(event.object.id))
+                        logger.info("updating the object user {}".format(event.object.id))
                         user = User(event.data)
                         user.id = event.object.id
-                        result = user.save()
+                        isSuccess = user.save(dbconnection)
 
                 except Exception as e:
                     import traceback
                     traceback.print_exc()
                     logger.error("Problem with event: {}".format(e))
-                    result = None
                     event.logError(str(e))
+
+                if isSuccess:
+                    event.setSuccess()
+                else:
                     event.setError()
 
-                if result:
-                    if 'errors' in result and len(result['errors'])>0:
-                        logger.error("Error: ".format(result['errors']))
-                        event.logError(str(result['errors']))
-                        event.setError()
-                    else:
-                        db.users(dbconnection, result, event.object.id)
-                        event.setSuccess()
-                
                 db.dispatch(dbconnection, event)
 
 def update_credentials(users):
@@ -101,9 +94,7 @@ def update_credentials(users):
                 u_db_object = User(u_db)
                 if u.id == u_db['id']:
                     user_setup = UserSetup(u_db_object, myslicelibsetup.endpoints)
-
-                    # XXX the admin user hrn must be a setting
-                    c = u.getCredentials(setup=user_setup, delegate_to="onelab.myslice")
+                    c = u.getCredentials(setup=user_setup)
     return users
 
 def sync(lock):

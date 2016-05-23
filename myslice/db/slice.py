@@ -1,28 +1,36 @@
 from myslicelib.model.slice import Slice as myslicelibSlice
+from myslicelib.query import q
+from myslice.db.activity import Object, ObjectType
+from myslice import db
+from myslice.db.user import User
 from xmlrpc.client import Fault as SFAError
 
 class Slice(myslicelibSlice):
 
-    def save(self, setup=None):
-        result = super(myslicelibSlice, self).save(setup)
+    def save(self, dbconnection, setup=None):
+        result = super(Slice, self).save(setup)
         #print(self.attributes())
         #print(result['data'][0])
         if result['errors']:
-            if len(result['errors']) == 2 \
-                and isinstance(result['errors'][1]['exception'], SFAError) \
-                and result['errors'][1]['exception'].faultCode == 7:
-                
-                return {**(self.attributes()), **result['data'][0]}
-
             raise Exception('errors: %s' % result['errors'] )
         else:
-            return { **(self.attributes()), **result['data'][0]}
+            result = {**(self.attributes()), **result['data'][0]}
+            db.slices(dbconnection, result, self.id)
 
-    def delete(self):
-        result = super(myslicelibSlice, self).delete()
+            for user in self.users:
+                db.users(dbconnection, q(User).id(user).get().dict()) 
+            return True
+
+    def delete(self, dbconnection, setup=None):
+        result = super(Slice, self).delete(setup)
         
         if result['errors']:
             raise Exception('errors: %s' % result['errors'])
-        return None
+        else:
+            db.delete(dbconnection, 'slices', self.id)
+            
+            for user in self.users:
+                db.users(dbconnection, q(User).id(user).get().dict()) 
+            return True
 
 

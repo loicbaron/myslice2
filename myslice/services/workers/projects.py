@@ -34,7 +34,7 @@ def events_run(lock, qProjectEvents):
     # db connection is shared between threads
     dbconnection = connect()
 
-    result = None
+    isSuccess = None
 
     while True:
 
@@ -48,55 +48,61 @@ def events_run(lock, qProjectEvents):
             with lock:
                 try:
                     event.setRunning()
+                    isSuccess = False
 
                     if event.creatingObject() or event.updatingObject():
-                        a = Project(event.data)
-                        a.id = event.object.id
-                        u = User(db.get(dbconnection, table='users', id=event.user))
-                        a.addPi(u) 
+                        logger.info("creating or updating the object project {}".format(event.object.id)) 
+                        
+                        proj = Project(event.data)
+                        proj.id = event.object.id
+                        pi = User(db.get(dbconnection, table='users', id=event.user))
+                        proj.addPi(pi) 
                         # TODO: Registry Only
-                        result = a.save()
+                        isSuccess = proj.save(dbconnection)
 
                     if event.deletingObject():
-                        result = q(Project).id(event.object.id).delete()
+                        logger.info("deleting the object project {}".format(event.object.id)) 
+
+                        proj = Project(db.get(dbconnection, table='projects', id=event.object.id))
+                        if not proj:
+                            raise Exception("Projects doesn't exist")
+                        isSuccess = proj.delete(dbconnection)
 
                     if event.addingObject():
+                        logger.info("adding data to the object project {}".format(event.object.id)) 
+
                         if event.data.type == DataType.USER:
                             logger.info("Project only supports PI at the moment, need new feature in SFA Reg")
                         # XXX : why or DataType.USER
                         if event.data.type == DataType.PI or event.data.type == DataType.USER:
-                            a = Project(db.get(dbconnection, table='projects', id=event.object.id))
+                            proj = Project(db.get(dbconnection, table='projects', id=event.object.id))
                             for val in event.data.values:
                                 pi = User(db.get(dbconnection, table='users', id=val))
-                                a.addPi(pi)
-                            result = a.save()
+                                proj.addPi(pi)
+                            isSuccess = proj.save(dbconnection)
 
                     if event.removingObject():
+                        logger.info("removing data from the object project {}".format(event.object.id)) 
+
                         if event.data.type == DataType.USER:
                             logger.info("Project only supports PI at the moment, need new feature in SFA Reg")
                         if event.data.type == DataType.PI or event.data.type == DataType.USER:
-                            a = Project(db.get(dbconnection, table='projects', id=event.object.id))
+                            proj = Project(db.get(dbconnection, table='projects', id=event.object.id))
                             for val in event.data.values:
                                 pi = User(db.get(dbconnection, table='users', id=val))
-                                a.removePi(pi)
-                            result = a.save()
+                                proj.removePi(pi)
+                            isSuccess = proj.save(dbconnection)
 
                 except Exception as e:
                     import traceback
                     traceback.print_exc()
                     logger.error("Problem with event: {}".format(e))
-                    result = None
                     event.logError(str(e))
+
+                if isSuccess:
+                    event.setSuccess()
+                else:
                     event.setError()
-                     
-                if result:
-                    if 'errors' in result and len(result['errors'])>0:
-                        logger.error("Error: ".format(result['errors']))
-                        event.logError(str(result['errors']))
-                        event.setError()
-                    else:
-                        db.projects(dbconnection, result, event.object.id)
-                        event.setSuccess()
                 
                 db.dispatch(dbconnection, event)
 

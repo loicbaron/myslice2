@@ -77,14 +77,6 @@ class EventAction(Enum):
     def __str__(self):
         return str(self.value)
 
-class Action(Enum):
-    # Approve/Deny operations
-    APPROVE = "APPROVE"
-    DENY = "DENY"
-
-    def __str__(self):
-        return str(self.value)
-
 
 class Dict(dict):
     '''
@@ -96,34 +88,6 @@ class Dict(dict):
             return self[key]
         except KeyError:
             raise AttributeError("Dict object has no attribute {}".format(key))
-
-class PiAction(Dict):
-    
-    def __init__(self, obj):
-        try:
-            self.action = obj['action']
-        except KeyError:
-            raise Exception('Object Type not specified')
-
-        ##
-        # User making the request
-        #
-        try:
-            self.user = obj['user']
-        except KeyError:
-            raise Exception("User Id not specified")
-    ##
-    # action of PI
-    @property
-    def action(self):
-        return self['action']
-
-    @action.setter
-    def action(self, value):
-        if value in Action.__members__:
-            self['action'] = Action[value]
-        else:
-            raise Exception('Object Type {} not valid'.format(value))
 
 
 class DataObject(Dict):
@@ -217,76 +181,6 @@ class Object(Dict):
                 ret[k] = self[k]
         return ret
 
-class RequestUser(dict):
-    '''
-        id: <SFA urn>
-        email: [String],
-        first_name: [String],
-        last_name: [String],
-        shortname: [String]
-    '''
-    def __init__(self, user):
-        try:
-            self.email = user['email']
-        except KeyError:
-            raise Exception("Request user email not specified")
-
-        try:
-            self.first_name = user['first_name']
-        except KeyError:
-            raise Exception("Request user firstname not specified")
-
-        try:
-            self.last_name = user['last_name']
-        except KeyError:
-            raise Exception("Request user lastname not specified")
-
-        try:
-            self.shortname = user['shortname']
-        except KeyError:
-            raise Exception("Request user shortname not specified")
-
-class RequestAuth(dict):
-
-    '''
-        id: <SFA urn>
-        pi: <RequestUser>
-        shortname: [String]
-        name: [String]
-        city: [String]
-        url:  [String](option)
-        address: [String]
-    '''
-
-    def __init__(self, auth):
-        
-        self.url = auth.get('url', '')
-
-        try:
-            self.pi = RequestUser(auth['pi'])
-        except KeyError:
-            raise Exception("Request auth pi not specified")
-
-        try:
-            self.shortname = auth['shortname']
-        except KeyError:
-            raise Exception("Request auth shortname not specified")
-
-        try:
-            self.name = auth['name']
-        except KeyError:
-            raise Exception("Request auth name not specified")
-
-        try:
-            self.address = auth['address']
-        except KeyError:
-            raise Exception("Request auth address not specified")
-
-        try:
-            self.city = auth['city']
-        except KeyError:
-            raise Exception("Request auth address not specified")
-
 class Event(Dict):
     """
         {
@@ -303,6 +197,7 @@ class Event(Dict):
             user: <id>
             created: <date>
             updated: <date>
+            notify: true|false (if true notify user by email)
         }
 
     """
@@ -371,6 +266,23 @@ class Event(Dict):
             self.updated(format_date(event['updated']))
         except KeyError:
             pass
+
+        ##
+        # Notify the user
+        try:
+            self.notify = event['notify']
+        except KeyError:
+            self.notify = False
+
+
+    @property
+    def notify(self):
+        return self['notify']
+
+    @notify.setter
+    def notify(self, value=True):
+        self['notify'] = value
+
 
     ##
     # Id
@@ -646,6 +558,9 @@ class Event(Dict):
             raise Exception('Event must be in state NEW before PENDING')
 
         self.status = EventStatus.PENDING
+
+        # notify user by default
+        self.notify = True
 
     def isApproved(self):
         return self._checkStatus(EventStatus.APPROVED)
