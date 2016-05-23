@@ -1,4 +1,10 @@
-<p>Dear OneLab user,</p>
+<p>Dear 
+    {% for r in recipients %}
+        {% block r %}
+            {{ escape(r.first_name) }} {{ escape(r.last_name) }}, 
+        {% end %}
+    {% end %}
+</p>
 <p></p>
 <p>You have recently requested an addition of the following authority in the OneLab portal ({{url}}):</p> 
 <p></p>

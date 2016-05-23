@@ -1,7 +1,9 @@
 <p>Dear 
-    <% for r in recipients % >
-        {{r.first_name}} {{r.last_name}}, 
-    <% end % >
+    {% for r in recipients %}
+        {% block r %}
+            {{ escape(r.first_name) }} {{ escape(r.last_name) }}, 
+        {% end %}
+    {% end %}
 </p>
 
 <p></p>

@@ -10,4 +10,4 @@ class settings(object):
         user = 'zhouquantest16@gmail.com'
         password = 'zqtest123'
         domain = theme + '.eu'
-        dir_path = os.path.expanduser("~/intern/myslice/myslice/email/templates")
+        dir_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')

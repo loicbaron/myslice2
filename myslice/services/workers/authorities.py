@@ -48,25 +48,9 @@ def events_run(lock, qAuthorityEvents):
                     isSuccess = False
                     
                     if event.creatingObject():
-
                         auth = Authority(event.data)
                         auth.id = event.object.id
-                        isOK1 = auth.save(dbconnection)
-
-                        pi = User(event.data['pi'])
-                        auth_head = '+'.join(event.object.id.split('+')[:-2])
-                        pi.id = auth_head + "+user+{}".format(event.data['pi']['shortname'])
-                        isOK2 = pi.save(dbconnection)
-
-                        auth.addPi(pi)
-                        isOK3 = auth.save(dbconnection)
-                        isSuccess = isOK1 & isOK2 & isOK3
-
-                        #    # if user is admin, add him as PI of the Authority
-                        #    # XXX Do we want that?
-                        #    pi_local_dict = db.get(dbconnection, table='users', id=event.user)
-                        #    u = User(pi_local_dict)
-
+                        isSuccess = auth.save(dbconnection)
 
                     if event.updatingObject():
                         logger.info("updating the object authority {}".format(event.object.id)) 
