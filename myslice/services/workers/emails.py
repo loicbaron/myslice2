@@ -41,7 +41,7 @@ def emails_run(qEmails):
             try:
 
                 # Recipients
-                recipients = []
+                recipients = set()
 
                 if event.isPending():
 
@@ -52,22 +52,18 @@ def emails_run(qEmails):
                     for pi_user in authority.pi_users:
                         pis = User(db.get(dbconnection, table='users', id=pi_user))
                         if pis.id != "urn:publicid:IDN+onelab:upmc+user+loic_baron":
-                            recipients.append(pis)
+                            recipients.add(pis)
 
                     if not recipients:
                         raise Exception('Emails cannot be sent because no one is the PI of {}'.format(event.object.id))
                 else:
                     # USER REQEUST in body
                     if event.object.type == ObjectType.USER:
-                        recipients.append(User(event.data))
-
-                    # AUTH REQEUST in body
-                    #elif event.object.type == ObjectType.AUTHORITY:
-                    #    request_user = User(event.data.pi)
+                        recipients.add(User(event.data))
 
                     # SLICE/ PROJECT REQUEST
                     else:
-                        recipients.append(User(db.get(dbconnection, table='users', id=event.user)))
+                        recipients.add(User(db.get(dbconnection, table='users', id=event.user)))
 
 
                 if event.isPending():
@@ -88,6 +84,7 @@ def emails_run(qEmails):
                                 entity = str(event.object.type),
                                 theme = s.email.theme,
                                 recipients = recipients,
+                                url = ''
                                 )
                 
                 m = Message(mail_from=('OneLab Support', 'zhouquantest16@gmail.com'),

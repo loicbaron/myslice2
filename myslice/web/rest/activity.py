@@ -8,7 +8,7 @@ from pprint import pprint
 from myslice.web.rest import Api
 from myslice.lib.util import myJSONEncoder
 from myslice.db import dispatch, changes
-from myslice.db.activity import Event, EventStatus, PiAction, Action
+from myslice.db.activity import Event, EventStatus
 
 '''
     API practice follows 
@@ -115,33 +115,7 @@ class ActivityHandler(Api):
         }
 
         '''
-        if id is None:
-            self.BadRequest('Bad Request')
-
-        # retrieve the event from db, and see if it is in pending status
-        ev = yield r.table('activity').get(id).run(self.dbconnection)
-        if not ev:
-            self.NotFoundError("activity not found {}".format(id))
-
-        event = Event(ev)
-        if not event.isPending():
-            self.BadRequest("malformed request")
-
-        # pi approve it or deny it
-        try:
-            data = escape.json_decode(self.request.body)
-            act = PiAction(data)
-            if act.action == Action.APPROVE:
-                event.setApproved()
-            if act.action == Action.DENY:
-                event.setDenied()
-            event.user = act.user
-        except Exception as e:
-            import traceback
-            traceback.print_exc()
-            self.BadRequest(str(e))
-
-        yield dispatch(self.dbconnection, event)
+        pass
 
 
 

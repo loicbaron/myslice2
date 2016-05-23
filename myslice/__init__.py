@@ -82,7 +82,7 @@ class settings(object):
         name = "myslice"
 
     class email(object):
-        dirpath = '/root/intern/myslice/myslice/web/templates/email'
+        dirpath = '/myslice/myslice/web/templates/email'
         theme = 'onelab'
         host = 'smtp.gmail.com'
         port = 587

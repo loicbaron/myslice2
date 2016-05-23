@@ -1,4 +1,10 @@
-<p>Dear {{first_name}} {{last_name}},</p>
+<p>Dear 
+    {% for r in recipients %}
+        {% block r %}
+            {{ escape(r.first_name) }} {{ escape(r.last_name) }}, 
+        {% end %}
+    {% end %}
+</p>
 <p></p>
 
 <p>You have recently requested a slice in the {{theme}} portal.</p>

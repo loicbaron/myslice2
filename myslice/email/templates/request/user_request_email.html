@@ -1,5 +1,10 @@
-<p>Dear {{first_name}} {{last_name}},</p>
-<p></p>
+<p>Dear 
+    {% for r in recipients %}
+        {% block r %}
+            {{ escape(r.first_name) }} {{ escape(r.last_name) }}, 
+        {% end %}
+    {% end %}
+</p>
 
 <p>You are receiving this request because we have you listed as a manager at an organization that uses {{theme}}.</p>
 
