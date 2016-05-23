@@ -63,6 +63,7 @@ def events_run(lock, qUserEvents):
                         user = User(db.get(dbconnection, table='authorities', id=event.object.id))
                         if not user:
                             raise Exception("Authority doesn't exist")
+                        user.id = event.object.id
                         isSuccess = user.delete(dbconnection)
 
                     if event.updatingObject():
@@ -93,9 +94,7 @@ def update_credentials(users):
                 u_db_object = User(u_db)
                 if u.id == u_db['id']:
                     user_setup = UserSetup(u_db_object, myslicelibsetup.endpoints)
-
-                    # XXX the admin user hrn must be a setting
-                    c = u.getCredentials(setup=user_setup, delegate_to="onelab.myslice")
+                    c = u.getCredentials(setup=user_setup)
     return users
 
 def sync(lock):
