@@ -51,7 +51,7 @@ def run():
     dbconnection = yield db.connect()
 
     http_server = httpserver.HTTPServer(Application(dbconnection))
-    http_server.listen(80)
+    http_server.listen(8111)
     #http_server.start(num_processes=None)
 
     # drop root privileges
@@ -114,9 +114,9 @@ class Application(web.Application):
         web_handlers = [
             (r"/login", login.Index),
             (r'/', home.Index),
+            (r'/project', home.Project),
             (r'/activity', activity.Index),
             (r'/static/(.*)', web.StaticFileHandler, {'path': self.static}),
-
 
         ]
 
