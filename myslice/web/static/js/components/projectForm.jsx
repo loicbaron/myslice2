@@ -1,81 +1,74 @@
-var ExperimentForm = React.createClass({
+var ProjectForm = React.createClass({
     getInitialState () {
-    var d = new Date();
-    var df = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()+" "+d.getHours()+":"+ d.getMinutes()+":"+d.getSeconds()
-        return {
-            label: '',
-            name: '',
-            v_public: true,
-            v_protected: false,
-            v_private: false,
-            url: '',
-            description: '',
-            start_date: df,
-            end_date: '',
-        };
+        return projectstore.getState();
     },
-    handleKeyPress(event) {
-        this.setState(
-            {
-                label: event.target.value,
-                name: this.normaliseLabel(event.target.value)
-            }
-        );
+    componentDidMount: function() {
+        // store
+        projectstore.listen(this.onChange);
+    },
+    componentWillUnmount() {
+        projectstore.unlisten(this.onChange);
+    },
+    onChange(state) {
+        this.setState(state);
+    },
+
+    handleLabelChange(e) {
+        projectactions.updateLabel(e.target.value);
+        projectactions.updateName(this.normaliseLabel(e.target.value));
     },
     normaliseLabel(text) {
         return text.replace(/[^a-z0-9]+/gi, '').replace(/^-*|-*$/g, '').toLowerCase();
     },
-    handleVisibilityChange: function(e) {
-       this.setState({visibility: e.target.value});
-    },
     handleUrlChange: function(e) {
-       this.setState({url: e.target.value});
+       projectactions.updateUrl(e.target.value);
     },
     handleDescriptionChange: function(e) {
-       this.setState({description: e.target.value});
+       projectactions.updateDescription(e.target.value);
     },
     handleStartDateChange: function(e) {
-       this.setState({start_date: e.target.value});
+       projectactions.updateStartDate(e.target.value);
     },
     handleEndDateChange: function(e) {
-       this.setState({end_date: e.target.value});
+       projectactions.updateEndDate(e.target.value);
     },
     onPublicChanged: function (e) {
-        this.setState({
-        v_public: e.currentTarget.checked,
-        v_protected: !e.currentTarget.checked,
-        v_private: !e.currentTarget.checked,
-        });
+        projectactions.updatePublic(e.currentTarget.checked);
+        projectactions.updateProtected(!e.currentTarget.checked);
+        projectactions.updatePrivate(!e.currentTarget.checked);
     },
     onProtectedChanged: function (e) {
-        this.setState({
-        v_public: !e.currentTarget.checked,
-        v_protected: e.currentTarget.checked,
-        v_private: !e.currentTarget.checked,
-        });
+        projectactions.updatePublic(!e.currentTarget.checked);
+        projectactions.updateProtected(e.currentTarget.checked);
+        projectactions.updatePrivate(!e.currentTarget.checked);
     },
     onPrivateChanged: function (e) {
-        this.setState({
-        v_public: !e.currentTarget.checked,
-        v_protected: !e.currentTarget.checked,
-        v_private: e.currentTarget.checked,
-        });
+        projectactions.updatePublic(!e.currentTarget.checked);
+        projectactions.updateProtected(!e.currentTarget.checked);
+        projectactions.updatePrivate(e.currentTarget.checked);
     },
     handleSubmit: function(e) {
         // prevent the browser's default action of submitting the form
         e.preventDefault();
         var label = this.state.label;
         var description = this.state.description;
+
         var flag = false;
+        var msg = '';
         if(!label){
-            alert('Name is required');
+            msg += 'Name is required \n';
             flag = true;
         }
         if(!description){
-            alert('Description is required');
+            msg += 'Description is required \n';
             flag = true;
         }
-        if(flag) return;
+        if(flag){ 
+            alert(msg); 
+            return;
+        }
+
+        projectactions.postForm();
 
         var d = new Date();
         var df = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()+" "+d.getHours()+":"+ d.getMinutes()+":"+d.getSeconds()
@@ -90,6 +83,7 @@ var ExperimentForm = React.createClass({
             start_date: df,
             end_date: '',
         });
+
         /*
         $.ajax({
           url: this.props.url,
@@ -109,7 +103,7 @@ var ExperimentForm = React.createClass({
         return ( 
             <div>
             <form className="experimentForm" onSubmit={this.handleSubmit}>
-            <input type="text" placeholder="Name" value={this.state.label} onChange={this.handleKeyPress} />
+            <input type="text" placeholder="Name" value={this.state.label} onChange={this.handleLabelChange} />
             <div>{this.state.name}</div>
             <input type="radio" value={this.state.v_public} checked={this.state.v_public === true } onChange={this.onPublicChanged} /> Public
             <input type="radio" value={this.state.v_protected} checked={this.state.v_protected === true } onChange={this.onProtectedChanged} /> Protected
@@ -130,6 +124,6 @@ var ExperimentForm = React.createClass({
 });
 
 ReactDOM.render(
-        <ExperimentForm />,
+        <ProjectForm />,
         document.getElementById('project-form')
 );
