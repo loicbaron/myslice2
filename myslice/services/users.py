@@ -43,11 +43,11 @@ def run():
         threads.append(t)
         t.start()
 
-    # for y in range(1):
-    #     t = threading.Thread(target=syncUsers, args=(lock, ))
-    #     t.daemon = True
-    #     threads.append(t)
-    #     t.start()
+    for y in range(1):
+        t = threading.Thread(target=syncUsers, args=(lock, ))
+        t.daemon = True
+        threads.append(t)
+        t.start()
 
     feed = changes(table='activity')
     for activity in feed:

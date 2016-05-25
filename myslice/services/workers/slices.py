@@ -94,8 +94,6 @@ def events_run(lock, qSliceEvents):
                                     l = Lease(val['lease'])
                                     l.addResource(r)
                                     sli.addLease(l)
-                            u = User(db.get(dbconnection, table='users', id=event.user))
-                            user_setup = UserSetup(u, myslicelibsetup.endpoints)
                             isSuccess = sli.save(dbconnection, user_setup)
 
                     if event.removingObject():

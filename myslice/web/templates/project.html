@@ -1,0 +1,73 @@
+{% extends "layout.html" %}
+{% block head %}
+<script type="text/babel" src="/static/js/actions/project.js"></script>
+<script type="text/babel" src="/static/js/stores/project.js"></script>
+
+<script type="text/babel" src="/static/js/components/projectForm.jsx"></script>
+{% end %}
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+
+        <div class="col-sm-6">
+
+            <div class="p-header">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="p-title">
+                                        <h1>Projects</h1>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="p-action" id="slice-add">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div id="experiment-list" class="p-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-sm-6">
+            <div class="p-view-header">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <h1>New Project</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-view-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div id="project-form"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+{% end %}

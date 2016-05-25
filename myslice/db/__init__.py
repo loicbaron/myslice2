@@ -109,8 +109,8 @@ def get(dbconnection=None, table=None, id=None, filter=None):
         return r.db(s.db.name).table(table).get(id).run(dbconnection)
 
     if filter:
-        pass 
         # return somthing with filter
+        return r.db(s.db.name).table(table).filter(filter).run(dbconnection)
 
     return r.db(s.db.name).table(table).run(dbconnection)
 

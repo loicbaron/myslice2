@@ -23,6 +23,18 @@ def receive_signal(signum, stack):
 
     raise SystemExit('Exiting')
 
+def process_event(ev):
+    try:
+        event = Event(ev)
+    except Exception as e:
+        logger.error("Problem with event: {}".format(e))
+    else:
+        if event.isReady():
+            if event.object.type == ObjectType.PROJECT:
+                qProjects.put(event)
+            if event.object.type == ObjectType.SLICE:
+                qSlices.put(event)
+
 def run():
     """
     A Process that will manage Projects and Slices 
@@ -48,12 +60,12 @@ def run():
         threads.append(t)
         t.start()
 
-    # # projects sync
-    # for y in range(1):
-    #     t = threading.Thread(target=syncProjects, args=(lock,))
-    #     t.daemon = True
-    #     threads.append(t)
-    #     t.start()
+    # projects sync
+    for y in range(1):
+        t = threading.Thread(target=syncProjects, args=(lock,))
+        t.daemon = True
+        threads.append(t)
+        t.start()
 
     # slices manager
     for y in range(1):
@@ -62,28 +74,30 @@ def run():
         threads.append(t)
         t.start()
 
-    # # slices sync
-    # for y in range(1):
-    #     t = threading.Thread(target=syncSlices, args=(lock,))
-    #     t.daemon = True
-    #     threads.append(t)
-    #     t.start()
+    # slices sync
+    for y in range(1):
+        t = threading.Thread(target=syncSlices, args=(lock,))
+        t.daemon = True
+        threads.append(t)
+        t.start()
+
+    dbconnection = connect()
+
+    ##
+    # Process events that were not watched 
+    # while Server process was not running
+    # myslice/bin/myslice-server
+    db_events = db.get(dbconnection, table='activity', filter={'status':"APPROVED"})
+    #db_events = db.get(dbconnection, table='activity', filter={'status':"WAITING"})
+    for e in db_events:
+        process_event(e)
 
     ##
     # will watch for incoming events/requests and pass them to
     # the appropriate thread group
-    feed = changes(table='activity')
+    feed = changes(dbconnection, table='activity')
     for activity in feed:
-        try:
-            event = Event(activity['new_val'])
-        except Exception as e:
-            logger.error("Problem with event: {}".format(e))
-        else:
-            if event.isReady():
-                if event.object.type == ObjectType.PROJECT:
-                    qProjects.put(event)
-                if event.object.type == ObjectType.SLICE:
-                    qSlices.put(event)
+        process_event(activity['new_val'])
 
     # waits for the thread to finish
     for x in threads:
