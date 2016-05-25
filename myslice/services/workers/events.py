@@ -54,6 +54,7 @@ def run(q):
                             event.setPending()
                     else:
                         event.setError()
+                        event.logError(str(e))
                         logger.error("User %s not found" % event.user)
                         # raising an Exception here, blocks the REST API
                         #raise Exception("User %s not found" % event.user)
@@ -61,6 +62,7 @@ def run(q):
                 import traceback
                 traceback.print_exc()
                 event.setError()
+                event.logError(str(e))
                 logger.error("Unable to fetch the user from db {}".format(e))
 
             # dispatch the updated event

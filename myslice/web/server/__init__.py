@@ -127,7 +127,7 @@ class Application(web.Application):
             (r'/api/v1/activity$', ActivityHandler),
             (r'/api/v1/activity/([a-z0-9\-]*)$', ActivityHandler),
             
-            (r'/api/v1/requests/([a-fA-F\d]{8}(-[a-fA-F\d]{4}){3}-[a-fA-F\d]{12})?', RequestsHandler),
+            (r'/api/v1/requests/([a-fA-F\d]{8}-[a-fA-F\d]{4}-[a-fA-F\d]{4}-[a-fA-F\d]{4}-[a-fA-F\d]{12})?', RequestsHandler),
             
             (r'/api/v1/authentication', AuthenticationHandler),
             
