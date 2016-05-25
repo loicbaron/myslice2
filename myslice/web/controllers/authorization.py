@@ -16,7 +16,7 @@ class CodeGrant(AuthorizationCodeGrantSiteAdapter, web.RequestHandler):
         page = template.Loader(self.templates)
         if (self.current_user):
             url = request.path + "?" + request.query_string
-            response.body = page.load("authorization.html").generate(url=url)
+            response.body = page.load("login.html").generate(url=url)
         else:
             url = request.path + "?" + request.query_string
             response.body = page.load("login.html").generate(url=url)
