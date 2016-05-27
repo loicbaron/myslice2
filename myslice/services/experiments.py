@@ -11,8 +11,9 @@ import logging
 import signal
 import threading
 from queue import Queue
+import myslice.db as db
+from myslice.db import connect, changes
 from myslice.db.activity import Event, ObjectType
-from myslice.db import changes
 from myslice.services.workers.projects import events_run as manageProjects, sync as syncProjects
 from myslice.services.workers.slices import events_run as manageSlices, sync as syncSlices
 
