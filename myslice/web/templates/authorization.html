@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+    <head>
+        <title>MySlice - Login</title>
+        <link href='https://fonts.googleapis.com/css?family=Roboto:100,300,300italic,400,400italic,500,500italic,700,700italic' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/static/font-awesome/css/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/stylesheet.css">
+    </head>
+
+    <body class="login">
+        <header>
+            <div class="row">
+
+                <div class="col-sm-6 col-sm-offset-6">
+                    <ul class="list-inline header-menu">
+                        <li><a href="">About</a></li>
+                        <li><a target="_blank" href="https://onelab.eu">Website</a></li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-4 col-sm-offset-3 logo-image">
+                    <img class="img-responsive" src="/static/images/onelab-big.png" alt="OneLab - Future Internet Testbeds" />
+                </div>
+                <div class="col-sm-3 logo-title">
+                    <h1>Authorization</h1>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-sm-4 col-sm-offset-3">
+                    <p>
+                        <a href="{{ url }}&confirm=1">confirm</a>
+                    </p>
+                    <p>
+                        <a href="{{ url }}&confirm=0">deny</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

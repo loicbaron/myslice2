@@ -4,7 +4,7 @@ from tornado import web, gen, httpserver
 
 from oauth2 import Provider
 from oauth2.web.tornado import OAuth2Handler
-from oauth2.grant import ImplicitGrant
+from oauth2.grant import AuthorizationCodeGrant, ImplicitGrant
 from oauth2.tokengenerator import Uuid4
 from oauth2.store.memory import ClientStore, TokenStore
 
@@ -14,7 +14,7 @@ import myslice.db as db
 
 ##
 # Authenticaction handler
-from myslice.web.controllers.login import Authentication
+from myslice.web.controllers.authorization import CodeGrant
 
 ##
 # REST handlers
@@ -76,7 +76,7 @@ class Application(web.Application):
         client_store = ClientStore()
         client_store.add_client(client_id="abc",
                                 client_secret="xyz",
-                                redirect_uris=["http://localhost:8111/events"])
+                                redirect_uris=["http://localhost:8111"])
 
         ##
         # OAuth Token Store (in memory)
@@ -96,27 +96,32 @@ class Application(web.Application):
         )
 
         #provider.token_path = '/oauth/token'
+
+        # Support for the authorization code grant
         provider.add_grant(
-            ImplicitGrant(site_adapter=Authentication())
+            AuthorizationCodeGrant(site_adapter=CodeGrant(self.templates))
         )
+        # provider.add_grant(
+        #     ImplicitGrant(site_adapter=Authentication())
+        # )
 
         logger.debug(provider.authorize_path)
         logger.debug(provider.token_path)
         ##
         # Auth handlers
         auth_handlers = [
-            (provider.authorize_path, OAuth2Handler, dict(provider=provider)),
-            (provider.token_path, OAuth2Handler, dict(provider=provider))
+            web.url(provider.authorize_path, OAuth2Handler, dict(provider=provider)),
+            web.url(provider.token_path, OAuth2Handler, dict(provider=provider))
         ]
 
         ##
         # Web
         web_handlers = [
-            (r"/login", login.Index),
-            (r'/', home.Index),
-            (r'/project', home.Project),
-            (r'/activity', activity.Index),
-            (r'/static/(.*)', web.StaticFileHandler, {'path': self.static}),
+            web.url(r"/login", login.Index),
+            web.url(r'/', home.Index),
+            web.url(r'/project', home.Project),
+            web.url(r'/activity', activity.Index),
+            web.url(r'/static/(.*)', web.StaticFileHandler, {'path': self.static}),
 
         ]
 
@@ -124,23 +129,23 @@ class Application(web.Application):
         # REST API
         rest_handlers = [
 
-            (r'/api/v1/activity$', ActivityHandler),
-            (r'/api/v1/activity/([a-z0-9\-]*)$', ActivityHandler),
-            
-            (r'/api/v1/requests/([a-fA-F\d]{8}-[a-fA-F\d]{4}-[a-fA-F\d]{4}-[a-fA-F\d]{4}-[a-fA-F\d]{12})?', RequestsHandler),
-            
-            (r'/api/v1/authentication', AuthenticationHandler),
-            
-            (r'/api/v1/resources$', ResourcesHandler),
-            (r'/api/v1/resources/()$', ResourcesHandler),
-            
-            (r'/api/v1/users', UsersHandler),
-            
-            (r'/api/v1/slices', SlicesHandler),
-            
-            (r'/api/v1/authorities', AuthoritiesHandler),
-            
-            (r'/api/v1/projects', ProjectsHandler),
+            web.url(r'/api/v1/activity$', ActivityHandler),
+            web.url(r'/api/v1/activity/([a-z0-9\-]*)$', ActivityHandler),
+
+            web.url(r'/api/v1/requests/([a-fA-F\d]{8}(-[a-fA-F\d]{4}){3}-[a-fA-F\d]{12})?', RequestsHandler),
+
+            web.url(r'/api/v1/authentication', AuthenticationHandler),
+
+            web.url(r'/api/v1/resources$', ResourcesHandler),
+            web.url(r'/api/v1/resources/()$', ResourcesHandler),
+
+            web.url(r'/api/v1/users', UsersHandler),
+
+            web.url(r'/api/v1/slices', SlicesHandler),
+
+            web.url(r'/api/v1/authorities', AuthoritiesHandler),
+
+            web.url(r'/api/v1/projects', ProjectsHandler),
         ]
 
         ##
