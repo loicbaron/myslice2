@@ -11,8 +11,8 @@ import signal
 import threading
 from queue import Queue
 import myslice.db as db
-from myslice.db import connect, changes
-from myslice.db.activity import Event
+from myslice.db import connect, changes, events
+from myslice.db.activity import Event, EventStatus
 from myslice.services.workers.events import run as manageEvents
 
 logger = logging.getLogger('myslice.service.activity')
@@ -20,15 +20,6 @@ logger = logging.getLogger('myslice.service.activity')
 def receive_signal(signum, stack):
     logger.info('Received signal %s', signum)
     raise SystemExit('Exiting')
-
-def process_event(ev):
-    try:
-        event = Event(ev)
-    except Exception as e:
-        logger.error("Problem with event: {}".format(e))
-    else:
-        if event.isNew():
-            qEvents.put(event)
 
 def run():
     """
@@ -55,18 +46,28 @@ def run():
     # Process events that were not watched 
     # while Server process was not running
     # myslice/bin/myslice-server
-    db_events = db.get(dbconnection, table='activity', filter={'status':"NEW"})
-    for e in db_events:
-        process_event(e)
-
-    ##
+    new_events = events(dbconnection, status="NEW")
+    for ev in new_events:
+        try:
+            event = Event(ev)
+        except Exception as e:
+            logger.error("Problem with event: {}".format(e))
+        else:
+            qEvents.put(event)
+        
+    #
     # Watch for changes on the activity table and send the event/request
     # to the running threads (via Queue).
     # A global watch feed is needed to permit spawning more threads to manage
     # events and requests
-    feed = changes(dbconnection, table='activity')
+    feed = changes(dbconnection, table='activity', status="NEW")
     for activity in feed:
-        process_event(activity['new_val'])
+        try:
+            event = Event(activity['new_val'])
+        except Exception as e:
+            logger.error("Problem with event: {}".format(e))
+        else:
+            qEvents.put(event)
 
     # waits for the thread to finish
     for x in threads:

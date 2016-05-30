@@ -189,24 +189,32 @@ def leases(dbconnection=None, data=None):
 
     return r.db(s.db.name).table('leases').run(dbconnection)
 
-def events(dbconnection=None, event=None, user=None, status=None, action=None):
+def events(dbconnection=None, event=None, user=None, status=None, action=None, obj_type=None):
     if not dbconnection:
         dbconnection = connect()
 
     if isinstance(event, Event):
         # update event on db
         ret = r.db(s.db.name).table('activity').insert(event.dict(), conflict='update').run(dbconnection)
-
-    req = r.db(s.db.name).table('events')
+    
+    req = r.db(s.db.name).table('activity')
 
     if user:
-        req.filter({'user':user})
+        req = req.filter({'user':user})
 
     if status:
-        req.filter({'user':status})
+        if isinstance(status, str) or len(status) == 1:
+            req = req.filter({'status': status})
+        elif isinstance(status, list) and len(status) == 2:
+            req = req.filter(lambda event: (event['status'] == status[0]) | (event['status'] == status[1]))
+        else:
+            raise Exception('status filter fields too much')
 
     if action:
-        req.filter({'user':action})
+        req = req.filter({'action':action})
+
+    if obj_type:
+        req = req.filter(lambda event: event['object']['type'] == obj_type)
 
     return req.run(dbconnection)
 
@@ -256,11 +264,27 @@ def delete(dbconnection=None, table=None, id=None):
 
     return False
 
-def changes(dbconnection=None, table=None):
+def changes(dbconnection=None, table=None, status=None, action=None, obj_type=None):
     if not table:
         return False
 
     if not dbconnection:
         dbconnection = connect()
 
-    return r.db(s.db.name).table(table).changes().run(dbconnection)
+    req = r.db(s.db.name).table(table).changes()
+
+    if status:
+        if isinstance(status, str) or len(status) == 1:
+            req = req.filter(lambda change: change['new_val']['status'] == status)
+        elif isinstance(status, list) and len(status) == 2:
+            req = req.filter(lambda event: (event['new_val']['status'] == status[0]) | (event['new_val']['status'] == status[1]))
+        else:
+            raise Exception('status filter fields too much')
+
+    if action:
+        req = req.filter(lambda change: change['new_val']['action'] == action)
+
+    if obj_type:
+        req = req.filter(lambda change: change['new_val']['object']['type'] == obj_type)
+
+    return req.run(dbconnection)

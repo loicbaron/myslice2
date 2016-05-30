@@ -35,7 +35,7 @@ def run(q):
             logger.error("Problem with event: {}".format(e))
         else:
             try:
-
+                print(event)
                 # TODO: if event.creatingObject()
                 # Check if the event.object.id already exists or not
                 # if it exists -> add a numer to the id & hrn to make it unique
@@ -54,8 +54,8 @@ def run(q):
                             event.setPending()
                     else:
                         event.setError()
-                        event.logError(str(e))
                         logger.error("User %s not found" % event.user)
+                        event.logError("User %s not found" % event.user)
                         # raising an Exception here, blocks the REST API
                         #raise Exception("User %s not found" % event.user)
             except Exception as e:
