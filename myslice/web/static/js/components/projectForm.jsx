@@ -1,51 +1,51 @@
 var ProjectForm = React.createClass({
     getInitialState () {
-        return projectstore.getState();
+        return projectformstore.getState();
     },
     componentDidMount: function() {
         // store
-        projectstore.listen(this.onChange);
+        projectformstore.listen(this.onChange);
     },
     componentWillUnmount() {
-        projectstore.unlisten(this.onChange);
+        projectformstore.unlisten(this.onChange);
     },
     onChange(state) {
         this.setState(state);
     },
 
     handleLabelChange(e) {
-        projectactions.updateLabel(e.target.value);
-        projectactions.updateName(this.normaliseLabel(e.target.value));
+        projectformactions.updateLabel(e.target.value);
+        projectformactions.updateName(this.normaliseLabel(e.target.value));
     },
     normaliseLabel(text) {
         return text.replace(/[^a-z0-9]+/gi, '').replace(/^-*|-*$/g, '').toLowerCase();
     },
     handleUrlChange: function(e) {
-       projectactions.updateUrl(e.target.value);
+       projectformactions.updateUrl(e.target.value);
     },
     handleDescriptionChange: function(e) {
-       projectactions.updateDescription(e.target.value);
+       projectformactions.updateDescription(e.target.value);
     },
     handleStartDateChange: function(e) {
-       projectactions.updateStartDate(e.target.value);
+       projectformactions.updateStartDate(e.target.value);
     },
     handleEndDateChange: function(e) {
-       projectactions.updateEndDate(e.target.value);
+       projectformactions.updateEndDate(e.target.value);
     },
     onPublicChanged: function (e) {
-        projectactions.updatePublic(e.currentTarget.checked);
-        projectactions.updateProtected(!e.currentTarget.checked);
-        projectactions.updatePrivate(!e.currentTarget.checked);
+        projectformactions.updatePublic(e.currentTarget.checked);
+        projectformactions.updateProtected(!e.currentTarget.checked);
+        projectformactions.updatePrivate(!e.currentTarget.checked);
     },
     onProtectedChanged: function (e) {
-        projectactions.updatePublic(!e.currentTarget.checked);
-        projectactions.updateProtected(e.currentTarget.checked);
-        projectactions.updatePrivate(!e.currentTarget.checked);
+        projectformactions.updatePublic(!e.currentTarget.checked);
+        projectformactions.updateProtected(e.currentTarget.checked);
+        projectformactions.updatePrivate(!e.currentTarget.checked);
     },
     onPrivateChanged: function (e) {
-        projectactions.updatePublic(!e.currentTarget.checked);
-        projectactions.updateProtected(!e.currentTarget.checked);
-        projectactions.updatePrivate(e.currentTarget.checked);
+        projectformactions.updatePublic(!e.currentTarget.checked);
+        projectformactions.updateProtected(!e.currentTarget.checked);
+        projectformactions.updatePrivate(e.currentTarget.checked);
     },
     handleSubmit: function(e) {
         // prevent the browser's default action of submitting the form
@@ -68,36 +68,8 @@ var ProjectForm = React.createClass({
             return;
         }
 
-        projectactions.postForm();
+        projectformactions.postForm();
 
-        var d = new Date();
-        var df = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()+" "+d.getHours()+":"+ d.getMinutes()+":"+d.getSeconds()
-        this.setState({
-            label: '',
-            name: '',
-            v_public: true,
-            v_protected: false,
-            v_private: false,
-            url: '',
-            description: '',
-            start_date: df,
-            end_date: '',
-        });
-
-        /*
-        $.ajax({
-          url: this.props.url,
-          dataType: 'json',
-          type: 'POST',
-          data: comment,
-          success: function(data) {
-            this.setState({data: data});
-          }.bind(this),
-          error: function(xhr, status, err) {
-            console.error(this.props.url, status, err.toString());
-          }.bind(this)
-        });
-        */
     },
     render: function () {
         return ( 

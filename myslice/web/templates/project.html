@@ -1,9 +1,42 @@
 {% extends "layout.html" %}
 {% block head %}
+<script type="text/babel" src="/static/js/actions/projectForm.js"></script>
+<script type="text/babel" src="/static/js/stores/projectForm.js"></script>
+<script type="text/babel" src="/static/js/components/projectForm.jsx"></script>
+
+<script src="//cdn.jsdelivr.net/sockjs/1/sockjs.min.js"></script>
+
 <script type="text/babel" src="/static/js/actions/project.js"></script>
 <script type="text/babel" src="/static/js/stores/project.js"></script>
+<script type="text/babel" src="/static/js/components/project.jsx"></script>
 
-<script type="text/babel" src="/static/js/components/projectForm.jsx"></script>
+
+<!--
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+	$.ajax({
+	  url: "/api/v1/users/urn:publicid:IDN+onelab:upmc+user+loic_baron",
+	  beforeSend: function( xhr ) {
+	    xhr.overrideMimeType( "text/plain; charset=x-user-defined" );
+	  }
+	}).done(function( data ) {
+	  if ( console && console.log ) {
+		r = JSON.parse(data);
+		$.each(r['result'], function( index, value ) {
+			$.each(value['pi_authorities'], function(i, v) {
+				console.log(v);
+			});
+		});
+		//console.log(JSON.parse(data));
+	  	console.log( "Sample of data:", data.slice( 0, 100 ) );
+	  }
+	});
+});
+</script>
+
+-->
 {% end %}
 {% block body %}
 <div class="container-fluid">
@@ -35,7 +68,7 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-md-12">
-                            <div id="experiment-list" class="p-list"></div>
+                            <div id="projects-list" class="p-list"></div>
                         </div>
                     </div>
                 </div>
@@ -68,6 +101,4 @@
 
     </div>
 </div>
-
-
 {% end %}

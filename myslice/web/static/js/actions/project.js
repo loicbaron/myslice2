@@ -1,41 +1,87 @@
 /**
- * Project view actions
+ * Project actions
+ *
+ * Manages Events and Requests
  *
  */
 
 class ProjectActions {
-    postForm() {
-        console.log("POST !!!");
-        console.log(projectstore.state);
-        return true; 
+
+    setupProject() {
+        // fetch project
+        this.fetchProject();
+
+        var socket = new SockJS('/api/v1/live');
+
+        socket.onopen = function() {
+            /*
+                Open websocket connection and watch for new/changed events
+             */
+            socket.send(JSON.stringify({'watch': 'projects'}));
+            socket.send(JSON.stringify({'watch': 'activity', 'object':'PROJECT'}));
+
+            console.log("open")
+        };
+
+        socket.onmessage = function(e) {
+            /*
+                Act upon receiving a message
+             */
+            let data = JSON.parse(e.data);
+
+            console.log(data)
+
+            this.updateProjectElement(data.project);
+
+        }.bind(this);
+
+        socket.onclose = function() {
+            console.log('close');
+        };
+
+        return false;
     }
-    updateLabel(label){
-        return label;
+
+    fetchProject() {
+        return (dispatch) => {
+            // we dispatch an event here so we can have "loading" state.
+            dispatch();
+            axios.get('/api/v1/projects', {
+            }).then(function (response) {
+                this.updateProject(response.data.result);
+                console.log(response.data.result);
+            }.bind(this)).catch(function (response) {
+                this.errorProject('error');
+                console.log(response);
+            }.bind(this));
+
+            axios.get('/api/v1/activity?object=PROJECT', {
+            }).then(function (response) {
+                this.updateProject(response.data.activity);
+                console.log(response.data.activity);
+            }.bind(this)).catch(function (response) {
+                this.errorProject('error');
+                console.log(response);
+            }.bind(this));
+
+        }
     }
-    updateName(name){
-        return name;
+
+    updateProjectElement(project) {
+        return project;
     }
-    updatePublic(v_public){
-        return v_public;
+
+    updateProject(project) {
+        return project;
     }
-    updateProtected(v_protected){
-        return v_protected;
+
+    errorProject(errorMessage) {
+        return errorMessage
     }
-    updatePrivate(v_private){
-        return v_private;
-    }
-    updateUrl(url){
-        return url;
-    }
-    updateDescription(description){
-        return description;
-    }
-    updateStartDate(start_date){
-        return start_date;
-    }
-    updateEndDate(end_date){
-        return end_date;
-    }
+
 }
 
 window.projectactions = alt.createActions(ProjectActions);
+
+// setup project
+projectactions.setupProject();

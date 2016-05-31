@@ -10,6 +10,7 @@ r.set_loop_type("tornado")
 
 class WebsocketsHandler(SockJSConnection):
     clients = set()
+    current_user = 'urn:publicid:IDN+onelab:upmc+user+loic_baron'
 
     def on_open(self, request):
 
@@ -22,7 +23,10 @@ class WebsocketsHandler(SockJSConnection):
         data = json.loads(message)
 
         if (data['watch'] == 'activity'):
-            self.activity()
+            if 'object' in data:
+                self.activity(data['object'])
+            else:
+                self.activity()
 
     def on_close(self):
 
@@ -30,16 +34,36 @@ class WebsocketsHandler(SockJSConnection):
         logger.info("WebSocket closed")
 
     @gen.coroutine
-    def activity(self):
+    def activity(self, obj=None):
 
         dbconnection = yield connect()
         feed = yield changes(dbconnection, table='activity')
 
         while (yield feed.fetch_next()):
             change = yield feed.next()
-            self.send(json.dumps({ 'activity': change['new_val'] }, ensure_ascii=False, cls=myJSONEncoder).encode('utf8'))
+            if obj:
+                if change['new_val']['object']['type'] == obj:
+                    if change['new_val']['user'] == self.current_user:
+                        self.send(json.dumps({ 'activity': change['new_val'] }, ensure_ascii=False, cls=myJSONEncoder).encode('utf8'))
+            else:
+                if change['new_val']['user'] == self.current_user:
+                    self.send(json.dumps({ 'activity': change['new_val'] }, ensure_ascii=False, cls=myJSONEncoder).encode('utf8'))
 
-                    # @gen.coroutine
+    @gen.coroutine
+    def projects(self):
+
+        dbconnection = yield connect()
+        feed = yield changes(dbconnection, table='projects')
+
+        while (yield feed.fetch_next()):
+            change = yield feed.next()
+            # public projects
+            # protected projects where user is memberi/PI of the authority
+            # projects where user is PI (including private)
+            if self.current_user in change['new_val']['pi_users']:
+                self.send(json.dumps({ 'projects': change['new_val'] }, ensure_ascii=False, cls=myJSONEncoder).encode('utf8'))
+
+    # @gen.coroutine
     # def jobs(self):
     #     conn = None
     #     try :
