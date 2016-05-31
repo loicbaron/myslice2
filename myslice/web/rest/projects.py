@@ -41,7 +41,7 @@ class ProjectsHandler(Api):
     def post(self):
         """
         POST /projects
-        { data: { name: string, label: string, description: string } }
+        { name: string, label: string, description: string }
         :return:
         """
 
