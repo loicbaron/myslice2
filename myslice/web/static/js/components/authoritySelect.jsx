@@ -31,8 +31,9 @@ var AuthoritySelect = React.createClass({
 
 
     getProjects: function(input, callback) {
-        axios.get('/api/v1/slices').then((response) => {
-            let s = response.data.slices
+        axios.get('/api/v1/authorities').then((response) => {
+            let s = response.data.result
+            console.log(response)
             let options = [{
                 label: 'Create new project',
                 value: 'pro',
@@ -86,54 +87,8 @@ var AuthoritySelect = React.createClass({
     }
 });
 
-var ExperimentLabel = React.createClass({
-    getInitialState() {
-        return {
-            label: "",
-            name: "test"
-        };
-    },
-
-    handleKeyPress(event) {
-        this.setState(
-            {
-                label: event.target.value,
-                name: this.normaliseLabel(event.target.value)
-            }
-        );
-    },
-
-    normaliseLabel(text) {
-        return text.replace(/[^a-z0-9]+/gi, '').replace(/^-*|-*$/g, '').toLowerCase();
-    },
-
-    render: function () {
-        return <div className="form-group">
-            <label htmlFor="sliceName">Slice name</label>
-            <input id="sliceName" className="form-control" type="text" name="label" onChange={this.handleKeyPress} placeholder="Slice name" />
-            <div>{this.state.name}</div>
-        </div>
-    }
-});
-
-
-var ExperimentForm = React.createClass({
-    getInitialState () {
-        return {
-            text: ""
-        };
-    },
-
-    render: function () {
-        return <form>
-            <ProjectSelect />
-            <ExperimentLabel />
-            <button type="submit" className="btn btn-default">Submit</button>
-        </form>
-    }
-});
 
 ReactDOM.render(
         <AuthoritySelect />,
-        document.getElementById('experiment-form')
+        document.getElementById('authoritySelect')
 );
