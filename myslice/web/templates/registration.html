@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+{% block title %}- Registration{% end %}
+{% block head %}
+{% include '_js_base.html' %}
+<script type="text/babel" src="/static/js/components/authoritySelect.jsx"></script>
+{% end %}
+{% block body %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-4 col-sm-offset-3 logo-image">
+            <img class="img-responsive" src="/static/images/onelab-big.png" alt="OneLab - Future Internet Testbeds" />
+        </div>
+        <div class="col-sm-3 logo-title">
+            <h1>Registration</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4 col-sm-offset-3">
+            <div id="registration-form" class="registration">
+                <form method="post">
+                    <div class="" id="authoritySelect"></div>
+                    <div className="login-email">
+                        <input class="form-control" placeholder="Email address" type="text" name="email" />
+                    </div>
+                    <div className="login-password">
+                         <input class="form-control" placeholder="Password" type="password" name="password" />
+                    </div>
+                    <div className="login-submit">
+                        <button type="submit" className="btn btn-default">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="">
+        <div class="col-sm-4 col-sm-offset-3">
+            {{ message }}
+        </div>
+    </div>
+</div>
+{% end %}
