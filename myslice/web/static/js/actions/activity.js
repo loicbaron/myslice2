@@ -11,7 +11,7 @@ class ActivityActions {
         // fetch activity
         this.fetchActivity();
 
-        var socket = new SockJS('http://localhost:8111/api/v1/live');
+        var socket = new SockJS('/api/v1/live');
 
         socket.onopen = function() {
             /*
