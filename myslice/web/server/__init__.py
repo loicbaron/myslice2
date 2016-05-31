@@ -36,7 +36,7 @@ from myslice.web.websocket import WebsocketsHandler
 
 ##
 # Web controllers
-from myslice.web.controllers import login, home, activity
+from myslice.web.controllers import login, registration, home, activity
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
@@ -118,6 +118,7 @@ class Application(web.Application):
         # Web
         web_handlers = [
             web.url(r"/login", login.Index),
+            web.url(r"/registration", registration.Index),
             web.url(r'/', home.Index),
             web.url(r'/project', home.Project),
             web.url(r'/activity', activity.Index),
