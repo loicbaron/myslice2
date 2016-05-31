@@ -22,22 +22,28 @@ class ActivityHandler(Api):
     @gen.coroutine
     def get(self, id=None):
         activity = []
-
-        if id:
+        params = self.request.arguments
+        if id is not None:
             result = yield r.table('activity').get(id).run(self.dbconnection)
             activity.append(result)
+            # return status code
+            if not activity:
+                self.NotFoundError('No such activity is found')
         else:
-            cursor = yield r.table('activity').run(self.dbconnection)
+            if 'object' in params:
+                val = params["object"][0]
+                cursor = yield r.table('activity').filter(lambda a:
+                    a["object"]["type"] == val.decode('ascii')
+                ).run(self.dbconnection);
+            else:
+                cursor = yield r.table('activity').run(self.dbconnection)
 
             while (yield cursor.fetch_next()):
                 item = yield cursor.next()
+                pprint(item)
                 activity.append(item)
 
-        # return status code
-        if not activity:
-            self.NotFoundError('No such activity is found')
-        else:
-            self.finish(json.dumps({"activity": activity}, cls=myJSONEncoder))
+        self.finish(json.dumps({"activity": activity}, cls=myJSONEncoder))
 
     @gen.coroutine
     def post(self):

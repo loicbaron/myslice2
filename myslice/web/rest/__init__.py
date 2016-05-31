@@ -1,3 +1,4 @@
+import json
 import logging
 import tornado_cors as cors
 from rethinkdb import r
@@ -14,7 +15,8 @@ class Api(cors.CorsMixin, web.RequestHandler):
         self.dbconnection = self.application.dbconnection
         #self.set_current_user(None)
 
-    def set_current_user(self, user):
+    def set_current_user(self, user=None):
+        # XXX To be Removed
         user = 'urn:publicid:IDN+onelab:upmc+user+loic_baron'
         if user:
             self.set_secure_cookie("user", escape.json_encode(user))

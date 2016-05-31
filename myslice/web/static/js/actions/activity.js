@@ -46,14 +46,13 @@ class ActivityActions {
             // we dispatch an event here so we can have "loading" state.
             dispatch();
             axios.get('/api/v1/activity', {
-                params: {
-                    ID: 12345
-                }
             }).then(function (response) {
                 this.updateActivity(response.data.activity);
+                console.log(response.data.activity);
 
             }.bind(this)).catch(function (response) {
                 this.errorActivity('error');
+                console.log(response);
             }.bind(this));
 
         }

@@ -14,6 +14,7 @@ from queue import Queue
 import myslice.db as db
 from myslice.db import connect, changes
 from myslice.db.activity import Event, ObjectType
+from myslice.db import changes, connect, events
 from myslice.services.workers.projects import events_run as manageProjects, sync as syncProjects
 from myslice.services.workers.slices import events_run as manageSlices, sync as syncSlices
 
@@ -23,18 +24,6 @@ def receive_signal(signum, stack):
     logger.info('Received signal %s', signum)
 
     raise SystemExit('Exiting')
-
-def process_event(ev):
-    try:
-        event = Event(ev)
-    except Exception as e:
-        logger.error("Problem with event: {}".format(e))
-    else:
-        if event.isReady():
-            if event.object.type == ObjectType.PROJECT:
-                qProjects.put(event)
-            if event.object.type == ObjectType.SLICE:
-                qSlices.put(event)
 
 def run():
     """
@@ -82,23 +71,37 @@ def run():
         threads.append(t)
         t.start()
 
-    dbconnection = connect()
 
     ##
     # Process events that were not watched 
     # while Server process was not running
     # myslice/bin/myslice-server
-    db_events = db.get(dbconnection, table='activity', filter={'status':"APPROVED"})
-    #db_events = db.get(dbconnection, table='activity', filter={'status':"WAITING"})
-    for e in db_events:
-        process_event(e)
-
+    dbconnection = connect()
+    wa_events = events(dbconnection, status=['WAITING', 'APPROVED'])
+    for ev in wa_events:
+        try:
+            event = Event(ev)
+        except Exception as e:
+            logger.error("Problem with event: {}".format(e))
+        else:
+            if event.object.type == ObjectType.PROJECT:
+                qProjects.put(event)
+            if event.object.type == ObjectType.SLICE:
+                qSlices.put(event)
     ##
     # will watch for incoming events/requests and pass them to
     # the appropriate thread group
-    feed = changes(dbconnection, table='activity')
+    feed = changes(dbconnection, table='activity', status=['WAITING', 'APPROVED'])
     for activity in feed:
-        process_event(activity['new_val'])
+        try:
+            event = Event(ev)
+        except Exception as e:
+            logger.error("Problem with event: {}".format(e))
+        else:
+            if event.object.type == ObjectType.PROJECT:
+                qProjects.put(event)
+            if event.object.type == ObjectType.SLICE:
+                qSlices.put(event)
 
     # waits for the thread to finish
     for x in threads:

@@ -130,7 +130,7 @@ class Application(web.Application):
         # REST API
         rest_handlers = [
 
-            web.url(r'/api/v1/activity$', ActivityHandler),
+            web.url(r'/api/v1/activity?([A-Za-z0-9-]+)?', ActivityHandler),
             web.url(r'/api/v1/activity/([a-z0-9\-]*)$', ActivityHandler),
 
             web.url(r'/api/v1/requests/([a-fA-F\d]{8}(-[a-fA-F\d]{4}){3}-[a-fA-F\d]{12})?', RequestsHandler),
@@ -140,13 +140,14 @@ class Application(web.Application):
             web.url(r'/api/v1/resources$', ResourcesHandler),
             web.url(r'/api/v1/resources/()$', ResourcesHandler),
 
-            web.url(r'/api/v1/users', UsersHandler),
+            web.url(r'/api/v1/users(.*)', UsersHandler),
 
-            web.url(r'/api/v1/slices', SlicesHandler),
+            web.url(r'/api/v1/slices(.*)', SlicesHandler),
 
-            web.url(r'/api/v1/authorities', AuthoritiesHandler),
+            web.url(r'/api/v1/authorities(.*)', AuthoritiesHandler),
 
-            web.url(r'/api/v1/projects', ProjectsHandler),
+            web.url(r'/api/v1/projects?([A-Za-z0-9-]+)?', ProjectsHandler),
+            web.url(r'/api/v1/projects/(.*)$', ProjectsHandler),
         ]
 
         ##

@@ -11,7 +11,7 @@ import signal
 import threading
 from queue import Queue
 from myslice.db.activity import Event, ObjectType
-from myslice.db import connect, changes
+from myslice.db import connect, changes, events
 from myslice.services.workers.users import events_run as manageUsersEvents
 from myslice.services.workers.users import sync as syncUsers
 
@@ -49,7 +49,22 @@ def run():
         threads.append(t)
         t.start()
 
-    feed = changes(table='activity')
+    dbconnection = connect()
+
+    ##
+    # Process events that were not watched 
+    # while Server process was not running
+    # myslice/bin/myslice-server
+    new_events = events(dbconnection, status=["WAITING", "PENDING"])
+    for ev in new_events:
+        try:
+            event = Event(ev)
+        except Exception as e:
+            logger.error("Problem with event: {}".format(e))
+        else:
+            qUserEvents.put(event)
+
+    feed = changes(dbconnection, table='activity', status=["WAITING", "PENDING"])
     for activity in feed:
         try:
             event = Event(activity['new_val'])
@@ -58,8 +73,7 @@ def run():
         else:
             if event.object.type == ObjectType.USER:
                 # event.isReady() = Request APPROVED or Event WAITING
-                if event.isReady():
-                    qUserEvents.put(event)
+                qUserEvents.put(event)
                 
     for x in threads:
         x.join()

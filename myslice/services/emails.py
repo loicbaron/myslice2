@@ -10,7 +10,7 @@ import logging
 import signal
 import threading
 from queue import Queue
-from myslice.db import connect, changes
+from myslice.db import connect, changes, events
 from myslice.db.activity import Event
 from myslice.services.workers.emails import emails_run as manageEmails
 
@@ -39,6 +39,21 @@ def run():
         threads.append(t)
         t.start()
 
+    dbconnection = connect()
+
+    ##
+    # Process events that were not watched 
+    # while Server process was not running
+    # myslice/bin/myslice-server
+    new_events = events(dbconnection, status="PENDING")
+    for ev in new_events:
+        try:
+            event = Event(ev)
+        except Exception as e:
+            logger.error("Problem with event: {}".format(e))
+        else:
+            if event.notify:
+                qEmails.put(event)
 
     feed = changes(table='activity')
     for activity in feed:
@@ -47,7 +62,6 @@ def run():
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
         else:
-            print(event)
 
             if event.isPending() and event.notify:
                 qEmails.put(event)
