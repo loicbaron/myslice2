@@ -24,7 +24,7 @@ class Api(cors.CorsMixin, web.RequestHandler):
             self.clear_cookie("user")
 
     def get_current_user_id(self):
-        #cookie = self.get_secure_cookie("user").decode("utf-8")
+        cookie = self.get_secure_cookie("user").decode("utf-8")
         #logger.debug("COOKIE USER ID: {}".format(cookie))
         return None
 
