@@ -4,7 +4,11 @@ body {
     height: 100%;
     color:#2C2C2C;
     background-color:#F6F6F6;
-    margin-top:130px;
+    margin-top:135px;
+}
+
+body.login {
+    background-color:white;
 }
 
 header {
@@ -36,6 +40,53 @@ h3 {
 h4 {
     font-weight:100;
 }
+
+input[type=text],
+input[type=password],
+input[type=email] {
+    font-size:11pt;
+    -webkit-border-radius: 0 !important;
+    -moz-border-radius: 0 !important;
+    border-radius: 2px;
+    border:2px solid #C5D5D5;
+    background-color:#FCFCFC;
+    outline: none;
+    box-shadow: none;
+    height:50px;
+}
+
+input[type=text]:focus,
+input[type=password]:focus,
+input[type=email]:focus {
+    border:2px solid #251A50;
+    box-shadow: none;
+}
+
+/*
+    LOGIN
+*/
+
+.logo-image {
+    padding-right:30px;
+}
+.logo-title {
+    border-left:1pt solid #2C2C2C;
+    padding-left:30px;
+}
+.login-form {
+    padding:50px 0;
+}
+.login-email {
+    padding-bottom:25px;
+}
+.login-password {
+    padding-bottom:25px;
+}
+.login-submit {
+
+}
+
+
 .green {
     color:#0F880A;
 }
@@ -49,12 +100,6 @@ h4 {
 }
 .header-menu li {
     margin-left:15px;
-}
-
-.icon {
-    vertical-align:top;
-    margin-right:4px;
-    margin-top:1px;
 }
 
 .p-left-header {

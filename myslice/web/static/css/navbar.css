@@ -2,9 +2,8 @@
     font-weight:100;
     border:0;
     margin:15px 0 0 0;
-    background-color: #2C2C2C;
+    background-color: #221144;
     border-radius:0;
-    box-shadow: 0 2px 2px #1b1b1b inset, 0 -2px 2px #1b1b1b inset;
 }
 .navbar-default .navbar-nav {
 }
@@ -17,35 +16,31 @@
 }
 
 .navbar-default .navbar-nav > li > a {
-    padding:5px 15px 5px 15px;
-    margin:20px 15px 0px 0;
+    padding:15px;
+    margin:0 15px 0 0;
     color:white;
+    border-top:4px solid #221144;
+    border-bottom:4px solid #221144;
 }
 .navbar-default .navbar-nav > li > a:hover,
 .navbar-default .navbar-nav > li > a:focus {
-    border-top-left-radius:5px;
-    border-top-right-radius:5px;
-    color:#2C2C2C;
-    background-color:#F6F6F6;
-    box-shadow: 2px -2px 2px #1b1b1b;
+    color:white;
+    border-bottom:4px solid #F6F6F6;
 }
 .navbar-default .navbar-nav > .active > a,
 .navbar-default .navbar-nav > .active > a:hover,
 .navbar-default .navbar-nav > .active > a:focus {
     font-weight:400;
-    border-top-left-radius:3px;
-    border-top-right-radius:3px;
     color: #2C2C2C;
+    border-top:4px solid #F6F6F6;
+    border-bottom:4px solid #F6F6F6;
     background-color: #F6F6F6;
-    box-shadow: 2px -2px 2px #1b1b1b;
 }
 .navbar-default .navbar-nav > .open > a,
 .navbar-default .navbar-nav > .open > a:hover,
 .navbar-default .navbar-nav > .open > a:focus {
-    padding:0;
 }
 .navbar-default .navbar-toggle {
-    padding:0;
 }
 .navbar-default .navbar-toggle:hover,
 .navbar-default .navbar-toggle:focus {
@@ -57,12 +52,18 @@
 
 }
 .navbar-default .navbar-form {
-    background-color: #2C2C2C;
+    background-color: #221144;
 }
 .navbar-default .navbar-link {
     color:red;
 }
 .navbar-default .navbar-link:hover {
+}
+
+.navbar-default .fa {
+    vertical-align:middle;
+    margin-bottom:1px;
+    margin-right:4px;
 }
 
 @media (max-width: 767px) {
