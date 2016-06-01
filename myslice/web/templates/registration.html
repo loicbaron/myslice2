@@ -1,6 +1,8 @@
 {% extends "layout.html" %}
-{% block title %}- Login{% end %}
+{% block title %}- Registration{% end %}
 {% block head %}
+{% include '_js_base.html' %}
+<script type="text/babel" src="/static/js/components/authoritySelect.jsx"></script>
 {% end %}
 {% block body %}
 <div class="container">
@@ -9,13 +11,14 @@
             <img class="img-responsive" src="/static/images/onelab-big.png" alt="OneLab - Future Internet Testbeds" />
         </div>
         <div class="col-sm-3 logo-title">
-            <h1>Login</h1>
+            <h1>Registration</h1>
         </div>
     </div>
     <div class="row">
         <div class="col-sm-4 col-sm-offset-3">
-            <div id="login-form" class="login-form">
+            <div id="registration-form" class="registration">
                 <form method="post">
+                    <div class="" id="authoritySelect"></div>
                     <div className="login-email">
                         <input class="form-control" placeholder="Email address" type="text" name="email" />
                     </div>

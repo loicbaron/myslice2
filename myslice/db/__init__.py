@@ -115,15 +115,29 @@ def get(dbconnection=None, table=None, id=None, filter=None):
     return r.db(s.db.name).table(table).run(dbconnection)
 
 
-def users(dbconnection=None, data=None, id=None):
+def users(dbconnection=None, data=None, id=None, email=None):
     if not dbconnection:
         dbconnection = connect()
 
+    ##
+    # Updating an existing user
     if id and data:
         r.db(s.db.name).table('users').get(id).update(data).run(dbconnection)
-        
+
+    ##
+    # Adding a new user
     if data:
         r.db(s.db.name).table('users').insert(data, conflict='update').run(dbconnection)
+
+    ##
+    # Return the user
+    if id:
+        return r.db(s.db.name).table('users').get(id).run(dbconnection)
+
+    ##
+    # Search user by email
+    if email:
+        return r.db(s.db.name).table('users').filter(email).run(dbconnection)
 
     return r.db(s.db.name).table('users').run(dbconnection)
 

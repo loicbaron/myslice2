@@ -6,7 +6,6 @@
 #   (c) 2016 Ciro Scognamiglio <ciro.scognamiglio@lip6.fr>
 ##
 
-import json
 import logging
 import time
 import myslice.db as db
@@ -33,7 +32,6 @@ def events_run(lock, qUserEvents):
 
     logger.info("Worker users events starting") 
 
-    # db connection is shared between threads
     dbconnection = connect()
 
     while True:
@@ -42,48 +40,64 @@ def events_run(lock, qUserEvents):
             event = Event(qUserEvents.get())
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
-        finally:
+        else:
             logger.info("Processing event from user {}".format(event.user))
-            
-            with lock:
-                event.setRunning()
-                
-                # Set event is successful as False 
-                isSuccess = False
-                
-                try:    
-                    if event.creatingObject():
-                        logger.info("creating the object user {}".format(event.object.id))
-                        user = User(event.data)
-                        user.id = event.object.id
-                        isSuccess = user.save(dbconnection)
 
-                    if event.deletingObject():
-                        logger.info("delete the object user {}".format(event.object.id))
-                        user = User(db.get(dbconnection, table='authorities', id=event.object.id))
-                        if not user:
-                            raise Exception("Authority doesn't exist")
-                        user.id = event.object.id
-                        isSuccess = user.delete(dbconnection)
+            event.setRunning()
 
-                    if event.updatingObject():
-                        logger.info("updating the object user {}".format(event.object.id))
-                        user = User(event.data)
-                        user.id = event.object.id
-                        isSuccess = user.save(dbconnection)
+            ##
+            # Creating a new user
+            if event.creatingObject():
+                logger.info("Creating user {}".format(event.object.id))
 
+                try:
+                    user = User(event.data)
+                    user.id = event.object.id
+                    ret = user.save(dbconnection)
                 except Exception as e:
-                    import traceback
-                    traceback.print_exc()
-                    logger.error("Problem with event: {}".format(e))
+                    logger.error("Problem creating user: {} - {}".format(event.object.id, e))
                     event.logError(str(e))
-
-                if isSuccess:
-                    event.setSuccess()
-                else:
                     event.setError()
+                else:
+                    event.setSuccess()
 
-                db.dispatch(dbconnection, event)
+            ##
+            # Deleting user
+            if event.deletingObject():
+                logger.info("Deleting user {}".format(event.object.id))
+
+                try:
+                    user = User(db.users(dbconnection, id=event.object.id))
+                    if not user:
+                        raise Exception("User doesn't exist")
+                    user.id = event.object.id
+                    ret = user.delete(dbconnection)
+                except Exception as e:
+                    logger.error("Problem deleting user: {} - {}".format(event.object.id, e))
+                    event.logError(str(e))
+                    event.setError()
+                else:
+                    event.setSuccess()
+
+            if event.updatingObject():
+                logger.info("Updating user {}".format(event.object.id))
+
+                try:
+                    user = User(event.data)
+                    user.id = event.object.id
+                    ret = user.save(dbconnection)
+                except Exception as e:
+                    logger.error("Problem updating user: {} - {}".format(event.object.id, e))
+                    event.logError(str(e))
+                    event.setError()
+                else:
+                    event.setSuccess()
+
+            ##
+            # we then dispatch the event
+            db.dispatch(dbconnection, event)
+
+
 
 def update_credentials(users):
     # Get users in RethinkDB
@@ -108,7 +122,7 @@ def sync(lock):
     while True:
         # acquires lock
         with lock:
-            logger.info("Worker users starting period synchronization")
+            logger.info("Worker users starting synchronization")
 
             users = q(User).get()
             users = update_credentials(users)

@@ -52,7 +52,7 @@ class ProjectsHandler(Api):
     def post(self, params):
         """
         POST /projects
-        { data: { name: string, label: string, description: string } }
+        { name: string, label: string, description: string }
         :return:
         """
         print(params)
