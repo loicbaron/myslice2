@@ -13,7 +13,7 @@ class Api(cors.CorsMixin, web.RequestHandler):
 
     def initialize(self):
         self.dbconnection = self.application.dbconnection
-        self.set_current_user(None)
+        self.set_current_user()
 
     def set_current_user(self, user=None):
         # XXX To be Removed
@@ -24,9 +24,11 @@ class Api(cors.CorsMixin, web.RequestHandler):
             self.clear_cookie("user")
 
     def get_current_user_id(self):
-        cookie = self.get_secure_cookie("user").decode("utf-8")
+        user = 'urn:publicid:IDN+onelab:upmc+user+loic_baron'
+        return user
+        # cookie = self.get_secure_cookie("user").decode("utf-8")
         #logger.debug("COOKIE USER ID: {}".format(cookie))
-        return cookie
+        # return cookie
 
     def get_current_user(self):
         ret = yield r.table('user').get(self.get_current_user_id()).run(self.dbconnection)
