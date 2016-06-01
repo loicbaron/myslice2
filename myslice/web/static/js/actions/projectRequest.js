@@ -5,7 +5,7 @@
  *
  */
 
-class ProjectActions {
+class ProjectRequestActions {
 
     setupProject() {
         // fetch project
@@ -17,7 +17,7 @@ class ProjectActions {
             /*
                 Open websocket connection and watch for new/changed events
              */
-            socket.send(JSON.stringify({'watch': 'projects'}));
+            socket.send(JSON.stringify({'watch': 'activity', 'object':'PROJECT'}));
 
             console.log("open")
         };
@@ -45,14 +45,15 @@ class ProjectActions {
         return (dispatch) => {
             // we dispatch an event here so we can have "loading" state.
             dispatch();
-            axios.get('/api/v1/projects', {
+            axios.get('/api/v1/activity?object=PROJECT', {
             }).then(function (response) {
-                this.updateProject(response.data.result);
-                console.log(response.data.result);
+                this.updateProject(response.data.activity);
+                console.log(response.data.activity);
             }.bind(this)).catch(function (response) {
                 this.errorProject('error');
                 console.log(response);
             }.bind(this));
+
         }
     }
 
@@ -70,7 +71,7 @@ class ProjectActions {
 
 }
 
-window.projectactions = alt.createActions(ProjectActions);
+window.projectrequestactions = alt.createActions(ProjectRequestActions);
 
 // setup project
-projectactions.setupProject();
+projectrequestactions.setupProject();
