@@ -26,7 +26,7 @@ class Api(cors.CorsMixin, web.RequestHandler):
     def get_current_user_id(self):
         cookie = self.get_secure_cookie("user").decode("utf-8")
         #logger.debug("COOKIE USER ID: {}".format(cookie))
-        return None
+        return cookie
 
     def get_current_user(self):
         ret = yield r.table('user').get(self.get_current_user_id()).run(self.dbconnection)
