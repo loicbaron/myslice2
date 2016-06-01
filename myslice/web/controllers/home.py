@@ -1,9 +1,12 @@
 from tornado import web
+from myslice.web.controllers import BaseController
 
-class Index(web.RequestHandler):
+class Index(BaseController):
     def get(self):
+        self.set_current_user("test")
         self.render(self.application.templates + "/index.html")
 
-class Project(web.RequestHandler):
+class Project(BaseController):
     def get(self):
+        self.set_current_user("test")
         self.render(self.application.templates + "/project.html")
