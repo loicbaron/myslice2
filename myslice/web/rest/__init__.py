@@ -13,7 +13,7 @@ class Api(cors.CorsMixin, web.RequestHandler):
 
     def initialize(self):
         self.dbconnection = self.application.dbconnection
-        #self.set_current_user(None)
+        self.set_current_user(None)
 
     def set_current_user(self, user=None):
         # XXX To be Removed
