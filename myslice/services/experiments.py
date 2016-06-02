@@ -94,7 +94,7 @@ def run():
     feed = changes(dbconnection, table='activity', status=['WAITING', 'APPROVED'])
     for activity in feed:
         try:
-            event = Event(ev)
+            event = Event(activity)
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
         else:

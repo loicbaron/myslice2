@@ -2,7 +2,7 @@ import json
 import logging
 import tornado_cors as cors
 from rethinkdb import r
-from tornado import web, escape
+from tornado import web, escape, gen
 
 from myslice.db.user import User
 
@@ -31,13 +31,13 @@ class Api(cors.CorsMixin, web.RequestHandler):
         # return cookie
 
     def get_current_user(self):
-        ret = yield r.table('user').get(self.get_current_user_id()).run(self.dbconnection)
+        ret = r.table('users').get(self.get_current_user_id()).run(self.dbconnection)
         if not ret:
             self.serverError("Access Denied")
 
         user = User(ret)
 
-        yield user
+        return user
 
     def set_default_headers(self):
         # Allow CORS

@@ -23,6 +23,8 @@ class WebsocketsHandler(SockJSConnection):
         data = json.loads(message)
 
         if (data['watch'] == 'activity'):
+            print('---> websocket watch data')
+            print(data)
             if 'object' in data:
                 self.activity(data['object'])
             else:
@@ -41,6 +43,9 @@ class WebsocketsHandler(SockJSConnection):
 
         while (yield feed.fetch_next()):
             change = yield feed.next()
+            print('--->  websocket activity()')
+            print(change)
+            print(obj)
             if obj:
                 if change['new_val']['object']['type'] == obj:
                     if change['new_val']['user'] == self.current_user:
