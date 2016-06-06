@@ -27,10 +27,10 @@ class ProjectRequestActions {
                 Act upon receiving a message
              */
             let data = JSON.parse(e.data);
+            console.log("Websocket:");
+            console.log(data);
 
-            console.log(data)
-
-            this.updateProjectElement(data.project);
+            this.updateProjectElement(data.activity);
 
         }.bind(this);
 

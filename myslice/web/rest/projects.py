@@ -62,14 +62,20 @@ class ProjectsHandler(Api):
         except json.decoder.JSONDecodeError as e:
             self.userError("malformed request", e.message)
             return
-
+        print(self.get_current_user_id())
+        print("---> REST POST PROJECT")
+        import re
+        # urn:publicid:IDN+onelab:upmc:test+authority+sa
+        u = self.get_current_user_id()
+        auth = '+'.join(u.split('+')[:-2])
+        id = auth+':'+data['name']+'+authority+sa'
         try:
             event = Event({
                 'action': EventAction.CREATE,
-                'user': 'user_id_todo_from_auth',
+                'user': self.get_current_user_id(), 
                 'object': {
                     'type': ObjectType.PROJECT,
-                    'id': 'generated id from data name'
+                    'id': id, 
                 },
                 'data': data
             })
