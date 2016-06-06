@@ -2,23 +2,27 @@
  * Authority Select component
  * requires: authorities actions and store
  */
+var React = require('react');
+var Select = require('react-select');
+var store = require('../stores/AuthoritiesStore');
+var actions = require('../actions/AuthoritiesActions');
 
-var AuthoritySelect = React.createClass({
+module.exports = React.createClass({
     getInitialState () {
-        return authoritiesstore.getState();
+        return store.getState();
     },
 
     componentDidMount: function() {
         // store
-        authoritiesstore.listen(this.onChange);
+        store.listen(this.onChange);
 
         // action fetch authorities
-        authoritiesactions.fetchAuthorities();
+        actions.fetchAuthorities();
 
     },
 
     componentWillUnmount() {
-        authoritiesstore.unlisten(this.onChange);
+        store.unlisten(this.onChange);
     },
 
     onChange(state) {
