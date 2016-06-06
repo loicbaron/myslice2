@@ -38,14 +38,6 @@ class RequestsHandler(Api):
         self.write(json.dumps({"result": users}, cls=myJSONEncoder))
 
     @gen.coroutine
-    def post(self):
-        """
-        POST /requests
-        :return:
-        """
-        pass
-
-    @gen.coroutine
     def put(self, id):
         """
         PUT /requests/<id>
