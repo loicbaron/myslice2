@@ -36,10 +36,27 @@ var ProjectStatus = React.createClass({
 });
 
 var ProjectRow = React.createClass({
-
+     getInitialState () {
+        return {
+        'selected':false
+        };
+     },
+     handleClick(){
+        if(this.state.selected){
+            this.setState({'selected':false});
+        }else{
+            this.setState({'selected':true});
+        }
+     },
      render: function() {
+         console.log('render called');
+         if(this.state.selected){
+            var liClass = 'elementBox selected';
+         }else{
+            var liClass = 'elementBox';
+         }
          return (
-             <li className="elementBox">
+             <li className={liClass} onClick={this.handleClick}>
                  <ProjectLabel project={this.props.project} />
                  <div className="row">
                      <div className="col-md-6">

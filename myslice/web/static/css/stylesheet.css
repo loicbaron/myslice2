@@ -186,6 +186,9 @@ input[type=email]:focus {
     padding:10px 15px 10px 30px;
     margin-bottom:5px;
 }
+.elementBox.selected {
+	background-color: #CDB4D8;
+}
 .elementBox:last-child {
     border:none;
 }

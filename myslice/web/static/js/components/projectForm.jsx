@@ -1,3 +1,11 @@
+// tutorial1.js
+var Title = React.createClass({
+  render: function() {
+    return (
+      <h1>New Project</h1>
+    );
+  }
+});
 var ProjectForm = React.createClass({
     getInitialState () {
         return projectformstore.getState();
@@ -94,7 +102,10 @@ var ProjectForm = React.createClass({
         );
     }
 });
-
+ReactDOM.render(
+        <Title />,
+        document.getElementById('title-right')
+);
 ReactDOM.render(
         <ProjectForm />,
         document.getElementById('project-form')
