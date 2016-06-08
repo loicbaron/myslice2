@@ -19,7 +19,7 @@ class ProjectActions {
              */
             socket.send(JSON.stringify({'watch': 'projects'}));
 
-            console.log("open")
+            console.log("open projects")
         };
 
         socket.onmessage = function(e) {
@@ -28,14 +28,15 @@ class ProjectActions {
              */
             let data = JSON.parse(e.data);
 
+            console.log("projects");
             console.log(data)
 
-            this.updateProjectElement(data.project);
+            this.updateProjectElement(data.projects);
 
         }.bind(this);
 
         socket.onclose = function() {
-            console.log('close');
+            console.log('close projects');
         };
 
         return false;
