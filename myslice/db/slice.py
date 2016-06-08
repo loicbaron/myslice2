@@ -3,6 +3,8 @@ from myslicelib.query import q
 from myslice.db.activity import Object, ObjectType
 from myslice import db
 from myslice.db.user import User
+from myslice.lib import Status
+from myslice.lib.util import format_date
 from xmlrpc.client import Fault as SFAError
 
 class Slice(myslicelibSlice):
@@ -15,6 +17,11 @@ class Slice(myslicelibSlice):
             raise Exception('errors: %s' % result['errors'] )
         else:
             result = {**(self.attributes()), **result['data'][0]}
+            # add status if not present and update on db
+            if not 'status' in result:
+                result['status'] = Status.ENABLED
+                result['enabled'] = format_date()
+
             db.slices(dbconnection, result, self.id)
 
             for user in self.users:
