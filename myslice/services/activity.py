@@ -43,6 +43,13 @@ def run():
     dbconnection = connect()
 
     ##
+    # Watch for changes on the activity table and send the event/request
+    # to the running threads (via Queue).
+    # A global watch feed is needed to permit spawning more threads to manage
+    # events and requests
+    feed = changes(dbconnection, table='activity', status="NEW")
+
+    ##
     # Process events that were not watched 
     # while Server process was not running
     # myslice/bin/myslice-server
@@ -54,13 +61,7 @@ def run():
             logger.error("Problem with event: {}".format(e))
         else:
             qEvents.put(event)
-        
-    #
-    # Watch for changes on the activity table and send the event/request
-    # to the running threads (via Queue).
-    # A global watch feed is needed to permit spawning more threads to manage
-    # events and requests
-    feed = changes(dbconnection, table='activity', status="NEW")
+
     for activity in feed:
         try:
             event = Event(activity['new_val'])
