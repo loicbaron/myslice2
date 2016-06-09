@@ -64,6 +64,9 @@ class ProjectActions {
     updateProject(project) {
         return project;
     }
+    selectProject(project) {
+        return project;
+    }
 
     errorProject(errorMessage) {
         return errorMessage

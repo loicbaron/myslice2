@@ -1,5 +1,6 @@
 var alt = require('../alt');
-var actions = require('../actions/AuthoritiesActions');
+var actions = require('../actions/Authorities');
+var source = require('../sources/Authoritites');
 
 class AuthoritiesStore {
 
@@ -11,6 +12,7 @@ class AuthoritiesStore {
             updateAuthorities: actions.UPDATE_AUTHORITIES,
         });
 
+        this.registerAsync(source);
     }
 
 
