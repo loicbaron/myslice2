@@ -103,6 +103,6 @@ class ProfileHandler(Api):
         """
         # TODO: id must be a valid URN
 
-        profile = yield r.table('users').get(self.get_current_user_id).run(self.dbconnection)
+        profile = yield r.table('users').get(self.get_current_user_id()).run(self.dbconnection)
 
         self.write(json.dumps({"result": profile}, cls=myJSONEncoder))
