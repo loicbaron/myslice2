@@ -1,5 +1,6 @@
 var alt = require('../alt');
 var actions = require('../actions/AuthoritiesActions');
+var source = require('../sources/AuthoritiesSource');
 
 class AuthoritiesStore {
 
@@ -9,13 +10,29 @@ class AuthoritiesStore {
 
         this.bindListeners({
             updateAuthorities: actions.UPDATE_AUTHORITIES,
+            fetchAuthorities: actions.FETCH_AUTHORITIES,
         });
+
+        this.registerAsync(source);
+        
+    }
+
+    fetchAuthorities() {
+
+        this.authorities = [];
+
+        if (!this.getInstance().isLoading()) {
+            this.getInstance().fetch();
+        }
 
     }
 
-
     updateAuthorities(authorities) {
-        this.authorities = authorities;
+        if (authorities.hasOwnProperty('data')) {
+            this.authorities = authorities.data.result;
+        } else {
+            this.authorities = authorities;
+        }
     }
 
 }

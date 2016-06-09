@@ -1,5 +1,6 @@
 var alt = require('../alt');
 var actions = require('../actions/RegistrationActions');
+var source = require('../sources/RegistrationSource');
 
 class RegistrationStore {
 
@@ -8,6 +9,7 @@ class RegistrationStore {
         this.email = '';
         this.firstname = '';
         this.lastname = '';
+        this.loading = false;
         this.errorMessage = null;
 
         this.bindListeners({
@@ -15,8 +17,11 @@ class RegistrationStore {
             updateEmail: actions.UPDATE_EMAIL,
             updateFirstname: actions.UPDATE_FIRSTNAME,
             updateLastname: actions.UPDATE_LASTNAME,
-
+            updateLoading: actions.LOADING,
+            submitForm: actions.SUBMIT_FORM,
         });
+
+        this.registerAsync(source);
     }
 
     updateAuthority(authority) {
@@ -33,6 +38,17 @@ class RegistrationStore {
 
     updateLastname(lastname) {
         this.lastname = lastname;
+    }
+
+    updateLoading(loading) {
+        this.loading = loading;
+    }
+
+    submitForm() {
+
+        if (!this.getInstance().isLoading()) {
+            this.getInstance().submit();
+        }
     }
 
 }

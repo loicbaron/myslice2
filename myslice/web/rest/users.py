@@ -3,7 +3,9 @@ import json
 import rethinkdb as r
 
 from myslice.lib.util import myJSONEncoder
+from myslice.db.activity import Event, EventAction, ObjectType
 from myslice.web.rest import Api
+
 
 from tornado import gen, escape
 
@@ -23,8 +25,10 @@ class UsersHandler(Api):
 
         # TODO: id must be a valid URN
         if id:
+            print(id)
             result = yield r.table('users').get(id).run(self.dbconnection)
             users.append(result)
+            print(result)
         else:
             cursor = yield r.table('users').run(self.dbconnection)
 
@@ -40,7 +44,37 @@ class UsersHandler(Api):
         POST /users
         :return:
         """
-        pass
+
+        try:
+            data = escape.json_decode(self.request.body)['data']
+        except json.decoder.JSONDecodeError as e:
+            self.userError("malformed request", e.message)
+            return
+        print(self.get_current_user_id())
+        print("---> REST POST PROJECT")
+        import re
+        # urn:publicid:IDN+onelab:upmc:test+authority+sa
+        u = self.get_current_user_id()
+        auth = '+'.join(u.split('+')[:-2])
+        id = auth + ':' + data['name'] + '+authority+sa'
+        try:
+            event = Event({
+                'action': EventAction.CREATE,
+                'user': self.get_current_user_id(),
+                'object': {
+                    'type': ObjectType.USER,
+                    'id': id,
+                },
+                'data': data
+            })
+        except Exception as e:
+            self.userError("problem with request", e.message)
+            return
+        else:
+            result = yield dispatch(self.dbconnection, event)
+            # data = self.get_argument('event','no data')
+            self.write(json.dumps({"result": "ok"}, cls=myJSONEncoder))
+            print(event)
 
     @gen.coroutine
     def put(self):
@@ -57,3 +91,20 @@ class UsersHandler(Api):
         :return:
         """
         pass
+
+class ProfileHandler(Api):
+
+    @gen.coroutine
+    def get(self):
+        """
+        GET /profile
+
+        Logged in User Profile
+
+        :return:
+        """
+        # TODO: id must be a valid URN
+
+        profile = yield r.table('users').get(self.get_current_user_id()).run(self.dbconnection)
+
+        self.write(json.dumps({"result": profile}, cls=myJSONEncoder))
