@@ -8,6 +8,7 @@ var store = require('../stores/AuthoritiesStore');
 var actions = require('../actions/AuthoritiesActions');
 
 module.exports = React.createClass({
+
     getInitialState () {
         return store.getState();
     },
@@ -29,23 +30,45 @@ module.exports = React.createClass({
         this.setState(state);
     },
 
-    setValue (value) {
-		this.setState({ value });
+    setValue(value) {
+		this.setState({ value })
+        this.props.handleChange(value.id);
 		console.log('Support level selected:', value.label);
 	},
 
     getOptions: function() {
-        return this.state.authorities.map(function(authority) { return { value: authority.id, label: authority.name } });
+        return this.state.authorities.map(function(authority) {
+            return {
+                value: authority.id,
+                label: authority.name,
+                shortname: authority.shortname
+            }
+        });
     },
 
     renderLink: function() {
 		return <a style={{ marginLeft: 5 }} href="/upgrade" target="_blank">C Upgrade here!</a>;
 	},
+
 	renderOption: function(option) {
-		return <span style={{ color: option.color }}>A{option.label} {option.link}</span>;
+		return (
+            <span>
+                <span>{option.label}</span>
+                &nbsp;
+                <i>{option.shortname}</i>
+            </span>
+        );
 	},
+
 	renderValue: function(option) {
-		return <strong style={{ color: option.color }}>B{option.label}</strong>;
+		return (
+            <span>
+                <span>{option.label}</span>
+                &nbsp;
+                <i>{option.shortname}</i>
+            </span>
+        );
+
 	},
 
     render: function () {
@@ -55,9 +78,9 @@ module.exports = React.createClass({
             name="form-field-name"
             placeholder="Select your Authority"
             value={this.state.value}
-            optionRenderer={this.renderOption}
-            options={options}
             valueRenderer={this.renderValue}
+            options={options}
+            optionRenderer={this.renderOption}
             onChange={this.setValue}
         />
     }

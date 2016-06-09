@@ -17,6 +17,15 @@ class RegistrationActions {
     updateLastname(lastname) {
         return lastname;
     }
+
+    loading(loading) {
+        return loading;
+    }
+
+    submitForm() {
+        this.loading(true);
+        return true;
+    }
 }
 
 module.exports = alt.createActions(RegistrationActions);

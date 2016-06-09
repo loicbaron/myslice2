@@ -1,10 +1,13 @@
 {% extends "layout.html" %}
 {% block title %}- Registration{% end %}
 {% block head %}
-{% include '_js_base.html' %}
-<script type="text/babel" src="/static/js/actions/authorities.js"></script>
-<script type="text/babel" src="/static/js/stores/authorities.js"></script>
-<script type="text/babel" src="/static/js/components/authoritySelect.jsx"></script>
+
+<!--<script type="text/babel" src="/static/js/actions/authorities.js"></script>-->
+<!--<script type="text/babel" src="/static/js/stores/authorities.js"></script>-->
+<!--<script type="text/babel" src="/static/js/components/authoritySelect.js"></script>-->
+<!--<script type="text/babel" src="/static/js/actions/registration.js"></script>-->
+<!--<script type="text/babel" src="/static/js/stores/registration.js"></script>-->
+<!--<script type="text/babel" src="/static/js/forms/registration.js"></script>-->
 {% end %}
 {% block body %}
 <div class="container">
@@ -18,20 +21,7 @@
     </div>
     <div class="row">
         <div class="col-sm-4 col-sm-offset-3">
-            <div id="registration-form" class="registration">
-                <form method="post">
-                    <div class="" id="authoritySelect"></div>
-                    <div className="login-email">
-                        <input class="form-control" placeholder="Email address" type="text" name="email" />
-                    </div>
-                    <div className="login-password">
-                         <input class="form-control" placeholder="Password" type="password" name="password" />
-                    </div>
-                    <div className="login-submit">
-                        <button type="submit" className="btn btn-default">Submit</button>
-                    </div>
-                </form>
-            </div>
+            <div id="registrationForm" class="registration-form"></div>
         </div>
     </div>
     <div class="">
@@ -40,4 +30,5 @@
         </div>
     </div>
 </div>
+<script type="text/javascript" src="/static/js/build/registration.js"></script>
 {% end %}
