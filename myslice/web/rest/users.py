@@ -25,8 +25,10 @@ class UsersHandler(Api):
 
         # TODO: id must be a valid URN
         if id:
+            print(id)
             result = yield r.table('users').get(id).run(self.dbconnection)
             users.append(result)
+            print(result)
         else:
             cursor = yield r.table('users').run(self.dbconnection)
 
