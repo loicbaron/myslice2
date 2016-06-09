@@ -7,11 +7,12 @@ class ProjectStore {
     constructor() {
         this.project = []
         this.errorMessage = null;
+        this.selected = null;
 
         this.bindListeners({
             updateProjectElement: projectactions.updateProjectElement,
             updateProject: projectactions.updateProject,
-
+            selectProject: projectactions.selectProject,
         });
 
 
@@ -40,6 +41,15 @@ class ProjectStore {
 
     updateProject(project) {
         this.project = project;
+    }
+    selectProject(project) {
+        if(this.selected!=project.id){
+            this.selected = project.id;
+        /*
+        }else{
+            this.selected = null;
+        */
+        }
     }
 
 }
