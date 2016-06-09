@@ -1,11 +1,11 @@
 {% extends "layout.html" %}
 {% block head %}
 {% include '_js_base.html' %}
+<script src="//cdn.jsdelivr.net/sockjs/1/sockjs.min.js"></script>
+
 <script type="text/babel" src="/static/js/actions/projectForm.js"></script>
 <script type="text/babel" src="/static/js/stores/projectForm.js"></script>
 <script type="text/babel" src="/static/js/components/projectForm.jsx"></script>
-
-<script src="//cdn.jsdelivr.net/sockjs/1/sockjs.min.js"></script>
 
 <script type="text/babel" src="/static/js/actions/project.js"></script>
 <script type="text/babel" src="/static/js/stores/project.js"></script>
@@ -33,7 +33,7 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
-                                    <div class="p-action" id="slice-add">
+                                    <div class="p-action" id="project-add">
                                     </div>
                                 </div>
                             </div>
@@ -55,26 +55,7 @@
 
         </div>
 
-        <div class="col-sm-6">
-            <div class="p-view-header">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-sm-12" id="title-right">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="p-view-body">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div id="project-form"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+        <div class="col-sm-6" id="projects-right">
         </div>
 
     </div>

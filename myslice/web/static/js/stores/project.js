@@ -45,10 +45,8 @@ class ProjectStore {
     selectProject(project) {
         if(this.selected!=project.id){
             this.selected = project.id;
-        /*
         }else{
             this.selected = null;
-        */
         }
     }
 
