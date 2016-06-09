@@ -4,7 +4,6 @@ import rethinkdb as r
 
 from myslice.lib.util import myJSONEncoder
 from myslice.db.activity import Event, EventAction, ObjectType
-from myslice.
 from myslice.web.rest import Api
 
 
