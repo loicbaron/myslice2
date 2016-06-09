@@ -52,19 +52,22 @@ def run():
     dbconnection = connect()
 
     ##
+    # Watch for changes on the activity table
+    feed = changes(dbconnection, table='activity', status=["WAITING", "APPROVED"])
+    ##
     # Process events that were not watched 
     # while Server process was not running
     # myslice/bin/myslice-server
-    new_events = events(dbconnection, status=["WAITING", "PENDING"])
+    new_events = events(dbconnection, status=["WAITING", "APPROVED"])
     for ev in new_events:
         try:
             event = Event(ev)
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
         else:
-            qUserEvents.put(event)
+            if event.object.type == ObjectType.USER:
+                qUserEvents.put(event)
 
-    feed = changes(dbconnection, table='activity', status=["WAITING", "PENDING"])
     for activity in feed:
         try:
             event = Event(activity['new_val'])
@@ -74,6 +77,7 @@ def run():
             if event.object.type == ObjectType.USER:
                 # event.isReady() = Request APPROVED or Event WAITING
                 qUserEvents.put(event)
+
                 
     for x in threads:
         x.join()

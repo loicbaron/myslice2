@@ -15,33 +15,6 @@
 <script type="text/babel" src="/static/js/stores/projectRequest.js"></script>
 <script type="text/babel" src="/static/js/components/projectRequest.jsx"></script>
 
-
-<!--
-<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-
-<script type="text/javascript">
-$(document).ready(function(){
-	$.ajax({
-	  url: "/api/v1/users/urn:publicid:IDN+onelab:upmc+user+loic_baron",
-	  beforeSend: function( xhr ) {
-	    xhr.overrideMimeType( "text/plain; charset=x-user-defined" );
-	  }
-	}).done(function( data ) {
-	  if ( console && console.log ) {
-		r = JSON.parse(data);
-		$.each(r['result'], function( index, value ) {
-			$.each(value['pi_authorities'], function(i, v) {
-				console.log(v);
-			});
-		});
-		//console.log(JSON.parse(data));
-	  	console.log( "Sample of data:", data.slice( 0, 100 ) );
-	  }
-	});
-});
-</script>
-
--->
 {% end %}
 {% block body %}
 <div class="container-fluid">
@@ -86,8 +59,7 @@ $(document).ready(function(){
             <div class="p-view-header">
                 <div class="container-fluid">
                     <div class="row">
-                        <div class="col-sm-12">
-                            <h1>New Project</h1>
+                        <div class="col-sm-12" id="title-right">
                         </div>
                     </div>
                 </div>

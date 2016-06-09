@@ -138,6 +138,9 @@ if __name__ == '__main__':
     processes.append(p)
     p.start()
 
+    ##
+    #Process: emails
+    #
     p = multiprocessing.Process(target=serviceEmails)
     processes.append(p)
     p.start()

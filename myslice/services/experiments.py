@@ -71,12 +71,16 @@ def run():
         threads.append(t)
         t.start()
 
+    dbconnection = connect()
 
+    ##
+    # will watch for incoming events/requests and pass them to
+    # the appropriate thread group
+    feed = changes(dbconnection, table='activity', status=['WAITING', 'APPROVED'])
     ##
     # Process events that were not watched 
     # while Server process was not running
     # myslice/bin/myslice-server
-    dbconnection = connect()
     wa_events = events(dbconnection, status=['WAITING', 'APPROVED'])
     for ev in wa_events:
         try:
@@ -88,13 +92,10 @@ def run():
                 qProjects.put(event)
             if event.object.type == ObjectType.SLICE:
                 qSlices.put(event)
-    ##
-    # will watch for incoming events/requests and pass them to
-    # the appropriate thread group
-    feed = changes(dbconnection, table='activity', status=['WAITING', 'APPROVED'])
+
     for activity in feed:
         try:
-            event = Event(activity)
+            event = Event(activity['new_val'])
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
         else:
@@ -102,6 +103,7 @@ def run():
                 qProjects.put(event)
             if event.object.type == ObjectType.SLICE:
                 qSlices.put(event)
+
 
     # waits for the thread to finish
     for x in threads:

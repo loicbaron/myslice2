@@ -30,6 +30,11 @@ class WebsocketsHandler(SockJSConnection):
             else:
                 self.activity()
 
+        if (data['watch'] == 'projects'):
+            print('---> websocket watch projects')
+            print(data)
+            self.projects()
+
     def on_close(self):
 
         self.clients.remove(self)

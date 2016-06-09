@@ -1,6 +1,8 @@
 from myslicelib.model.user import User as myslicelibUser
 from xmlrpc.client import Fault as SFAError
 from myslice import db
+from myslice.lib import Status
+from myslice.lib.util import format_date
 from pprint import pprint
 
 def generate_RSA(bits=2048):
@@ -55,6 +57,11 @@ class User(myslicelibUser):
             raise Exception('errors: %s' % result['errors'] )
         else:
             result = { **(self.attributes()), **result['data'][0]}
+            # add status if not present and update on db
+            if not 'status' in result:
+                result['status'] = Status.ENABLED
+                result['enabled'] = format_date()
+
             db.users(dbconnection, result, self.id)
             return True
 

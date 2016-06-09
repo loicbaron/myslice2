@@ -42,6 +42,10 @@ def run():
     dbconnection = connect()
 
     ##
+    # Watch for changes on the activity table
+    feed = changes(table='activity')
+
+    ##
     # Process events that were not watched 
     # while Server process was not running
     # myslice/bin/myslice-server
@@ -55,7 +59,6 @@ def run():
             if event.notify:
                 qEmails.put(event)
 
-    feed = changes(table='activity')
     for activity in feed:
         try:
             event = Event(activity['new_val'])

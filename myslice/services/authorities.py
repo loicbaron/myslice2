@@ -52,19 +52,9 @@ def run():
     dbconnection = connect()
 
     ##
-    # Process events that were not watched 
-    # while Server process was not running
-    # myslice/bin/myslice-server
-    new_events = events(dbconnection, status=["WAITING", "PENDING"])
-    for ev in new_events:
-        try:
-            event = Event(ev)
-        except Exception as e:
-            logger.error("Problem with event: {}".format(e))
-        else:
-            qAuthorityEvents.put(event)
-
-    feed = changes(dbconnection, table='activity', status=["WAITING", "PENDING"])
+    # will watch for incoming events/requests and pass them to
+    # the appropriate thread group
+    feed = changes(dbconnection, table='activity', status=["WAITING", "APPROVED"])
     for activity in feed:
         try:
             event = Event(activity['new_val'])
@@ -74,7 +64,21 @@ def run():
             if event.object.type == ObjectType.AUTHORITY:
                 # event.isReady() = Request APPROVED or Event WAITING
                 qAuthorityEvents.put(event)
-                
+
+    ##
+    # Process events that were not watched 
+    # while Server process was not running
+    # myslice/bin/myslice-server
+    new_events = events(dbconnection, status=["WAITING", "APPROVED"])
+    for ev in new_events:
+        try:
+            event = Event(ev)
+        except Exception as e:
+            logger.error("Problem with event: {}".format(e))
+        else:
+            if event.object.type == ObjectType.AUTHORITY:
+                qAuthorityEvents.put(event)
+
     for x in threads:
         x.join()
 

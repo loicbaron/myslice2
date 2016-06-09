@@ -44,7 +44,7 @@ var ProjectRow = React.createClass({
                  <div className="row">
                      <div className="col-md-6">
                          <div className="elementId">
-                             {this.props.project.id}
+                             {this.props.project.object.id}
                          </div>
                          <div className="elementDate">
                             Created: { moment(this.props.project.created).format("DD/MM/YYYY H:mm") }
@@ -94,7 +94,11 @@ var ProjectList = React.createClass({
 
         return (
             <ul className="elementList">
-            {project.map(function(project) { return <ProjectRow key={project.id} project={project}></ProjectRow>; }) }
+            {project.map(function(project) { 
+                if(project.status!='SUCCESS'){
+                    return <ProjectRow key={project.id} project={project}></ProjectRow>; 
+                }
+            })}
             </ul>
         );
     }

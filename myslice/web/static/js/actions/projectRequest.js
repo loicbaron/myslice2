@@ -29,7 +29,7 @@ class ProjectRequestActions {
             let data = JSON.parse(e.data);
             console.log("Websocket:");
             console.log(data);
-
+            console.log(data.activity.status);
             this.updateProjectElement(data.activity);
 
         }.bind(this);
@@ -49,6 +49,7 @@ class ProjectRequestActions {
             }).then(function (response) {
                 this.updateProject(response.data.activity);
                 console.log(response.data.activity);
+                console.log(response.data.activity.status);
             }.bind(this)).catch(function (response) {
                 this.errorProject('error');
                 console.log(response);

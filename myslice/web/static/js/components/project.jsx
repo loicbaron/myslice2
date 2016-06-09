@@ -36,10 +36,31 @@ var ProjectStatus = React.createClass({
 });
 
 var ProjectRow = React.createClass({
-
+     /*
+     getInitialState () {
+        return {
+        'selected':false
+        };
+     },
+     */
+     handleClick(){
+        projectactions.selectProject(this.props.project);
+        /*
+        if(this.state.selected){
+            this.setState({'selected':false});
+        }else{
+            this.setState({'selected':true});
+        }
+        */
+     },
      render: function() {
+         if(this.props.selected == this.props.project.id){
+            var liClass = 'elementBox selected';
+         }else{
+            var liClass = 'elementBox';
+         }
          return (
-             <li className="elementBox">
+             <li className={liClass} onClick={this.handleClick}>
                  <ProjectLabel project={this.props.project} />
                  <div className="row">
                      <div className="col-md-6">
@@ -84,7 +105,7 @@ var ProjectList = React.createClass({
     },
 
     render: function() {
-
+        var selected = this.state.selected;
         var project = this.state.project;
         if (this.state.errorMessage) {
             return (
@@ -94,7 +115,7 @@ var ProjectList = React.createClass({
 
         return (
             <ul className="elementList">
-            {project.map(function(project) { return <ProjectRow key={project.id} project={project}></ProjectRow>; }) }
+            {project.map(function(project) { return <ProjectRow key={project.id} project={project} selected={selected}></ProjectRow>; }) }
             </ul>
         );
     }
