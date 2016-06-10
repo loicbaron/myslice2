@@ -51,8 +51,11 @@ def events_run(lock, qUserEvents):
                 logger.info("Creating user {}".format(event.object.id))
 
                 try:
-                    user = User(event.data)
-                    user.id = event.object.id
+                    user = User()
+                    # email
+                    # authority
+                    user.email = event.data['email']
+                    user.authority = event.data['authority']
                     ret = user.save(dbconnection)
                 except Exception as e:
                     logger.error("Problem creating user: {} - {}".format(event.object.id, e))
