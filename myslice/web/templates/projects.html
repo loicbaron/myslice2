@@ -1,63 +1,32 @@
 {% extends "layout.html" %}
 {% block head %}
 {% include '_js_base.html' %}
-<script src="//cdn.jsdelivr.net/sockjs/1/sockjs.min.js"></script>
+<!--<script src="//cdn.jsdelivr.net/sockjs/1/sockjs.min.js"></script>-->
 
-<script type="text/babel" src="/static/js/actions/projectForm.js"></script>
-<script type="text/babel" src="/static/js/stores/projectForm.js"></script>
-<script type="text/babel" src="/static/js/components/projectForm.jsx"></script>
+<!--<script type="text/babel" src="/static/js/actions/projectForm.js"></script>-->
+<!--<script type="text/babel" src="/static/js/stores/projectForm.js"></script>-->
+<!--<script type="text/babel" src="/static/js/components/projectForm.jsx"></script>-->
 
-<script type="text/babel" src="/static/js/actions/project.js"></script>
-<script type="text/babel" src="/static/js/stores/project.js"></script>
-<script type="text/babel" src="/static/js/components/project.jsx"></script>
+<!--<script type="text/babel" src="/static/js/actions/project.js"></script>-->
+<!--<script type="text/babel" src="/static/js/stores/project.js"></script>-->
+<!--<script type="text/babel" src="/static/js/components/project.jsx"></script>-->
 
-<script type="text/babel" src="/static/js/actions/projectRequest.js"></script>
-<script type="text/babel" src="/static/js/stores/projectRequest.js"></script>
-<script type="text/babel" src="/static/js/components/projectRequest.jsx"></script>
+<!--<script type="text/babel" src="/static/js/actions/projectRequest.js"></script>-->
+<!--<script type="text/babel" src="/static/js/stores/projectRequest.js"></script>-->
+<!--<script type="text/babel" src="/static/js/components/projectRequest.jsx"></script>-->
 
 {% end %}
 {% block body %}
 <div class="container-fluid">
     <div class="row">
 
+        <div id="projectsList"></div>
+
         <div class="col-sm-6">
-
-            <div class="p-header">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="p-title">
-                                        <h1>Projects</h1>
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="p-action" id="project-add">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="p-body">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div id="projects-list" class="p-list"></div>
-                            <div id="projects-requests-list" class="p-list"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <div class="col-sm-6" id="projects-right">
+            <div id="projectsView"></div>
         </div>
 
     </div>
 </div>
+<script type="text/javascript" src="/static/js/build/projects.js"></script>
 {% end %}
