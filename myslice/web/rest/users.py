@@ -1,7 +1,7 @@
 import json
 
 import rethinkdb as r
-
+from myslice.db import dispatch, changes
 from myslice.lib.util import myJSONEncoder
 from myslice.db.activity import Event, EventAction, ObjectType
 from myslice.web.rest import Api
@@ -108,3 +108,48 @@ class ProfileHandler(Api):
         profile = yield r.table('users').get(self.get_current_user_id()).run(self.dbconnection)
 
         self.write(json.dumps({"result": profile}, cls=myJSONEncoder))
+
+    @gen.coroutine
+    def put(self):
+        """
+        PUT /profile
+
+        :return:
+        """
+        try:
+            data = escape.json_decode(self.request.body)['data']
+        except json.decoder.JSONDecodeError as e:
+            self.userError("malformed request", e.message)
+            return
+        try:
+            event = Event({
+                'action': EventAction.UPDATE,
+                'user': self.get_current_user_id(),
+                'object': {
+                    'type': ObjectType.USER,
+                    'id': self.get_current_user_id(),
+                },
+                'data': data
+            })
+        except Exception as e:
+            self.userError("problem with request", e.message)
+            return
+        else:
+            activity = yield dispatch(self.dbconnection, event)
+
+            feed = yield changes(self.dbconnection, 
+                            table='activity', 
+                            status=['ERROR', 'SUCCESS'], 
+                            id = activity['generated_keys'][0]
+                            )
+
+            while (yield feed.fetch_next()):
+                result = yield feed.next()
+                if result['new_val']['status'] == 'SUCCESS':
+                    self.finish(json.dumps({"result": result['new_val']}, cls=myJSONEncoder))
+                else:
+                    self.userError("updated failed", result['new_val'])
+
+
+
+

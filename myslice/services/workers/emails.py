@@ -18,7 +18,6 @@ from myslice.db.authority import Authority
 from myslice.db.user import User
 
 from myslice.email.message import Message, Mailer, build_subject_and_template
-from myslice.lib.sfa import get_authority
 
 
 
@@ -47,8 +46,7 @@ def emails_run(qEmails):
 
                     # Find the authoirty of the event object
                     # Then according the authority, put the pi_emails in pis_email
-                    auth_id, entity = get_authority(event.object.id, event.object.type)
-                    authority = Authority(db.get(dbconnection, table=entity, id=auth_id))
+                    authority = Authority(db.get(dbconnection, table='authority', id=event.data['authority']))
                     for pi_user in authority.pi_users:
                         pis = User(db.get(dbconnection, table='users', id=pi_user))
                         if pis.id != "urn:publicid:IDN+onelab:upmc+user+loic_baron":
@@ -98,9 +96,6 @@ def emails_run(qEmails):
             except Exception as e:
                 import traceback
                 traceback.print_exc()
-
-                event.setError()
                 event.logError(str(e))
                 dispatch(dbconnection,event)
-
                 logger.error("There is something wrong with email system {}".format(e))
