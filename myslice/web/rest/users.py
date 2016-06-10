@@ -4,8 +4,8 @@ import rethinkdb as r
 from myslice.db import dispatch, changes
 from myslice.lib.util import myJSONEncoder
 from myslice.db.activity import Event, EventAction, ObjectType
+from myslice.db import dispatch
 from myslice.web.rest import Api
-
 
 from tornado import gen, escape
 
@@ -39,42 +39,55 @@ class UsersHandler(Api):
         self.write(json.dumps({"result": users}, cls=myJSONEncoder))
 
     @gen.coroutine
-    def post(self):
+    def post(self, p):
         """
         POST /users
         :return:
         """
+        if not self.request.body:
+            self.userError("empty request")
+            return
 
         try:
-            data = escape.json_decode(self.request.body)['data']
+            data = escape.json_decode(self.request.body)
         except json.decoder.JSONDecodeError as e:
-            self.userError("malformed request", e.message)
+            self.userError("Malformed request", e)
             return
-        print(self.get_current_user_id())
-        print("---> REST POST PROJECT")
-        import re
-        # urn:publicid:IDN+onelab:upmc:test+authority+sa
-        u = self.get_current_user_id()
-        auth = '+'.join(u.split('+')[:-2])
-        id = auth + ':' + data['name'] + '+authority+sa'
+        except Exception as e:
+            self.userError("Malformed request", e)
+            return
+        from pprint import pprint
+        pprint(data)
+
+        if not data['authority']:
+            self.userError("Authority not specified")
+            return
+
+        if not data['email']:
+            self.userError("Email not specified")
+            return
+
         try:
             event = Event({
                 'action': EventAction.CREATE,
                 'user': self.get_current_user_id(),
                 'object': {
-                    'type': ObjectType.USER,
-                    'id': id,
+                    'type': ObjectType.USER
                 },
                 'data': data
             })
         except Exception as e:
-            self.userError("problem with request", e.message)
+            self.userError("Can't create request", e.message)
             return
         else:
             result = yield dispatch(self.dbconnection, event)
-            # data = self.get_argument('event','no data')
-            self.write(json.dumps({"result": "ok"}, cls=myJSONEncoder))
-            print(event)
+            print(result)
+            self.write(json.dumps(
+                {
+                    "result": "success",
+                    "error": None,
+                    "debug": None
+                 }, cls=myJSONEncoder))
 
     @gen.coroutine
     def put(self):

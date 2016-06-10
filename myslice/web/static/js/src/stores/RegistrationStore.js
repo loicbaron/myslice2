@@ -19,12 +19,15 @@ class RegistrationStore {
             updateLastname: actions.UPDATE_LASTNAME,
             updateLoading: actions.LOADING,
             submitForm: actions.SUBMIT_FORM,
+            submitSuccess: actions.SUBMIT_SUCCESS,
+            submitError: actions.SUBMIT_ERROR,
         });
 
         this.registerAsync(source);
     }
 
     updateAuthority(authority) {
+        console.log(authority);
         this.authority = authority;
     }
 
@@ -49,6 +52,16 @@ class RegistrationStore {
         if (!this.getInstance().isLoading()) {
             this.getInstance().submit();
         }
+    }
+
+    submitSuccess(response) {
+
+        this.message = response.data.error;
+    }
+
+    submitError(response) {
+
+        this.message = response.data.error;
     }
 
 }

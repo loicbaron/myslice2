@@ -26,6 +26,16 @@ class RegistrationActions {
         this.loading(true);
         return true;
     }
+
+    submitSuccess(response) {
+        this.loading(false);
+        return response;
+    }
+
+    submitError(response) {
+        this.loading(false);
+        return response;
+    }
 }
 
 module.exports = alt.createActions(RegistrationActions);

@@ -8,7 +8,7 @@ var LoadingPanel = require('./LoadingPanel');
 module.exports = React.createClass({
 
     propTypes: {
-        handleChange: React.PropTypes.func
+        updateAuthority: React.PropTypes.func
     },
 
     getInitialState () {
@@ -65,6 +65,9 @@ module.exports = React.createClass({
                 </div>
                 <div className="registration-submit">
                     <input type="submit" className="btn btn-default" />
+                </div>
+                <div className="">
+                    {this.state.message}
                 </div>
                 <LoadingPanel show={this.state.loading} />
             </form>
