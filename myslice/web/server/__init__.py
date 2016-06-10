@@ -51,7 +51,7 @@ def run():
     dbconnection = yield db.connect()
 
     http_server = httpserver.HTTPServer(Application(dbconnection))
-    http_server.listen(80)
+    http_server.listen(8111)
     #http_server.start(num_processes=None)
 
     # drop root privileges
@@ -141,12 +141,12 @@ class Application(web.Application):
             web.url(r'/api/v1/resources$', ResourcesHandler),
             web.url(r'/api/v1/resources/()$', ResourcesHandler),
 
-            web.url(r'/api/v1/users/(.*)', UsersHandler),
+            web.url(r'/api/v1/users/?(.*)?', UsersHandler),
             web.url(r'/api/v1/profile$', ProfileHandler),
 
             web.url(r'/api/v1/slices/(.*)', SlicesHandler),
 
-            web.url(r'/api/v1/authorities/(.*)', AuthoritiesHandler),
+            web.url(r'/api/v1/authorities/?(.*)?', AuthoritiesHandler),
 
             web.url(r'/api/v1/projects?([A-Za-z0-9-]+)?', ProjectsHandler),
             web.url(r'/api/v1/projects/(.*)$', ProjectsHandler),
