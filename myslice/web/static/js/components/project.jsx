@@ -308,8 +308,8 @@ var ProjectInfo = React.createClass({
               </div>
               <div className="panel-body">
                 <ul>
-                {p.pi_users.map(function(listValue){
-                  return <li>{listValue}</li>;
+                {p.pi_users.map(function(listValue, i){
+                  return <li key={i}>{listValue}</li>;
                 })}
                 </ul>
               </div>
@@ -320,8 +320,8 @@ var ProjectInfo = React.createClass({
               </div>
               <div className="panel-body">
                 <ul>
-                {p.slices.map(function(listValue){
-                  return <li>{listValue}</li>;
+                {p.slices.map(function(listValue, i){
+                  return <li key={i}>{listValue}</li>;
                 })}
                 </ul>
               </div>
@@ -330,6 +330,51 @@ var ProjectInfo = React.createClass({
         );
     }
 });
+var UserRow = React.createClass({
+     /*
+     getInitialState () {
+        return {
+        'selected':false
+        };
+     },
+     */
+     handleClick(){
+        console.log(this.state);
+        //projectactions.selectProject(this.props.project);
+        /*
+        if(this.state.selected){
+            this.setState({'selected':false});
+        }else{
+            this.setState({'selected':true});
+        }
+        */
+     },
+     render: function() {
+         if(this.props.selected == this.props.project.id){
+            var liClass = 'elementBox selected';
+         }else{
+            var liClass = 'elementBox';
+         }
+         return (
+             <li className={liClass} onClick={this.handleClick}>
+                 <div className="row">
+                     <div className="col-md-6">
+                         <div className="elementId">
+                             {this.props.user.id}
+                         </div>
+                         <div>
+                             {this.props.user.first_name} {this.props.user.last_name}
+                         </div>
+
+                     </div>
+                     <div className="col-md-6">
+
+                     </div>
+                 </div>
+             </li>
+         );
+     }
+ });
 var ProjectRight = React.createClass({
     getInitialState: function() {
         return projectstore.getState();
@@ -366,7 +411,7 @@ var ProjectRight = React.createClass({
             </div>
             ) 
         }else{
-            return (<ProjectInfo project={project} selected={selected}></ProjectInfo>);
+            return (<ProjectInfo key={selected} project={project} selected={selected}></ProjectInfo>);
         }
     }
 });
