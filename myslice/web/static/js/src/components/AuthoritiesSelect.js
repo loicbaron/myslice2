@@ -31,9 +31,8 @@ module.exports = React.createClass({
     },
 
     setValue(value) {
-		this.setState({ value })
-        this.props.handleChange(value.id);
-		console.log('Support level selected:', value.label);
+		this.setState({ value });
+        this.props.handleChange(value.value);
 	},
 
     getOptions: function() {
