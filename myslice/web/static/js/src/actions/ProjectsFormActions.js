@@ -50,4 +50,4 @@ class ProjectsFormActions {
     }
 }
 
-module.exports = alt.createActions(ProjectsFormActions);
+export default alt.createActions(ProjectsFormActions);
