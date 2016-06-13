@@ -1,56 +1,56 @@
 var React = require('react');
-var store = require('../stores/ProjectsFormStore');
-var actions = require('../actions/ProjectsFormActions');
+import ProjectsFormStore from '../stores/ProjectsFormStore';
 var LoadingPanel = require('./LoadingPanel');
+import ProjectsFormActions from '../actions/ProjectsFormActions';
 
 module.exports = React.createClass({
     getInitialState () {
-        return store.getState();
+        return ProjectsFormStore.getState();
     },
     componentDidMount: function() {
         // store
-        store.listen(this.onChange);
+        ProjectsFormStore.listen(this.onChange);
     },
     componentWillUnmount() {
-        store.unlisten(this.onChange);
+        ProjectsFormStore.unlisten(this.onChange);
     },
     onChange(state) {
         this.setState(state);
     },
 
     handleLabelChange(e) {
-        actions.updateLabel(e.target.value);
-        actions.updateName(this.normaliseLabel(e.target.value));
+        ProjectsFormActions.updateLabel(e.target.value);
+        ProjectsFormActions.updateName(this.normaliseLabel(e.target.value));
     },
     normaliseLabel(text) {
         return text.replace(/[^a-z0-9]+/gi, '').replace(/^-*|-*$/g, '').toLowerCase();
     },
     handleUrlChange: function(e) {
-       actions.updateUrl(e.target.value);
+       ProjectsFormActions.updateUrl(e.target.value);
     },
     handleDescriptionChange: function(e) {
-       actions.updateDescription(e.target.value);
+       ProjectsFormActions.updateDescription(e.target.value);
     },
     handleStartDateChange: function(e) {
-       actions.updateStartDate(e.target.value);
+       ProjectsFormActions.updateStartDate(e.target.value);
     },
     handleEndDateChange: function(e) {
-       actions.updateEndDate(e.target.value);
+       ProjectsFormActions.updateEndDate(e.target.value);
     },
     onPublicChanged: function (e) {
-        actions.updatePublic(e.currentTarget.checked);
-        actions.updateProtected(!e.currentTarget.checked);
-        actions.updatePrivate(!e.currentTarget.checked);
+        ProjectsFormActions.updatePublic(e.currentTarget.checked);
+        ProjectsFormActions.updateProtected(!e.currentTarget.checked);
+        ProjectsFormActions.updatePrivate(!e.currentTarget.checked);
     },
     onProtectedChanged: function (e) {
-        actions.updatePublic(!e.currentTarget.checked);
-        actions.updateProtected(e.currentTarget.checked);
-        actions.updatePrivate(!e.currentTarget.checked);
+        ProjectsFormActions.updatePublic(!e.currentTarget.checked);
+        ProjectsFormActions.updateProtected(e.currentTarget.checked);
+        ProjectsFormActions.updatePrivate(!e.currentTarget.checked);
     },
     onPrivateChanged: function (e) {
-        actions.updatePublic(!e.currentTarget.checked);
-        actions.updateProtected(!e.currentTarget.checked);
-        actions.updatePrivate(e.currentTarget.checked);
+        ProjectsFormActions.updatePublic(!e.currentTarget.checked);
+        ProjectsFormActions.updateProtected(!e.currentTarget.checked);
+        ProjectsFormActions.updatePrivate(e.currentTarget.checked);
     },
     handleSubmit: function(e) {
         // prevent the browser's default action of submitting the form
@@ -73,7 +73,7 @@ module.exports = React.createClass({
             return;
         }
 
-        actions.submitForm();
+        ProjectsFormActions.submitForm();
 
     },
     render: function () {

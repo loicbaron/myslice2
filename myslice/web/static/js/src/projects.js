@@ -1,7 +1,7 @@
-var ReactDOM = require('react-dom');
-var React = require('react');
-var ProjectsList = require('./components/ProjectsList');
-var ProjectsView = require('./components/ProjectsView');
+import React from 'react';
+import ReactDOM from 'react-dom';
+import ProjectsList from './components/ProjectsList';
+import ProjectsView from './components/ProjectsView';
 
 ReactDOM.render(
         <ProjectsList />,

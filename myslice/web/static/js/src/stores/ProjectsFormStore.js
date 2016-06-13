@@ -1,6 +1,6 @@
 var alt = require('../alt');
-var actions = require('../actions/ProjectsFormActions');
 var source = require('../sources/ProjectsSource');
+import ProjectsFormActions from '../actions/ProjectsFormActions';
 
 class ProjectsFormStore {
 
@@ -19,20 +19,20 @@ class ProjectsFormStore {
 
 
         this.bindListeners({
-            updateLabel: actions.UPDATE_LABEL,
-            updateName: actions.UPDATE_NAME,
-            updatePublic: actions.UPDATE_PUBLIC,
-            updateProtected: actions.UPDATE_PROTECTED,
-            updatePrivate: actions.UPDATE_PRIVATE,
-            updateUrl: actions.UPDATE_URL,
-            updateDescription: actions.UPDATE_DESCRIPTION,
-            updateStartDate: actions.UPDATE_START_DATE,
-            updateEndDate: actions.UPDATE_END_DATE,
+            updateLabel: ProjectsFormActions.UPDATE_LABEL,
+            updateName: ProjectsFormActions.UPDATE_NAME,
+            updatePublic: ProjectsFormActions.UPDATE_PUBLIC,
+            updateProtected: ProjectsFormActions.UPDATE_PROTECTED,
+            updatePrivate: ProjectsFormActions.UPDATE_PRIVATE,
+            updateUrl: ProjectsFormActions.UPDATE_URL,
+            updateDescription: ProjectsFormActions.UPDATE_DESCRIPTION,
+            updateStartDate: ProjectsFormActions.UPDATE_START_DATE,
+            updateEndDate: ProjectsFormActions.UPDATE_END_DATE,
 
-            updateLoading: actions.LOADING,
-            submitForm: actions.SUBMIT_FORM,
-            submitSuccess: actions.SUBMIT_SUCCESS,
-            submitError: actions.SUBMIT_ERROR,
+            updateLoading: ProjectsFormActions.LOADING,
+            submitForm: ProjectsFormActions.SUBMIT_FORM,
+            submitSuccess: ProjectsFormActions.SUBMIT_SUCCESS,
+            submitError: ProjectsFormActions.SUBMIT_ERROR,
         });
 
         this.registerAsync(source);
@@ -89,4 +89,4 @@ class ProjectsFormStore {
     }
 }
 
-module.exports = alt.createStore(ProjectsFormStore, 'ProjectsFormStore');
+export default alt.createStore(ProjectsFormStore, 'ProjectsFormStore');
