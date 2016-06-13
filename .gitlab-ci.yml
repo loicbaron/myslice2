@@ -24,6 +24,7 @@ before_script:
   - "apt-get update"
   - "apt-get -y install nodejs npm"
   - "cd ./myslice/web/static/js/ && npm install && cd -"
+  - npm install -g webpack
   - "cd ./myslice/web/static/js/src && webpack && cd -"
   - "pip3 install -r requirements"
   - "python3.5 setup.py develop"
