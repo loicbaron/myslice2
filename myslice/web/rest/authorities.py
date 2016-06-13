@@ -10,18 +10,14 @@ from tornado import gen, escape
 class AuthoritiesHandler(Api):
 
     @gen.coroutine
-    def get(self):
+    def get(self, id=None):
         """
         GET /authorities/[<id>]
 
-        User list or user with <id>
+        Authorities list or authority with <id>
 
         :return:
         """
-
-        self.write(json.dumps({"result": self.get_current_user()}, cls=myJSONEncoder))
-
-        return
         authorities = []
 
         # TODO: id must be a valid URN
@@ -41,9 +37,44 @@ class AuthoritiesHandler(Api):
     def post(self):
         """
         POST /authorities
+        { 'name': 'Test Authority', 'shortname': 'test_authority' }
         :return:
         """
-        pass
+
+
+        payload = {
+            "event": {
+                "action": "CREATE",
+                "user": "urn:publicid:IDN+onelab:upmc+user+loic_baron",
+                "object": {
+                    "type": "AUTHORITY",
+                    "id": "urn:publicid:IDN+onelab:test_authority+authority+sa"
+                },
+                "data": {
+                    "name": "Test Autority",
+                    "pi_users": ["urn:publicid:IDN+onelab:upmc+user+loic_baron"]
+                }
+            }
+        }
+
+        try:
+            data = escape.json_decode(self.request.body)['event']
+        except json.decoder.JSONDecodeError as e:
+            #pprint(self.request.body)
+            import traceback
+            traceback.print_exc()
+            self.set_status(400)
+            self.finish(json.dumps({"return": {"status": "error", "messages": "malformed request"}}))
+            return
+
+        try:
+            event = Event(data)
+        except Exception as e:
+            pprint(self.request.body)
+            import traceback
+            traceback.print_exc()
+            self.set_status(500)
+            self.finish(json.dumps({"return": {"status": "error", "messages": e.message}}))
 
     @gen.coroutine
     def put(self):
