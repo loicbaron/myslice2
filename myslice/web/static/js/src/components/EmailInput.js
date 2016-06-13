@@ -1,12 +1,15 @@
 import React from 'react';
 
 export default class EmailInput extends React.Component {
-    
+
     constructor(props) {
         super(props);
+
         this.state = {
             'class' : ''
-        }
+        };
+
+        this.updateEmail = this.updateEmail.bind(this);
     }
 
     validateEmail(email) {

@@ -51,9 +51,9 @@ export default class AuthoritiesSelect extends React.Component {
 	renderOption(option) {
 		return (
             <span>
-                <span>{option.label}</span>
+                <span className="selectLabel">{option.label}</span>
                 &nbsp;
-                <i>{option.shortname}</i>
+                <span className="selectShortname">({option.shortname})</span>
             </span>
         );
 	}
@@ -74,7 +74,7 @@ export default class AuthoritiesSelect extends React.Component {
 
         return <Select
             name="form-field-name"
-            placeholder="Select your Authority"
+            placeholder="Select your Organization"
             value={this.state.value}
             valueRenderer={this.renderValue}
             options={options}
