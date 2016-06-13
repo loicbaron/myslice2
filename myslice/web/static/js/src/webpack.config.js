@@ -4,9 +4,12 @@ var webpack = require('webpack');
 
 module.exports = {
   context: __dirname,
-  entry: "./userprofile.js",
+  entry: {
+          userprofile :"./userprofile.js",
+          projects: "./projects"
+        },
   output: {
-    filename: "userprofile.js",
+    filename: "[name].js",
     path: "../build/",
   },
   module: {
