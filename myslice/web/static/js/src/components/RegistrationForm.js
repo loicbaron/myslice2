@@ -1,54 +1,52 @@
-var React = require('react');
-var actions = require('../actions/RegistrationActions');
-var store = require('../stores/RegistrationStore');
-var AuthoritiesSelect = require('./AuthoritiesSelect');
-var EmailInput = require('./EmailInput');
-var LoadingPanel = require('./LoadingPanel');
+import React from 'react';
+import actions from '../actions/RegistrationActions';
+import store from '../stores/RegistrationStore';
+import AuthoritiesSelect from './AuthoritiesSelect';
+import EmailInput from './EmailInput';
+import LoadingPanel from './LoadingPanel';
 
-module.exports = React.createClass({
+class RegistrationForm extends React.Component {
 
-    propTypes: {
-        updateAuthority: React.PropTypes.func
-    },
+    constructor(props) {
+        super(props);
+        this.state = store.getState();
+        this.onChange = this.onChange.bind(this);
+    }
 
-    getInitialState () {
-        return store.getState();
-    },
-
-    componentDidMount: function() {
+    componentDidMount() {
         store.listen(this.onChange);
-    },
+    }
 
     componentWillUnmount() {
         store.unlisten(this.onChange);
-    },
+    }
 
     onChange(state) {
         this.setState(state);
-    },
+    }
 
     updateAuthority(value) {
         actions.updateAuthority(value);
-    },
+    }
 
     updateEmail(value) {
         actions.updateEmail(value);
-    },
+    }
 
     updateFirstname(event) {
         actions.updateFirstname(event.target.value);
-    },
+    }
 
     updateLastname(event) {
         actions.updateLastname(event.target.value);
-    },
+    }
 
     submitForm(event) {
         event.preventDefault();
         actions.submitForm();
-    },
+    }
 
-    render: function () {
+    render() {
         return (
             <form onSubmit={this.submitForm}>
                 <div className="registration-authority">
@@ -75,4 +73,10 @@ module.exports = React.createClass({
 
     }
 
-});
+}
+
+RegistrationForm.propTypes = {
+    updateAuthority: React.PropTypes.func
+};
+
+export default RegistrationForm;

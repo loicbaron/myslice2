@@ -1,6 +1,6 @@
-var alt = require('../alt');
-var actions = require('../actions/AuthoritiesActions');
-var source = require('../sources/AuthoritiesSource');
+import alt from '../alt';
+import actions from '../actions/AuthoritiesActions';
+import source from '../sources/AuthoritiesSource';
 
 class AuthoritiesStore {
 
@@ -38,5 +38,5 @@ class AuthoritiesStore {
 }
 
 
-module.exports = alt.createStore(AuthoritiesStore, 'AuthoritiesStore');
+export default alt.createStore(AuthoritiesStore, 'AuthoritiesStore');
 

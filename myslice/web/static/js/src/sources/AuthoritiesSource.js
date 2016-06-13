@@ -1,7 +1,7 @@
-var axios = require('axios');
-var actions = require('../actions/AuthoritiesActions');
+import axios from 'axios';
+import actions from '../actions/AuthoritiesActions';
 
-module.exports = function() {
+const AuthoritiesSource = () => {
     return {
         fetch: {
             // remotely fetch something (required)
@@ -28,3 +28,5 @@ module.exports = function() {
         }
     }
 };
+
+export default AuthoritiesSource;

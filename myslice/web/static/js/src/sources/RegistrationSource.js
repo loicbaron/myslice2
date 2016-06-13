@@ -1,7 +1,6 @@
-var axios = require('axios');
-var actions = require('../actions/RegistrationActions');
+import actions from '../actions/RegistrationActions'
 
-module.exports = function() {
+const RegistrationSource = () => {
     return {
         submit: {
             // remotely fetch something (required)
@@ -33,3 +32,5 @@ module.exports = function() {
         }
     }
 };
+
+export default RegistrationSource;
