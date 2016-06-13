@@ -17,6 +17,11 @@ before_script:
   - 'echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
 
   # INSTALL MYSLICE
+  - "deb http://ftp.debian.org/debian jessie main non-free contrib"
+  - "deb-src http://ftp.debian.org/debian jessie main non-free contrib"
+  - "deb http://ftp.debian.org/debian jessie-updates main contrib non-free"
+  - "deb-src http://ftp.debian.org/debian jessie-updates main contrib non-free"
+  - "apt-get update"
   - "apt-get install nodejs"
   - "cd ./myslice/web/static/js/ && npm install && cd -"
   - "pip3 install -r requirements"
