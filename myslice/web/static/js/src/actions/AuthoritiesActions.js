@@ -1,5 +1,4 @@
-var alt = require('../alt');
-var axios = require('axios');
+import alt from '../alt';
 
 class AuthoritiesActions {
 
@@ -17,4 +16,4 @@ class AuthoritiesActions {
 
 }
 
-module.exports = alt.createActions(AuthoritiesActions);
+export default alt.createActions(AuthoritiesActions);

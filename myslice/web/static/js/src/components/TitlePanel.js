@@ -1,7 +1,7 @@
-var React = require('react');
+import React from 'react';
 
-module.exports = React.createClass({
-  render: function() {
+export default class TitlePanel extends React.Component {
+  render() {
         return (
                 <div className="p-view-header">
                     <div className="container-fluid">
@@ -14,4 +14,4 @@ module.exports = React.createClass({
                 </div>
         );
   }
-});
+}

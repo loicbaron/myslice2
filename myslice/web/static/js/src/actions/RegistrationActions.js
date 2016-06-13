@@ -38,4 +38,4 @@ class RegistrationActions {
     }
 }
 
-module.exports = alt.createActions(RegistrationActions);
+export default alt.createActions(RegistrationActions);

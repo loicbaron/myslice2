@@ -1,6 +1,6 @@
-var ReactDOM = require('react-dom');
-var React = require('react');
-var RegistrationForm = require('./components/RegistrationForm');
+import ReactDOM from 'react-dom';
+import React from 'react';
+import RegistrationForm from './components/RegistrationForm';
 
 ReactDOM.render(
         <RegistrationForm />,

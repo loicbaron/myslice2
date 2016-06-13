@@ -1,9 +1,9 @@
-var React = require('react');
-var classNames = require('classnames');
+import React from 'react';
+import classNames from 'classnames';
 
-module.exports = React.createClass({
+export default class LoadingPanel extends React.Component {
 
-    render: function() {
+    render() {
         var loadingClass = classNames({
             'loading': true,
             'hidden': !this.props.show
@@ -14,4 +14,4 @@ module.exports = React.createClass({
             </div>
         );
     }
-});
+}

@@ -1,41 +1,40 @@
-/*
- * Authority Select component
- * requires: authorities actions and store
- */
-var React = require('react');
-var Select = require('react-select');
-var store = require('../stores/AuthoritiesStore');
-var actions = require('../actions/AuthoritiesActions');
+import React from 'react';
+import Select from 'react-select';
+import store from '../stores/AuthoritiesStore';
+import actions from '../actions/AuthoritiesActions';
 
-module.exports = React.createClass({
+export default class AuthoritiesSelect extends React.Component {
 
-    getInitialState () {
-        return store.getState();
-    },
+    constructor(props) {
+        super(props);
+        this.state = store.getState();
+        this.onChange = this.onChange.bind(this);
+        this.setValue = this.setValue.bind(this);
+    }
 
-    componentDidMount: function() {
+    componentDidMount() {
         // store
         store.listen(this.onChange);
 
         // action fetch authorities
         actions.fetchAuthorities();
 
-    },
+    }
 
     componentWillUnmount() {
         store.unlisten(this.onChange);
-    },
+    }
 
     onChange(state) {
         this.setState(state);
-    },
+    }
 
     setValue(value) {
 		this.setState({ value });
         this.props.handleChange(value.value);
-	},
+	}
 
-    getOptions: function() {
+    getOptions() {
         return this.state.authorities.map(function(authority) {
             return {
                 value: authority.id,
@@ -43,13 +42,13 @@ module.exports = React.createClass({
                 shortname: authority.shortname
             }
         });
-    },
+    }
 
-    renderLink: function() {
+    renderLink() {
 		return <a style={{ marginLeft: 5 }} href="/upgrade" target="_blank">C Upgrade here!</a>;
-	},
+	}
 
-	renderOption: function(option) {
+	renderOption(option) {
 		return (
             <span>
                 <span>{option.label}</span>
@@ -57,9 +56,9 @@ module.exports = React.createClass({
                 <i>{option.shortname}</i>
             </span>
         );
-	},
+	}
 
-	renderValue: function(option) {
+	renderValue(option) {
 		return (
             <span>
                 <span>{option.label}</span>
@@ -68,9 +67,9 @@ module.exports = React.createClass({
             </span>
         );
 
-	},
+	}
 
-    render: function () {
+    render() {
         let options = this.getOptions();
 
         return <Select
@@ -83,4 +82,4 @@ module.exports = React.createClass({
             onChange={this.setValue}
         />
     }
-});
+}

@@ -1,17 +1,18 @@
-var React = require('react');
+import React from 'react';
 
-module.exports = React.createClass({
-
-    getInitialState () {
-        return {
-            'class' : '',
+export default class EmailInput extends React.Component {
+    
+    constructor(props) {
+        super(props);
+        this.state = {
+            'class' : ''
         }
-    },
+    }
 
     validateEmail(email) {
     	var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     	return re.test(email);
-	},
+	}
 
     updateEmail(event) {
         var email = event.target.value;
@@ -22,11 +23,11 @@ module.exports = React.createClass({
         } else {
             this.setState({'class' : 'error'});
         }
-    },
+    }
 
-    render: function () {
+    render() {
         return (
             <input onChange={this.updateEmail} className={this.state.class} placeholder="Email address" type="text" name="email" />
         );
     }
-});
+}

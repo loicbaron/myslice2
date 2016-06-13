@@ -1,6 +1,6 @@
-var alt = require('../alt');
-var actions = require('../actions/RegistrationActions');
-var source = require('../sources/RegistrationSource');
+import alt from '../alt';
+import actions from '../actions/RegistrationActions'
+import source from '../sources/RegistrationSource'
 
 class RegistrationStore {
 
@@ -66,4 +66,4 @@ class RegistrationStore {
 
 }
 
-module.exports = alt.createStore(RegistrationStore, 'RegistrationStore');
+export default alt.createStore(RegistrationStore, 'RegistrationStore');
