@@ -278,7 +278,7 @@ def delete(dbconnection=None, table=None, id=None):
 
     return False
 
-def changes(dbconnection=None, table=None, status=None, action=None, obj_type=None):
+def changes(dbconnection=None, table=None, status=None, action=None, obj_type=None, id=None):
     if not table:
         return False
 
@@ -298,7 +298,7 @@ def changes(dbconnection=None, table=None, status=None, action=None, obj_type=No
     if action:
         req = req.filter(lambda change: change['new_val']['action'] == action)
 
-    if obj_type:
-        req = req.filter(lambda change: change['new_val']['object']['type'] == obj_type)
+    if id:
+        req = req.filter(lambda change: change['new_val']['id'] == id)
 
     return req.run(dbconnection)
