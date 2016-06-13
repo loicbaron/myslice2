@@ -6,7 +6,8 @@ module.exports = {
   context: __dirname,
   entry: {
           userprofile :"./userprofile.js",
-          projects: "./projects"
+          projects: "./projects.js",
+          registration: "./registration.js"
         },
   output: {
     filename: "[name].js",
