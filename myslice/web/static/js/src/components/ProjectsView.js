@@ -40,16 +40,18 @@ class ProjectsView extends React.Component {
 
     render() {
         var selected = this.state.selectedElement;
+        var buttonActive = false;
+        var panelRight = null;
 
         if (this.state.errorMessage) {
-            var panelRight =
+            return (
                 <div>Something is wrong</div>
-            ;
+            );
         }
 
         if (selected == null) {
-            var buttonActive = true;
-            var panelRight =
+            buttonActive = true;
+            panelRight =
                 <Panel>
                     <PanelHeader>
                         <Title title="New Project" />
@@ -60,8 +62,8 @@ class ProjectsView extends React.Component {
                 </Panel>
             ;
         } else {
-            var buttonActive = false;
-            var panelRight =
+            buttonActive = false;
+            panelRight =
                 <Panel>
                     <PanelHeader>
                         <Title title={selected.hrn} subtitle={selected.id} />
