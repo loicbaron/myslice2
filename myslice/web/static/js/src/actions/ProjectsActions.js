@@ -49,10 +49,6 @@ class ProjectsActions {
         return project;
     }
 
-    selectProject(project) {
-        return project;
-    }
-
     errorProjects(errorMessage) {
         return errorMessage
     }

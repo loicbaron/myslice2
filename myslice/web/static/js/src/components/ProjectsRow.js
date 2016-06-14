@@ -1,5 +1,5 @@
 import React from 'react';
-import actions from '../actions/ProjectsActions';
+import moment from 'moment';
 
 class ProjectLabel extends React.Component {
 
@@ -42,18 +42,26 @@ class ProjectStatus extends React.Component {
 
 
 class ProjectsRow extends React.Component {
-    
+
     constructor(props) {
         super(props);
         this.state = {
             'selected': false
         };
-        this.onChange = this.onChange.bind(this);
         this.handleClick = this.handleClick.bind(this);
     }
 
     handleClick(){
-        actions.selectProject(this.props.project);
+
+        if (this.state.selected == this.props.project) {
+            this.setState({
+                'selected': false
+            });
+        } else {
+            this.setState({
+                'selected': this.props.project
+            });
+        }
         /*
         if(this.state.selected){
             this.setState({'selected':false});
