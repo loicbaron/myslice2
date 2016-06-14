@@ -34,7 +34,7 @@ class ProjectsView extends React.Component {
         this.setState(state);
     }
 
-    addProject(event) {
+    showForm() {
         actions.updateSelectedElement(null);
     }
 
@@ -81,7 +81,7 @@ class ProjectsView extends React.Component {
                 <Panel>
                     <PanelHeader>
                         <Title title="Projects" />
-                        <Button label="Request Project" icon="plus" active={buttonActive} handleClick={this.addProject} />
+                        <Button label="Request Project" icon="plus" active={buttonActive} handleClick={this.showForm} />
                     </PanelHeader>
                     <PanelBody>
                         <ProjectsList />
