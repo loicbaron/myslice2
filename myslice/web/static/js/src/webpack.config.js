@@ -7,7 +7,8 @@ module.exports = {
   entry: {
           userprofile :"./userprofile.js",
           projects: "./projects.js",
-          registration: "./registration.js"
+          registration: "./registration.js",
+          login: "./login.js"
         },
   output: {
     filename: "[name].js",
