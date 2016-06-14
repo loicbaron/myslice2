@@ -1,11 +1,13 @@
 import React from 'react';
 import store from '../stores/base/ViewStore';
+import actions from '../actions/base/ViewActions';
 
 import View from './base/View';
 import Panel from './base/Panel';
 import PanelHeader from './base/PanelHeader';
 import PanelBody from './base/PanelBody';
 import Title from './base/Title';
+import Button from './base/Button';
 
 import ProjectsInfo from './ProjectsInfo';
 import ProjectsForm from './ProjectsForm';
@@ -32,6 +34,10 @@ class ProjectsView extends React.Component {
         this.setState(state);
     }
 
+    addProject(event) {
+        actions.updateSelectedElement(null);
+    }
+
     render() {
         var selected = this.state.selectedElement;
 
@@ -42,6 +48,7 @@ class ProjectsView extends React.Component {
         }
 
         if (selected == null) {
+            var buttonActive = true;
             var panelRight =
                 <Panel>
                     <PanelHeader>
@@ -53,11 +60,11 @@ class ProjectsView extends React.Component {
                 </Panel>
             ;
         } else {
+            var buttonActive = false;
             var panelRight =
                 <Panel>
                     <PanelHeader>
-                        <Title title={selected.hrn} />
-                        <h2>{selected.id}</h2>
+                        <Title title={selected.hrn} subtitle={selected.id} />
                     </PanelHeader>
                     <PanelBody>
                         <ProjectsInfo selected={selected}></ProjectsInfo>
@@ -72,6 +79,7 @@ class ProjectsView extends React.Component {
                 <Panel>
                     <PanelHeader>
                         <Title title="Projects" />
+                        <Button label="Request Project" icon="plus" active={buttonActive} handleClick={this.addProject} />
                     </PanelHeader>
                     <PanelBody>
                         <ProjectsList />
