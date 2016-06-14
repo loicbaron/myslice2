@@ -1,6 +1,8 @@
 import React from 'react';
 import moment from 'moment';
 
+import Element from './base/Element';
+
 class ProjectLabel extends React.Component {
 
     label() {
@@ -45,40 +47,13 @@ class ProjectsRow extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            'selected': false
-        };
-        this.handleClick = this.handleClick.bind(this);
     }
 
-    handleClick(){
-
-        if (this.state.selected == this.props.project) {
-            this.setState({
-                'selected': false
-            });
-        } else {
-            this.setState({
-                'selected': this.props.project
-            });
-        }
-        /*
-        if(this.state.selected){
-            this.setState({'selected':false});
-        }else{
-            this.setState({'selected':true});
-        }
-        */
-    }
 
     render() {
-         if(this.props.selected == this.props.project){
-            var liClass = 'elementBox selected';
-         }else{
-            var liClass = 'elementBox';
-         }
+
          return (
-             <li className={liClass} onClick={this.handleClick}>
+             <Element element={this.props.project}>
                  <ProjectLabel project={this.props.project} />
                  <div className="row">
                      <div className="col-md-6">
@@ -96,7 +71,7 @@ class ProjectsRow extends React.Component {
                      </div>
                  </div>
                  <ProjectStatus status={this.props.project.status} />
-             </li>
+             </Element>
          );
     }
  }

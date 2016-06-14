@@ -1,5 +1,5 @@
 import React from 'react';
-import store from '../stores/ProjectsStore';
+import store from '../stores/base/ViewStore';
 
 import View from './base/View';
 import Panel from './base/Panel';
@@ -33,7 +33,7 @@ class ProjectsView extends React.Component {
     }
 
     render() {
-        var selected = this.state.selected;
+        var selected = this.state.selectedElement;
 
         if (this.state.errorMessage) {
             var panelRight =
@@ -56,10 +56,11 @@ class ProjectsView extends React.Component {
             var panelRight =
                 <Panel>
                     <PanelHeader>
-                        <Title title="{selected.shortname}" />
+                        <Title title={selected.hrn} />
+                        <h2>{selected.id}</h2>
                     </PanelHeader>
                     <PanelBody>
-                        <ProjectInfo key={selected} selected={selected}></ProjectInfo>
+                        <ProjectsInfo selected={selected}></ProjectsInfo>
                     </PanelBody>
                 </Panel>
 

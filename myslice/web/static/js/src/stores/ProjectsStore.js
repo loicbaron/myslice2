@@ -7,12 +7,10 @@ class ProjectsStore {
     constructor() {
         this.projects = [];
         this.errorMessage = null;
-        this.selected = null;
 
         this.bindListeners({
             updateProjectElement: actions.UPDATE_PROJECT_ELEMENT,
-            selectProject: actions.SELECT_PROJECT,
-            
+
             updateProjects: actions.UPDATE_PROJECTS,
             fetchProjects: actions.FETCH_PROJECTS,
             errorProjects: actions.ERROR_PROJECTS
@@ -56,14 +54,6 @@ class ProjectsStore {
             this.projects = projects.data.result;
         } else {
             this.projects = projects;
-        }
-    }
-
-    selectProject(project) {
-        if (this.selected != project) {
-            this.selected = project;
-        } else {
-            this.selected = null;
         }
     }
 

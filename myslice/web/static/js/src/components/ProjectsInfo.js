@@ -7,8 +7,6 @@ class ProjectsInfo extends React.Component {
 
         return (
         <div>
-            <h1>{p.hrn}</h1>
-            <h4>{p.id}</h4>
             <dl>
                 <dt>visibility:</dt>
                 <dd>{p.visibility}&nbsp;</dd>
