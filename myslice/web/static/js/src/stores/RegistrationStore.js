@@ -10,6 +10,7 @@ class RegistrationStore {
         this.firstname = '';
         this.lastname = '';
         this.loading = false;
+        this.success = false;
         this.errorMessage = null;
 
         this.bindListeners({
@@ -55,13 +56,11 @@ class RegistrationStore {
     }
 
     submitSuccess(response) {
-
-        this.message = response.data.error;
+        this.success = true;
     }
 
     submitError(response) {
-
-        this.message = response.data.error;
+        this.errorMessage = response.data.error;
     }
 
 }

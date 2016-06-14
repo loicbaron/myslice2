@@ -1,4 +1,5 @@
-import actions from '../actions/RegistrationActions'
+import axios from 'axios';
+import actions from '../actions/RegistrationActions';
 
 const RegistrationSource = () => {
     return {
