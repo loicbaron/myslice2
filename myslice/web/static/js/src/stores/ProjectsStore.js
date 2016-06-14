@@ -1,6 +1,6 @@
-var alt = require('../alt');
-var actions = require('../actions/ProjectsActions');
-var source = require('../sources/ProjectsSource');
+import alt from '../alt';
+import actions from '../actions/ProjectsActions';
+import source from '../sources/ProjectsSource';
 
 class ProjectsStore {
 
@@ -10,18 +10,19 @@ class ProjectsStore {
         this.selected = null;
 
         this.bindListeners({
-            updateProjectElement: actions.updateProjectElement,
-            updateProjects: actions.updateProjects,
-            selectProject: actions.selectProject,
-            fetchProjects: actions.fetchProjects,
+            updateProjectElement: actions.UPDATE_PROJECT_ELEMENT,
+            selectProject: actions.SELECT_PROJECT,
+            
+            updateProjects: actions.UPDATE_PROJECTS,
+            fetchProjects: actions.FETCH_PROJECTS,
+            errorProjects: actions.ERROR_PROJECTS
+            
         });
 
         this.registerAsync(source);
     }
 
     fetchProjects() {
-
-        this.projects = [];
 
         if (!this.getInstance().isLoading()) {
             this.getInstance().fetch();
@@ -66,8 +67,12 @@ class ProjectsStore {
         }
     }
 
+    errorProjects(errorMessage) {
+        console.log(errorMessage);
+    } 
+
 }
 
 
-module.exports = alt.createStore(ProjectsStore, 'ProjectsStore');
+export default alt.createStore(ProjectsStore, 'ProjectsStore');
 

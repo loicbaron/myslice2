@@ -1,6 +1,6 @@
 import alt from '../alt';
-import UserProfileActions from '../actions/UserProfileActions';
-import UserProfileSource from '../sources/ProfileSource';
+import actions from '../actions/UserProfileActions';
+import source from '../sources/ProfileSource';
 
 class UserProfileStore {
 
@@ -16,22 +16,22 @@ class UserProfileStore {
 
         this.bindListeners({
             //changes views 
-            updateFirstname: UserProfileActions.UPDATE_FIRSTNAME,
-            updateLastname: UserProfileActions.UPDATE_LASTNAME,
-            updateBio: UserProfileActions.UPDATE_BIO,
-            updateUrl: UserProfileActions.UPDATE_URL,
+            updateFirstname: actions.UPDATE_FIRSTNAME,
+            updateLastname: actions.UPDATE_LASTNAME,
+            updateBio: actions.UPDATE_BIO,
+            updateUrl: actions.UPDATE_URL,
             
             //async requests
-            initUser: UserProfileActions.INIT_USER,
-            onSubmit: UserProfileActions.ON_SUBMIT,
-            updateLoading: UserProfileActions.UPDATE_LOADING,
+            initUser: actions.INIT_USER,
+            onSubmit: actions.ON_SUBMIT,
+            updateLoading: actions.UPDATE_LOADING,
 
             //update views from rest api results
-            updateUser: UserProfileActions.UPDATE_USER,
-            errorupdateUser: UserProfileActions.ERRORUPDATE_USER
+            updateUser: actions.UPDATE_USER,
+            errorupdateUser: actions.ERRORUPDATE_USER
         });
         
-        this.registerAsync(UserProfileSource);
+        this.registerAsync(source);
     }
     /*
     Initalize the user profile

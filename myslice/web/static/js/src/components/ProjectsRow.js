@@ -1,6 +1,5 @@
-var React = require('react');
-var actions = require('../actions/ProjectsActions.js');
-
+import React from 'react';
+import actions from '../actions/ProjectsActions.js';
 
 var ProjectLabel = React.createClass({
 
@@ -41,7 +40,7 @@ var ProjectStatus = React.createClass({
 });
 
 
-module.exports = React.createClass({
+export default class ProjectsRow extends React.Component {
      /*
      getInitialState () {
         return {
@@ -58,15 +57,16 @@ module.exports = React.createClass({
             this.setState({'selected':true});
         }
         */
-     },
-     render: function() {
+     }
+
+     render() {
          if(this.props.selected == this.props.project){
             var liClass = 'elementBox selected';
          }else{
             var liClass = 'elementBox';
          }
          return (
-             <li className={liClass} onClick={this.handleClick}>
+             <li className={liClass} onClick={this.handleClick.bind(this)}>
                  <ProjectLabel project={this.props.project} />
                  <div className="row">
                      <div className="col-md-6">
@@ -87,4 +87,4 @@ module.exports = React.createClass({
              </li>
          );
      }
- });
+ }

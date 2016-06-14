@@ -1,36 +1,35 @@
-var React = require('react');
-var store = require('../stores/ProjectsStore');
-var actions = require('../actions/ProjectsActions');
-var ProjectsRow = require('./ProjectsRow');
-var TitlePanel = require('./TitlePanel');
-var AddButton = require('./AddButton');
+import React from 'react';
+import store from '../stores/ProjectsStore';
+import actions from '../actions/ProjectsActions';
 
-var ProjectsList = React.createClass({
+import ProjectsRow from'./ProjectsRow';
+import TitlePanel from'./TitlePanel';
+import AddButton from'./AddButton';
 
-    getInitialState: function() {
-        return store.getState();
-    },
+export default class ProjectsList extends React.Component {
 
-    componentDidMount: function() {
+    constructor(props) {
+        super(props);
+        this.state = store.getState();
+        this.onChange = this.onChange.bind(this);
+    }
 
-        // listen on state changes
+    componentDidMount() {
         store.listen(this.onChange);
-
         actions.fetchProjects();
-
-    },
+    }
 
     componentWillUnmount() {
         store.unlisten(this.onChange);
-    },
+    }
 
     onChange(state) {
         this.setState(state);
-    },
+    }
 
-    render: function() {
-        var selected = this.state.selected;
-        var projects = this.state.projects;
+    render() {
+        let selected = this.state.selected;
+        let projects = this.state.projects;
 
         if (this.state.errorMessage) {
             return (
@@ -47,7 +46,7 @@ var ProjectsList = React.createClass({
             </ul>
         );
     }
-});
+}
 
 module.exports = React.createClass({
 
@@ -58,31 +57,20 @@ module.exports = React.createClass({
     render: function() {
         return (
             <div className="col-sm-6">
-
                 <div className="p-header">
                     <div className="container-fluid">
-
                         <div className="row">
                             <div className="col-sm-12">
-
                                 <div class="row">
                                     <div class="col-sm-6">
-
                                         <TitlePanel title="Projects" />
-
                                     </div>
                                     <div class="col-sm-6">
-
                                         <AddButton label="Add Project" handleClick={this.addProject}  />
-
                                     </div>
                                 </div>
-
-
                             </div>
                         </div>
-
-
                     </div>
                 </div>
 
