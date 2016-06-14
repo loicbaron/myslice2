@@ -18,14 +18,12 @@ from myslice.web.controllers.authorization import CodeGrant
 
 ##
 # REST handlers
-from myslice.web.rest.authentication import AuthenticationHandler
-
 from myslice.web.rest.requests import RequestsHandler
 
 from myslice.web.rest.authorities import AuthoritiesHandler
 from myslice.web.rest.projects import ProjectsHandler
 from myslice.web.rest.slices import SlicesHandler
-from myslice.web.rest.users import UsersHandler, ProfileHandler
+from myslice.web.rest.users import UsersHandler, ProfileHandler, LoginHandler
 from myslice.web.rest.resources import ResourcesHandler
 
 from myslice.web.rest.activity import ActivityHandler
@@ -137,7 +135,7 @@ class Application(web.Application):
 
             web.url(r'/api/v1/requests/([a-fA-F\d]{8}(-[a-fA-F\d]{4}){3}-[a-fA-F\d]{12})?', RequestsHandler),
 
-            web.url(r'/api/v1/authentication', AuthenticationHandler),
+            web.url(r'/api/v1/login', LoginHandler),
 
             web.url(r'/api/v1/resources$', ResourcesHandler),
             web.url(r'/api/v1/resources/()$', ResourcesHandler),
