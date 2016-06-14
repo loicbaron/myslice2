@@ -3,12 +3,22 @@ import React from 'react';
 class Button extends React.Component {
 
     render() {
+
+        var icon = "fa fa-" + this.props.icon + " fa-lg";
+
+        if (this.props.active) {
+            var className = 'active';
+        } else {
+            var className = '';
+        }
+
         return (
-            <button className="{this.props.class}" onClick={this.props.handleClick} >
-                <img className="icon" src="/static/icons/{this.props.icon}.png" alt="{this.props.label}" />
+            <button className={className} onClick={this.props.handleClick} >
+                <i className={icon}></i>&nbsp;&nbsp;
                 {this.props.label}
             </button>
         );
+
     }
 }
 
