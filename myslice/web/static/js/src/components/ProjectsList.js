@@ -1,12 +1,9 @@
 import React from 'react';
 import store from '../stores/ProjectsStore';
 import actions from '../actions/ProjectsActions';
-
 import ProjectsRow from'./ProjectsRow';
-import TitlePanel from'./TitlePanel';
-import AddButton from'./AddButton';
 
-export default class ProjectsList extends React.Component {
+class ProjectsList extends React.Component {
 
     constructor(props) {
         super(props);
@@ -48,43 +45,4 @@ export default class ProjectsList extends React.Component {
     }
 }
 
-module.exports = React.createClass({
-
-    addProject: function(){
-        actions.selectProject(null);
-    },
-
-    render: function() {
-        return (
-            <div className="col-sm-6">
-                <div className="p-header">
-                    <div className="container-fluid">
-                        <div className="row">
-                            <div className="col-sm-12">
-                                <div class="row">
-                                    <div class="col-sm-6">
-                                        <TitlePanel title="Projects" />
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <AddButton label="Add Project" handleClick={this.addProject}  />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="p-body">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <ProjectsList />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        );
-    }
-});
+export default ProjectsList;

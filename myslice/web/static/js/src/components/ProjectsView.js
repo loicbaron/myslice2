@@ -1,96 +1,85 @@
 import React from 'react';
 import store from '../stores/ProjectsStore';
-import ProjectsForm from './ProjectsForm';
-import TitlePanel from './TitlePanel';
 
-export default class ProjectsInfo extends React.Component {
+import View from './base/View';
+import Panel from './base/Panel';
+import PanelHeader from './base/PanelHeader';
+import PanelBody from './base/PanelBody';
+import Title from './base/Title';
+
+import ProjectsInfo from './ProjectsInfo';
+import ProjectsForm from './ProjectsForm';
+import ProjectsList from './ProjectsList';
+
+class ProjectsView extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = store.getState();
+        this.onChange = this.onChange.bind(this);
+    }
+
+    componentDidMount() {
+        // listen on state changes
+        store.listen(this.onChange);
+    }
+
+    componentWillUnmount() {
+        store.unlisten(this.onChange);
+    }
+
+    onChange(state) {
+        this.setState(state);
+    }
 
     render() {
-        var p = this.props.selected;
+        var selected = this.state.selected;
+
+        if (this.state.errorMessage) {
+            var panelRight =
+                <div>Something is wrong</div>
+            ;
+        }
+
+        if (selected == null) {
+            var panelRight =
+                <Panel>
+                    <PanelHeader>
+                        <Title title="New Project" />
+                    </PanelHeader>
+                    <PanelBody>
+                        <ProjectsForm />
+                    </PanelBody>
+                </Panel>
+            ;
+        } else {
+            var panelRight =
+                <Panel>
+                    <PanelHeader>
+                        <Title title="{selected.shortname}" />
+                    </PanelHeader>
+                    <PanelBody>
+                        <ProjectInfo key={selected} selected={selected}></ProjectInfo>
+                    </PanelBody>
+                </Panel>
+
+            ;
+        }
 
         return (
-        <div>
-            <h1>{p.hrn}</h1>
-            <h4>{p.id}</h4>
-            <dl>
-                <dt>visibility:</dt>
-                <dd>{p.visibility}&nbsp;</dd>
-                <dt>url:</dt>
-                <dd><a href="{p.url}" target="_blank">{p.url}</a>&nbsp;</dd>
-                <dt>description:</dt>
-                <dd>{p.description}&nbsp;</dd>
-                <dt>start:</dt>
-                <dd>{p.start_date}&nbsp;</dd>
-                <dt>end:</dt>
-                <dd>{p.end_date}&nbsp;</dd>
-            </dl>
-            <div className="panel panel-default">
-              <div className="panel-heading">
-                <h3 className="panel-title">Users</h3>
-              </div>
-              <div className="panel-body">
-                <ul>
-                {p.pi_users.map(function(listValue, i){
-                  return <li key={i}>{listValue}</li>;
-                })}
-                </ul>
-              </div>
-            </div>
-            <div className="panel panel-default">
-              <div className="panel-heading">
-                <h3 className="panel-title">Experiments</h3>
-              </div>
-              <div className="panel-body">
-                <ul>
-                {p.slices.map(function(listValue, i){
-                  return <li key={i}>{listValue}</li>;
-                })}
-                </ul>
-              </div>
-            </div>
-        </div>
+            <View>
+                <Panel>
+                    <PanelHeader>
+                        <Title title="Projects" />
+                    </PanelHeader>
+                    <PanelBody>
+                        <ProjectsList />
+                    </PanelBody>
+                </Panel>
+                {panelRight}
+            </View>
         );
     }
 }
 
-module.exports = React.createClass({
-    getInitialState: function() {
-        return store.getState();
-    },
-
-    componentDidMount: function() {
-        // listen on state changes
-        store.listen(this.onChange);
-    },
-
-    componentWillUnmount() {
-        store.unlisten(this.onChange);
-    },
-
-    onChange(state) {
-        this.setState(state);
-    },
-
-    render: function() {
-        var selected = this.state.selected;
-
-        if (this.state.errorMessage) {
-            return (
-                <div>Something is wrong</div>
-            );
-        }
-
-        if (selected == null) {
-            return(
-                <div>
-                    <TitlePanel title="New Project" />
-                    <ProjectsForm />
-                </div>
-            )
-        } else {
-            return (
-                <ProjectInfo key={selected} selected={selected}></ProjectInfo>
-            );
-        }
-    }
-});
+export default ProjectsView;

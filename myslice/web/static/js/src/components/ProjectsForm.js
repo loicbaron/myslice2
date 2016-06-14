@@ -1,59 +1,74 @@
 import React from 'react';
-import ProjectsFormStore from '../stores/ProjectsFormStore';
-import ProjectsFormActions from '../actions/ProjectsFormActions';
+import store from '../stores/ProjectsFormStore';
+import actions from '../actions/ProjectsFormActions';
 
 import LoadingPanel from './LoadingPanel';
 
-module.exports = React.createClass({
-    getInitialState () {
-        return ProjectsFormStore.getState();
-    },
-    componentDidMount: function() {
+class ProjectsForm extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = store.getState();
+        this.onChange = this.onChange.bind(this);
+    }
+
+    componentDidMount() {
         // store
-        ProjectsFormStore.listen(this.onChange);
-    },
+        store.listen(this.onChange);
+    }
+
     componentWillUnmount() {
-        ProjectsFormStore.unlisten(this.onChange);
-    },
+        store.unlisten(this.onChange);
+    }
+
     onChange(state) {
         this.setState(state);
-    },
+    }
 
     handleLabelChange(e) {
-        ProjectsFormActions.updateLabel(e.target.value);
-        ProjectsFormActions.updateName(this.normaliseLabel(e.target.value));
-    },
+        actions.updateLabel(e.target.value);
+        actions.updateName(this.normaliseLabel(e.target.value));
+    }
+
     normaliseLabel(text) {
         return text.replace(/[^a-z0-9]+/gi, '').replace(/^-*|-*$/g, '').toLowerCase();
-    },
-    handleUrlChange: function(e) {
-       ProjectsFormActions.updateUrl(e.target.value);
-    },
-    handleDescriptionChange: function(e) {
-       ProjectsFormActions.updateDescription(e.target.value);
-    },
-    handleStartDateChange: function(e) {
-       ProjectsFormActions.updateStartDate(e.target.value);
-    },
-    handleEndDateChange: function(e) {
-       ProjectsFormActions.updateEndDate(e.target.value);
-    },
-    onPublicChanged: function (e) {
-        ProjectsFormActions.updatePublic(e.currentTarget.checked);
-        ProjectsFormActions.updateProtected(!e.currentTarget.checked);
-        ProjectsFormActions.updatePrivate(!e.currentTarget.checked);
-    },
-    onProtectedChanged: function (e) {
-        ProjectsFormActions.updatePublic(!e.currentTarget.checked);
-        ProjectsFormActions.updateProtected(e.currentTarget.checked);
-        ProjectsFormActions.updatePrivate(!e.currentTarget.checked);
-    },
-    onPrivateChanged: function (e) {
-        ProjectsFormActions.updatePublic(!e.currentTarget.checked);
-        ProjectsFormActions.updateProtected(!e.currentTarget.checked);
-        ProjectsFormActions.updatePrivate(e.currentTarget.checked);
-    },
-    handleSubmit: function(e) {
+    }
+
+    handleUrlChange(e) {
+       actions.updateUrl(e.target.value);
+    }
+
+    handleDescriptionChange(e) {
+       actions.updateDescription(e.target.value);
+    }
+
+    handleStartDateChange(e) {
+       actions.updateStartDate(e.target.value);
+    }
+
+    handleEndDateChange(e) {
+       actions.updateEndDate(e.target.value);
+    }
+
+    onPublicChanged(e) {
+        actions.updatePublic(e.currentTarget.checked);
+        actions.updateProtected(!e.currentTarget.checked);
+        actions.updatePrivate(!e.currentTarget.checked);
+    }
+
+    onProtectedChanged(e) {
+        actions.updatePublic(!e.currentTarget.checked);
+        actions.updateProtected(e.currentTarget.checked);
+        actions.updatePrivate(!e.currentTarget.checked);
+    }
+
+    onPrivateChanged(e) {
+        actions.updatePublic(!e.currentTarget.checked);
+        actions.updateProtected(!e.currentTarget.checked);
+        actions.updatePrivate(e.currentTarget.checked);
+    }
+
+    handleSubmit(e) {
         // prevent the browser's default action of submitting the form
         e.preventDefault();
         var label = this.state.label;
@@ -74,10 +89,11 @@ module.exports = React.createClass({
             return;
         }
 
-        ProjectsFormActions.submitForm();
+        actions.submitForm();
 
-    },
-    render: function () {
+    }
+
+    render() {
         return (
             <div className="p-view-body">
                 <div className="container-fluid">
@@ -112,4 +128,6 @@ module.exports = React.createClass({
 
         );
     }
-});
+}
+
+export default ProjectsForm;

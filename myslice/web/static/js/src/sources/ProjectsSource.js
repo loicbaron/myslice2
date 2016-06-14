@@ -2,7 +2,7 @@ import axios from 'axios';
 import actions from '../actions/ProjectsActions';
 import formactions from '../actions/ProjectsFormActions';
 
-const AuthoritiesSource = () => {
+const ProjectsSource = () => {
     return {
         fetch: {
             // remotely fetch something (required)
@@ -66,5 +66,5 @@ const AuthoritiesSource = () => {
     }
 };
 
-export default AuthoritiesSource;
+export default ProjectsSource;
 

@@ -1,4 +1,4 @@
-var alt = require('../alt');
+import alt from '../alt';
 import source from '../sources/ProjectsSource';
 import actions from '../actions/ProjectsFormActions';
 

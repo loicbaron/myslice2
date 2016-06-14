@@ -59,6 +59,6 @@ class ProjectsActions {
 
 }
 
-module.exports = alt.createActions(ProjectsActions);
+export default alt.createActions(ProjectsActions);
 
 

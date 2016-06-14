@@ -1,18 +1,18 @@
 import React from 'react';
-import actions from '../actions/ProjectsActions.js';
+import actions from '../actions/ProjectsActions';
 
-var ProjectLabel = React.createClass({
+class ProjectLabel extends React.Component {
 
-    label: function() {
+    label() {
         let label = '';
         switch(this.props.project.action) {
             case 'REQ':
                 label = 'requested ' + this.props.project.object.type;
         }
         return label;
-    },
+    }
 
-    render: function () {
+    render() {
         return (
 
             <div className="row">
@@ -25,10 +25,11 @@ var ProjectLabel = React.createClass({
             </div>
         )
     }
-});
+}
 
-var ProjectStatus = React.createClass({
-    render: function () {
+class ProjectStatus extends React.Component {
+
+    render() {
         return (
             <div className="row">
                 <div className="col-md-12">
@@ -37,18 +38,21 @@ var ProjectStatus = React.createClass({
             </div>
         )
     }
-});
+}
 
 
-export default class ProjectsRow extends React.Component {
-     /*
-     getInitialState () {
-        return {
-        'selected':false
+class ProjectsRow extends React.Component {
+    
+    constructor(props) {
+        super(props);
+        this.state = {
+            'selected': false
         };
-     },
-     */
-     handleClick(){
+        this.onChange = this.onChange.bind(this);
+        this.handleClick = this.handleClick.bind(this);
+    }
+
+    handleClick(){
         actions.selectProject(this.props.project);
         /*
         if(this.state.selected){
@@ -57,16 +61,16 @@ export default class ProjectsRow extends React.Component {
             this.setState({'selected':true});
         }
         */
-     }
+    }
 
-     render() {
+    render() {
          if(this.props.selected == this.props.project){
             var liClass = 'elementBox selected';
          }else{
             var liClass = 'elementBox';
          }
          return (
-             <li className={liClass} onClick={this.handleClick.bind(this)}>
+             <li className={liClass} onClick={this.handleClick}>
                  <ProjectLabel project={this.props.project} />
                  <div className="row">
                      <div className="col-md-6">
@@ -86,5 +90,7 @@ export default class ProjectsRow extends React.Component {
                  <ProjectStatus status={this.props.project.status} />
              </li>
          );
-     }
+    }
  }
+
+export default ProjectsRow;
