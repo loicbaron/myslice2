@@ -1,8 +1,8 @@
-var axios = require('axios');
-import ProjectsActions from '../actions/ProjectsActions';
-import ProjectsFormActions from '../actions/ProjectsFormActions';
+import axios from 'axios';
+import actions from '../actions/ProjectsActions';
+import formactions from '../actions/ProjectsFormActions';
 
-module.exports = function() {
+const AuthoritiesSource = () => {
     return {
         fetch: {
             // remotely fetch something (required)
@@ -17,9 +17,9 @@ module.exports = function() {
             // },
 
             // here we setup some actions to handle our response
-            //loading: ProjectsActions.loadingResults, // (optional)
-            success: ProjectsActions.updateProjects, // (required)
-            error: ProjectsActions.errorProjects, // (required)
+            //loading: actions.loadingResults, // (optional)
+            success: actions.updateProjects, // (required)
+            error: actions.errorProjects, // (required)
 
             // should fetch has precedence over the value returned by local in determining whether remote should be called
             // in this particular example if the value is present locally it would return but still fire off the remote request (optional)
@@ -53,9 +53,9 @@ module.exports = function() {
             // },
 
             // here we setup some actions to handle our response
-            //loading: ProjectsActions.loading, // (optional)
-            success: ProjectsFormActions.submitSuccess, // (required)
-            error: ProjectsFormActions.submitError, // (required)
+            //loading: actions.loading, // (optional)
+            success: formactions.submitSuccess, // (required)
+            error: formactions.submitError, // (required)
 
             // should fetch has precedence over the value returned by local in determining whether remote should be called
             // in this particular example if the value is present locally it would return but still fire off the remote request (optional)
@@ -65,3 +65,6 @@ module.exports = function() {
         }
     }
 };
+
+export default AuthoritiesSource;
+

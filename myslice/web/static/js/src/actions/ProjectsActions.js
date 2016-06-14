@@ -1,4 +1,4 @@
-var alt = require('../alt');
+import alt from '../alt';
 
 class ProjectsActions {
 
@@ -53,7 +53,7 @@ class ProjectsActions {
         return project;
     }
 
-    errorProject(errorMessage) {
+    errorProjects(errorMessage) {
         return errorMessage
     }
 

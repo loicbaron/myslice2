@@ -1,11 +1,11 @@
-var React = require('react');
-var store = require('../stores/ProjectsStore');
-var ProjectsForm = require('./ProjectsForm');
-var TitlePanel = require('./TitlePanel');
+import React from 'react';
+import store from '../stores/ProjectsStore';
+import ProjectsForm from './ProjectsForm';
+import TitlePanel from './TitlePanel';
 
-var ProjectInfo = React.createClass({
+export default class ProjectsInfo extends React.Component {
 
-    render: function() {
+    render() {
         var p = this.props.selected;
 
         return (
@@ -51,7 +51,7 @@ var ProjectInfo = React.createClass({
         </div>
         );
     }
-});
+}
 
 module.exports = React.createClass({
     getInitialState: function() {

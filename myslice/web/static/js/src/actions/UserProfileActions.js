@@ -1,6 +1,4 @@
 import alt from '../alt';
-import axios from 'axios';
-import UserProfileStore from '../stores/UserProfileStore';
 
 class UserProfileActions {
 

@@ -1,6 +1,6 @@
 import React from 'react';
-import UserProfileStore from '../stores/UserProfileStore';
-import UserProfileActions from '../actions/UserProfileActions';
+import store from '../stores/UserProfileStore';
+import actions from '../actions/UserProfileActions';
 import AuthorityName from './AuthorityName';
 import LoadingPanel from './LoadingPanel';
 
@@ -8,17 +8,17 @@ export default class UserProfile extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = UserProfileStore.getState();
+        this.state = store.getState();
         this.onChange = this.onChange.bind(this);
     }
 
     componentDidMount() {
-        UserProfileStore.listen(this.onChange);
-        UserProfileActions.initUser();
+        store.listen(this.onChange);
+        actions.initUser();
     }
 
     componentWillUnmount() {
-        UserProfileStore.unlisten(this.onChange);
+        store.unlisten(this.onChange);
     }
     
     // listen to the Store once something changes
@@ -28,24 +28,24 @@ export default class UserProfile extends React.Component {
 
     // change the state and view
     updateLastname(event) {
-        UserProfileActions.updateLastname(event.target.value);
+        actions.updateLastname(event.target.value);
     }
 
     updateFirstname(event) {
-        UserProfileActions.updateFirstname(event.target.value);
+        actions.updateFirstname(event.target.value);
     }
 
     updateBio(event) {
-        UserProfileActions.updateBio(event.target.value);
+        actions.updateBio(event.target.value);
     }
 
     updateUrl(event) {
-        UserProfileActions.updateUrl(event.target.value);
+        actions.updateUrl(event.target.value);
     }
 
     submitForm(event) {
         event.preventDefault();
-        UserProfileActions.onSubmit();
+        actions.onSubmit();
     }
 
     render() {
@@ -77,7 +77,9 @@ export default class UserProfile extends React.Component {
                                 type="text"
                                 />
                     </div>
-                    <AuthorityName id={this.state.authority} />
+                    <div>
+                        <AuthorityName id={this.state.authority} />
+                    </div>
                     <div>
                         <input  value={this.state.bio}
                                 placeholder="Bio"

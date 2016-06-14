@@ -1,7 +1,8 @@
-var React = require('react');
+import React from 'react';
 import ProjectsFormStore from '../stores/ProjectsFormStore';
-var LoadingPanel = require('./LoadingPanel');
 import ProjectsFormActions from '../actions/ProjectsFormActions';
+
+import LoadingPanel from './LoadingPanel';
 
 module.exports = React.createClass({
     getInitialState () {

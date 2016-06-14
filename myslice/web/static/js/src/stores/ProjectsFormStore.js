@@ -1,6 +1,6 @@
 var alt = require('../alt');
-var source = require('../sources/ProjectsSource');
-import ProjectsFormActions from '../actions/ProjectsFormActions';
+import source from '../sources/ProjectsSource';
+import actions from '../actions/ProjectsFormActions';
 
 class ProjectsFormStore {
 
@@ -19,20 +19,20 @@ class ProjectsFormStore {
 
 
         this.bindListeners({
-            updateLabel: ProjectsFormActions.UPDATE_LABEL,
-            updateName: ProjectsFormActions.UPDATE_NAME,
-            updatePublic: ProjectsFormActions.UPDATE_PUBLIC,
-            updateProtected: ProjectsFormActions.UPDATE_PROTECTED,
-            updatePrivate: ProjectsFormActions.UPDATE_PRIVATE,
-            updateUrl: ProjectsFormActions.UPDATE_URL,
-            updateDescription: ProjectsFormActions.UPDATE_DESCRIPTION,
-            updateStartDate: ProjectsFormActions.UPDATE_START_DATE,
-            updateEndDate: ProjectsFormActions.UPDATE_END_DATE,
+            updateLabel: actions.UPDATE_LABEL,
+            updateName: actions.UPDATE_NAME,
+            updatePublic: actions.UPDATE_PUBLIC,
+            updateProtected: actions.UPDATE_PROTECTED,
+            updatePrivate: actions.UPDATE_PRIVATE,
+            updateUrl: actions.UPDATE_URL,
+            updateDescription: actions.UPDATE_DESCRIPTION,
+            updateStartDate: actions.UPDATE_START_DATE,
+            updateEndDate: actions.UPDATE_END_DATE,
 
-            updateLoading: ProjectsFormActions.LOADING,
-            submitForm: ProjectsFormActions.SUBMIT_FORM,
-            submitSuccess: ProjectsFormActions.SUBMIT_SUCCESS,
-            submitError: ProjectsFormActions.SUBMIT_ERROR,
+            updateLoading: actions.LOADING,
+            submitForm: actions.SUBMIT_FORM,
+            submitSuccess: actions.SUBMIT_SUCCESS,
+            submitError: actions.SUBMIT_ERROR,
         });
 
         this.registerAsync(source);
