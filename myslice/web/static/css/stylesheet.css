@@ -267,3 +267,22 @@ div.registrationForm {
 .elementDate {
     font-size:9pt;
 }
+
+
+/* LOG */
+.logLine {
+    font-size:9pt;
+}
+.logIcon {
+    color:yellow;
+}
+.logTimestamp {
+    margin-left:8px;
+}
+.logType {
+    font-weight:bold;
+    margin:0 8px;
+}
+.logMessage {
+
+}
