@@ -18,7 +18,6 @@ from myslice.web.controllers.authorization import CodeGrant
 
 ##
 # REST handlers
-from myslice.web.rest.activity import ActivityHandler
 from myslice.web.rest.requests import RequestsHandler
 
 from myslice.web.rest.authorities import AuthoritiesHandler
@@ -27,7 +26,7 @@ from myslice.web.rest.slices import SlicesHandler
 from myslice.web.rest.users import UsersHandler, ProfileHandler, LoginHandler
 from myslice.web.rest.resources import ResourcesHandler
 
-
+from myslice.web.rest.activity import ActivityHandler
 
 ##
 # WebSocket handler
@@ -120,7 +119,7 @@ class Application(web.Application):
             web.url(r"/login", login.Index),
             web.url(r"/registration", registration.Index),
             web.url(r'/', home.Index),
-            web.url(r'/profile', home.User),
+            web.url(r'/settings', home.User),
             web.url(r'/projects', projects.Projects),
             web.url(r'/activity', activity.Index),
             web.url(r'/static/(.*)', web.StaticFileHandler, {'path': self.static}),
@@ -131,8 +130,10 @@ class Application(web.Application):
         # REST API
         rest_handlers = [
 
-            web.url(r'/api/v1/activity/?(.*)?', ActivityHandler),
-            web.url(r'/api/v1/requests/?(.*)?', RequestsHandler),
+            web.url(r'/api/v1/activity?([A-Za-z0-9-]+)?', ActivityHandler),
+            web.url(r'/api/v1/activity/([a-z0-9\-]*)$', ActivityHandler),
+
+            web.url(r'/api/v1/requests/([a-fA-F\d]{8}(-[a-fA-F\d]{4}){3}-[a-fA-F\d]{12})?', RequestsHandler),
 
             web.url(r'/api/v1/login', LoginHandler),
 
