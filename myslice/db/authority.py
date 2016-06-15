@@ -16,7 +16,7 @@ class Authority(myslicelibAuthority):
         if result['errors']:
             raise Exception('errors: %s' % result['errors'] )
         else:
-            result = { **(self.attributes()), **result['data'][0]}
+            result = { **(self.dict()), **result['data'][0]}
             # add status if not present and update on db
             if not 'status' in result:
                 result['status'] = Status.ENABLED

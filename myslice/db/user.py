@@ -34,15 +34,6 @@ class User(myslicelibUser):
         self.keys = data.get('keys', [])
         self.credentials = data.get('credentials', [])
     
-    #private_key = None
-    #public_key = None
-    #generate_keys = False
-
-    # def isRemoteUpdate(self):
-    #     if set(self.attributes()) & set(self.remote_fields):
-    #         return True
-    #     return False
-
     def save(self, dbconnection, setup=None):
         if self.generate_keys:
             private_key, public_key = generate_RSA()
@@ -51,12 +42,10 @@ class User(myslicelibUser):
             self.keys.append(self.public_key)
 
         result = super(User, self).save(setup)
-        #print(self.attributes())
-        #print(result['data'][0])
         if result['errors']:
             raise Exception('errors: %s' % result['errors'] )
         else:
-            result = { **(self.attributes()), **result['data'][0]}
+            result = { **(self.dict()), **result['data'][0]}
             # add status if not present and update on db
             if not 'status' in result:
                 result['status'] = Status.ENABLED
