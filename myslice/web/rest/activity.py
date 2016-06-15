@@ -21,9 +21,13 @@ class ActivityHandler(Api):
 
     @gen.coroutine
     def get(self, id=None):
+
         activity = []
+
         params = self.request.arguments
-        if id is not None:
+
+        # TODO: id must be a valid UUID
+        if id:
             result = yield r.table('activity').get(id).run(self.dbconnection)
             activity.append(result)
             # return status code
@@ -43,7 +47,7 @@ class ActivityHandler(Api):
                 pprint(item)
                 activity.append(item)
 
-        self.finish(json.dumps({"activity": activity}, cls=myJSONEncoder))
+        self.finish(json.dumps({"result": activity}, cls=myJSONEncoder))
 
     @gen.coroutine
     def post(self):
