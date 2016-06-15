@@ -36,7 +36,7 @@ class ActivityList extends React.Component {
             );
         }
 
-        if (!this.state.activity.length) {
+        if (!this.state.activity) {
             return <LoadingPanel show="true" />;
         } else {
             return (
