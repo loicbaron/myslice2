@@ -1,4 +1,7 @@
 import json
+from email.utils import parseaddr
+import crypt
+from hmac import compare_digest as compare_hash
 
 import rethinkdb as r
 from myslice.db import dispatch, changes
@@ -8,6 +11,94 @@ from myslice.db import dispatch
 from myslice.web.rest import Api
 
 from tornado import gen, escape
+
+class LoginHandler(Api):
+
+    @gen.coroutine
+    def post(self):
+        """
+        POST /login
+        { email: <email>, password: <password> }
+        :return:
+        """
+        if not self.request.body:
+            self.userError("empty request")
+            return
+
+        try:
+            data = escape.json_decode(self.request.body)
+        except json.decoder.JSONDecodeError as e:
+            self.userError("Malformed request", e)
+            return
+        except Exception as e:
+            self.userError("Malformed request", e)
+            return
+
+        if not data['email']:
+            self.userError("Email not specified")
+            return
+
+        if not data['password']:
+            self.userError("Password not specified")
+            return
+        else:
+            password = data['password']
+
+        _, email = parseaddr(data['email'])
+        if not email:
+            self.userError("Wrong Email address")
+            return
+
+        feed = yield r.table('users').filter({"email": email}).run(self.application.dbconnection)
+        yield feed.fetch_next()
+        user = yield feed.next()
+
+        if not user:
+            self.userError("User does not exists")
+            return
+
+        p = bytes(password, 'latin-1')
+
+        #self.userError("{}".format(p))
+
+        cpassword = crypt.crypt(str(p), user['password'][:12])
+        if not compare_hash(cpassword, user['password']):
+            self.userError("password does not match {} - {}".format(cpassword, user['password']))
+            return
+
+        # TODO: integrate OAuth2 and pass a token to the user
+        self.set_current_user(user['id'])
+
+        self.write(json.dumps(
+                {
+                    "result": "success",
+                    "error": None,
+                    "debug": None
+                }, cls=myJSONEncoder))
+
+        # TODO: Maybe create a log event when logging in?
+        # try:
+        #     event = Event({
+        #         'action': EventAction.CREATE,
+        #         'user': self.get_current_user_id(),
+        #         'object': {
+        #             'type': ObjectType.USER
+        #         },
+        #         'data': data
+        #     })
+        # except Exception as e:
+        #     self.userError("Can't create request", e.message)
+        #     return
+        # else:
+        #     result = yield dispatch(self.dbconnection, event)
+        #     print(result)
+        #     self.write(json.dumps(
+        #         {
+        #             "result": "success",
+        #             "error": None,
+        #             "debug": None
+        #         }, cls=myJSONEncoder))
+
 
 class UsersHandler(Api):
 
@@ -162,7 +253,3 @@ class ProfileHandler(Api):
                     self.finish(json.dumps({"result": result['new_val']}, cls=myJSONEncoder))
                 else:
                     self.userError("updated failed", result['new_val'])
-
-
-
-
