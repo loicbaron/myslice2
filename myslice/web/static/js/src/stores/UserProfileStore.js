@@ -22,7 +22,7 @@ class UserProfileStore {
             updateUrl: actions.UPDATE_URL,
             
             //async requests
-            initUser: actions.INIT_USER,
+            fetchProfile: actions.FETCH_PROFILE,
             onSubmit: actions.ON_SUBMIT,
             updateLoading: actions.UPDATE_LOADING,
 
@@ -36,8 +36,8 @@ class UserProfileStore {
     /*
     Initalize the user profile
     */
-    initUser() {
-        this.getInstance().initUser();
+    fetchProfile() {
+        this.getInstance().fetchProfile();
     }
     /*
     Submit updated user profile
