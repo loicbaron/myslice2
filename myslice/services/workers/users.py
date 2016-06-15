@@ -87,6 +87,7 @@ def events_run(lock, qUserEvents):
 
                 try:
                     user = User(event.data)
+                    user.email = db.users(dbconnection, id=event.object.id)['email']
                     user.id = event.object.id
                     ret = user.save(dbconnection)
                 except Exception as e:
