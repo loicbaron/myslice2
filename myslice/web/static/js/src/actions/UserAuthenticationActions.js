@@ -1,6 +1,6 @@
 import alt from '../alt';
 
-class UserProfileActions {
+class UserAuthenticationActions {
 
     generateKeys() {
         return true;
@@ -13,6 +13,16 @@ class UserProfileActions {
     errorMessage(message) {
         return message;
     }
+
+    fetchProfile() {
+        return true;
+    }
+
+    updateUser(response) {
+        console.log('sss')
+        return response;
+    }
+
 }
 
-export default alt.createActions(UserProfileActions);
+export default alt.createActions(UserAuthenticationActions);

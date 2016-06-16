@@ -24,17 +24,17 @@ class DownloadButton extends React.Component {
             loading: false,
             fileData: null,
         };
-        this._onGenerate = this._onGenerate.bind(this);
-        this._donePreparing = this._donePreparing.bind(this);
-        this._onDownload = this._onDownload.bind(this);
+        this.onGenerate = this.onGenerate.bind(this);
+        this.donePreparing = this.donePreparing.bind(this);
+        this.onDownload = this.onDownload.bind(this);
     }
 
-    _onGenerate(){
+    onGenerate(){
         this.setState({loading: true, fileData: null});
-        this.props.genFile(this._donePreparing);
+        this.props.genFile(this.donePreparing);
     }
 
-    _donePreparing(fileData) {
+    donePreparing(fileData) {
         this.setState({
             loading: false,
             fileData: fileData,
@@ -42,7 +42,7 @@ class DownloadButton extends React.Component {
         console.log(this.state, this.props);
     }
 
-    _onDownload() {
+    onDownload() {
         
         var fileData = (this.props.fileData || (this.props.async ? this.state.fileData : this.props.genFile()));
 
@@ -75,7 +75,7 @@ class DownloadButton extends React.Component {
             
             }
           
-            return (<button style={style} onClick={this._onDownload} className={cls}>
+            return (<button style={style} onClick={this.onDownload} className={cls}>
                         {title}
                     </button>);
         }
@@ -87,7 +87,7 @@ class DownloadButton extends React.Component {
                     </button>);
         }
 
-        return (<button style={style} onClick={this._onGenerate} className={cls + ' DownloadButton-generate'}>
+        return (<button style={style} onClick={this.onGenerate} className={cls + ' DownloadButton-generate'}>
                     {this.props.generateTitle}
                 </button>);
     }

@@ -4,7 +4,7 @@ import actions from '../actions/UserAuthenticationActions';
 import Button from './base/Button';
 import DownloadButton from './DownloadButton';
 
-export default class UserProfile extends React.Component {
+export default class UserAuthentication extends React.Component {
 
     constructor(props) {
         super(props);
@@ -42,9 +42,28 @@ export default class UserProfile extends React.Component {
         actions.updateUrl(event.target.value);
     }
 */
-    generateKeys() {
+    generateNewKeys() {
         console.log('generateKeys');
         actions.generateKeys();
+    }
+
+    downloadPublicKeys() {
+        actions.fetchProfile();
+        return {
+            mime: 'text/plain',
+            filename:'publickey',
+            contents: this.state.public_key,
+        }
+    }
+
+    downloadPrivateKeys() {
+        actions.fetchProfile();
+        return {
+            mime: 'text/plain',
+            filename:'privatekey',
+            contents: this.state.private_key,
+        }
+
     }
 
     submitForm(event) {
@@ -56,9 +75,15 @@ export default class UserProfile extends React.Component {
         return (
                 <div>
                     {this.state.message}
-                    <Button label="Generate New Keys" handleClick={this.generateKeys.bind(this)}/> 
-                    <DownloadButton downloadTitle="Download Pubic Keys" fileData= {this.state.pk}/> 
-                    <DownloadButton downloadTitle="Download Private Keys" fileData= {this.state.pk} /> 
+                    <Button label="Generate New Keys" handleClick={this.generateNewKeys.bind(this)}/> 
+                    <DownloadButton 
+                            downloadTitle="Download Pubic Keys" 
+                            genFile={this.downloadPublicKeys.bind(this)}
+                            /> 
+                    <DownloadButton 
+                            downloadTitle="Download Private Keys" 
+                            genFile= {this.downloadPrivateKeys.bind(this)} 
+                            />
                     <form onSubmit={this.submitForm}>
                         <div>
                             <input  defaultvalue=''
