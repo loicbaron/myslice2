@@ -5,7 +5,6 @@ import rethinkdb as r
 from myslice.db import dispatch
 from myslice.db.activity import Event
 from myslice.lib.util import myJSONEncoder
-from myslice.lib.sfa import has_privilege
 from myslice.web.rest import Api
 
 from tornado import gen, escape
@@ -71,9 +70,7 @@ class RequestsHandler(Api):
 
         user = self.get_current_user()
 
-        object = event.object
-
-        if not has_privilege(user, object):
+        if not user.has_privilege(event):
             self.userError("Permission denied")
             return
 
