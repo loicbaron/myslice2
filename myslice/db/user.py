@@ -1,6 +1,7 @@
 from myslicelib.model.user import User as myslicelibUser
 from xmlrpc.client import Fault as SFAError
 from myslice import db
+from myslice.db.activity import ObjectType
 from myslice.lib import Status
 from myslice.lib.util import format_date
 from pprint import pprint
@@ -33,7 +34,39 @@ class User(myslicelibUser):
         self.generate_keys = data.get('generate_keys', False)
         self.keys = data.get('keys', [])
         self.credentials = data.get('credentials', [])
-    
+
+    def has_privilege(self, event):
+        '''
+        Return True if user has the privlege over the object.
+        '''
+        # user updates its own property
+        # user updates its own slices(experiments)
+        # user is Pi of the obj he wants to update
+        if self.id == event.object.id:
+            return True
+
+        if event.object.type == ObjectType.SLICE and event.object.id in self.slices:
+            return True
+
+        from pprint import pprint
+        print('aaaaaaa'*10)
+        pprint(self.pi_authorities)
+        for auth in self.pi_authorities:
+            if hasattr(event.data, 'authority') and auth == event.data.authority:
+                return True
+            if auth == event.object.id:
+                return True
+        return False
+
+    #private_key = None
+    #public_key = None
+    #generate_keys = False
+
+    # def isRemoteUpdate(self):
+    #     if set(self.attributes()) & set(self.remote_fields):
+    #         return True
+    #     return False
+
     def save(self, dbconnection, setup=None):
         if self.generate_keys:
             private_key, public_key = generate_RSA()

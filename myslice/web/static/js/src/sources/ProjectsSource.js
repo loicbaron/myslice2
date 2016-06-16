@@ -38,6 +38,7 @@ const ProjectsSource = () => {
                 return axios.post('/api/v1/projects', {
                         'label': state.label,
                         'name':  state.name,
+                        'authority': state.authority,
                         'visibility': v,
                         'url': state.url,
                         'description': state.description,

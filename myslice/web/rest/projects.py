@@ -74,6 +74,8 @@ class ProjectsHandler(Api):
         #id = auth+':'+data['name']+'+authority+sa'
 
         try:
+            if not hasattr(data, 'authority'):
+                raise AttributeError('data.authority of the Object must be defined')
             event = Event({
                 'action': EventAction.CREATE,
                 'user': self.get_current_user_id(), 
@@ -83,6 +85,9 @@ class ProjectsHandler(Api):
                 },
                 'data': data
             })
+        except AttributeError as e:
+            self.userError("Can't create request", str(e))
+            return
         except Exception as e:
             self.userError("Can't create request", e.message)
             return
