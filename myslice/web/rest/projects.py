@@ -74,7 +74,7 @@ class ProjectsHandler(Api):
         #id = auth+':'+data['name']+'+authority+sa'
 
         try:
-            if not hasattr(data, 'authority'):
+            if not 'authority' in data:
                 raise AttributeError('data.authority of the Object must be defined')
             event = Event({
                 'action': EventAction.CREATE,
