@@ -4,6 +4,7 @@ import actions from '../actions/UserProfileActions';
 import AuthorityName from './AuthorityName';
 import LoadingPanel from './LoadingPanel';
 
+
 export default class UserProfile extends React.Component {
 
     constructor(props) {
@@ -14,7 +15,7 @@ export default class UserProfile extends React.Component {
 
     componentDidMount() {
         store.listen(this.onChange);
-        actions.initUser();
+        actions.fetchProfile();
     }
 
     componentWillUnmount() {
@@ -75,6 +76,7 @@ export default class UserProfile extends React.Component {
                                 name="email"
                                 placeholder="Email address"
                                 type="text"
+                                readOnly
                                 />
                     </div>
                     <div>
@@ -103,6 +105,5 @@ export default class UserProfile extends React.Component {
             </div>
             )
     }
-
 
 }

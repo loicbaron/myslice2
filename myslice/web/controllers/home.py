@@ -9,4 +9,4 @@ class Index(BaseController):
 class User(BaseController):
     def get(self):
         self.set_current_user("test")
-        self.render(self.application.templates + "/profile.html")
+        self.render(self.application.templates + "/settings.html")

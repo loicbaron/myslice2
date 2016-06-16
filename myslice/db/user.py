@@ -75,12 +75,10 @@ class User(myslicelibUser):
             self.keys.append(self.public_key)
 
         result = super(User, self).save(setup)
-        #print(self.attributes())
-        #print(result['data'][0])
         if result['errors']:
             raise Exception('errors: %s' % result['errors'] )
         else:
-            result = { **(self.attributes()), **result['data'][0]}
+            result = { **(self.dict()), **result['data'][0]}
             # add status if not present and update on db
             if not 'status' in result:
                 result['status'] = Status.ENABLED

@@ -1,25 +1,39 @@
 import React from 'react';
 import axios from 'axios'
 
+/*
+A Component turns authoirty URN into authoirty name
+*/
+
 export default class AuthorityName extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            authname: ''
+            authname: '',
         }
 
         this.fetchAuthorityName = this.fetchAuthorityName.bind(this);
     }
-    
+
     componentDidUpdate() {
-        var re = /(urn:publicid:IDN\+[\w\+]*)/;
-        
-        if (re.test(this.props.id) && !this.state.authname) {
-            this.fetchAuthorityName(this.props.id);
+        if (!this.state.authname) {
+
+            let re = /(urn:publicid:IDN\+[\w\+]*)/;
+            
+            if (re.test(this.props.id) ) {
+                this.fetchAuthorityName();
+            }
         }
     }
 
+    componentWillUnmount() {
+        this.state = {
+            authname: '',
+        }
+    }
+    /* why there mutiple calls here */
+    
     fetchAuthorityName() {
         axios.get('/api/v1/authorities/'+ this.props.id)
         .then(function (response) {
@@ -28,7 +42,6 @@ export default class AuthorityName extends React.Component {
             console.log(response);
             this.errorAuthorityName('error');
         }.bind(this));
-       
     }
 
     updateAuthorityName(data) {
@@ -49,6 +62,7 @@ export default class AuthorityName extends React.Component {
                         placeholder="Authority" 
                         type="text" 
                         name="authority"
+                        readOnly
                         />
             </div>
         )

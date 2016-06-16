@@ -3,6 +3,7 @@ import store from '../stores/ProjectsFormStore';
 import actions from '../actions/ProjectsFormActions';
 
 import LoadingPanel from './LoadingPanel';
+import UserAuthority from './UserAuthority';
 
 class ProjectsForm extends React.Component {
 
@@ -10,6 +11,7 @@ class ProjectsForm extends React.Component {
         super(props);
         this.state = store.getState();
         this.onChange = this.onChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     componentDidMount() {
@@ -27,15 +29,16 @@ class ProjectsForm extends React.Component {
 
     handleLabelChange(e) {
         actions.updateLabel(e.target.value);
-        actions.updateName(this.normaliseLabel(e.target.value));
-    }
-
-    normaliseLabel(text) {
-        return text.replace(/[^a-z0-9]+/gi, '').replace(/^-*|-*$/g, '').toLowerCase();
+        actions.normaliseLabel(e.target.value);
     }
 
     handleUrlChange(e) {
        actions.updateUrl(e.target.value);
+    }
+
+    updateAuthority(value) {
+       console.log("component: "+value);
+       actions.updateAuthority(value);
     }
 
     handleDescriptionChange(e) {
@@ -101,6 +104,7 @@ class ProjectsForm extends React.Component {
                         <div className="col-md-12">
                             <div id="project-form">
                                 <form className="experimentForm" onSubmit={this.handleSubmit}>
+                                <UserAuthority handleUpdateAuthority={this.updateAuthority} />
                                 <input type="text" placeholder="Name" value={this.state.label} onChange={this.handleLabelChange} />
                                 <div>{this.state.name}</div>
                                 <input type="radio" value={this.state.v_public} checked={this.state.v_public === true } onChange={this.onPublicChanged} /> Public

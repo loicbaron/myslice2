@@ -12,7 +12,6 @@ import myslice.db as db
 from myslice.db import connect, dispatch
 from myslice.db.activity import Event, ObjectType 
 from myslice.db.user import User
-from myslice.lib.sfa import has_privilege 
 
 logger = logging.getLogger('myslice.service.activity')
 
@@ -48,7 +47,7 @@ def run(q):
                     db_user = db.get(dbconnection, table='users', id=event.user)
                     if db_user:
                         user = User(db_user)
-                        if has_privilege(user, event.object):
+                        if user.has_privilege(event):
                             event.setWaiting()
                         else:
                             event.setPending()

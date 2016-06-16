@@ -9,6 +9,7 @@ class ProjectsFormStore {
         var df = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()+" "+d.getHours()+":"+ d.getMinutes()+":"+d.getSeconds()
         this.label = '';
         this.name = '';
+        this.authority = '';
         this.v_public = true;
         this.v_protected = false;
         this.v_private = false;
@@ -21,6 +22,7 @@ class ProjectsFormStore {
         this.bindListeners({
             updateLabel: actions.UPDATE_LABEL,
             updateName: actions.UPDATE_NAME,
+            updateAuthority: actions.UPDATE_AUTHORITY,
             updatePublic: actions.UPDATE_PUBLIC,
             updateProtected: actions.UPDATE_PROTECTED,
             updatePrivate: actions.UPDATE_PRIVATE,
@@ -28,7 +30,7 @@ class ProjectsFormStore {
             updateDescription: actions.UPDATE_DESCRIPTION,
             updateStartDate: actions.UPDATE_START_DATE,
             updateEndDate: actions.UPDATE_END_DATE,
-
+            normaliseLabel: actions.NORMALISE_LABEL,
             updateLoading: actions.LOADING,
             submitForm: actions.SUBMIT_FORM,
             submitSuccess: actions.SUBMIT_SUCCESS,
@@ -37,11 +39,17 @@ class ProjectsFormStore {
 
         this.registerAsync(source);
     }
-
+    normaliseLabel(label){
+        this.name = label;
+    }
     updateLabel(label) {
         this.label = label;
     }
     updateName(name) {
+        this.name = name;
+    }
+    updateAuthority(authority) {
+        console.log("store: "+authority);
         this.name = name;
     }
     updatePublic(v_public) {

@@ -209,6 +209,8 @@ class ProfileHandler(Api):
         """
         # TODO: id must be a valid URN
 
+        print('posted')
+
         profile = yield r.table('users').get(self.get_current_user_id()).run(self.dbconnection)
 
         self.write(json.dumps({"result": profile}, cls=myJSONEncoder))

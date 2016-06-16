@@ -2,7 +2,7 @@ import alt from '../alt';
 
 class UserProfileActions {
 
-    initUser() {
+    fetchProfile() {
         return true;
     }
 

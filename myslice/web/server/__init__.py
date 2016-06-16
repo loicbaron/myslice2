@@ -119,7 +119,7 @@ class Application(web.Application):
             web.url(r"/login", login.Index),
             web.url(r"/registration", registration.Index),
             web.url(r'/', home.Index),
-            web.url(r'/profile', home.User),
+            web.url(r'/settings', home.User),
             web.url(r'/projects', projects.Projects),
             web.url(r'/activity', activity.Index),
             web.url(r'/static/(.*)', web.StaticFileHandler, {'path': self.static}),
