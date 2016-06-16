@@ -119,6 +119,11 @@ p.inputDescription {
     color:#5e5e5e;
 }
 
+textarea {
+	width: 100%;
+    margin-top: 10px;
+}
+
 div.inputSubmit {
 
 }
