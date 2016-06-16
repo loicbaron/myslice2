@@ -1,8 +1,10 @@
 import React from 'react';
 import store from '../stores/UserProfileStore';
 import actions from '../actions/UserProfileActions';
+
 import AuthorityName from './AuthorityName';
 import LoadingPanel from './LoadingPanel';
+import Avatar from 'react-avatar';
 
 
 export default class UserProfile extends React.Component {
@@ -50,10 +52,13 @@ export default class UserProfile extends React.Component {
     }
 
     render() {
+        let name = [this.state.first_name,this.state.last_name].join(' ');
 
         return (
             <div>
                 <h3> Your Details</h3>
+
+                <Avatar name={name} />
                 <form onSubmit={this.submitForm}>
                     <div>
                         <input  value={this.state.first_name} 
