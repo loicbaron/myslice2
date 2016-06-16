@@ -50,7 +50,7 @@ class ProjectsFormStore {
     }
     updateAuthority(authority) {
         console.log("store: "+authority);
-        this.name = name;
+        this.authority = authority;
     }
     updatePublic(v_public) {
         this.v_public = v_public;

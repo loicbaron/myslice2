@@ -12,6 +12,7 @@ class ProjectsForm extends React.Component {
         this.state = store.getState();
         this.onChange = this.onChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.updateAuthority = this.updateAuthority.bind(this);
     }
 
     componentDidMount() {
@@ -38,7 +39,7 @@ class ProjectsForm extends React.Component {
 
     updateAuthority(value) {
        console.log("component: "+value);
-       actions.updateAuthority(value);
+       actions.updateAuthority.defer(value);
     }
 
     handleDescriptionChange(e) {
