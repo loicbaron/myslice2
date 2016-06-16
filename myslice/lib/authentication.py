@@ -13,6 +13,8 @@ class UserSetup(Setup):
     def __init__(self, user, endpoints):
 
         try:
+            self._setup = True
+            self._authentication = None
             self._endpoints = endpoints
 
             is_delegated = False
