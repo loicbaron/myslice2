@@ -37,8 +37,8 @@ class ProjectsActions {
         return false;
     }
 
-    fetchProjects() {
-        return true;
+    fetchProjects(filter) {
+        return filter;
     }
 
     updateProjectElement(project) {

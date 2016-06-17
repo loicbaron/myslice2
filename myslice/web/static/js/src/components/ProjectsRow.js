@@ -54,11 +54,16 @@ class ProjectsRow extends React.Component {
 
          return (
              <Element element={this.props.project}>
-                 <ProjectLabel project={this.props.project} />
+                 <ProjectLabel project={this.props.project.shortname} />
                  <div className="row">
                      <div className="col-md-6">
+                         <div>
+                             {this.props.project.shortname}
+                         </div>
                          <div className="elementId">
-                             {this.props.project.id}
+
+
+                             <i>{this.props.project.id}</i>
                          </div>
                          <div className="elementDate">
                             Created: { moment(this.props.project.created).format("DD/MM/YYYY H:mm") }

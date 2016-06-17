@@ -6,6 +6,7 @@ class ProjectsStore {
 
     constructor() {
         this.projects = [];
+        this.filter = {};
         this.errorMessage = null;
 
         this.bindListeners({
@@ -20,7 +21,9 @@ class ProjectsStore {
         this.registerAsync(source);
     }
 
-    fetchProjects() {
+    fetchProjects(filter) {
+
+        this.filter = filter;
 
         if (!this.getInstance().isLoading()) {
             this.getInstance().fetch();

@@ -7,7 +7,13 @@ const ProjectsSource = () => {
         fetch: {
             // remotely fetch something (required)
             remote(state) {
-                return axios.get('/api/v1/projects');
+                switch(state.filter.name) {
+                    case 'authority':
+                        return axios.get('/api/v1/authorities/' + state.filter.value + '/projects');
+                    default:
+                        return axios.get('/api/v1/projects');
+                }
+
             },
 
             // this function checks in our local cache first

@@ -16,7 +16,7 @@ class ProjectsList extends React.Component {
 
     componentDidMount() {
         store.listen(this.onChange);
-        actions.fetchProjects();
+        actions.fetchProjects(this.props.filter);
     }
 
     componentWillUnmount() {
@@ -47,5 +47,13 @@ class ProjectsList extends React.Component {
         );
     }
 }
+
+ProjectsList.defaultProps = {
+    'filter' : {
+        'type' : null,
+        'value' : null
+    }
+
+};
 
 export default ProjectsList;
