@@ -236,7 +236,7 @@ div.registrationForm {
     list-style:none;
     width:100%;
     background-color:white;
-    padding:15px 15px 15px 30px;
+    padding:10px 15px 15px 30px;
     margin-bottom:5px;
 }
 .elementBox.selected {
@@ -248,19 +248,21 @@ div.registrationForm {
 
 .elementIcon {
     position:absolute;
-    top:5px;
-    left:-35px;
+    top:15px;
+    left:-20px;
     text-align:center;
+    line-height:46px;
     width: 40px;
     height: 40px;
-    background:#B9B5C7;
+
     -moz-border-radius: 20px;
     -webkit-border-radius: 20px;
     border-radius: 20px;
 }
 
-.elementIcon img {
-    margin-top:6px;
+.iconProject {
+    color:#281E52;
+    background:#CDB4D8;
 }
 
 .elementTitle {
@@ -285,7 +287,7 @@ div.registrationForm {
     padding:15px 0;
 }
 .elementDate {
-    font-size:10pt;
+    font-size:9pt;
 }
 .elementStatus {
     position:absolute;
