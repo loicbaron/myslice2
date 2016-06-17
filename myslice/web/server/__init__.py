@@ -143,11 +143,11 @@ class Application(web.Application):
             web.url(r'/api/v1/resources$', ResourcesHandler),
             web.url(r'/api/v1/resources/()$', ResourcesHandler),
 
-            web.url(r'/api/v1/users/?(.*)?', UsersHandler),
             web.url(r'/api/v1/profile$', ProfileHandler),
 
             web.url(r'/api/v1/slices/(.*)', SlicesHandler),
 
+            web.url(r'/api/v1/users/?(' + urn_regex + ')?/?(projects|slices)?$', AuthoritiesHandler),
             web.url(r'/api/v1/authorities/?(' + urn_regex + ')?/?(users|projects)?$', AuthoritiesHandler),
             web.url(r'/api/v1/projects/?('+urn_regex+')?/?(users|slices)?$', ProjectsHandler),
             #web.url(r'/api/v1/projects/(.*)$', ProjectsHandler),

@@ -103,31 +103,69 @@ class LoginHandler(Api):
 class UsersHandler(Api):
 
     @gen.coroutine
-    def get(self, id):
+    def get(self, id=None, o=None):
+
         """
-        GET /users/[<id>]
+            GET /users/[<id>[/(projects)]]
 
-        User list or user with <id>
+            User list or user with <id>
+            User or Slice list part of project with <id>
 
-        :return:
-        """
+            :return:
+            """
 
-        users = []
+        user = None
+        response = []
 
-        # TODO: id must be a valid URN
         if id:
-            print(id)
-            result = yield r.table('users').get(id).run(self.dbconnection)
-            users.append(result)
-            print(result)
+            # get the user
+            cursor = yield r.table('user').get(id).run(self.dbconnection)
+
+            while (yield cursor.fetch_next()):
+                user = yield cursor.next()
+
+            if not user:
+                self.userError("no user found or permission denied")
+                return
+
+            # GET /users/<id>/projects
+            if o == 'projects':
+                # users in a project
+                cursor = yield r.table('projects').filter(lambda project:
+                                                       project["pi_users"].contains(id)
+                                                       ).run(self.dbconnection)
+                while (yield cursor.fetch_next()):
+                    item = yield cursor.next()
+                    response.append(item)
+
+            # GET /users/<id>/slices
+            if o == 'slices':
+                # users in a project
+                cursor = yield r.table('slices').filter(lambda project:
+                                                          project["users"].contains(id)
+                                                          ).run(self.dbconnection)
+                while (yield cursor.fetch_next()):
+                    item = yield cursor.next()
+                    response.append(item)
+
+            # GET /projects/<id>
+            elif o is None:
+                response.append(user)
+
+            else:
+                self.userError("invalid request")
+                return
+
+        # GET /users
         else:
+            # list of projects of a user
             cursor = yield r.table('users').run(self.dbconnection)
 
             while (yield cursor.fetch_next()):
-                result = yield cursor.next()
-                users.append(result)
+                item = yield cursor.next()
+                response.append(item)
 
-        self.write(json.dumps({"result": users}, cls=myJSONEncoder))
+        self.write(json.dumps({"result": response}, cls=myJSONEncoder))
 
     @gen.coroutine
     def post(self, p):
