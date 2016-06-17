@@ -46,11 +46,10 @@ def emails_run(qEmails):
 
                     # Find the authoirty of the event object
                     # Then according the authority, put the pi_emails in pis_email
-                    authority = Authority(db.get(dbconnection, table='authority', id=event.data['authority']))
+                    authority = Authority(db.get(dbconnection, table='authorities', id=event.data['authority']))
                     for pi_user in authority.pi_users:
                         pis = User(db.get(dbconnection, table='users', id=pi_user))
-                        if pis.id != "urn:publicid:IDN+onelab:upmc+user+loic_baron":
-                            recipients.add(pis)
+                        recipients.add(pis)
 
                     if not recipients:
                         raise Exception('Emails cannot be sent because no one is the PI of {}'.format(event.object.id))

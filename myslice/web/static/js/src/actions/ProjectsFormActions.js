@@ -1,12 +1,20 @@
 import alt from '../alt';
 
 class ProjectsFormActions {
-    
+   
+    normaliseLabel(label){
+        return label.replace(/[^a-z0-9]+/gi, '').replace(/^-*|-*$/g, '').toLowerCase();
+    }
+ 
     updateLabel(label){
         return label;
     }
     updateName(name){
         return name;
+    }
+    updateAuthority(authority){
+        console.log("actions: "+authority);
+        return authority;
     }
     updatePublic(v_public){
         return v_public;

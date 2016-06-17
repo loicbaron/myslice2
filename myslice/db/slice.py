@@ -11,12 +11,12 @@ class Slice(myslicelibSlice):
 
     def save(self, dbconnection, setup=None):
         result = super(Slice, self).save(setup)
-        #print(self.attributes())
+        #print(self.dict())
         #print(result['data'][0])
         if result['errors']:
             raise Exception('errors: %s' % result['errors'] )
         else:
-            result = {**(self.attributes()), **result['data'][0]}
+            result = {**(self.dict()), **result['data'][0]}
             # add status if not present and update on db
             if not 'status' in result:
                 result['status'] = Status.ENABLED

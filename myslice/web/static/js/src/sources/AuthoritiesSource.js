@@ -9,11 +9,6 @@ const AuthoritiesSource = () => {
                 return axios.get('/api/v1/authorities');
             },
 
-            // this function checks in our local cache first
-            // if the value is present it'll use that instead (optional).
-            // local(state) {
-            //     return state.authorities ? state.authorities : null;
-            // },
 
             // here we setup some actions to handle our response
             //loading: actions.loadingResults, // (optional)
@@ -22,9 +17,9 @@ const AuthoritiesSource = () => {
 
             // should fetch has precedence over the value returned by local in determining whether remote should be called
             // in this particular example if the value is present locally it would return but still fire off the remote request (optional)
-            shouldFetch(state) {
+            /*shouldFetch(state) {
                 return true
-            }
+            }*/
         }
     }
 };

@@ -1,8 +1,11 @@
 import React from 'react';
 import store from '../stores/UserProfileStore';
 import actions from '../actions/UserProfileActions';
+
 import AuthorityName from './AuthorityName';
 import LoadingPanel from './LoadingPanel';
+import Avatar from 'react-avatar';
+
 
 export default class UserProfile extends React.Component {
 
@@ -14,7 +17,7 @@ export default class UserProfile extends React.Component {
 
     componentDidMount() {
         store.listen(this.onChange);
-        actions.initUser();
+        actions.fetchProfile();
     }
 
     componentWillUnmount() {
@@ -49,10 +52,13 @@ export default class UserProfile extends React.Component {
     }
 
     render() {
+        let name = [this.state.first_name,this.state.last_name].join(' ');
 
         return (
             <div>
                 <h3> Your Details</h3>
+
+                <Avatar email={this.state.email} name={name} />
                 <form onSubmit={this.submitForm}>
                     <div>
                         <input  value={this.state.first_name} 
@@ -75,6 +81,7 @@ export default class UserProfile extends React.Component {
                                 name="email"
                                 placeholder="Email address"
                                 type="text"
+                                readOnly
                                 />
                     </div>
                     <div>
@@ -103,6 +110,5 @@ export default class UserProfile extends React.Component {
             </div>
             )
     }
-
 
 }

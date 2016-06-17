@@ -19,13 +19,16 @@
     "classnames": "^2.2.5",
     "moment": "^2.13.0",
     "react": "^15.1.0",
+    "react-avatar": "^1.2.1",
     "react-dom": "^15.1.0",
     "react-select": "^1.0.0-beta13",
+    "react-tabs": "^0.5.5",
     "react-tap-event-plugin": "^1.0.0",
     "sockjs-client": "^1.1.1",
     "webpack": "^1.13.1"
   },
   "devDependencies": {
-    "babel-preset-es2015": "^6.9.0"
+    "babel-preset-es2015": "^6.9.0",
+    "babel-preset-stage-0": "^6.5.0"
   }
 }
