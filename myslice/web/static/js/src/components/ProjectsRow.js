@@ -2,6 +2,10 @@ import React from 'react';
 import moment from 'moment';
 
 import Element from './base/Element';
+import ElementTitle from './base/ElementTitle';
+import ElementId from './base/ElementId';
+import ElementStatus from './base/ElementStatus';
+import DateTime from './base/DateTime';
 
 class ProjectLabel extends React.Component {
 
@@ -51,31 +55,28 @@ class ProjectsRow extends React.Component {
 
 
     render() {
+        var label = this.props.project.name || this.props.project.shortname;
+        var authority = this.props.project.authority_details.name || this.props.project.authority_details.shortname;
 
-         return (
+        return (
              <Element element={this.props.project}>
-                 <ProjectLabel project={this.props.project.shortname} />
-                 <div className="row">
-                     <div className="col-md-6">
-                         <div>
-                             {this.props.project.shortname}
-                         </div>
-                         <div className="elementId">
-
-
-                             <i>{this.props.project.id}</i>
-                         </div>
-                         <div className="elementDate">
-                            Created: { moment(this.props.project.created).format("DD/MM/YYYY H:mm") }
-                            <br />
-                            Updated: { moment(this.props.project.updated).format("DD/MM/YYYY H:mm") }
-                         </div>
-                     </div>
-                     <div className="col-md-6">
-
-                     </div>
+                 <ElementTitle label={label} detail={this.props.project.shortname} />
+                 <ElementId id={this.props.project.id} />
+                 <div className="elementDetail">
+                     <span className="elementLabel">Users</span> {this.props.project.pi_users.length}
+                     &nbsp;&nbsp;&nbsp;&nbsp;
+                     <span className="elementLabel">Slices</span> {this.props.project.slices.length}
+                     <br />
+                     <span className="elementLabel">Managed by</span> {authority}
                  </div>
-                 <ProjectStatus status={this.props.project.status} />
+                 <div className="elementDate">
+                     <span className="elementLabel">Created</span> <DateTime timestamp={this.props.project.created} />
+                     <br />
+                     <span className="elementLabel">Enabled</span> <DateTime timestamp={this.props.project.enabled} />
+                     <br />
+                     <span className="elementLabel">Updated</span> <DateTime timestamp={this.props.project.updated} />
+                 </div>
+                 <ElementStatus status={this.props.project.status} />
              </Element>
          );
     }
