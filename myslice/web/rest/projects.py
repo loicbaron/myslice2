@@ -69,7 +69,26 @@ class ProjectsHandler(Api):
         # GET /projects
         else:
             # list of projects of a user
-            cursor = yield r.table('projects').run(self.dbconnection)
+            cursor = yield r.table('projects').filter(lambda project:
+                                                            project["pi_users"].contains(self.get_current_user_id())
+                                                    ).merge(
+
+                        lambda project: {
+
+                        'authority_details': r.table('authorities').get(project['authority']).pluck('name','shortname')
+
+                                        }
+                    ).run(self.dbconnection)
+                #
+                # .eq_join(
+                #                                         'authority',
+                #                                         r.table('authorities')
+                #                                 ).map( r.row.merge({
+                #
+                #                                     "a_shortname": r.row["right"]["shortname"],
+                #                                     "a_hrn": r.row["right"]["hrn"]
+                #                                     })
+                #                                 ).run(self.dbconnection)
 
             while (yield cursor.fetch_next()):
                 item = yield cursor.next()
