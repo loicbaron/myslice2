@@ -15,7 +15,7 @@ class ProjectsHandler(Api):
     @gen.coroutine
     def get(self, id=None, o=None):
         """
-        GET /projects/[<id>][/(users|slices)]
+        GET /projects/[<id>[/(users|slices)]]
 
         Project list or project with <id>
         User or Slice list part of project with <id>
@@ -66,7 +66,7 @@ class ProjectsHandler(Api):
                 self.userError("invalid request")
                 return
 
-        # /projects
+        # GET /projects
         else:
             # list of project of a user
 
@@ -99,16 +99,11 @@ class ProjectsHandler(Api):
             self.userError("malformed request", e.message)
             return
 
-        #import re
-        # urn:publicid:IDN+onelab:upmc:test+authority+sa
-
-        #u = self.get_current_user_id()
-        #auth = '+'.join(u.split('+')[:-2])
-        #id = auth+':'+data['name']+'+authority+sa'
-
         try:
             if not 'authority' in data:
-                raise AttributeError('data.authority of the Object must be defined')
+                self.userError("missing required parameter authority")
+                return
+
             event = Event({
                 'action': EventAction.CREATE,
                 'user': self.get_current_user_id(), 
@@ -126,7 +121,7 @@ class ProjectsHandler(Api):
             return
         else:
             result = yield dispatch(self.dbconnection, event)
-            print(result)
+
             self.write(json.dumps(
                 {
                     "result": "success",
