@@ -13,40 +13,73 @@ from tornado import gen, escape
 class ProjectsHandler(Api):
 
     @gen.coroutine
-    def get(self, id):
+    def get(self, id=None, o=None):
         """
-        GET /projects/[<id>]
+        GET /projects/[<id>][/(users|slices)]
 
         Project list or project with <id>
+        User or Slice list part of project with <id>
 
         :return:
         """
 
-        projects = []
-        print(self.request.arguments)
+        project = None
+        response = []
 
-        # TODO: id must be a valid URN
         if id:
-            result = yield r.table('projects').get(id).run(self.dbconnection)
-            projects.append(result)
+            # get the project
+            cursor = yield r.table('projects').filter({ 'id' : id }).filter(lambda project:
+                                                            project["pi_users"].contains(self.get_current_user_id())
+                                                    ).run(self.dbconnection)
+
+            while (yield cursor.fetch_next()):
+                project = yield cursor.next()
+
+            if not project:
+                self.userError("no project found or permission denied")
+                return
+
+            # GET /projects/<id>/users
+            if o == 'users':
+                # users in a project
+                cursor = yield r.table('users').filter(lambda user:
+                                                            user["projects"].contains(id)
+                                                        ).run(self.dbconnection)
+                while (yield cursor.fetch_next()):
+                    item = yield cursor.next()
+                    response.append(item)
+
+            # GET /projects/<id>/slices
+            elif o == 'slices':
+                # users in a project
+                cursor = yield r.table('slices').filter({ "project": id }).run(self.dbconnection)
+
+                while (yield cursor.fetch_next()):
+                    item = yield cursor.next()
+                    response.append(item)
+
+            # GET /projects/<id>
+            elif o is None:
+                response.append(project)
+
+            else:
+                self.userError("invalid request")
+                return
+
+        # /projects
         else:
-            # USER
-            # public projects
-            # protected projects where user is memberi/PI of the authority
-            # projects where user is PI (including private)
-            user = yield r.table('users').get(self.get_current_user_id()).run(self.dbconnection)
-            for p in user['projects']:
-                result = yield r.table('projects').get(p).run(self.dbconnection)
-                projects.append(result)
+            # list of project of a user
 
-            # XXX ADMIN = NO FILTER
-            #cursor = yield r.table('projects').run(self.dbconnection)
+            # user projects
+            cursor = yield r.table('projects').filter(lambda project:
+                                                            project["pi_users"].contains(self.get_current_user_id())
+                                                   ).run(self.dbconnection)
 
-            #while (yield cursor.fetch_next()):
-            #    result = yield cursor.next()
-            #    projects.append(result)
+            while (yield cursor.fetch_next()):
+                item = yield cursor.next()
+                response.append(item)
 
-        self.write(json.dumps({"result": projects}, cls=myJSONEncoder))
+        self.write(json.dumps({"result": response}, cls=myJSONEncoder))
 
     @gen.coroutine
     def post(self, params):
