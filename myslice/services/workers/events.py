@@ -34,7 +34,6 @@ def run(q):
             logger.error("Problem with event: {}".format(e))
         else:
             try:
-                print(event)
                 # TODO: if event.creatingObject()
                 # Check if the event.object.id already exists or not
                 # if it exists -> add a numer to the id & hrn to make it unique

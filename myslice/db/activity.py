@@ -191,7 +191,11 @@ class Event(Dict):
                 message: <String>
                 type: <info|warning|error|debug>
             }]
-            messages: [String]
+            messages: [{
+                timestamp: <timestamp>
+                message: <String>
+                from: <String>
+            }]
             object: <Object>
             data: { [<mixed>] }
             user: <id>
@@ -211,6 +215,7 @@ class Event(Dict):
         ##
         # Default status when creating the event is NEW
         self.status = event.get('status', EventStatus.NEW)
+        self.previous_status = event.get('status', EventStatus.NEW)
 
         try:
             self.action = event['action']
@@ -320,6 +325,7 @@ class Event(Dict):
 
     @status.setter
     def status(self, value):
+        self.previous_status = self.status
         if isinstance(value, EventStatus):
             status = value
         elif value in EventStatus.__members__:
@@ -331,6 +337,24 @@ class Event(Dict):
         self.updated()
 
         self['status'] = status
+
+    ##
+    # Previous Status
+    # Can change during the life of the event
+    @property
+    def previous_status(self):
+        return self['previous_status']
+
+    @status.setter
+    def previous_status(self, value):
+        if isinstance(value, EventStatus):
+            status = value
+        elif value in EventStatus.__members__:
+            status = EventStatus[value]
+        else:
+            raise Exception("Event Previous Status not valid")
+
+        self['previous_status'] = status
 
     ##
     # User creating the Event
@@ -386,6 +410,18 @@ class Event(Dict):
             else:
                 ret[k] = self[k]
         return ret
+
+    ##
+    # Send messages about an event
+    # from_user
+    # message
+    # timestamp
+    def message(self, from_user, message=None):
+        self['messages'].append({
+            'from': from_user,
+            'message': message,
+            'timestamp': format_date(),
+        })
 
     ##
     # Logging

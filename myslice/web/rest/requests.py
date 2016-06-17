@@ -40,7 +40,7 @@ class RequestsHandler(Api):
     def put(self, id):
         """
         PUT /requests/<id>
-        { action: <approve|deny> }
+        { action: <approve|deny|message>, message: <string> }
         :return:
         """
 
@@ -49,6 +49,15 @@ class RequestsHandler(Api):
 
         try:
             action = escape.json_decode(self.request.body)['action']
+        except json.decoder.JSONDecodeError as e:
+            self.userError("malformed request", e.message)
+            return
+
+        try:
+            if 'message' in escape.json_decode(self.request.body):
+                message = escape.json_decode(self.request.body)['message']
+            else:
+                message = None
         except json.decoder.JSONDecodeError as e:
             self.userError("malformed request", e.message)
             return
@@ -74,12 +83,13 @@ class RequestsHandler(Api):
             self.userError("Permission denied")
             return
 
-        event.user = self.get_current_user_id()
-
         if action == 'approve':
             event.setApproved()
 
         if action == 'deny':
             event.setDenied()
+
+        if message:
+            event.message(self.get_current_user_id(), message)
 
         yield dispatch(self.dbconnection, event)

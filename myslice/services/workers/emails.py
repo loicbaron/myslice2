@@ -40,6 +40,11 @@ def emails_run(qEmails):
             try:
 
                 # Recipients
+                # TODO: Send specific emails
+                # Status did NOT changed
+                # Comments about an event with a message
+                if event.status == event.previous_status:
+                    print("TODO: send specific emails with messages")
                 recipients = set()
 
                 if event.isPending():

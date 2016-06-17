@@ -65,10 +65,11 @@ def run():
     for activity in feed:
         try:
             event = Event(activity['new_val'])
+            # If the status of the event changes then process it
+            if event.status != event.previous_status:
+                qEvents.put(event)
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
-        else:
-            qEvents.put(event)
 
     # waits for the thread to finish
     for x in threads:
