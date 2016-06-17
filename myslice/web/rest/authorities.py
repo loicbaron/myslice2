@@ -10,28 +10,72 @@ from tornado import gen, escape
 class AuthoritiesHandler(Api):
 
     @gen.coroutine
-    def get(self, id=None):
+    def get(self, id=None, o=None):
         """
-        GET /authorities/[<id>]
+            GET /authorities/[<id>[/(users|projects)]]
 
-        Authorities list or authority with <id>
+            Authority list or authority with <id>
+            User or Slice list part of authority with <id>
 
-        :return:
-        """
-        authorities = []
+            :return:
+            """
 
-        # TODO: id must be a valid URN
+        authority = None
+        response = []
+
         if id:
-            result = yield r.table('authorities').get(id).run(self.dbconnection)
-            authorities.append(result)
+            # get the project
+            cursor = yield r.table('authorities').filter({'id': id}).filter(lambda authority:
+                                                                        authority["pi_users"].contains(
+                                                                             self.get_current_user_id())
+                                                                          or
+                                                                        authority["users"].contains(
+                                                                            self.get_current_user_id())
+                                                                        ).run(self.dbconnection)
+
+            while (yield cursor.fetch_next()):
+                authority = yield cursor.next()
+
+            if not authority:
+                self.userError("no authority found or permission denied")
+                return
+
+            # GET /authority/<id>/users
+            if o == 'users':
+                # users in a project
+                cursor = yield r.table('users').filter({"authority": id}).run(self.dbconnection)
+                while (yield cursor.fetch_next()):
+                    item = yield cursor.next()
+                    response.append(item)
+
+            # GET /authority/<id>/projects
+            elif o == 'projects':
+                # users in a project
+                cursor = yield r.table('projects').filter({"authority": id}).run(self.dbconnection)
+
+                while (yield cursor.fetch_next()):
+                    item = yield cursor.next()
+                    response.append(item)
+
+            # GET /authority/<id>
+            elif o is None:
+                response.append(authority)
+
+            else:
+                self.userError("invalid request")
+                return
+
+        # GET /authority
         else:
+            # list of projects of a user
             cursor = yield r.table('authorities').run(self.dbconnection)
 
             while (yield cursor.fetch_next()):
-                result = yield cursor.next()
-                authorities.append(result)
+                item = yield cursor.next()
+                response.append(item)
 
-        self.write(json.dumps({"result": authorities}, cls=myJSONEncoder))
+        self.write(json.dumps({"result": response}, cls=myJSONEncoder))
+
 
     @gen.coroutine
     def post(self):
