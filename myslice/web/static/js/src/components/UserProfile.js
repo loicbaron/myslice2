@@ -58,7 +58,7 @@ export default class UserProfile extends React.Component {
             <div>
                 <h3> Your Details</h3>
 
-                <Avatar email={this.state.email} name={name} />
+                <Avatar email={this.state.email} name={name} round={true} />
                 <form onSubmit={this.submitForm}>
                     <div>
                         <input  value={this.state.first_name} 
