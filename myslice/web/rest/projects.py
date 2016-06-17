@@ -69,9 +69,7 @@ class ProjectsHandler(Api):
         # GET /projects
         else:
             # list of projects of a user
-            cursor = yield r.table('projects').filter(lambda project:
-                                                            project["pi_users"].contains(self.get_current_user_id())
-                                                   ).run(self.dbconnection)
+            cursor = yield r.table('projects').run(self.dbconnection)
 
             while (yield cursor.fetch_next()):
                 item = yield cursor.next()
