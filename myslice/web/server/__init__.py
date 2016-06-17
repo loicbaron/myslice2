@@ -126,8 +126,10 @@ class Application(web.Application):
 
         ]
 
+
         ##
         # REST API
+        urn_regex = "urn:[a-z0-9][a-z0-9-]{0,31}:[a-zA-Z0-9()+,\-.:=@;$_!*'%?#]+"
         rest_handlers = [
 
             web.url(r'/api/v1/activity?([A-Za-z0-9-]+)?', ActivityHandler),
@@ -145,10 +147,9 @@ class Application(web.Application):
 
             web.url(r'/api/v1/slices/(.*)', SlicesHandler),
 
-            web.url(r'/api/v1/authorities/?(.*)?', AuthoritiesHandler),
-
-            web.url(r'/api/v1/projects?([A-Za-z0-9-]+)?', ProjectsHandler),
-            web.url(r'/api/v1/projects/(.*)$', ProjectsHandler),
+            web.url(r'/api/v1/authorities/?(' + urn_regex + ')?/?(users|projects)?$', AuthoritiesHandler),
+            web.url(r'/api/v1/projects/?('+urn_regex+')?/?(users|slices)?$', ProjectsHandler),
+            #web.url(r'/api/v1/projects/(.*)$', ProjectsHandler),
         ]
 
         ##
