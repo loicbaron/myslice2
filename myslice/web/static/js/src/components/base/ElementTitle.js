@@ -1,20 +1,18 @@
 import React from 'react';
 
-class ElementLabel extends React.Component {
+class ElementTitle extends React.Component {
 
     render() {
 
         return (
-            <h3 className="elementLabel">
+            <h3 className="elementTitle">
                 {this.props.label}
                 &nbsp;
-                <span>
-                    {this.props.detail}
-                </span>
+                <span>{this.props.detail}</span>
             </h3>
         );
 
     }
 }
 
-export default ElementLabel;
+export default ElementTitle;
