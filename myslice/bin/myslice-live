@@ -1,0 +1,65 @@
+#!/usr/bin/env python3.5
+
+'''
+    MySlice Live service
+
+    This service will run multiple threads responsible for watching for changes
+    to rethinkdb and broadcast to connected clients with ZeroMQ
+
+    (c) 2016 Ciro Scognamiglio <ciro.scognamiglio@lip6.fr>
+'''
+
+import logging
+import json
+import signal
+import threading
+from queue import Queue
+import zmq
+
+from pprint import pprint
+
+from myslice.lib.util import myJSONEncoder
+from myslice.db import connect, changes, tables
+
+logger = logging.getLogger("myslice-live")
+
+def receive_signal(signum, stack):
+    logger.info('Received signal %s', signum)
+    raise SystemExit('Exiting')
+
+def watch(table, q):
+    dbconnection = connect()
+
+    logger.info("watching changes on {}".format(table))
+
+    # Watch for changes on the activity table and send the event/request
+    feed = changes(dbconnection, table=table)
+    for c in feed:
+        q.put({ table: c['new_val'] })
+
+if __name__ == '__main__':
+
+    signal.signal(signal.SIGINT, receive_signal)
+    signal.signal(signal.SIGTERM, receive_signal)
+    signal.signal(signal.SIGHUP, receive_signal)
+
+    # setup ZeroMQ PUB socket
+    context = zmq.Context()
+    sock = context.socket(zmq.PUB)
+    sock.bind('tcp://127.0.0.1:6001')
+
+    # setup the Queue
+    q = Queue()
+
+    # spawn one thread for each table
+    watchers = []
+    for table in tables:
+        t = threading.Thread(target=watch, args=(table, q,))
+        t.daemon = True
+        watchers.append(t)
+        t.start()
+
+    # receive changes from the queue and broadcast it through the zmq socket
+    while True:
+        r = q.get()
+        sock.send_json(r, ensure_ascii=False, cls=myJSONEncoder)

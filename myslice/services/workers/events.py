@@ -44,6 +44,7 @@ def run(q):
                     event.setPending()
                 else:
                     db_user = db.get(dbconnection, table='users', id=event.user)
+                    print(db_user)
                     if db_user:
                         user = User(db_user)
                         if user.has_privilege(event):

@@ -32,23 +32,14 @@ tables = [
             'name' : 'projects',
             'pkey' : 'id'
         },
-
         {
             'name' : 'users',
             'pkey' : 'id'
         },
         {
-            'name': 'activity',
-            'pkey': 'id'
-        },
-        {
-            'name' : 'events',
+            'name' : 'activity',
             'pkey' : 'id'
-        },
-        {
-            'name': 'requests',
-            'pkey': 'id'
-        },
+        }
     ]
 
 def connect():
