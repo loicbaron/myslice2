@@ -8,7 +8,7 @@ from pprint import pprint
 from myslice.web.rest import Api
 from myslice.lib.util import myJSONEncoder
 from myslice.db import dispatch, changes
-from myslice.db.activity import Event, EventStatus
+from myslice.db.activity import Event, EventStatus, EventAction, ObjectType
 
 '''
     API practice follows 
@@ -21,10 +21,20 @@ class ActivityHandler(Api):
 
     @gen.coroutine
     def get(self, id=None):
+        """
+            GET /activity/[<id>[/(users|slices)]]
 
+            filter: {
+                action : [ <create|update|delete|add|remove>, ... ],
+                status : [ <new|pending|denied|approved|waiting|running|success|error|warning>, ... ],
+                object : [ <authority|user|project|slice|resource>, ... ]
+            }
+
+            :return:
+        """
         activity = []
 
-        params = self.request.arguments
+        self.filter = {}
 
         # TODO: id must be a valid UUID
         if id:
@@ -34,20 +44,33 @@ class ActivityHandler(Api):
             if not activity:
                 self.NotFoundError('No such activity is found')
         else:
-            if 'object' in params:
-                val = params["object"][0]
-                cursor = yield r.table('activity').filter(lambda a:
-                    a["object"]["type"] == val.decode('ascii')
-                ).run(self.dbconnection);
-            else:
-                cursor = yield r.table('activity').run(self.dbconnection)
+
+            filter = json.loads(self.get_argument("filter", default={}, strip=False))
+
+            # status are uppercase
+            filter['status'] = list(status.upper() for status in filter['status'])
+            filter['action'] = list(action.upper() for action in filter['action'])
+            filter['object'] = list(object.upper() for object in filter['object'])
+
+            cursor = yield r.table('activity').filter(lambda activity:
+
+                (len(filter['action']) == 0 or r.expr(filter['action']).contains(activity['action']))
+                                                        ).filter(lambda activity:
+
+                (len(filter['status']) == 0 or r.expr(filter['status']).contains(activity['status']))
+                                                        ).filter(lambda activity:
+
+                (len(filter['object']) == 0 or r.expr(filter['object']).contains(activity['object']['type']))
+
+                                                        ).run(self.dbconnection)
 
             while (yield cursor.fetch_next()):
                 item = yield cursor.next()
-                pprint(item)
                 activity.append(item)
 
         self.finish(json.dumps({"result": activity}, cls=myJSONEncoder))
+
+
 
     @gen.coroutine
     def post(self):
