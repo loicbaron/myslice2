@@ -1,9 +1,9 @@
 import axios from 'axios';
-import actions from '../actions/UserProfileActions'
-import authactions from '../actions/UserAuthenticationActions'
+import actions from '../actions/ProfileActions'
+import authactions from '../actions/SettingsActions'
 
-const UserProfileSource = () => {
-    return { 
+const SettingsSource = () => {
+    return {
             fetchProfile: {
                 // remotely fetch something (required)
                 remote(state) {
@@ -91,4 +91,4 @@ const UserProfileSource = () => {
     }
 };
 
-export default UserProfileSource;
+export default SettingsSource;

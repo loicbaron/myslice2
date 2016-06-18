@@ -1,6 +1,6 @@
 import React from 'react';
-import store from '../stores/UserAuthenticationStore';
-import actions from '../actions/UserAuthenticationActions';
+import store from '../stores/SettingsStore';
+import actions from '../actions/SettingsActions';
 import Button from './base/Button';
 import DownloadButton from './DownloadButton';
 

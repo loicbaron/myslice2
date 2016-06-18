@@ -1,6 +1,6 @@
 import alt from '../alt';
 
-class UserAuthenticationActions {
+class SettingsActions {
 
     generateKeys() {
         return true;
@@ -25,4 +25,4 @@ class UserAuthenticationActions {
 
 }
 
-export default alt.createActions(UserAuthenticationActions);
+export default alt.createActions(SettingsActions);

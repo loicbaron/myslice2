@@ -1,9 +1,9 @@
 import alt from '../alt';
-import actions from '../actions/UserAuthenticationActions';
-import profileaction from '../actions/UserProfileActions';
-import source from '../sources/ProfileSource';
+import actions from '../actions/SettingsActions';
+import profileaction from '../actions/ProfileActions';
+import source from '../sources/SettingsSource';
 
-class UserAuthenticationStore {
+class SettingsStore {
 
     constructor() {
         this.message = '';
@@ -50,4 +50,4 @@ class UserAuthenticationStore {
 }
 
 
-export default alt.createStore(UserAuthenticationStore, 'UserAuthenticationStore');
+export default alt.createStore(SettingsStore, 'SettingsStore');

@@ -1,13 +1,13 @@
 import React from 'react';
-import store from '../stores/UserProfileStore';
-import actions from '../actions/UserProfileActions';
+import store from '../stores/ProfileStore';
+import actions from '../actions/ProfileActions';
 
 import AuthorityName from './AuthorityName';
 import LoadingPanel from './LoadingPanel';
 import Avatar from 'react-avatar';
 
 
-export default class UserProfile extends React.Component {
+class SettingsProfile extends React.Component {
 
     constructor(props) {
         super(props);
@@ -56,9 +56,7 @@ export default class UserProfile extends React.Component {
 
         return (
             <div>
-                <h3> Your Details</h3>
-
-                <Avatar email={this.state.email} name={name} round={true} />
+                <Avatar className="avatar" email={this.state.email} name={name} round={true} />
                 <form onSubmit={this.submitForm}>
                     <div>
                         <input  value={this.state.first_name} 
@@ -112,3 +110,5 @@ export default class UserProfile extends React.Component {
     }
 
 }
+
+export default SettingsProfile;

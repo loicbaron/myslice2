@@ -1,8 +1,8 @@
 import alt from '../alt';
-import actions from '../actions/UserProfileActions';
-import source from '../sources/ProfileSource';
+import actions from '../actions/ProfileActions';
+import source from '../sources/SettingsSource';
 
-class UserProfileStore {
+class ProfileStore {
 
     constructor() {
         this.email = '';
@@ -75,4 +75,4 @@ class UserProfileStore {
     }
 }
 
-export default alt.createStore(UserProfileStore, 'UserProfileStore');
+export default alt.createStore(ProfileStore, 'ProfileStore');

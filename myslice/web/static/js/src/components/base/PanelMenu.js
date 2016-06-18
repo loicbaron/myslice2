@@ -1,15 +1,15 @@
 import React from 'react';
 
-class Panel extends React.Component {
+class PanelMenu extends React.Component {
 
     render() {
         return (
-            <div>
+            <ul>
                 {this.props.children}
-            </div>
+            </ul>
         );
     }
-    
+
 }
 
-export default Panel;
+export default PanelMenu;

@@ -1,6 +1,6 @@
 import alt from '../alt';
 
-class UserProfileActions {
+class ProfileActions {
 
     fetchProfile() {
         return true;
@@ -42,4 +42,4 @@ class UserProfileActions {
 
 }
 
-export default alt.createActions(UserProfileActions);
+export default alt.createActions(ProfileActions);

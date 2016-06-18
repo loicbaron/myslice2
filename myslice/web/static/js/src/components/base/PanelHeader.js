@@ -8,7 +8,7 @@ class PanelHeader extends React.Component {
                     <div className="container-fluid">
                         <div className="row">
                             <div className="col-sm-6">
-                                {this.props.children.slice(0,1)}
+                                {this.props.children[0]}
                             </div>
                             <div className="col-sm-6">
                                 {this.props.children.slice(1)}

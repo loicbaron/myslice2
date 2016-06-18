@@ -1,6 +1,6 @@
 import React from 'react';
-import store from '../stores/UserProfileStore';
-import actions from '../actions/UserProfileActions';
+import store from '../stores/ProfileStore';
+import actions from '../actions/ProfileActions';
 
 export default class UserAuthority extends React.Component {
 
