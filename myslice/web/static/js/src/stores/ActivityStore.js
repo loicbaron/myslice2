@@ -19,9 +19,26 @@ class ActivityStore {
 
     }
 
-    fetchActivity() {
+    fetchActivity(filter) {
 
         this.activity = [];
+        this.filter = {
+            'action': [],
+            'status': [],
+            'object': []
+        };
+
+        /*
+            filter: {
+                action: [ a, b, c ],
+                status: [ x, y, z ]
+            }
+         */
+        if (filter.length > 0) {
+            filter.map(function (f) {
+                this.filter[f.name].push(f.value);
+            }.bind(this));
+        }
 
         if (!this.getInstance().isLoading()) {
             this.getInstance().fetch();
