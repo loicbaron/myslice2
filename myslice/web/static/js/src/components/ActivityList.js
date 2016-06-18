@@ -18,6 +18,7 @@ class ActivityList extends React.Component {
     componentDidMount() {
         store.listen(this.onChange);
         actions.fetchActivity();
+        //actions.watchActivity();
     }
 
     componentWillUnmount() {

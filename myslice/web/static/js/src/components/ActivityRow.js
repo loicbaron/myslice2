@@ -1,48 +1,11 @@
 import React from 'react';
-import moment from 'moment';
 
 import Element from './base/Element';
-import Log from './base/Log';
-
-class ActivityLabel extends React.Component {
-
-    label() {
-        let label = '';
-        switch(this.props.activity.action) {
-            case 'REQ':
-                label = 'requested ' + this.props.activity.object.type;
-        }
-        return label;
-    }
-
-    render() {
-        return (
-
-            <div className="row">
-                <div className="col-md-12">
-                    <div className="elementIcon">
-                <img src="/static/icons/projects-w-24.png" alt="" />
-            </div>
-                    <div className="elementLabel">{ this.label() }</div>
-                </div>
-            </div>
-        )
-    }
-}
-
-class ActivityStatus extends React.Component {
-
-    render() {
-        return (
-            <div className="row">
-                <div className="col-md-12">
-                    <div className="elementStatus">{ this.props.status }</div>
-                </div>
-            </div>
-        )
-    }
-}
-
+import ElementTitle from './base/ElementTitle';
+import ElementStatus from './base/ElementStatus';
+import ElementIcon from './base/ElementIcon';
+import LogList from './base/LogList';
+import DateTime from './base/DateTime';
 
 class ActivityRow extends React.Component {
 
@@ -50,35 +13,56 @@ class ActivityRow extends React.Component {
         super(props);
     }
 
+    label() {
+        var object = this.props.activity.object.type.charAt(0) + this.props.activity.object.type.slice(1).toLowerCase();
+        var data = '';
+        if (this.props.activity.data.hasOwnProperty('type')) {
+            data = this.props.activity.data.type.charAt(0) + this.props.activity.data.type.slice(1).toLowerCase();
+        }
+
+        switch(this.props.activity.action) {
+            case 'CREATE':
+                return 'New ' + object;
+                break;
+            case 'UPDATE':
+                return 'Update ' + object;
+                break;
+            case 'DELETE':
+                return 'Delete ' + object;
+                break;
+            case 'ADD':
+                return 'Add ' + data + ' to ' + object;
+                break;
+            case 'REMOVE':
+                return 'Remove ' + data + ' from ' + object;
+                break;
+        }
+    }
 
     render() {
+        var object = this.props.activity.object.type.toLowerCase();
+        var status = this.props.activity.status.toLowerCase();
 
-         return (
-             <Element element={this.props.project}>
-                 <ActivityLabel activity={this.props.activity} />
-                 <div className="row">
-                     <div className="col-md-6">
-                         <div className="elementId">
-                             {this.props.activity.id}
-                         </div>
-                         <div className="elementDate">
-                            Created: { moment(this.props.activity.created).format("DD/MM/YYYY H:mm") }
-                            <br />
-                            Updated: { moment(this.props.activity.updated).format("DD/MM/YYYY H:mm") }
-                         </div>
-                     </div>
-                     <div className="col-md-6">
-
-                     </div>
-                 </div>
-                 <ActivityStatus status={this.props.activity.status} />
-                 {
-                     this.props.activity.log.map(function(log) {
-                         return <Log key={log.timestamp} log={log} />;
-                     })
-                 }
-             </Element>
-         );
+        return (
+            <Element element={this.props.activity} type={object}>
+                <ElementStatus status={status} />
+                <ElementIcon icon={object} />
+                <ElementTitle label={this.label()} />
+                <div className="row elementDate">
+                    <div className="col-sm-3">
+                        <span className="elementLabel">Created</span>
+                        <br />
+                        <DateTime timestamp={this.props.activity.created} />
+                    </div>
+                    <div className="col-sm-3">
+                        <span className="elementLabel">Updated</span>
+                        <br />
+                        <DateTime timestamp={this.props.activity.updated} />
+                    </div>
+                </div>
+                <LogList log={this.props.activity.log} />
+            </Element>
+        );
     }
  }
 

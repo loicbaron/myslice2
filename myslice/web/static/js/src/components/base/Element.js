@@ -34,8 +34,9 @@ class Element extends React.Component {
     }
 
     render() {
+        var type = this.props.type || '';
         if (this.state.selectedElement === this.props.element) {
-            var className = 'elementBox selected';
+            var className = 'elementBox selected ' + type;
         } else {
             var className = 'elementBox';
         }

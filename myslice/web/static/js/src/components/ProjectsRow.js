@@ -1,5 +1,4 @@
 import React from 'react';
-import moment from 'moment';
 
 import Element from './base/Element';
 import ElementTitle from './base/ElementTitle';
@@ -7,44 +6,6 @@ import ElementId from './base/ElementId';
 import ElementStatus from './base/ElementStatus';
 import ElementIcon from './base/ElementIcon';
 import DateTime from './base/DateTime';
-
-class ProjectLabel extends React.Component {
-
-    label() {
-        let label = '';
-        switch(this.props.project.action) {
-            case 'REQ':
-                label = 'requested ' + this.props.project.object.type;
-        }
-        return label;
-    }
-
-    render() {
-        return (
-
-            <div className="row">
-                <div className="col-md-12">
-
-                    <div className="elementLabel">{ this.label() }</div>
-                </div>
-            </div>
-        )
-    }
-}
-
-class ProjectStatus extends React.Component {
-
-    render() {
-        return (
-            <div className="row">
-                <div className="col-md-12">
-                    <div className="elementStatus">{ this.props.status }</div>
-                </div>
-            </div>
-        )
-    }
-}
-
 
 class ProjectsRow extends React.Component {
 
@@ -58,7 +19,8 @@ class ProjectsRow extends React.Component {
         var authority = this.props.project.authority_details.name || this.props.project.authority_details.shortname;
 
         return (
-             <Element element={this.props.project}>
+             <Element element={this.props.project}  type="project">
+                 <ElementStatus status={this.props.project.status} />
                  <ElementIcon icon="project" />
                  <ElementTitle label={label} detail={this.props.project.shortname} />
                  <ElementId id={this.props.project.id} />
@@ -86,7 +48,6 @@ class ProjectsRow extends React.Component {
                          <DateTime timestamp={this.props.project.updated} />
                      </div>
                  </div>
-                 <ElementStatus status={this.props.project.status} />
              </Element>
          );
     }

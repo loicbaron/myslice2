@@ -259,10 +259,40 @@ div.registrationForm {
     -webkit-border-radius: 20px;
     border-radius: 20px;
 }
-
-.iconProject {
+.authority {
     color:#281E52;
-    background:#CDB4D8;
+    background-color:#D0E0E3;
+}
+.elementBox.selected.authority {
+	background-color: #D0E0E3;
+}
+.user {
+    color:#281E52;
+    background-color:#CFE2F3;
+}
+.elementBox.selected.user {
+	background-color: #CFE2F3;
+}
+.project {
+    color:#281E52;
+    background-color:#D9D2E9;
+}
+.elementBox.selected.project {
+	background-color: #D9D2E9;
+}
+.slice {
+    color:#281E52;
+    background-color:#EAD1DC;
+}
+.elementBox.selected.slice {
+	background-color: #EAD1DC;
+}
+.resource {
+    color:#281E52;
+    background-color:#D9EAD3;
+}
+.elementBox.selected.resource {
+	background-color: #D9EAD3;
 }
 
 .elementTitle {
@@ -278,7 +308,7 @@ div.registrationForm {
     color:gray;
 }
 .elementLabel {
-    font-size:8pt;
+    font-size:9pt;
     color:grey;
     margin-right:2px;
 }
@@ -291,20 +321,38 @@ div.registrationForm {
 }
 .elementStatus {
     position:absolute;
-    bottom:15px;
+    top:15px;
     right:15px;
     font-size:9pt;
 }
-.elementStatus i {
-    color:green;
+.elementStatus .new {
+    color:#8E7CC3;
+}
+
+.elementStatus .success, .elementStatus .enabled {
+    color:#93C47D;
+}
+.elementStatus .error {
+    color:#E06666;
+}
+.elementStatus .warning {
+    color:#F6B26B;
+}
+.elementStatus .waiting {
+    color:#76A5AF;
 }
 
 /* LOG */
-.logLine {
+.logList {
+    margin:5px 0 0 0;
+    padding:0;
+    list-style:none;
+}
+.logRow {
     font-size:9pt;
 }
 .logIcon {
-    color:yellow;
+    color:#F6B26B;
 }
 .logTimestamp {
     margin-left:8px;
