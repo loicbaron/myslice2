@@ -5,7 +5,7 @@ var webpack = require('webpack');
 module.exports = {
   context: __dirname,
   entry: {
-          usersettings :"./usersettings.js",
+          settings :"./settings.js",
           projects: "./projects.js",
           users: "./users.js",
           registration: "./registration.js",
