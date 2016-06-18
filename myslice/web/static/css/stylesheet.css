@@ -134,6 +134,9 @@ div.registrationForm {
     padding:25px 0;
 }
 
+.avatar {
+    margin:15px 0;
+}
 /*
     LOGIN
 */
@@ -176,38 +179,78 @@ div.registrationForm {
 
 
 
-
-.p-left-header {
+/*
+    PANELS
+*/
+.p-left .p-header {
     position:fixed;
     right:50%;
     left:0;
     background-color:#F6F6F6;
     z-index:90;
 }
-.p-left-body {
+.p-left .p-body {
     position:fixed;
     left:0;
     bottom:15px;
-    top:198px;
+    top:212px;
     width:50%;
     overflow-y: auto;
     border-right:1px solid #DCDCF8;
 }
-.p-right-header {
+.p-right .p-header {
     position:fixed;
     left:50%;
     right:0;
     background-color:#F6F6F6;
     z-index:90;
 }
-.p-right-body {
+.p-right .p-body {
     position:fixed;
-    left:50%;
+    width:50%;
     right:0;
+    bottom:15px;
     top:212px;
     background-color:#F6F6F6;
-    z-index:90;
+    overflow-y: auto;
 }
+
+.p-center .p-header {
+    text-align:center;
+}
+.p-center .p-body {
+    text-align:center;
+}
+
+/*
+    Panel Menu
+*/
+.p-menu {
+
+
+}
+.p-menu ul {
+    margin:100px 0 0 50%;
+    padding:0;
+    list-style:none;
+}
+.p-menu li {
+    font-weight:300;
+    font-size:12pt;
+    margin-bottom:15px;
+
+}
+.p-menu li a:hover {
+    cursor:pointer;
+    border-bottom:2pt solid #221144;
+}
+.p-menu li i {
+    margin-right:8px;
+}
+
+
+
+
 .p-title {
 }
 .p-title h1 {
@@ -259,35 +302,36 @@ div.registrationForm {
     -webkit-border-radius: 20px;
     border-radius: 20px;
 }
-.authority {
+.elementIcon.authority {
     color:#281E52;
     background-color:#D0E0E3;
 }
 .elementBox.selected.authority {
 	background-color: #D0E0E3;
 }
-.user {
+.elementIcon.user {
     color:#281E52;
     background-color:#CFE2F3;
 }
 .elementBox.selected.user {
 	background-color: #CFE2F3;
 }
-.project {
+.elementIcon.project {
     color:#281E52;
     background-color:#D9D2E9;
 }
 .elementBox.selected.project {
 	background-color: #D9D2E9;
 }
-.slice {
+.elementIcon.slice {
+    line-height:50px;
     color:#281E52;
     background-color:#EAD1DC;
 }
 .elementBox.selected.slice {
 	background-color: #EAD1DC;
 }
-.resource {
+.elementIcon.resource {
     color:#281E52;
     background-color:#D9EAD3;
 }
