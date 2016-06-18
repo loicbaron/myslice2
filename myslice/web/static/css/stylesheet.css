@@ -232,7 +232,7 @@ div.registrationForm {
     color:gray;
     font-size:10pt;
 }
-}
+
 .p-header-right {
     text-align:right;
 }
@@ -245,12 +245,12 @@ div.registrationForm {
 */
 .p-menu {
 
-
 }
 .p-menu ul {
     margin:100px 0 0 50%;
     padding:0;
     list-style:none;
+    border-right:1px solid #DCDCF8;
 }
 .p-menu li {
     font-weight:300;
@@ -263,6 +263,8 @@ div.registrationForm {
     border-bottom:2pt solid #221144;
 }
 .p-menu li i {
+    text-align:center;
+    width:32px;
     margin-right:8px;
 }
 
@@ -374,16 +376,16 @@ div.registrationForm {
     color:#8E7CC3;
 }
 
-.elementStatus .success, .elementStatus .enabled {
+.elementStatus .success, .elementStatus .enabled, .elementStatus .success {
     color:#93C47D;
 }
-.elementStatus .error {
+.elementStatus .error, .elementStatus .denied {
     color:#E06666;
 }
 .elementStatus .warning {
     color:#F6B26B;
 }
-.elementStatus .waiting {
+.elementStatus .waiting, .elementStatus .pending  {
     color:#76A5AF;
 }
 
