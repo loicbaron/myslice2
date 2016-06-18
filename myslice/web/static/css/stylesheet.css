@@ -35,7 +35,7 @@ h2 {
     font-weight:100;
 }
 h3 {
-    font-weight:100;
+    font-weight:400;
     margin:4px 0;
 }
 h4 {
@@ -69,7 +69,6 @@ button {
     border:none;
     background-color:transparent;
     padding:10px;
-    margin:18px 0 0 0;
 }
 button:hover, button.active {
     border-bottom:solid 4px #221144;
@@ -186,6 +185,7 @@ div.registrationForm {
     position:fixed;
     right:50%;
     left:0;
+    top:138px;
     background-color:#F6F6F6;
     z-index:90;
 }
@@ -202,6 +202,7 @@ div.registrationForm {
     position:fixed;
     left:50%;
     right:0;
+    top:138px;
     background-color:#F6F6F6;
     z-index:90;
 }
@@ -220,6 +221,23 @@ div.registrationForm {
 }
 .p-center .p-body {
     text-align:center;
+}
+
+.p-header h1 {
+    padding:0 0 0 0;
+    margin:18px 0 0 0;
+    line-height:1em;
+}
+.p-header h1 span {
+    color:gray;
+    font-size:10pt;
+}
+}
+.p-header-right {
+    text-align:right;
+}
+.p-header-right button {
+    margin:18px 0 0 0;
 }
 
 /*
@@ -248,30 +266,13 @@ div.registrationForm {
     margin-right:8px;
 }
 
-
-
-
-.p-title {
-}
-.p-title h1 {
-    padding:0;
-    margin:15px 0;
-    line-height:1em;
-}
-.p-action {
-    z-index:91;
-    text-align:right;
-}
-
-
-.p-list {
-
-}
-
+/*
+    Element List
+*/
 
 .elementList {
     margin:0;
-    padding:0 0 0 25px;
+    padding:0 0 0 20px;
     overflow-y: scroll;
 }
 .elementBox {
@@ -386,7 +387,9 @@ div.registrationForm {
     color:#76A5AF;
 }
 
-/* LOG */
+/*
+    LOG
+*/
 .logList {
     margin:5px 0 0 0;
     padding:0;
