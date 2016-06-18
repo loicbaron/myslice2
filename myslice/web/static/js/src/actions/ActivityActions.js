@@ -3,8 +3,8 @@ import SockJS from 'sockjs-client';
 
 class ActivityActions {
 
-    fetchActivity() {
-        return true;
+    fetchActivity(filter = {}) {
+        return filter;
     }
 
     watchActivity() {

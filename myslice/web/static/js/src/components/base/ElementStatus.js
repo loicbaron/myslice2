@@ -4,10 +4,11 @@ class ElementStatus extends React.Component {
 
     render() {
         var status = this.props.status.toLowerCase() || '';
-        var iconClass = 'fa fa-';
+        var iconClass = 'fa fa-lg fa-';
 
 
         switch(status) {
+            case 'approved':
             case 'enabled':
             case 'success':
                 iconClass += 'check';
@@ -15,11 +16,17 @@ class ElementStatus extends React.Component {
             case 'new':
                 iconClass += 'cog';
                 break;
+            case 'pending':
+                iconClass += 'clock-o';
+                break;
+            case 'denied':
+                iconClass += 'times';
+                break;
             case 'waiting':
                 iconClass += 'clock-o';
                 break;
             case 'running':
-                iconClass += 'cog fa-spin fa-fw';
+                iconClass += 'cog fa-spin ';
                 break;
             case 'warning':
             case 'error':
@@ -30,7 +37,7 @@ class ElementStatus extends React.Component {
                 break;
         }
 
-        iconClass += ' ' + status;
+        iconClass += ' ' + status + ' fa-fw';
 
         return (
                 <div className="elementStatus">

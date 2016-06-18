@@ -6,8 +6,11 @@ const ActivitySource = () => {
         fetch: {
             // remotely fetch something (required)
             remote(state) {
-                return axios.get('/api/v1/activity', {
 
+                return axios.get('/api/v1/activity', {
+                    params: {
+                        filter: state.filter
+                    }
                 });
             },
 

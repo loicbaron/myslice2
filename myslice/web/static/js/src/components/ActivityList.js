@@ -5,6 +5,7 @@ import actions from '../actions/ActivityActions';
 import List from './base/List';
 import LoadingPanel from './LoadingPanel';
 
+import ActivityFilter from './ActivityFilter';
 import ActivityRow from'./ActivityRow';
 
 class ActivityList extends React.Component {
@@ -29,6 +30,11 @@ class ActivityList extends React.Component {
         this.setState(state);
     }
 
+    handleFilter(value) {
+        console.log(value);
+        actions.fetchActivity(value);
+    }
+
     render() {
 
         if (this.state.errorMessage) {
@@ -41,13 +47,16 @@ class ActivityList extends React.Component {
             return <LoadingPanel show="true" />;
         } else {
             return (
-                <List>
-                    {
-                        this.state.activity.map(function (activity) {
-                            return <ActivityRow key={activity.id} activity={activity}/>;
-                        })
-                    }
-                </List>
+                <div>
+                    <ActivityFilter handleChange={this.handleFilter} />
+                    <List>
+                        {
+                            this.state.activity.map(function (activity) {
+                                return <ActivityRow key={activity.id} activity={activity}/>;
+                            })
+                        }
+                    </List>
+                </div>
             );
         }
     }
