@@ -16,7 +16,7 @@ class ElementIcon extends React.Component {
                 iconClass += 'user';
                 break;
             case 'slice':
-                iconClass += 'server';
+                iconClass += 'tasks';
                 break;
             case 'resource':
                 iconClass += 'server';
