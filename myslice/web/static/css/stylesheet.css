@@ -273,21 +273,36 @@ div.registrationForm {
 */
 
 .elementList {
+    list-style:none;
     margin:0;
-    padding:0 0 0 20px;
+    padding:5px 4px 2px 20px;
     overflow-y: scroll;
 }
 .elementBox {
     position:relative;
-    list-style:none;
     width:100%;
     background-color:white;
     padding:10px 15px 15px 30px;
-    margin-bottom:5px;
+    margin-bottom:6px;
+    box-shadow: none;
+    transition: box-shadow 0.2s ease-in, background-color 0.2s ease-in;
+}
+.elementBox.pointer {
+    cursor:pointer;
 }
 .elementBox.selected {
-	background-color: #CDB4D8;
+    background-color: #F5F5F5;
+    box-shadow: 1px 1px 3px 0 rgba(0, 0, 0, 0.2), -1px -1px 3px 0 rgba(0, 0, 0, 0.2);
+
 }
+
+.elementBox.selected::after {
+
+  opacity: 1;
+
+}
+
+
 .elementBox:last-child {
     border:none;
 }
@@ -310,21 +325,18 @@ div.registrationForm {
     background-color:#D0E0E3;
 }
 .elementBox.selected.authority {
-	background-color: #D0E0E3;
 }
 .elementIcon.user {
     color:#281E52;
     background-color:#CFE2F3;
 }
 .elementBox.selected.user {
-	background-color: #CFE2F3;
 }
 .elementIcon.project {
     color:#281E52;
     background-color:#D9D2E9;
 }
 .elementBox.selected.project {
-	background-color: #D9D2E9;
 }
 .elementIcon.slice {
     line-height:50px;
@@ -332,14 +344,12 @@ div.registrationForm {
     background-color:#EAD1DC;
 }
 .elementBox.selected.slice {
-	background-color: #EAD1DC;
 }
 .elementIcon.resource {
     color:#281E52;
     background-color:#D9EAD3;
 }
 .elementBox.selected.resource {
-	background-color: #D9EAD3;
 }
 
 .elementTitle {
