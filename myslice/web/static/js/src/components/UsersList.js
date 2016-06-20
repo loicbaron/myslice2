@@ -4,6 +4,8 @@ import actions from '../actions/UsersActions';
 
 import List from './base/List';
 
+import UsersRow from'./UsersRow';
+
 //import UsersRow from'./UsersRow';
 
 class UsersList extends React.Component {
@@ -40,8 +42,8 @@ class UsersList extends React.Component {
             <List>
             {
                 users.map(function(user) {
-                    //return <UsersRow key={user.id} user={user}></UsersRow>;
-                    return <div>{user.id}</div>
+                    return <UsersRow key={user.id} user={user}></UsersRow>;
+                    //return <div>{user.id}</div>
                 })
             }
             </List>

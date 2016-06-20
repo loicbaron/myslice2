@@ -54,7 +54,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _RegistrationForm = __webpack_require__(338);
+	var _RegistrationForm = __webpack_require__(415);
 
 	var _RegistrationForm2 = _interopRequireDefault(_RegistrationForm);
 
@@ -20340,12 +20340,13 @@
 /* 174 */,
 /* 175 */,
 /* 176 */,
-/* 177 */
+/* 177 */,
+/* 178 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _alt = __webpack_require__(178);
+	var _alt = __webpack_require__(179);
 
 	var _alt2 = _interopRequireDefault(_alt);
 
@@ -20356,7 +20357,7 @@
 	module.exports = alt;
 
 /***/ },
-/* 178 */
+/* 179 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20365,25 +20366,25 @@
 	  value: true
 	});
 
-	var _flux = __webpack_require__(179);
+	var _flux = __webpack_require__(180);
 
-	var _StateFunctions = __webpack_require__(182);
+	var _StateFunctions = __webpack_require__(183);
 
 	var StateFunctions = _interopRequireWildcard(_StateFunctions);
 
-	var _functions = __webpack_require__(183);
+	var _functions = __webpack_require__(184);
 
 	var fn = _interopRequireWildcard(_functions);
 
-	var _store = __webpack_require__(184);
+	var _store = __webpack_require__(185);
 
 	var store = _interopRequireWildcard(_store);
 
-	var _AltUtils = __webpack_require__(185);
+	var _AltUtils = __webpack_require__(186);
 
 	var utils = _interopRequireWildcard(_AltUtils);
 
-	var _actions = __webpack_require__(189);
+	var _actions = __webpack_require__(190);
 
 	var _actions2 = _interopRequireDefault(_actions);
 
@@ -20738,7 +20739,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 179 */
+/* 180 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -20750,11 +20751,11 @@
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 */
 
-	module.exports.Dispatcher = __webpack_require__(180);
+	module.exports.Dispatcher = __webpack_require__(181);
 
 
 /***/ },
-/* 180 */
+/* 181 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -20776,7 +20777,7 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var invariant = __webpack_require__(181);
+	var invariant = __webpack_require__(182);
 
 	var _prefix = 'ID_';
 
@@ -20991,7 +20992,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 181 */
+/* 182 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -21046,7 +21047,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 182 */
+/* 183 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21059,7 +21060,7 @@
 	exports.saveInitialSnapshot = saveInitialSnapshot;
 	exports.filterSnapshots = filterSnapshots;
 
-	var _functions = __webpack_require__(183);
+	var _functions = __webpack_require__(184);
 
 	var fn = _interopRequireWildcard(_functions);
 
@@ -21123,7 +21124,7 @@
 	}
 
 /***/ },
-/* 183 */
+/* 184 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -21164,7 +21165,7 @@
 	}
 
 /***/ },
-/* 184 */
+/* 185 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21177,19 +21178,19 @@
 	exports.createStoreFromObject = createStoreFromObject;
 	exports.createStoreFromClass = createStoreFromClass;
 
-	var _AltUtils = __webpack_require__(185);
+	var _AltUtils = __webpack_require__(186);
 
 	var utils = _interopRequireWildcard(_AltUtils);
 
-	var _functions = __webpack_require__(183);
+	var _functions = __webpack_require__(184);
 
 	var fn = _interopRequireWildcard(_functions);
 
-	var _AltStore = __webpack_require__(186);
+	var _AltStore = __webpack_require__(187);
 
 	var _AltStore2 = _interopRequireDefault(_AltStore);
 
-	var _StoreMixin = __webpack_require__(188);
+	var _StoreMixin = __webpack_require__(189);
 
 	var _StoreMixin2 = _interopRequireDefault(_StoreMixin);
 
@@ -21381,7 +21382,7 @@
 	}
 
 /***/ },
-/* 185 */
+/* 186 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21400,7 +21401,7 @@
 	exports.fsa = fsa;
 	exports.dispatch = dispatch;
 
-	var _functions = __webpack_require__(183);
+	var _functions = __webpack_require__(184);
 
 	var fn = _interopRequireWildcard(_functions);
 
@@ -21502,7 +21503,7 @@
 	function NoopClass() {}
 
 /***/ },
-/* 186 */
+/* 187 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21511,11 +21512,11 @@
 	  value: true
 	});
 
-	var _functions = __webpack_require__(183);
+	var _functions = __webpack_require__(184);
 
 	var fn = _interopRequireWildcard(_functions);
 
-	var _transmitter = __webpack_require__(187);
+	var _transmitter = __webpack_require__(188);
 
 	var _transmitter2 = _interopRequireDefault(_transmitter);
 
@@ -21658,7 +21659,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 187 */
+/* 188 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -21706,7 +21707,7 @@
 
 
 /***/ },
-/* 188 */
+/* 189 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21715,11 +21716,11 @@
 	  value: true
 	});
 
-	var _transmitter = __webpack_require__(187);
+	var _transmitter = __webpack_require__(188);
 
 	var _transmitter2 = _interopRequireDefault(_transmitter);
 
-	var _functions = __webpack_require__(183);
+	var _functions = __webpack_require__(184);
 
 	var fn = _interopRequireWildcard(_functions);
 
@@ -21947,7 +21948,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 189 */
+/* 190 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21957,15 +21958,15 @@
 	});
 	exports['default'] = makeAction;
 
-	var _functions = __webpack_require__(183);
+	var _functions = __webpack_require__(184);
 
 	var fn = _interopRequireWildcard(_functions);
 
-	var _AltUtils = __webpack_require__(185);
+	var _AltUtils = __webpack_require__(186);
 
 	var utils = _interopRequireWildcard(_AltUtils);
 
-	var _isPromise = __webpack_require__(190);
+	var _isPromise = __webpack_require__(191);
 
 	var _isPromise2 = _interopRequireDefault(_isPromise);
 
@@ -22034,7 +22035,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 190 */
+/* 191 */
 /***/ function(module, exports) {
 
 	module.exports = isPromise;
@@ -22045,27 +22046,91 @@
 
 
 /***/ },
-/* 191 */,
 /* 192 */,
-/* 193 */
+/* 193 */,
+/* 194 */,
+/* 195 */,
+/* 196 */,
+/* 197 */,
+/* 198 */,
+/* 199 */,
+/* 200 */,
+/* 201 */,
+/* 202 */,
+/* 203 */,
+/* 204 */,
+/* 205 */,
+/* 206 */,
+/* 207 */,
+/* 208 */,
+/* 209 */,
+/* 210 */,
+/* 211 */,
+/* 212 */,
+/* 213 */,
+/* 214 */,
+/* 215 */,
+/* 216 */,
+/* 217 */,
+/* 218 */,
+/* 219 */,
+/* 220 */,
+/* 221 */,
+/* 222 */,
+/* 223 */,
+/* 224 */,
+/* 225 */,
+/* 226 */,
+/* 227 */,
+/* 228 */,
+/* 229 */,
+/* 230 */,
+/* 231 */,
+/* 232 */,
+/* 233 */,
+/* 234 */,
+/* 235 */,
+/* 236 */,
+/* 237 */,
+/* 238 */,
+/* 239 */,
+/* 240 */,
+/* 241 */,
+/* 242 */,
+/* 243 */,
+/* 244 */,
+/* 245 */,
+/* 246 */,
+/* 247 */,
+/* 248 */,
+/* 249 */,
+/* 250 */,
+/* 251 */,
+/* 252 */,
+/* 253 */,
+/* 254 */,
+/* 255 */,
+/* 256 */,
+/* 257 */,
+/* 258 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(194);
+	module.exports = __webpack_require__(259);
 
 /***/ },
-/* 194 */
+/* 259 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var defaults = __webpack_require__(195);
-	var utils = __webpack_require__(196);
-	var dispatchRequest = __webpack_require__(198);
-	var InterceptorManager = __webpack_require__(207);
-	var isAbsoluteURL = __webpack_require__(208);
-	var combineURLs = __webpack_require__(209);
-	var bind = __webpack_require__(210);
-	var transformData = __webpack_require__(202);
+	var defaults = __webpack_require__(260);
+	var utils = __webpack_require__(261);
+	var dispatchRequest = __webpack_require__(263);
+	var InterceptorManager = __webpack_require__(272);
+	var isAbsoluteURL = __webpack_require__(273);
+	var combineURLs = __webpack_require__(274);
+	var bind = __webpack_require__(275);
+	var transformData = __webpack_require__(267);
 
 	function Axios(defaultConfig) {
 	  this.defaults = utils.merge({}, defaultConfig);
@@ -22154,7 +22219,7 @@
 	axios.all = function all(promises) {
 	  return Promise.all(promises);
 	};
-	axios.spread = __webpack_require__(211);
+	axios.spread = __webpack_require__(276);
 
 	// Provide aliases for supported request methods
 	utils.forEach(['delete', 'get', 'head'], function forEachMethodNoData(method) {
@@ -22182,13 +22247,13 @@
 
 
 /***/ },
-/* 195 */
+/* 260 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var utils = __webpack_require__(196);
-	var normalizeHeaderName = __webpack_require__(197);
+	var utils = __webpack_require__(261);
+	var normalizeHeaderName = __webpack_require__(262);
 
 	var PROTECTION_PREFIX = /^\)\]\}',?\n/;
 	var DEFAULT_CONTENT_TYPE = {
@@ -22260,7 +22325,7 @@
 
 
 /***/ },
-/* 196 */
+/* 261 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -22543,12 +22608,12 @@
 
 
 /***/ },
-/* 197 */
+/* 262 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var utils = __webpack_require__(196);
+	var utils = __webpack_require__(261);
 
 	module.exports = function normalizeHeaderName(headers, normalizedName) {
 	  utils.forEach(headers, function processHeader(value, name) {
@@ -22561,7 +22626,7 @@
 
 
 /***/ },
-/* 198 */
+/* 263 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -22583,10 +22648,10 @@
 	        adapter = config.adapter;
 	      } else if (typeof XMLHttpRequest !== 'undefined') {
 	        // For browsers use XHR adapter
-	        adapter = __webpack_require__(199);
+	        adapter = __webpack_require__(264);
 	      } else if (typeof process !== 'undefined') {
 	        // For node use HTTP adapter
-	        adapter = __webpack_require__(199);
+	        adapter = __webpack_require__(264);
 	      }
 
 	      if (typeof adapter === 'function') {
@@ -22602,18 +22667,18 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 199 */
+/* 264 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
 
-	var utils = __webpack_require__(196);
-	var buildURL = __webpack_require__(200);
-	var parseHeaders = __webpack_require__(201);
-	var transformData = __webpack_require__(202);
-	var isURLSameOrigin = __webpack_require__(203);
-	var btoa = (typeof window !== 'undefined' && window.btoa) || __webpack_require__(204);
-	var settle = __webpack_require__(205);
+	var utils = __webpack_require__(261);
+	var buildURL = __webpack_require__(265);
+	var parseHeaders = __webpack_require__(266);
+	var transformData = __webpack_require__(267);
+	var isURLSameOrigin = __webpack_require__(268);
+	var btoa = (typeof window !== 'undefined' && window.btoa) || __webpack_require__(269);
+	var settle = __webpack_require__(270);
 
 	module.exports = function xhrAdapter(resolve, reject, config) {
 	  var requestData = config.data;
@@ -22710,7 +22775,7 @@
 	  // This is only done if running in a standard browser environment.
 	  // Specifically not if we're in a web worker, or react-native.
 	  if (utils.isStandardBrowserEnv()) {
-	    var cookies = __webpack_require__(206);
+	    var cookies = __webpack_require__(271);
 
 	    // Add xsrf header
 	    var xsrfValue = config.withCredentials || isURLSameOrigin(config.url) ?
@@ -22771,12 +22836,12 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 200 */
+/* 265 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var utils = __webpack_require__(196);
+	var utils = __webpack_require__(261);
 
 	function encode(val) {
 	  return encodeURIComponent(val).
@@ -22845,12 +22910,12 @@
 
 
 /***/ },
-/* 201 */
+/* 266 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var utils = __webpack_require__(196);
+	var utils = __webpack_require__(261);
 
 	/**
 	 * Parse headers into an object
@@ -22888,12 +22953,12 @@
 
 
 /***/ },
-/* 202 */
+/* 267 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var utils = __webpack_require__(196);
+	var utils = __webpack_require__(261);
 
 	/**
 	 * Transform the data for a request or a response
@@ -22914,12 +22979,12 @@
 
 
 /***/ },
-/* 203 */
+/* 268 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var utils = __webpack_require__(196);
+	var utils = __webpack_require__(261);
 
 	module.exports = (
 	  utils.isStandardBrowserEnv() ?
@@ -22988,7 +23053,7 @@
 
 
 /***/ },
-/* 204 */
+/* 269 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -23030,7 +23095,7 @@
 
 
 /***/ },
-/* 205 */
+/* 270 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -23054,12 +23119,12 @@
 
 
 /***/ },
-/* 206 */
+/* 271 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var utils = __webpack_require__(196);
+	var utils = __webpack_require__(261);
 
 	module.exports = (
 	  utils.isStandardBrowserEnv() ?
@@ -23113,12 +23178,12 @@
 
 
 /***/ },
-/* 207 */
+/* 272 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var utils = __webpack_require__(196);
+	var utils = __webpack_require__(261);
 
 	function InterceptorManager() {
 	  this.handlers = [];
@@ -23171,7 +23236,7 @@
 
 
 /***/ },
-/* 208 */
+/* 273 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -23191,7 +23256,7 @@
 
 
 /***/ },
-/* 209 */
+/* 274 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -23209,7 +23274,7 @@
 
 
 /***/ },
-/* 210 */
+/* 275 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -23226,7 +23291,7 @@
 
 
 /***/ },
-/* 211 */
+/* 276 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -23259,8 +23324,8 @@
 
 
 /***/ },
-/* 212 */,
-/* 213 */
+/* 277 */,
+/* 278 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23275,7 +23340,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _classnames = __webpack_require__(214);
+	var _classnames = __webpack_require__(279);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
@@ -23317,7 +23382,7 @@
 	exports.default = LoadingPanel;
 
 /***/ },
-/* 214 */
+/* 279 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -23371,757 +23436,8 @@
 
 
 /***/ },
-/* 215 */,
-/* 216 */,
-/* 217 */,
-/* 218 */,
-/* 219 */,
-/* 220 */,
-/* 221 */,
-/* 222 */,
-/* 223 */,
-/* 224 */,
-/* 225 */,
-/* 226 */,
-/* 227 */,
-/* 228 */,
-/* 229 */,
-/* 230 */,
-/* 231 */,
-/* 232 */,
-/* 233 */,
-/* 234 */,
-/* 235 */,
-/* 236 */,
-/* 237 */,
-/* 238 */,
-/* 239 */,
-/* 240 */,
-/* 241 */,
-/* 242 */,
-/* 243 */,
-/* 244 */,
-/* 245 */,
-/* 246 */,
-/* 247 */,
-/* 248 */,
-/* 249 */,
-/* 250 */,
-/* 251 */,
-/* 252 */,
-/* 253 */,
-/* 254 */,
-/* 255 */,
-/* 256 */,
-/* 257 */,
-/* 258 */,
-/* 259 */,
-/* 260 */,
-/* 261 */,
-/* 262 */,
-/* 263 */,
-/* 264 */,
-/* 265 */,
-/* 266 */,
-/* 267 */,
-/* 268 */,
-/* 269 */,
-/* 270 */,
-/* 271 */,
-/* 272 */,
-/* 273 */,
-/* 274 */,
-/* 275 */,
-/* 276 */,
-/* 277 */,
-/* 278 */,
-/* 279 */,
 /* 280 */,
-/* 281 */,
-/* 282 */,
-/* 283 */,
-/* 284 */,
-/* 285 */,
-/* 286 */,
-/* 287 */,
-/* 288 */,
-/* 289 */,
-/* 290 */,
-/* 291 */,
-/* 292 */,
-/* 293 */,
-/* 294 */,
-/* 295 */,
-/* 296 */,
-/* 297 */,
-/* 298 */,
-/* 299 */,
-/* 300 */,
-/* 301 */,
-/* 302 */,
-/* 303 */,
-/* 304 */,
-/* 305 */,
-/* 306 */,
-/* 307 */,
-/* 308 */,
-/* 309 */,
-/* 310 */,
-/* 311 */,
-/* 312 */,
-/* 313 */,
-/* 314 */,
-/* 315 */,
-/* 316 */,
-/* 317 */,
-/* 318 */,
-/* 319 */,
-/* 320 */,
-/* 321 */,
-/* 322 */,
-/* 323 */,
-/* 324 */,
-/* 325 */,
-/* 326 */,
-/* 327 */,
-/* 328 */,
-/* 329 */,
-/* 330 */,
-/* 331 */,
-/* 332 */,
-/* 333 */,
-/* 334 */,
-/* 335 */,
-/* 336 */,
-/* 337 */,
-/* 338 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(162);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _RegistrationActions = __webpack_require__(339);
-
-	var _RegistrationActions2 = _interopRequireDefault(_RegistrationActions);
-
-	var _RegistrationStore = __webpack_require__(340);
-
-	var _RegistrationStore2 = _interopRequireDefault(_RegistrationStore);
-
-	var _AuthoritiesSelect = __webpack_require__(342);
-
-	var _AuthoritiesSelect2 = _interopRequireDefault(_AuthoritiesSelect);
-
-	var _EmailInput = __webpack_require__(352);
-
-	var _EmailInput2 = _interopRequireDefault(_EmailInput);
-
-	var _LoadingPanel = __webpack_require__(213);
-
-	var _LoadingPanel2 = _interopRequireDefault(_LoadingPanel);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var RegistrationForm = function (_React$Component) {
-	    _inherits(RegistrationForm, _React$Component);
-
-	    function RegistrationForm(props) {
-	        _classCallCheck(this, RegistrationForm);
-
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RegistrationForm).call(this, props));
-
-	        _this.state = _RegistrationStore2.default.getState();
-	        _this.onChange = _this.onChange.bind(_this);
-	        return _this;
-	    }
-
-	    _createClass(RegistrationForm, [{
-	        key: 'componentDidMount',
-	        value: function componentDidMount() {
-	            _RegistrationStore2.default.listen(this.onChange);
-	        }
-	    }, {
-	        key: 'componentWillUnmount',
-	        value: function componentWillUnmount() {
-	            _RegistrationStore2.default.unlisten(this.onChange);
-	        }
-	    }, {
-	        key: 'onChange',
-	        value: function onChange(state) {
-	            this.setState(state);
-	        }
-	    }, {
-	        key: 'updateAuthority',
-	        value: function updateAuthority(value) {
-	            _RegistrationActions2.default.updateAuthority(value);
-	        }
-	    }, {
-	        key: 'updateEmail',
-	        value: function updateEmail(value) {
-	            _RegistrationActions2.default.updateEmail(value);
-	        }
-	    }, {
-	        key: 'updateFirstname',
-	        value: function updateFirstname(event) {
-	            _RegistrationActions2.default.updateFirstname(event.target.value);
-	        }
-	    }, {
-	        key: 'updateLastname',
-	        value: function updateLastname(event) {
-	            _RegistrationActions2.default.updateLastname(event.target.value);
-	        }
-	    }, {
-	        key: 'submitForm',
-	        value: function submitForm(event) {
-	            event.preventDefault();
-	            _RegistrationActions2.default.submitForm();
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            if (this.state.success) {
-	                return _react2.default.createElement(
-	                    'div',
-	                    null,
-	                    'Success!'
-	                );
-	            } else {
-
-	                return _react2.default.createElement(
-	                    'form',
-	                    { onSubmit: this.submitForm },
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'row' },
-	                        _react2.default.createElement(
-	                            'div',
-	                            { className: 'col-sm-4 col-sm-offset-4 inputForm' },
-	                            _react2.default.createElement(_AuthoritiesSelect2.default, { handleChange: this.updateAuthority })
-	                        )
-	                    ),
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'row' },
-	                        _react2.default.createElement(
-	                            'div',
-	                            { className: 'col-sm-7 col-sm-offset-3' },
-	                            _react2.default.createElement(
-	                                'p',
-	                                { className: 'inputDescription' },
-	                                'Choose your organization (company or university) from this list.',
-	                                _react2.default.createElement('br', null),
-	                                'Use the arrow keys to scroll through the list; type part of the name to narrow down the list.',
-	                                _react2.default.createElement('br', null),
-	                                _react2.default.createElement(
-	                                    'b',
-	                                    null,
-	                                    'We will send an email to the managers'
-	                                ),
-	                                ' that we have on record for your organization, asking them to validate your sign-up request.'
-	                            )
-	                        )
-	                    ),
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'row' },
-	                        _react2.default.createElement(
-	                            'div',
-	                            { className: 'col-sm-4 col-sm-offset-4 inputForm' },
-	                            _react2.default.createElement(_EmailInput2.default, { handleChange: this.updateEmail })
-	                        )
-	                    ),
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'row' },
-	                        _react2.default.createElement(
-	                            'div',
-	                            { className: 'col-sm-7 col-sm-offset-3' },
-	                            _react2.default.createElement(
-	                                'p',
-	                                { className: 'inputDescription' },
-	                                'Please provide your Email address, it will be your identifier for logging in. ',
-	                                _react2.default.createElement('br', null),
-	                                'We will also contact you to verify your account and occasionally for important communications.'
-	                            )
-	                        )
-	                    ),
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'row' },
-	                        _react2.default.createElement(
-	                            'div',
-	                            { className: 'col-sm-4 col-sm-offset-4 inputForm' },
-	                            _react2.default.createElement('input', { onChange: this.updateFirstname, placeholder: 'First name', type: 'text', name: 'firstname' })
-	                        )
-	                    ),
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'row' },
-	                        _react2.default.createElement(
-	                            'div',
-	                            { className: 'col-sm-4 col-sm-offset-4 inputForm' },
-	                            _react2.default.createElement('input', { onChange: this.updateLastname, placeholder: 'Last name', type: 'text', name: 'lastname' })
-	                        )
-	                    ),
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'row' },
-	                        _react2.default.createElement(
-	                            'div',
-	                            { className: 'col-sm-4 col-sm-offset-4 inputForm' },
-	                            _react2.default.createElement('input', { type: 'checkbox', name: 'terms' }),
-	                            '   I agree to the ',
-	                            _react2.default.createElement(
-	                                'a',
-	                                { href: '#', 'data-toggle': 'modal', 'data-target': '#myModal' },
-	                                'terms and conditions.'
-	                            )
-	                        )
-	                    ),
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'row' },
-	                        _react2.default.createElement(
-	                            'div',
-	                            { className: 'col-sm-4 col-sm-offset-4 inputSubmit' },
-	                            _react2.default.createElement('input', { type: 'submit', className: 'btn btn-default' })
-	                        )
-	                    ),
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'row' },
-	                        _react2.default.createElement(
-	                            'div',
-	                            { className: 'col-sm-4 col-sm-offset-4' },
-	                            this.state.message
-	                        )
-	                    ),
-	                    _react2.default.createElement(_LoadingPanel2.default, { show: this.state.loading })
-	                );
-	            }
-	        }
-	    }]);
-
-	    return RegistrationForm;
-	}(_react2.default.Component);
-
-	RegistrationForm.propTypes = {
-	    updateAuthority: _react2.default.PropTypes.func
-	};
-
-	exports.default = RegistrationForm;
-
-/***/ },
-/* 339 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _alt = __webpack_require__(177);
-
-	var _alt2 = _interopRequireDefault(_alt);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	var RegistrationActions = function () {
-	    function RegistrationActions() {
-	        _classCallCheck(this, RegistrationActions);
-	    }
-
-	    _createClass(RegistrationActions, [{
-	        key: 'updateAuthority',
-	        value: function updateAuthority(authority) {
-	            return authority;
-	        }
-	    }, {
-	        key: 'updateEmail',
-	        value: function updateEmail(email) {
-	            return email;
-	        }
-	    }, {
-	        key: 'updateFirstname',
-	        value: function updateFirstname(firstname) {
-	            return firstname;
-	        }
-	    }, {
-	        key: 'updateLastname',
-	        value: function updateLastname(lastname) {
-	            return lastname;
-	        }
-	    }, {
-	        key: 'loading',
-	        value: function loading(_loading) {
-	            return _loading;
-	        }
-	    }, {
-	        key: 'submitForm',
-	        value: function submitForm() {
-	            this.loading(true);
-	            return true;
-	        }
-	    }, {
-	        key: 'submitSuccess',
-	        value: function submitSuccess(response) {
-	            this.loading(false);
-	            return response;
-	        }
-	    }, {
-	        key: 'submitError',
-	        value: function submitError(response) {
-	            this.loading(false);
-	            return response;
-	        }
-	    }]);
-
-	    return RegistrationActions;
-	}();
-
-	exports.default = _alt2.default.createActions(RegistrationActions);
-
-/***/ },
-/* 340 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _alt = __webpack_require__(177);
-
-	var _alt2 = _interopRequireDefault(_alt);
-
-	var _RegistrationActions = __webpack_require__(339);
-
-	var _RegistrationActions2 = _interopRequireDefault(_RegistrationActions);
-
-	var _RegistrationSource = __webpack_require__(341);
-
-	var _RegistrationSource2 = _interopRequireDefault(_RegistrationSource);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	var RegistrationStore = function () {
-	    function RegistrationStore() {
-	        _classCallCheck(this, RegistrationStore);
-
-	        this.authority = '';
-	        this.email = '';
-	        this.firstname = '';
-	        this.lastname = '';
-	        this.loading = false;
-	        this.success = false;
-	        this.errorMessage = null;
-
-	        this.bindListeners({
-	            updateAuthority: _RegistrationActions2.default.UPDATE_AUTHORITY,
-	            updateEmail: _RegistrationActions2.default.UPDATE_EMAIL,
-	            updateFirstname: _RegistrationActions2.default.UPDATE_FIRSTNAME,
-	            updateLastname: _RegistrationActions2.default.UPDATE_LASTNAME,
-	            updateLoading: _RegistrationActions2.default.LOADING,
-	            submitForm: _RegistrationActions2.default.SUBMIT_FORM,
-	            submitSuccess: _RegistrationActions2.default.SUBMIT_SUCCESS,
-	            submitError: _RegistrationActions2.default.SUBMIT_ERROR
-	        });
-
-	        this.registerAsync(_RegistrationSource2.default);
-	    }
-
-	    _createClass(RegistrationStore, [{
-	        key: 'updateAuthority',
-	        value: function updateAuthority(authority) {
-	            console.log(authority);
-	            this.authority = authority;
-	        }
-	    }, {
-	        key: 'updateEmail',
-	        value: function updateEmail(email) {
-	            this.email = email;
-	        }
-	    }, {
-	        key: 'updateFirstname',
-	        value: function updateFirstname(firstname) {
-	            this.firstname = firstname;
-	        }
-	    }, {
-	        key: 'updateLastname',
-	        value: function updateLastname(lastname) {
-	            this.lastname = lastname;
-	        }
-	    }, {
-	        key: 'updateLoading',
-	        value: function updateLoading(loading) {
-	            this.loading = loading;
-	        }
-	    }, {
-	        key: 'submitForm',
-	        value: function submitForm() {
-
-	            if (!this.getInstance().isLoading()) {
-	                this.getInstance().submit();
-	            }
-	        }
-	    }, {
-	        key: 'submitSuccess',
-	        value: function submitSuccess(response) {
-	            this.success = true;
-	        }
-	    }, {
-	        key: 'submitError',
-	        value: function submitError(response) {
-	            this.errorMessage = response.data.error;
-	        }
-	    }]);
-
-	    return RegistrationStore;
-	}();
-
-	exports.default = _alt2.default.createStore(RegistrationStore, 'RegistrationStore');
-
-/***/ },
-/* 341 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _axios = __webpack_require__(193);
-
-	var _axios2 = _interopRequireDefault(_axios);
-
-	var _RegistrationActions = __webpack_require__(339);
-
-	var _RegistrationActions2 = _interopRequireDefault(_RegistrationActions);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var RegistrationSource = function RegistrationSource() {
-	    return {
-	        submit: {
-	            // remotely fetch something (required)
-
-	            remote: function remote(state) {
-	                return _axios2.default.post('/api/v1/users', {
-	                    'authority': state.authority,
-	                    'firstname': state.firstname,
-	                    'lastname': state.lastname,
-	                    'email': state.email
-	                });
-	            },
-
-
-	            // this function checks in our local cache first
-	            // if the value is present it'll use that instead (optional).
-	            // local(state) {
-	            //     return state.authorities ? state.authorities : null;
-	            // },
-
-	            // here we setup some actions to handle our response
-	            //loading: actions.loading, // (optional)
-	            success: _RegistrationActions2.default.submitSuccess, // (required)
-	            error: _RegistrationActions2.default.submitError, // (required)
-
-	            // should fetch has precedence over the value returned by local in determining whether remote should be called
-	            // in this particular example if the value is present locally it would return but still fire off the remote request (optional)
-	            shouldFetch: function shouldFetch(state) {
-	                return true;
-	            }
-	        }
-	    };
-	};
-
-	exports.default = RegistrationSource;
-
-/***/ },
-/* 342 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(162);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactSelect = __webpack_require__(343);
-
-	var _reactSelect2 = _interopRequireDefault(_reactSelect);
-
-	var _AuthoritiesStore = __webpack_require__(349);
-
-	var _AuthoritiesStore2 = _interopRequireDefault(_AuthoritiesStore);
-
-	var _AuthoritiesActions = __webpack_require__(350);
-
-	var _AuthoritiesActions2 = _interopRequireDefault(_AuthoritiesActions);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var AuthoritiesSelect = function (_React$Component) {
-	    _inherits(AuthoritiesSelect, _React$Component);
-
-	    function AuthoritiesSelect(props) {
-	        _classCallCheck(this, AuthoritiesSelect);
-
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(AuthoritiesSelect).call(this, props));
-
-	        _this.state = _AuthoritiesStore2.default.getState();
-	        _this.onChange = _this.onChange.bind(_this);
-	        _this.setValue = _this.setValue.bind(_this);
-	        return _this;
-	    }
-
-	    _createClass(AuthoritiesSelect, [{
-	        key: 'componentDidMount',
-	        value: function componentDidMount() {
-	            // store
-	            _AuthoritiesStore2.default.listen(this.onChange);
-
-	            // action fetch authorities
-	            _AuthoritiesActions2.default.fetchAuthorities();
-	        }
-	    }, {
-	        key: 'componentWillUnmount',
-	        value: function componentWillUnmount() {
-	            _AuthoritiesStore2.default.unlisten(this.onChange);
-	        }
-	    }, {
-	        key: 'onChange',
-	        value: function onChange(state) {
-	            this.setState(state);
-	        }
-	    }, {
-	        key: 'setValue',
-	        value: function setValue(value) {
-	            this.setState({ value: value });
-	            this.props.handleChange(value.value);
-	        }
-	    }, {
-	        key: 'getOptions',
-	        value: function getOptions() {
-	            return this.state.authorities.map(function (authority) {
-	                return {
-	                    value: authority.id,
-	                    label: authority.name,
-	                    shortname: authority.shortname
-	                };
-	            });
-	        }
-	    }, {
-	        key: 'renderLink',
-	        value: function renderLink() {
-	            return _react2.default.createElement(
-	                'a',
-	                { style: { marginLeft: 5 }, href: '/upgrade', target: '_blank' },
-	                'C Upgrade here!'
-	            );
-	        }
-	    }, {
-	        key: 'renderOption',
-	        value: function renderOption(option) {
-	            return _react2.default.createElement(
-	                'span',
-	                null,
-	                _react2.default.createElement(
-	                    'span',
-	                    { className: 'selectLabel' },
-	                    option.label
-	                ),
-	                ' ',
-	                _react2.default.createElement(
-	                    'span',
-	                    { className: 'selectShortname' },
-	                    '(',
-	                    option.shortname,
-	                    ')'
-	                )
-	            );
-	        }
-	    }, {
-	        key: 'renderValue',
-	        value: function renderValue(option) {
-	            return _react2.default.createElement(
-	                'span',
-	                null,
-	                _react2.default.createElement(
-	                    'span',
-	                    null,
-	                    option.label
-	                ),
-	                ' ',
-	                _react2.default.createElement(
-	                    'i',
-	                    null,
-	                    option.shortname
-	                )
-	            );
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var options = this.getOptions();
-
-	            return _react2.default.createElement(_reactSelect2.default, {
-	                name: 'form-field-name',
-	                placeholder: 'Select your Organization',
-	                value: this.state.value,
-	                valueRenderer: this.renderValue,
-	                options: options,
-	                optionRenderer: this.renderOption,
-	                onChange: this.setValue
-	            });
-	        }
-	    }]);
-
-	    return AuthoritiesSelect;
-	}(_react2.default.Component);
-
-	exports.default = AuthoritiesSelect;
-
-/***/ },
-/* 343 */
+/* 281 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24142,27 +23458,27 @@
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _reactInputAutosize = __webpack_require__(344);
+	var _reactInputAutosize = __webpack_require__(282);
 
 	var _reactInputAutosize2 = _interopRequireDefault(_reactInputAutosize);
 
-	var _classnames = __webpack_require__(214);
+	var _classnames = __webpack_require__(279);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
-	var _utilsStripDiacritics = __webpack_require__(345);
+	var _utilsStripDiacritics = __webpack_require__(283);
 
 	var _utilsStripDiacritics2 = _interopRequireDefault(_utilsStripDiacritics);
 
-	var _Async = __webpack_require__(346);
+	var _Async = __webpack_require__(284);
 
 	var _Async2 = _interopRequireDefault(_Async);
 
-	var _Option = __webpack_require__(347);
+	var _Option = __webpack_require__(285);
 
 	var _Option2 = _interopRequireDefault(_Option);
 
-	var _Value = __webpack_require__(348);
+	var _Value = __webpack_require__(286);
 
 	var _Value2 = _interopRequireDefault(_Value);
 
@@ -25076,7 +24392,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 344 */
+/* 282 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25207,7 +24523,7 @@
 	module.exports = AutosizeInput;
 
 /***/ },
-/* 345 */
+/* 283 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -25222,7 +24538,7 @@
 	};
 
 /***/ },
-/* 346 */
+/* 284 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25235,11 +24551,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Select = __webpack_require__(343);
+	var _Select = __webpack_require__(281);
 
 	var _Select2 = _interopRequireDefault(_Select);
 
-	var _utilsStripDiacritics = __webpack_require__(345);
+	var _utilsStripDiacritics = __webpack_require__(283);
 
 	var _utilsStripDiacritics2 = _interopRequireDefault(_utilsStripDiacritics);
 
@@ -25403,7 +24719,7 @@
 	module.exports = Async;
 
 /***/ },
-/* 347 */
+/* 285 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25414,7 +24730,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _classnames = __webpack_require__(214);
+	var _classnames = __webpack_require__(279);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
@@ -25512,7 +24828,7 @@
 	module.exports = Option;
 
 /***/ },
-/* 348 */
+/* 286 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25523,7 +24839,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _classnames = __webpack_require__(214);
+	var _classnames = __webpack_require__(279);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
@@ -25621,7 +24937,135 @@
 	module.exports = Value;
 
 /***/ },
-/* 349 */
+/* 287 */,
+/* 288 */,
+/* 289 */,
+/* 290 */,
+/* 291 */,
+/* 292 */,
+/* 293 */,
+/* 294 */,
+/* 295 */,
+/* 296 */,
+/* 297 */,
+/* 298 */,
+/* 299 */,
+/* 300 */,
+/* 301 */,
+/* 302 */,
+/* 303 */,
+/* 304 */,
+/* 305 */,
+/* 306 */,
+/* 307 */,
+/* 308 */,
+/* 309 */,
+/* 310 */,
+/* 311 */,
+/* 312 */,
+/* 313 */,
+/* 314 */,
+/* 315 */,
+/* 316 */,
+/* 317 */,
+/* 318 */,
+/* 319 */,
+/* 320 */,
+/* 321 */,
+/* 322 */,
+/* 323 */,
+/* 324 */,
+/* 325 */,
+/* 326 */,
+/* 327 */,
+/* 328 */,
+/* 329 */,
+/* 330 */,
+/* 331 */,
+/* 332 */,
+/* 333 */,
+/* 334 */,
+/* 335 */,
+/* 336 */,
+/* 337 */,
+/* 338 */,
+/* 339 */,
+/* 340 */,
+/* 341 */,
+/* 342 */,
+/* 343 */,
+/* 344 */,
+/* 345 */,
+/* 346 */,
+/* 347 */,
+/* 348 */,
+/* 349 */,
+/* 350 */,
+/* 351 */,
+/* 352 */,
+/* 353 */,
+/* 354 */,
+/* 355 */,
+/* 356 */,
+/* 357 */,
+/* 358 */,
+/* 359 */,
+/* 360 */,
+/* 361 */,
+/* 362 */,
+/* 363 */,
+/* 364 */,
+/* 365 */,
+/* 366 */,
+/* 367 */,
+/* 368 */,
+/* 369 */,
+/* 370 */,
+/* 371 */,
+/* 372 */,
+/* 373 */,
+/* 374 */,
+/* 375 */,
+/* 376 */,
+/* 377 */,
+/* 378 */,
+/* 379 */,
+/* 380 */,
+/* 381 */,
+/* 382 */,
+/* 383 */,
+/* 384 */,
+/* 385 */,
+/* 386 */,
+/* 387 */,
+/* 388 */,
+/* 389 */,
+/* 390 */,
+/* 391 */,
+/* 392 */,
+/* 393 */,
+/* 394 */,
+/* 395 */,
+/* 396 */,
+/* 397 */,
+/* 398 */,
+/* 399 */,
+/* 400 */,
+/* 401 */,
+/* 402 */,
+/* 403 */,
+/* 404 */,
+/* 405 */,
+/* 406 */,
+/* 407 */,
+/* 408 */,
+/* 409 */,
+/* 410 */,
+/* 411 */,
+/* 412 */,
+/* 413 */,
+/* 414 */,
+/* 415 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25632,15 +25076,642 @@
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _alt = __webpack_require__(177);
+	var _react = __webpack_require__(162);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _RegistrationActions = __webpack_require__(416);
+
+	var _RegistrationActions2 = _interopRequireDefault(_RegistrationActions);
+
+	var _RegistrationStore = __webpack_require__(417);
+
+	var _RegistrationStore2 = _interopRequireDefault(_RegistrationStore);
+
+	var _AuthoritiesSelect = __webpack_require__(419);
+
+	var _AuthoritiesSelect2 = _interopRequireDefault(_AuthoritiesSelect);
+
+	var _EmailInput = __webpack_require__(423);
+
+	var _EmailInput2 = _interopRequireDefault(_EmailInput);
+
+	var _LoadingPanel = __webpack_require__(278);
+
+	var _LoadingPanel2 = _interopRequireDefault(_LoadingPanel);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var RegistrationForm = function (_React$Component) {
+	    _inherits(RegistrationForm, _React$Component);
+
+	    function RegistrationForm(props) {
+	        _classCallCheck(this, RegistrationForm);
+
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RegistrationForm).call(this, props));
+
+	        _this.state = _RegistrationStore2.default.getState();
+	        _this.onChange = _this.onChange.bind(_this);
+	        return _this;
+	    }
+
+	    _createClass(RegistrationForm, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            _RegistrationStore2.default.listen(this.onChange);
+	        }
+	    }, {
+	        key: 'componentWillUnmount',
+	        value: function componentWillUnmount() {
+	            _RegistrationStore2.default.unlisten(this.onChange);
+	        }
+	    }, {
+	        key: 'onChange',
+	        value: function onChange(state) {
+	            this.setState(state);
+	        }
+	    }, {
+	        key: 'updateAuthority',
+	        value: function updateAuthority(value) {
+	            _RegistrationActions2.default.updateAuthority(value);
+	        }
+	    }, {
+	        key: 'updateEmail',
+	        value: function updateEmail(value) {
+	            _RegistrationActions2.default.updateEmail(value);
+	        }
+	    }, {
+	        key: 'updateFirstname',
+	        value: function updateFirstname(event) {
+	            _RegistrationActions2.default.updateFirstname(event.target.value);
+	        }
+	    }, {
+	        key: 'updateLastname',
+	        value: function updateLastname(event) {
+	            _RegistrationActions2.default.updateLastname(event.target.value);
+	        }
+	    }, {
+	        key: 'submitForm',
+	        value: function submitForm(event) {
+	            event.preventDefault();
+	            _RegistrationActions2.default.submitForm();
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            if (this.state.success) {
+	                return _react2.default.createElement(
+	                    'div',
+	                    null,
+	                    'Success!'
+	                );
+	            } else {
+
+	                return _react2.default.createElement(
+	                    'form',
+	                    { onSubmit: this.submitForm },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'row' },
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'col-sm-4 col-sm-offset-4 inputForm' },
+	                            _react2.default.createElement(_AuthoritiesSelect2.default, { handleChange: this.updateAuthority })
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'row' },
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'col-sm-7 col-sm-offset-3' },
+	                            _react2.default.createElement(
+	                                'p',
+	                                { className: 'inputDescription' },
+	                                'Choose your organization (company or university) from this list.',
+	                                _react2.default.createElement('br', null),
+	                                'Use the arrow keys to scroll through the list; type part of the name to narrow down the list.',
+	                                _react2.default.createElement('br', null),
+	                                _react2.default.createElement(
+	                                    'b',
+	                                    null,
+	                                    'We will send an email to the managers'
+	                                ),
+	                                ' that we have on record for your organization, asking them to validate your sign-up request.'
+	                            )
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'row' },
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'col-sm-4 col-sm-offset-4 inputForm' },
+	                            _react2.default.createElement(_EmailInput2.default, { handleChange: this.updateEmail })
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'row' },
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'col-sm-7 col-sm-offset-3' },
+	                            _react2.default.createElement(
+	                                'p',
+	                                { className: 'inputDescription' },
+	                                'Please provide your Email address, it will be your identifier for logging in. ',
+	                                _react2.default.createElement('br', null),
+	                                'We will also contact you to verify your account and occasionally for important communications.'
+	                            )
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'row' },
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'col-sm-4 col-sm-offset-4 inputForm' },
+	                            _react2.default.createElement('input', { onChange: this.updateFirstname, placeholder: 'First name', type: 'text', name: 'firstname' })
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'row' },
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'col-sm-4 col-sm-offset-4 inputForm' },
+	                            _react2.default.createElement('input', { onChange: this.updateLastname, placeholder: 'Last name', type: 'text', name: 'lastname' })
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'row' },
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'col-sm-4 col-sm-offset-4 inputForm' },
+	                            _react2.default.createElement('input', { type: 'checkbox', name: 'terms' }),
+	                            '   I agree to the ',
+	                            _react2.default.createElement(
+	                                'a',
+	                                { href: '#', 'data-toggle': 'modal', 'data-target': '#myModal' },
+	                                'terms and conditions.'
+	                            )
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'row' },
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'col-sm-4 col-sm-offset-4 inputSubmit' },
+	                            _react2.default.createElement('input', { type: 'submit', className: 'btn btn-default' })
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'row' },
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'col-sm-4 col-sm-offset-4' },
+	                            this.state.message
+	                        )
+	                    ),
+	                    _react2.default.createElement(_LoadingPanel2.default, { show: this.state.loading })
+	                );
+	            }
+	        }
+	    }]);
+
+	    return RegistrationForm;
+	}(_react2.default.Component);
+
+	RegistrationForm.propTypes = {
+	    updateAuthority: _react2.default.PropTypes.func
+	};
+
+	exports.default = RegistrationForm;
+
+/***/ },
+/* 416 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _alt = __webpack_require__(178);
 
 	var _alt2 = _interopRequireDefault(_alt);
 
-	var _AuthoritiesActions = __webpack_require__(350);
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var RegistrationActions = function () {
+	    function RegistrationActions() {
+	        _classCallCheck(this, RegistrationActions);
+	    }
+
+	    _createClass(RegistrationActions, [{
+	        key: 'updateAuthority',
+	        value: function updateAuthority(authority) {
+	            return authority;
+	        }
+	    }, {
+	        key: 'updateEmail',
+	        value: function updateEmail(email) {
+	            return email;
+	        }
+	    }, {
+	        key: 'updateFirstname',
+	        value: function updateFirstname(firstname) {
+	            return firstname;
+	        }
+	    }, {
+	        key: 'updateLastname',
+	        value: function updateLastname(lastname) {
+	            return lastname;
+	        }
+	    }, {
+	        key: 'loading',
+	        value: function loading(_loading) {
+	            return _loading;
+	        }
+	    }, {
+	        key: 'submitForm',
+	        value: function submitForm() {
+	            this.loading(true);
+	            return true;
+	        }
+	    }, {
+	        key: 'submitSuccess',
+	        value: function submitSuccess(response) {
+	            this.loading(false);
+	            return response;
+	        }
+	    }, {
+	        key: 'submitError',
+	        value: function submitError(response) {
+	            this.loading(false);
+	            return response;
+	        }
+	    }]);
+
+	    return RegistrationActions;
+	}();
+
+	exports.default = _alt2.default.createActions(RegistrationActions);
+
+/***/ },
+/* 417 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _alt = __webpack_require__(178);
+
+	var _alt2 = _interopRequireDefault(_alt);
+
+	var _RegistrationActions = __webpack_require__(416);
+
+	var _RegistrationActions2 = _interopRequireDefault(_RegistrationActions);
+
+	var _RegistrationSource = __webpack_require__(418);
+
+	var _RegistrationSource2 = _interopRequireDefault(_RegistrationSource);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var RegistrationStore = function () {
+	    function RegistrationStore() {
+	        _classCallCheck(this, RegistrationStore);
+
+	        this.authority = '';
+	        this.email = '';
+	        this.firstname = '';
+	        this.lastname = '';
+	        this.loading = false;
+	        this.success = false;
+	        this.errorMessage = null;
+
+	        this.bindListeners({
+	            updateAuthority: _RegistrationActions2.default.UPDATE_AUTHORITY,
+	            updateEmail: _RegistrationActions2.default.UPDATE_EMAIL,
+	            updateFirstname: _RegistrationActions2.default.UPDATE_FIRSTNAME,
+	            updateLastname: _RegistrationActions2.default.UPDATE_LASTNAME,
+	            updateLoading: _RegistrationActions2.default.LOADING,
+	            submitForm: _RegistrationActions2.default.SUBMIT_FORM,
+	            submitSuccess: _RegistrationActions2.default.SUBMIT_SUCCESS,
+	            submitError: _RegistrationActions2.default.SUBMIT_ERROR
+	        });
+
+	        this.registerAsync(_RegistrationSource2.default);
+	    }
+
+	    _createClass(RegistrationStore, [{
+	        key: 'updateAuthority',
+	        value: function updateAuthority(authority) {
+	            console.log(authority);
+	            this.authority = authority;
+	        }
+	    }, {
+	        key: 'updateEmail',
+	        value: function updateEmail(email) {
+	            this.email = email;
+	        }
+	    }, {
+	        key: 'updateFirstname',
+	        value: function updateFirstname(firstname) {
+	            this.firstname = firstname;
+	        }
+	    }, {
+	        key: 'updateLastname',
+	        value: function updateLastname(lastname) {
+	            this.lastname = lastname;
+	        }
+	    }, {
+	        key: 'updateLoading',
+	        value: function updateLoading(loading) {
+	            this.loading = loading;
+	        }
+	    }, {
+	        key: 'submitForm',
+	        value: function submitForm() {
+
+	            if (!this.getInstance().isLoading()) {
+	                this.getInstance().submit();
+	            }
+	        }
+	    }, {
+	        key: 'submitSuccess',
+	        value: function submitSuccess(response) {
+	            this.success = true;
+	        }
+	    }, {
+	        key: 'submitError',
+	        value: function submitError(response) {
+	            this.errorMessage = response.data.error;
+	        }
+	    }]);
+
+	    return RegistrationStore;
+	}();
+
+	exports.default = _alt2.default.createStore(RegistrationStore, 'RegistrationStore');
+
+/***/ },
+/* 418 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _axios = __webpack_require__(258);
+
+	var _axios2 = _interopRequireDefault(_axios);
+
+	var _RegistrationActions = __webpack_require__(416);
+
+	var _RegistrationActions2 = _interopRequireDefault(_RegistrationActions);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var RegistrationSource = function RegistrationSource() {
+	    return {
+	        submit: {
+	            // remotely fetch something (required)
+
+	            remote: function remote(state) {
+	                return _axios2.default.post('/api/v1/users', {
+	                    'authority': state.authority,
+	                    'firstname': state.firstname,
+	                    'lastname': state.lastname,
+	                    'email': state.email
+	                });
+	            },
+
+
+	            // this function checks in our local cache first
+	            // if the value is present it'll use that instead (optional).
+	            // local(state) {
+	            //     return state.authorities ? state.authorities : null;
+	            // },
+
+	            // here we setup some actions to handle our response
+	            //loading: actions.loading, // (optional)
+	            success: _RegistrationActions2.default.submitSuccess, // (required)
+	            error: _RegistrationActions2.default.submitError, // (required)
+
+	            // should fetch has precedence over the value returned by local in determining whether remote should be called
+	            // in this particular example if the value is present locally it would return but still fire off the remote request (optional)
+	            shouldFetch: function shouldFetch(state) {
+	                return true;
+	            }
+	        }
+	    };
+	};
+
+	exports.default = RegistrationSource;
+
+/***/ },
+/* 419 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(162);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactSelect = __webpack_require__(281);
+
+	var _reactSelect2 = _interopRequireDefault(_reactSelect);
+
+	var _AuthoritiesStore = __webpack_require__(420);
+
+	var _AuthoritiesStore2 = _interopRequireDefault(_AuthoritiesStore);
+
+	var _AuthoritiesActions = __webpack_require__(421);
 
 	var _AuthoritiesActions2 = _interopRequireDefault(_AuthoritiesActions);
 
-	var _AuthoritiesSource = __webpack_require__(351);
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var AuthoritiesSelect = function (_React$Component) {
+	    _inherits(AuthoritiesSelect, _React$Component);
+
+	    function AuthoritiesSelect(props) {
+	        _classCallCheck(this, AuthoritiesSelect);
+
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(AuthoritiesSelect).call(this, props));
+
+	        _this.state = _AuthoritiesStore2.default.getState();
+	        _this.onChange = _this.onChange.bind(_this);
+	        _this.setValue = _this.setValue.bind(_this);
+	        return _this;
+	    }
+
+	    _createClass(AuthoritiesSelect, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            // store
+	            _AuthoritiesStore2.default.listen(this.onChange);
+
+	            // action fetch authorities
+	            _AuthoritiesActions2.default.fetchAuthorities();
+	        }
+	    }, {
+	        key: 'componentWillUnmount',
+	        value: function componentWillUnmount() {
+	            _AuthoritiesStore2.default.unlisten(this.onChange);
+	        }
+	    }, {
+	        key: 'onChange',
+	        value: function onChange(state) {
+	            this.setState(state);
+	        }
+	    }, {
+	        key: 'setValue',
+	        value: function setValue(value) {
+	            this.setState({ value: value });
+	            this.props.handleChange(value.value);
+	        }
+	    }, {
+	        key: 'getOptions',
+	        value: function getOptions() {
+	            return this.state.authorities.map(function (authority) {
+	                return {
+	                    value: authority.id,
+	                    label: authority.name,
+	                    shortname: authority.shortname
+	                };
+	            });
+	        }
+	    }, {
+	        key: 'renderLink',
+	        value: function renderLink() {
+	            return _react2.default.createElement(
+	                'a',
+	                { style: { marginLeft: 5 }, href: '/upgrade', target: '_blank' },
+	                'C Upgrade here!'
+	            );
+	        }
+	    }, {
+	        key: 'renderOption',
+	        value: function renderOption(option) {
+	            return _react2.default.createElement(
+	                'span',
+	                null,
+	                _react2.default.createElement(
+	                    'span',
+	                    { className: 'selectLabel' },
+	                    option.label
+	                ),
+	                ' ',
+	                _react2.default.createElement(
+	                    'span',
+	                    { className: 'selectShortname' },
+	                    '(',
+	                    option.shortname,
+	                    ')'
+	                )
+	            );
+	        }
+	    }, {
+	        key: 'renderValue',
+	        value: function renderValue(option) {
+	            return _react2.default.createElement(
+	                'span',
+	                null,
+	                _react2.default.createElement(
+	                    'span',
+	                    null,
+	                    option.label
+	                ),
+	                ' ',
+	                _react2.default.createElement(
+	                    'i',
+	                    null,
+	                    option.shortname
+	                )
+	            );
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var options = this.getOptions();
+
+	            return _react2.default.createElement(_reactSelect2.default, {
+	                name: 'form-field-name',
+	                placeholder: 'Select your Organization',
+	                value: this.state.value,
+	                valueRenderer: this.renderValue,
+	                options: options,
+	                optionRenderer: this.renderOption,
+	                onChange: this.setValue
+	            });
+	        }
+	    }]);
+
+	    return AuthoritiesSelect;
+	}(_react2.default.Component);
+
+	exports.default = AuthoritiesSelect;
+
+/***/ },
+/* 420 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _alt = __webpack_require__(178);
+
+	var _alt2 = _interopRequireDefault(_alt);
+
+	var _AuthoritiesActions = __webpack_require__(421);
+
+	var _AuthoritiesActions2 = _interopRequireDefault(_AuthoritiesActions);
+
+	var _AuthoritiesSource = __webpack_require__(422);
 
 	var _AuthoritiesSource2 = _interopRequireDefault(_AuthoritiesSource);
 
@@ -25690,7 +25761,7 @@
 	exports.default = _alt2.default.createStore(AuthoritiesStore, 'AuthoritiesStore');
 
 /***/ },
-/* 350 */
+/* 421 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25701,7 +25772,7 @@
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _alt = __webpack_require__(177);
+	var _alt = __webpack_require__(178);
 
 	var _alt2 = _interopRequireDefault(_alt);
 
@@ -25737,7 +25808,7 @@
 	exports.default = _alt2.default.createActions(AuthoritiesActions);
 
 /***/ },
-/* 351 */
+/* 422 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25746,11 +25817,11 @@
 	    value: true
 	});
 
-	var _axios = __webpack_require__(193);
+	var _axios = __webpack_require__(258);
 
 	var _axios2 = _interopRequireDefault(_axios);
 
-	var _AuthoritiesActions = __webpack_require__(350);
+	var _AuthoritiesActions = __webpack_require__(421);
 
 	var _AuthoritiesActions2 = _interopRequireDefault(_AuthoritiesActions);
 
@@ -25783,7 +25854,7 @@
 	exports.default = AuthoritiesSource;
 
 /***/ },
-/* 352 */
+/* 423 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
