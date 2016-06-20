@@ -1,7 +1,7 @@
 import React from 'react';
 
-import store from '../stores/ProjectsStore';
-import actions from '../actions/ProjectsActions';
+import store from '../stores/base/ElementStore';
+import actions from '../actions/base/ElementActions';
 
 import View from './base/View';
 import Panel from './base/Panel';
@@ -26,7 +26,6 @@ class ProjectsView extends React.Component {
 
     componentDidMount() {
         store.listen(this.onChange);
-        actions.fetchProjects();
     }
 
     componentWillUnmount() {
@@ -42,7 +41,7 @@ class ProjectsView extends React.Component {
     }
 
     selectProject(project) {
-        actions.selectProject(project);
+        actions.selectElement(project);
     }
 
     render() {
@@ -90,7 +89,7 @@ class ProjectsView extends React.Component {
                         <Button label="Request Project" icon="plus" active={buttonActive} handleClick={this.showForm} />
                     </PanelHeader>
                     <PanelBody>
-                        <ProjectsList projects={this.state.projects} selected={this.state.selected} selectProject={this.selectProject} />
+                        <ProjectsList select={true} />
                     </PanelBody>
                 </Panel>
                 {panelRight}

@@ -1,9 +1,16 @@
 import React from 'react';
 
+import UsersList from './UsersList';
+
 class ProjectsInfo extends React.Component {
 
     render() {
         var p = this.props.selected;
+
+        var user_filter = {
+            type: 'project',
+            id: p.id
+        };
 
         return (
         <div>
@@ -19,18 +26,9 @@ class ProjectsInfo extends React.Component {
                 <dt>end:</dt>
                 <dd>{p.end_date}&nbsp;</dd>
             </dl>
-            <div className="panel panel-default">
-              <div className="panel-heading">
-                <h3 className="panel-title">Users</h3>
-              </div>
-              <div className="panel-body">
-                <ul>
-                {p.pi_users.map(function(listValue, i){
-                  return <li key={i}>{listValue}</li>;
-                })}
-                </ul>
-              </div>
-            </div>
+
+            <UsersList belongTo={user_filter} />
+
             <div className="panel panel-default">
               <div className="panel-heading">
                 <h3 className="panel-title">Experiments</h3>

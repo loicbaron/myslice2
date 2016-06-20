@@ -14,7 +14,7 @@ class ProjectsRow extends React.Component {
         var authority = this.props.project.authority_details.name || this.props.project.authority_details.shortname;
 
         return (
-             <Element element={this.props.project} type="project" selected={this.props.selected} selectElement={this.props.selectProject}>
+             <Element element={this.props.project} type="project" select={this.props.select}>
                  <ElementStatus status={this.props.project.status} />
                  <ElementIcon icon="project" />
                  <ElementTitle label={label} detail={this.props.project.shortname} />
@@ -46,6 +46,15 @@ class ProjectsRow extends React.Component {
              </Element>
          );
     }
- }
+}
+
+ProjectsRow.propTypes = {
+    project: React.PropTypes.object.isRequired,
+    select: React.PropTypes.bool
+};
+
+ProjectsRow.defaultProps = {
+    select: false
+};
 
 export default ProjectsRow;
