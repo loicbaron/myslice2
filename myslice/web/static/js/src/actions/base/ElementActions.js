@@ -1,6 +1,6 @@
 import alt from '../../alt';
 
-class ViewActions {
+class ElementActions {
 
     selectElement(selected) {
         return selected;
@@ -8,4 +8,4 @@ class ViewActions {
 
 }
 
-export default alt.createActions(ViewActions);
+export default alt.createActions(ElementActions);
