@@ -6,13 +6,14 @@ class ProjectsStore {
 
     constructor() {
         this.projects = [];
+        this.selected = null;
         this.filter = {};
         this.errorMessage = null;
 
         this.bindListeners({
             updateProjectElement: actions.UPDATE_PROJECT_ELEMENT,
-
             updateProjects: actions.UPDATE_PROJECTS,
+            selectProject: actions.SELECT_PROJECT,
             fetchProjects: actions.FETCH_PROJECTS,
             errorProjects: actions.ERROR_PROJECTS
             
@@ -35,10 +36,7 @@ class ProjectsStore {
         console.log("STORAGE UPD ACTIVITY:" + project.id)
         // Check if we already have this project in the state
         let index = this.projects.findIndex(function(projectElement) {
-            if (projectElement.id === project.id) {
-                return true;
-            }
-            return false;
+            return (projectElement.id === project.id);
         });
         /*  If we do we update it, otherwise we add a new
             project event to the state (at the top of the array) */
@@ -58,6 +56,10 @@ class ProjectsStore {
         } else {
             this.projects = projects;
         }
+    }
+
+    selectProject(project) {
+        this.selected = project;
     }
 
     errorProjects(errorMessage) {

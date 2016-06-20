@@ -19,7 +19,7 @@ class ProjectsRow extends React.Component {
         var authority = this.props.project.authority_details.name || this.props.project.authority_details.shortname;
 
         return (
-             <Element element={this.props.project}  type="project">
+             <Element element={this.props.project} type="project" selected={this.props.selected} selectElement={this.props.selectProject}>
                  <ElementStatus status={this.props.project.status} />
                  <ElementIcon icon="project" />
                  <ElementTitle label={label} detail={this.props.project.shortname} />

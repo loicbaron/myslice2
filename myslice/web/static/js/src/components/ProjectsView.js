@@ -1,6 +1,7 @@
 import React from 'react';
-import store from '../stores/base/ViewStore';
-import actions from '../actions/base/ViewActions';
+
+import store from '../stores/ProjectsStore';
+import actions from '../actions/ProjectsActions';
 
 import View from './base/View';
 import Panel from './base/Panel';
@@ -19,11 +20,13 @@ class ProjectsView extends React.Component {
         super(props);
         this.state = store.getState();
         this.onChange = this.onChange.bind(this);
+        this.showForm = this.showForm.bind(this);
+        this.selectProject = this.selectProject.bind(this);
     }
 
     componentDidMount() {
-        // listen on state changes
         store.listen(this.onChange);
+        actions.fetchProjects();
     }
 
     componentWillUnmount() {
@@ -35,11 +38,14 @@ class ProjectsView extends React.Component {
     }
 
     showForm() {
-        actions.updateSelectedElement(null);
+        this.state.selected = null;
+    }
+
+    selectProject(project) {
+        actions.selectProject(project);
     }
 
     render() {
-        var selected = this.state.selectedElement;
         var buttonActive = false;
         var panelRight = null;
 
@@ -49,7 +55,7 @@ class ProjectsView extends React.Component {
             );
         }
 
-        if (selected == null) {
+        if (this.state.selected == null) {
             buttonActive = true;
             panelRight =
                 <Panel>
@@ -66,10 +72,10 @@ class ProjectsView extends React.Component {
             panelRight =
                 <Panel>
                     <PanelHeader>
-                        <Title title={selected.hrn} subtitle={selected.id} />
+                        <Title title={this.state.selected.shortname} subtitle={this.state.selected.hrn} />
                     </PanelHeader>
                     <PanelBody>
-                        <ProjectsInfo selected={selected}></ProjectsInfo>
+                        <ProjectsInfo selected={this.state.selected} />
                     </PanelBody>
                 </Panel>
 
@@ -84,7 +90,7 @@ class ProjectsView extends React.Component {
                         <Button label="Request Project" icon="plus" active={buttonActive} handleClick={this.showForm} />
                     </PanelHeader>
                     <PanelBody>
-                        <ProjectsList />
+                        <ProjectsList projects={this.state.projects} selected={this.state.selected} selectProject={this.selectProject} />
                     </PanelBody>
                 </Panel>
                 {panelRight}
