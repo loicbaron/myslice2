@@ -1,24 +1,31 @@
 import React from 'react';
 
+import store from '../../stores/base/ElementStore';
+import actions from '../../actions/base/ElementActions';
+
 class Element extends React.Component {
 
     constructor(props) {
         super(props);
+        this.state = store.getState();
+        this.onChange = this.onChange.bind(this);
         this.handleClick = this.handleClick.bind(this);
     }
 
     componentDidMount() {
-        if (typeof(this.props.selectElement) != 'undefined') {
+        store.listen(this.onChange);
+    }
 
-        }
+    componentWillUnmount() {
+        store.unlisten(this.onChange);
+    }
+
+    onChange(state) {
+        this.setState(state);
     }
 
     handleClick() {
-        if (this.props.selectElement && (this.props.element != this.props.selected)) {
-            this.props.selectElement(this.props.element);
-        } else {
-            this.props.selectElement(null);
-        }
+        actions.selectElement(this.props.element);
     }
 
     render() {
@@ -28,21 +35,21 @@ class Element extends React.Component {
             className += ' ' + this.props.type;
         }
 
-        if (!this.props.selectElement) {
-            return (
-                <li className={className}>
-                    {this.props.children}
-                </li>
-            );
-        } else {
+        if (this.props.select) {
             className += ' pointer';
 
-            if (this.props.element == this.props.selected) {
+            if (this.props.element == this.state.selected) {
                 className += ' selected';
             }
 
             return (
                 <li className={className} onClick={this.handleClick}>
+                    {this.props.children}
+                </li>
+            );
+        } else {
+            return (
+                <li className={className}>
                     {this.props.children}
                 </li>
             );
@@ -54,13 +61,11 @@ class Element extends React.Component {
 Element.propTypes = {
     element: React.PropTypes.object.isRequired,
     type: React.PropTypes.string,
-    selected: React.PropTypes.object,
-    selectElement: React.PropTypes.func
+    select: React.PropTypes.bool
 };
 
 Element.defaultProps = {
-    selected: null,
-    selectElement: null
+    select: false
 };
 
 export default Element;
