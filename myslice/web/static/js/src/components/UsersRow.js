@@ -9,18 +9,12 @@ import DateTime from './base/DateTime';
 
 class UsersRow extends React.Component {
 
-    constructor(props) {
-        super(props);
-    }
-
-
     render() {
-        var label = this.props.user.first_name +" "+ this.props.user.last_name;
-        //var authority = this.props.user.authority_details.name || this.props.user.authority_details.shortname;
+        var label = this.props.user.first_name +' '+ this.props.user.last_name;
         var authority = this.props.user.authority;
 
         return (
-             <Element element={this.props.user}  type="user">
+             <Element element={this.props.user} type="user" selected={this.props.selected} selectElement={this.props.selectUser}>
                  <ElementStatus status={this.props.user.status} />
                  <ElementIcon icon="user" />
                  <ElementTitle label={label} detail={this.props.user.email} />

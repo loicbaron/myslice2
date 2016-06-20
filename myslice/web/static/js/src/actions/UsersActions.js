@@ -37,8 +37,8 @@ class UsersActions {
         return false;
     }
 
-    fetchUsers() {
-        return true;
+    fetchUsers(filter={}) {
+        return filter;
     }
 
     updateUserElement(user) {
@@ -46,6 +46,10 @@ class UsersActions {
     }
 
     updateUsers(user) {
+        return user;
+    }
+
+    selectUser(user) {
         return user;
     }
 
