@@ -1,52 +1,66 @@
 import React from 'react';
 
-import store from '../../stores/base/ViewStore';
-import actions from '../../actions/base/ViewActions';
-
 class Element extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = store.getState();
-        this.onChange = this.onChange.bind(this);
         this.handleClick = this.handleClick.bind(this);
     }
 
     componentDidMount() {
-        store.listen(this.onChange);
-    }
+        if (typeof(this.props.selectElement) != 'undefined') {
 
-    componentWillUnmount() {
-        store.unlisten(this.onChange);
-    }
-
-    onChange(state) {
-        this.setState(state);
-    }
-
-    handleClick(event) {
-        if (this.state.selectedElement === this.props.element) {
-            actions.updateSelectedElement(null);
-        } else {
-            actions.updateSelectedElement(this.props.element);
         }
+    }
 
+    handleClick() {
+        if (this.props.selectElement && (this.props.element != this.props.selected)) {
+            this.props.selectElement(this.props.element);
+        } else {
+            this.props.selectElement(null);
+        }
     }
 
     render() {
-        var type = this.props.type || '';
-        if (this.state.selectedElement === this.props.element) {
-            var className = 'elementBox selected ' + type;
-        } else {
-            var className = 'elementBox';
+        var className = 'elementBox';
+
+        if (this.props.type) {
+            className += ' ' + this.props.type;
         }
 
-        return (
-            <li className={className} onClick={this.handleClick}>
-                {this.props.children}
-            </li>
-        );
+        if (!this.props.selectElement) {
+            return (
+                <li className={className}>
+                    {this.props.children}
+                </li>
+            );
+        } else {
+            className += ' pointer';
+
+            if (this.props.element == this.props.selected) {
+                className += ' selected';
+            }
+
+            return (
+                <li className={className} onClick={this.handleClick}>
+                    s{this.props.children}
+                </li>
+            );
+        }
+
     }
 }
+
+Element.propTypes = {
+    element: React.PropTypes.object.isRequired,
+    type: React.PropTypes.string,
+    selected: React.PropTypes.object,
+    selectElement: React.PropTypes.func
+};
+
+Element.defaultProps = {
+    selected: null,
+    selectElement: null
+};
 
 export default Element;
