@@ -43,7 +43,7 @@ class Element extends React.Component {
 
             return (
                 <li className={className} onClick={this.handleClick}>
-                    s{this.props.children}
+                    {this.props.children}
                 </li>
             );
         }
