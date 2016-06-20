@@ -1,7 +1,7 @@
 import React from 'react';
 
-import store from '../stores/UsersStore';
-import actions from '../actions/UsersActions';
+import store from '../stores/base/ElementStore';
+import actions from '../actions/base/ElementActions';
 
 import View from './base/View';
 import Panel from './base/Panel';
@@ -20,12 +20,11 @@ class UsersView extends React.Component {
         this.state = store.getState();
         this.onChange = this.onChange.bind(this);
         this.showForm = this.showForm.bind(this);
-        this.selectUser = this.selectUser.bind(this);
+        // this.selectUser = this.selectUser.bind(this);
     }
 
     componentDidMount() {
         store.listen(this.onChange);
-        actions.fetchUsers();
     }
 
     componentWillUnmount() {
@@ -37,11 +36,19 @@ class UsersView extends React.Component {
     }
 
     showForm() {
-        this.state.selected = null;
+        actions.selectElement(null);
     }
 
-    selectUser(user) {
-        actions.selectUser(user);
+    // selectUser(user) {
+    //     actions.selectElement(user);
+    // }
+
+    getSelectedId() {
+        if (this.state.selected) {
+            return this.state.selected.id;
+        } else {
+            return null;
+        }
     }
 
     render() {
@@ -74,6 +81,11 @@ class UsersView extends React.Component {
             ;
         }
 
+        var selectedId = null;
+        if (this.state.selected) {
+            selectedId = this.state.selected.id;
+        }
+
         return (
             <View>
                 <Panel>
@@ -81,7 +93,7 @@ class UsersView extends React.Component {
                         <Title title="Users" />
                     </PanelHeader>
                     <PanelBody>
-                        <UsersList users={this.state.users} selected={this.state.selected} selectUser={this.selectUser} />
+                        <UsersList select={true} />
                     </PanelBody>
                 </Panel>
                 {panelRight}

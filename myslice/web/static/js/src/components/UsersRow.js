@@ -14,7 +14,7 @@ class UsersRow extends React.Component {
         var authority = this.props.user.authority;
 
         return (
-             <Element element={this.props.user} type="user" selected={this.props.selected} selectElement={this.props.selectUser}>
+             <Element element={this.props.user} type="user" select={this.props.select}>
                  <ElementStatus status={this.props.user.status} />
                  <ElementIcon icon="user" />
                  <ElementTitle label={label} detail={this.props.user.email} />
@@ -47,5 +47,14 @@ class UsersRow extends React.Component {
          );
     }
  }
+
+UsersRow.propTypes = {
+    user: React.PropTypes.object.isRequired,
+    select: React.PropTypes.bool
+};
+
+UsersRow.defaultProps = {
+    select: false
+};
 
 export default UsersRow;
