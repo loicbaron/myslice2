@@ -9,11 +9,6 @@ import DateTime from './base/DateTime';
 
 class ProjectsRow extends React.Component {
 
-    constructor(props) {
-        super(props);
-    }
-
-
     render() {
         var label = this.props.project.name || this.props.project.shortname;
         var authority = this.props.project.authority_details.name || this.props.project.authority_details.shortname;
