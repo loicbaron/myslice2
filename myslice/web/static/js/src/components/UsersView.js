@@ -75,7 +75,6 @@ class UsersView extends React.Component {
                 <Panel>
                     <PanelHeader>
                         <Title title="Users" />
-                        <Button label="Request User" icon="plus" active={buttonActive} handleClick={this.showForm} />
                     </PanelHeader>
                     <PanelBody>
                         <UsersList />
