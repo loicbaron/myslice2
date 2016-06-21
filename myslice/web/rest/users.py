@@ -119,7 +119,7 @@ class UsersHandler(Api):
 
         if id:
             # get the user
-            cursor = yield r.table('user').get(id).run(self.dbconnection)
+            cursor = yield r.table('users').get(id).run(self.dbconnection)
 
             while (yield cursor.fetch_next()):
                 user = yield cursor.next()
@@ -148,7 +148,7 @@ class UsersHandler(Api):
                     item = yield cursor.next()
                     response.append(item)
 
-            # GET /projects/<id>
+            # GET /users/<id>
             elif o is None:
                 response.append(user)
 
@@ -158,7 +158,7 @@ class UsersHandler(Api):
 
         # GET /users
         else:
-            # list of projects of a user
+            # list of users
             cursor = yield r.table('users').run(self.dbconnection)
 
             while (yield cursor.fetch_next()):

@@ -37,7 +37,7 @@ class ProjectsActions {
         return false;
     }
 
-    fetchProjects(filter) {
+    fetchProjects(filter={}) {
         return filter;
     }
 
@@ -46,6 +46,10 @@ class ProjectsActions {
     }
 
     updateProjects(project) {
+        return project;
+    }
+
+    selectProject(project) {
         return project;
     }
 

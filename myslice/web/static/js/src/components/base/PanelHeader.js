@@ -2,7 +2,8 @@ import React from 'react';
 
 class PanelHeader extends React.Component {
     render() {
-        if (this.props.children.length >= 2) {
+        var num = React.Children.count(this.props.children);
+        if (num >= 2) {
             return (
                 <div className="p-header">
                     <div className="container-fluid">

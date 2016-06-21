@@ -1,6 +1,7 @@
 import React from 'react';
-import store from '../stores/base/ViewStore';
-import actions from '../actions/base/ViewActions';
+
+import store from '../stores/base/ElementStore';
+import actions from '../actions/base/ElementActions';
 
 import View from './base/View';
 import Panel from './base/Panel';
@@ -10,7 +11,6 @@ import Title from './base/Title';
 import Button from './base/Button';
 
 import UsersInfo from './UsersInfo';
-//import UsersForm from './UsersForm';
 import UsersList from './UsersList';
 
 class UsersView extends React.Component {
@@ -19,10 +19,11 @@ class UsersView extends React.Component {
         super(props);
         this.state = store.getState();
         this.onChange = this.onChange.bind(this);
+        this.showForm = this.showForm.bind(this);
+        // this.selectUser = this.selectUser.bind(this);
     }
 
     componentDidMount() {
-        // listen on state changes
         store.listen(this.onChange);
     }
 
@@ -35,11 +36,22 @@ class UsersView extends React.Component {
     }
 
     showForm() {
-        actions.updateSelectedElement(null);
+        actions.selectElement(null);
+    }
+
+    // selectUser(user) {
+    //     actions.selectElement(user);
+    // }
+
+    getSelectedId() {
+        if (this.state.selected) {
+            return this.state.selected.id;
+        } else {
+            return null;
+        }
     }
 
     render() {
-        var selected = this.state.selectedElement;
         var buttonActive = false;
         var panelRight = null;
 
@@ -49,25 +61,29 @@ class UsersView extends React.Component {
             );
         }
 
-        if (selected == null) {
+        if (this.state.selected == null) {
             buttonActive = true;
             panelRight =
-                <Panel>
-                </Panel>
+                <div />
             ;
         } else {
             buttonActive = false;
             panelRight =
                 <Panel>
                     <PanelHeader>
-                        <Title title={selected.hrn} subtitle={selected.id} />
+                        <Title title={this.state.selected.shortname} subtitle={this.state.selected.hrn} />
                     </PanelHeader>
                     <PanelBody>
-                        <UsersInfo selected={selected}></UsersInfo>
+                        <UsersInfo selected={this.state.selected} />
                     </PanelBody>
                 </Panel>
 
             ;
+        }
+
+        var selectedId = null;
+        if (this.state.selected) {
+            selectedId = this.state.selected.id;
         }
 
         return (
@@ -75,10 +91,9 @@ class UsersView extends React.Component {
                 <Panel>
                     <PanelHeader>
                         <Title title="Users" />
-                        <Button label="Request User" icon="plus" active={buttonActive} handleClick={this.showForm} />
                     </PanelHeader>
                     <PanelBody>
-                        <UsersList />
+                        <UsersList select={true} />
                     </PanelBody>
                 </Panel>
                 {panelRight}

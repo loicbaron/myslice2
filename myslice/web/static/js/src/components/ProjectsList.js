@@ -1,9 +1,9 @@
 import React from 'react';
+
 import store from '../stores/ProjectsStore';
 import actions from '../actions/ProjectsActions';
 
 import List from './base/List';
-
 import ProjectsRow from'./ProjectsRow';
 
 class ProjectsList extends React.Component {
@@ -16,7 +16,14 @@ class ProjectsList extends React.Component {
 
     componentDidMount() {
         store.listen(this.onChange);
-        actions.fetchProjects(this.props.filter);
+
+        actions.fetchProjects(
+            {
+                of: this.props.of
+            }
+        );
+
+
     }
 
     componentWillUnmount() {
@@ -26,34 +33,28 @@ class ProjectsList extends React.Component {
     onChange(state) {
         this.setState(state);
     }
-    
+
     render() {
-        let projects = this.state.projects;
-
-        if (this.state.errorMessage) {
-            return (
-                <div>Something is wrong</div>
-            );
-        }
-
         return (
             <List>
             {
-                projects.map(function(project) {
-                    return <ProjectsRow key={project.id} project={project}></ProjectsRow>;
-                })
+                this.state.projects.map(function(project) {
+                    return <ProjectsRow key={project.id} project={project} select={this.props.select} />;
+                }.bind(this))
             }
             </List>
         );
     }
 }
 
-ProjectsList.defaultProps = {
-    'filter' : {
-        'type' : null,
-        'value' : null
-    }
+ProjectsList.propTypes = {
+    belongTo: React.PropTypes.object,
+    select: React.PropTypes.bool
+};
 
+ProjectsList.defaultProps = {
+    belongTo: { type: null, id: null},
+    select: false
 };
 
 export default ProjectsList;

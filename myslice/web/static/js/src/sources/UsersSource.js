@@ -7,7 +7,16 @@ const UsersSource = () => {
         fetch: {
             // remotely fetch something (required)
             remote(state) {
-                return axios.get('/api/v1/users');
+                //console.log(state.options);
+                switch(state.options.belongTo.type) {
+                    case 'project':
+                        return axios.get('/api/v1/projects/'+state.options.belongTo.id+'/users');
+                        break;
+                    default:
+                        return axios.get('/api/v1/users');
+                }
+
+
             },
 
             // this function checks in our local cache first
@@ -27,6 +36,7 @@ const UsersSource = () => {
                 return true
             }
         },
+
         /*
         submit: {
             // remotely fetch something (required)

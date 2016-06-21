@@ -7,22 +7,22 @@ import ElementStatus from './base/ElementStatus';
 import ElementIcon from './base/ElementIcon';
 import DateTime from './base/DateTime';
 
-class ProjectsRow extends React.Component {
+class UsersRow extends React.Component {
 
     render() {
-        var label = this.props.project.name || this.props.project.shortname;
-        var authority = this.props.project.authority_details.name || this.props.project.authority_details.shortname;
+        var label = this.props.user.first_name +' '+ this.props.user.last_name;
+        var authority = this.props.user.authority;
 
         return (
-             <Element element={this.props.project} type="project" select={this.props.select}>
-                 <ElementStatus status={this.props.project.status} />
-                 <ElementIcon icon="project" />
-                 <ElementTitle label={label} detail={this.props.project.shortname} />
-                 <ElementId id={this.props.project.id} />
+             <Element element={this.props.user} type="user" select={this.props.select}>
+                 <ElementStatus status={this.props.user.status} />
+                 <ElementIcon icon="user" />
+                 <ElementTitle label={label} detail={this.props.user.email} />
+                 <ElementId id={this.props.user.id} />
                  <div className="elementDetail">
-                     <span className="elementLabel">Users</span> {this.props.project.pi_users.length}
+                     <span className="elementLabel">Projects</span> {this.props.user.projects.length}
                      &nbsp;&nbsp;&nbsp;&nbsp;
-                     <span className="elementLabel">Slices</span> {this.props.project.slices.length}
+                     <span className="elementLabel">Slices</span> {this.props.user.slices.length}
                      <br />
                      <span className="elementLabel">Managed by</span> {authority}
                  </div>
@@ -30,31 +30,31 @@ class ProjectsRow extends React.Component {
                      <div className="col-sm-3">
                          <span className="elementLabel">Created</span>
                          <br />
-                         <DateTime timestamp={this.props.project.created} />
+                         <DateTime timestamp={this.props.user.created} />
                      </div>
                      <div className="col-sm-3">
                          <span className="elementLabel">Enabled</span>
                          <br />
-                         <DateTime timestamp={this.props.project.enabled} />
+                         <DateTime timestamp={this.props.user.enabled} />
                      </div>
                      <div className="col-sm-3">
                          <span className="elementLabel">Updated</span>
                          <br />
-                         <DateTime timestamp={this.props.project.updated} />
+                         <DateTime timestamp={this.props.user.updated} />
                      </div>
                  </div>
              </Element>
          );
     }
-}
+ }
 
-ProjectsRow.propTypes = {
-    project: React.PropTypes.object.isRequired,
+UsersRow.propTypes = {
+    user: React.PropTypes.object.isRequired,
     select: React.PropTypes.bool
 };
 
-ProjectsRow.defaultProps = {
+UsersRow.defaultProps = {
     select: false
 };
 
-export default ProjectsRow;
+export default UsersRow;

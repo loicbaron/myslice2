@@ -1,10 +1,10 @@
 import React from 'react';
+
 import store from '../stores/UsersStore';
 import actions from '../actions/UsersActions';
 
 import List from './base/List';
-
-//import UsersRow from'./UsersRow';
+import UsersRow from'./UsersRow';
 
 class UsersList extends React.Component {
 
@@ -16,7 +16,17 @@ class UsersList extends React.Component {
 
     componentDidMount() {
         store.listen(this.onChange);
-        actions.fetchUsers();
+
+        this.fetchUsers({
+            belongTo: this.props.belongTo
+        });
+
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.fetchUsers({
+            belongTo: nextProps.belongTo
+        });
     }
 
     componentWillUnmount() {
@@ -26,27 +36,35 @@ class UsersList extends React.Component {
     onChange(state) {
         this.setState(state);
     }
-    
-    render() {
-        let users = this.state.users;
 
-        if (this.state.errorMessage) {
-            return (
-                <div>Something is wrong</div>
-            );
-        }
+    fetchUsers(options) {
+        actions.fetchUsers({
+            belongTo: options.belongTo
+        });
+    }
+
+    render() {
 
         return (
             <List>
             {
-                users.map(function(user) {
-                    //return <UsersRow key={user.id} user={user}></UsersRow>;
-                    return <div>{user.id}</div>
-                })
+                this.state.users.map(function(user) {
+                    return <UsersRow key={user.id} user={user} select={this.props.select} />;
+                }.bind(this))
             }
             </List>
         );
     }
 }
+
+UsersList.propTypes = {
+    belongTo: React.PropTypes.object,
+    select: React.PropTypes.bool
+};
+
+UsersList.defaultProps = {
+    belongTo: { type: null, id: null},
+    select: false
+};
 
 export default UsersList;

@@ -1,9 +1,16 @@
 import React from 'react';
 
+import UsersList from './UsersList';
+
 class ProjectsInfo extends React.Component {
 
     render() {
         var p = this.props.selected;
+
+        var user_filter = {
+            type: 'project',
+            id: p.id
+        };
 
         return (
         <div>
@@ -21,6 +28,8 @@ class ProjectsInfo extends React.Component {
                 <dd>{p.end_date}&nbsp;</dd>
             </dl>
             
+            <UsersList belongTo={user_filter} />
+
             <div className="panel panel-default">
               <div className="panel-heading">
                 <h3 className="panel-title">Users</h3>

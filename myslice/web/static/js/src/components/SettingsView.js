@@ -59,8 +59,11 @@ class SettingsView extends React.Component {
                 <PanelMenuEntry icon="user" name="profile" handleSelect={this.handleSelect}>
                     Profile
                 </PanelMenuEntry>
-                <PanelMenuEntry name="ssh" handleSelect={this.handleSelect}>
+                <PanelMenuEntry icon="key" name="ssh" handleSelect={this.handleSelect}>
                     SSH Keys
+                </PanelMenuEntry>
+                <PanelMenuEntry icon="unlock-alt" name="password" handleSelect={this.handleSelect}>
+                    Password
                 </PanelMenuEntry>
             </PanelMenu>
         );

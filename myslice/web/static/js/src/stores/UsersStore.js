@@ -6,11 +6,17 @@ class UsersStore {
 
     constructor() {
         this.users = [];
+        this.options = {
+            filter: [],
+            belongTo: {
+                type: null,
+                object: null
+            }
+        };
         this.errorMessage = null;
 
         this.bindListeners({
             updateUserElement: actions.UPDATE_USER_ELEMENT,
-
             updateUsers: actions.UPDATE_USERS,
             fetchUsers: actions.FETCH_USERS,
             errorUsers: actions.ERROR_USERS
@@ -20,7 +26,9 @@ class UsersStore {
         this.registerAsync(source);
     }
 
-    fetchUsers() {
+    fetchUsers(options) {
+
+        this.options = options;
 
         if (!this.getInstance().isLoading()) {
             this.getInstance().fetch();
@@ -29,16 +37,9 @@ class UsersStore {
     }
 
     updateUserElement(user) {
-        console.log("STORAGE UPD ACTIVITY:" + user.id)
-        // Check if we already have this user in the state
         let index = this.users.findIndex(function(userElement) {
-            if (userElement.id === user.id) {
-                return true;
-            }
-            return false;
+            return (userElement.id === user.id);
         });
-        /*  If we do we update it, otherwise we add a new
-            user event to the state (at the top of the array) */
         if (index !== -1) {
             this.users[index] = user;
         } else {
@@ -46,7 +47,6 @@ class UsersStore {
         }
 
         this.errorMessage = null;
-        // optionally return false to suppress the store change event
     }
 
     updateUsers(users) {
