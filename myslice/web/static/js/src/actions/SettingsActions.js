@@ -2,26 +2,35 @@ import alt from '../alt';
 
 class SettingsActions {
 
-    generateKeys() {
+    fetchSettings() {
         return true;
     }
 
-    successMessage(message) {
-        return message;
-    }
-
-    errorMessage(message) {
-        return message;
-    }
-
-    fetchProfile() {
-        return true;
-    }
-
-    updateUser(response) {
-        console.log('sss')
+    updateSettings(response) {
+        this.updateLoading(false);
         return response;
     }
+
+    errorupdateSettings(response) {
+        this.updateLoading(false);
+        return response;
+    }
+
+    onSubmit() {
+        console.log('set loading ture')
+        this.updateLoading(true);
+        return true;
+    }
+
+    generateKeys(){
+        this.updateLoading(true);
+        return true;
+    }
+
+    updateLoading(loading) {
+        return loading;
+    }
+        
 
 }
 

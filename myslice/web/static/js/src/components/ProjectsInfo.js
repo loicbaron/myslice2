@@ -7,6 +7,7 @@ class ProjectsInfo extends React.Component {
 
         return (
         <div>
+            
             <dl>
                 <dt>visibility:</dt>
                 <dd>{p.visibility}&nbsp;</dd>
@@ -19,6 +20,7 @@ class ProjectsInfo extends React.Component {
                 <dt>end:</dt>
                 <dd>{p.end_date}&nbsp;</dd>
             </dl>
+            
             <div className="panel panel-default">
               <div className="panel-heading">
                 <h3 className="panel-title">Users</h3>
@@ -31,6 +33,7 @@ class ProjectsInfo extends React.Component {
                 </ul>
               </div>
             </div>
+            
             <div className="panel panel-default">
               <div className="panel-heading">
                 <h3 className="panel-title">Experiments</h3>
@@ -40,6 +43,7 @@ class ProjectsInfo extends React.Component {
                 {p.slices.map(function(listValue, i){
                   return <li key={i}>{listValue}</li>;
                 })}
+                <SliceRow />
                 </ul>
               </div>
             </div>

@@ -1,52 +1,58 @@
 import alt from '../alt';
 import actions from '../actions/SettingsActions';
-import profileaction from '../actions/ProfileActions';
 import source from '../sources/SettingsSource';
 
 class SettingsStore {
 
     constructor() {
-        this.message = '';
-        this.public_key = '';
-        this.private_key = '';
+        //set profile as default pannel to see
+        this.settings = null;
+        this.menuSelected = 'profile';
+
+        this.loading = false;
 
         this.bindListeners({
-            fetchProfile: actions.FETCH_PROFILE,
-            generateKeys: actions.GENERATE_KEYS,
-            successMessage:actions.SUCCESS_MESSAGE,
-            errorMessage: actions.ERROR_MESSAGE,
+            updateLoading: actions.UPDATE_LOADING,
 
-            updateUser: profileaction.UPDATE_USER,
+            fetchProfile: actions.FETCH_SETTINGS,
+            onSubmit: actions.ON_SUBMIT,
+            generateKeys: actions.GENERATE_KEYS,
+
+            updateSettings: actions.UPDATE_SETTINGS,
+            errorupdateSettings: actions.ERRORUPDATE_SETTINGS,
         });
 
         this.registerAsync(source);
         
     }
 
+    fetchProfile () {
+        this.getInstance().fetchSettings();
+    }
+
+    onSubmit() {
+        this.getInstance().onSubmit();
+    }
 
     generateKeys() {
         this.getInstance().generateKeys();
     }
 
-    fetchProfile () {
-        this.getInstance().fetchProfile();
+    updateSettings (response) {
+        this.setState({ settings: response.data.result});
     }
 
-    updateUser (response) {
-        let user = response.data.result;
-        this.setState({
-            public_key:  user['public_key'],
-            private_key: user['private_key']
-        });
+    errorupdateSettings (error) {
+        console.log(error);
     }
 
-    successMessage(){
-        this.message = "SUCESS";
+    updateLoading(loading) {
+        this.loading = loading;
     }
 
-    errorMessage() {
-        this.message = "ERROR";
-    }
+
+
+
 }
 
 
