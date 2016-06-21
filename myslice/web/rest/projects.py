@@ -28,9 +28,16 @@ class ProjectsHandler(Api):
 
         if id:
             # get the project
-            cursor = yield r.table('projects').filter({ 'id' : id }).filter(lambda project:
-                                                            project["pi_users"].contains(self.get_current_user_id())
-                                                    ).run(self.dbconnection)
+            cursor = yield r.table('projects') \
+                .pluck(self.fields['projects']) \
+                .filter(lambda project:
+                        project["id"].contains(id) and
+                        project["pi_users"].contains(self.get_current_user_id())
+                ) \
+                .merge(lambda project: {
+                    'authority': r.table('authorities').get(project['authority']).pluck(self.fields_short['authorities'])
+                }) \
+                .run(self.dbconnection)
 
             while (yield cursor.fetch_next()):
                 project = yield cursor.next()
@@ -42,9 +49,17 @@ class ProjectsHandler(Api):
             # GET /projects/<id>/users
             if o == 'users':
                 # users in a project
-                cursor = yield r.table('users').filter(lambda user:
-                                                            user["projects"].contains(id)
-                                                        ).run(self.dbconnection)
+                cursor = yield r.table('users') \
+                                .pluck(self.fields['users']) \
+                                .filter(lambda user:
+                                    user["projects"].contains(id)
+                                ) \
+                                .merge(lambda project: {
+                                    'authority': r.table('authorities').get(project['authority']).pluck(
+                                        self.fields_short['authorities'])
+                                }) \
+                                .run(self.dbconnection)
+
                 while (yield cursor.fetch_next()):
                     item = yield cursor.next()
                     response.append(item)
@@ -52,7 +67,20 @@ class ProjectsHandler(Api):
             # GET /projects/<id>/slices
             elif o == 'slices':
                 # users in a project
-                cursor = yield r.table('slices').filter({ "project": id }).run(self.dbconnection)
+                cursor = yield r.table('slices') \
+                                .pluck(self.fields['slices']) \
+                                .filter({"project": id}) \
+                                .merge(lambda slice: {
+                                    'project': r.table('projects').get(slice['project']).pluck(
+                                    self.fields_short['projects'])
+                                }) \
+                                .merge(lambda slice: {
+                                    'authority': r.table('authorities').get(slice['project']['authority']).pluck(
+                                        self.fields_short['authorities'])
+                                }) \
+                                .run(self.dbconnection)
+
+
 
                 while (yield cursor.fetch_next()):
                     item = yield cursor.next()
@@ -69,26 +97,12 @@ class ProjectsHandler(Api):
         # GET /projects
         else:
             # list of projects of a user
-            cursor = yield r.table('projects').filter(lambda project:
-                                                            project["pi_users"].contains(self.get_current_user_id())
-                                                    ).merge(
-
-                        lambda project: {
-
-                        'authority_details': r.table('authorities').get(project['authority']).pluck('name','shortname')
-
-                                        }
-                    ).run(self.dbconnection)
-                #
-                # .eq_join(
-                #                                         'authority',
-                #                                         r.table('authorities')
-                #                                 ).map( r.row.merge({
-                #
-                #                                     "a_shortname": r.row["right"]["shortname"],
-                #                                     "a_hrn": r.row["right"]["hrn"]
-                #                                     })
-                #                                 ).run(self.dbconnection)
+            cursor = yield r.table('projects') \
+                            .pluck(self.fields['projects']) \
+                            .filter(lambda project: project["pi_users"].contains(self.get_current_user_id()))\
+                            .merge(lambda project: {
+                                'authority': r.table('authorities').get(project['authority']).pluck(self.fields_short['authorities'])
+                            }).run(self.dbconnection)
 
             while (yield cursor.fetch_next()):
                 item = yield cursor.next()
