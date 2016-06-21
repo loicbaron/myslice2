@@ -4,7 +4,7 @@ import store from '../stores/SlicesStore';
 import actions from '../actions/SlicesActions';
 
 import List from './base/List';
-import ProjectsRow from'./SlicesRow';
+import SlicesRow from'./SlicesRow';
 
 class SlicesList extends React.Component {
 
@@ -17,7 +17,7 @@ class SlicesList extends React.Component {
     componentDidMount() {
         store.listen(this.onChange);
 
-        actions.fetchProjects({
+        actions.fetchSlices({
                 belongTo: this.props.belongTo
         });
 
@@ -37,7 +37,7 @@ class SlicesList extends React.Component {
             <List>
             {
                 this.state.slices.map(function(slice) {
-                    return <SlicesRow key={slice.id} project={slice} select={this.props.select} />;
+                    return <SlicesRow key={slice.id} slice={slice} select={this.props.select} />;
                 }.bind(this))
             }
             </List>
@@ -45,12 +45,12 @@ class SlicesList extends React.Component {
     }
 }
 
-SlicessList.propTypes = {
+SlicesList.propTypes = {
     belongTo: React.PropTypes.object,
     select: React.PropTypes.bool
 };
 
-SlicessList.defaultProps = {
+SlicesList.defaultProps = {
     belongTo: { type: null, id: null},
     select: false
 };
