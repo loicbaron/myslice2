@@ -37,6 +37,8 @@ class EventStatus(Enum):
     Event Status: new events will automatically have a NEW status,
     once dispatched a new event will be treated and its status will change
     """
+    # INIT is the initial status for previous_status 
+    INIT = "INIT"
     # NEW created event, this will be processed
     NEW = "NEW"
     # If the event needs an external interaction
@@ -186,6 +188,7 @@ class Event(Dict):
         {
             action: <EventAction>
             status: <EventStatus>
+            previous_status: <EventStatus>
             log: [{
                 timestamp: <timestamp>
                 message: <String>
@@ -214,9 +217,8 @@ class Event(Dict):
         
         ##
         # Default status when creating the event is NEW
+        self.previous_status = event.get('previous_status', EventStatus.INIT) 
         self.status = event.get('status', EventStatus.NEW)
-        self.previous_status = event.get('status', EventStatus.NEW)
-
         try:
             self.action = event['action']
         except KeyError:
@@ -325,7 +327,8 @@ class Event(Dict):
 
     @status.setter
     def status(self, value):
-        self.previous_status = self.status
+        if 'status' in self:
+            self.previous_status = self['status']
         if isinstance(value, EventStatus):
             status = value
         elif value in EventStatus.__members__:
@@ -345,7 +348,7 @@ class Event(Dict):
     def previous_status(self):
         return self['previous_status']
 
-    @status.setter
+    @previous_status.setter
     def previous_status(self, value):
         if isinstance(value, EventStatus):
             status = value
@@ -492,7 +495,7 @@ class Event(Dict):
         return self._checkAction(EventAction.REMOVE)
 
     ##
-    # Status
+    # Check Status
     def _checkStatus(self, status):
         if self.status == status:
             return True
