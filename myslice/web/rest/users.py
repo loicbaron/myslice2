@@ -185,8 +185,6 @@ class UsersHandler(Api):
         except Exception as e:
             self.userError("Malformed request", e)
             return
-        from pprint import pprint
-        pprint(data)
 
         if not data['authority']:
             self.userError("Authority not specified")
@@ -210,7 +208,6 @@ class UsersHandler(Api):
             return
         else:
             result = yield dispatch(self.dbconnection, event)
-            print(result)
             self.write(json.dumps(
                 {
                     "result": "success",
@@ -247,8 +244,6 @@ class ProfileHandler(Api):
         """
         # TODO: id must be a valid URN
 
-        print('posted')
-
         profile = yield r.table('users').get(self.get_current_user_id()).run(self.dbconnection)
 
         self.write(json.dumps({"result": profile}, cls=myJSONEncoder))
@@ -263,7 +258,7 @@ class ProfileHandler(Api):
         try:
             data = escape.json_decode(self.request.body)['data']
         except json.decoder.JSONDecodeError as e:
-            self.userError("malformed request", e.message)
+            self.userError("malformed request", e)
             return
         try:
             event = Event({
@@ -276,7 +271,7 @@ class ProfileHandler(Api):
                 'data': data
             })
         except Exception as e:
-            self.userError("problem with request", e.message)
+            self.userError("problem with request", e)
             return
         else:
             activity = yield dispatch(self.dbconnection, event)
