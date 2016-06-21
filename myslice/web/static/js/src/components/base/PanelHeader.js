@@ -22,7 +22,7 @@ class PanelHeader extends React.Component {
             return (
                 <div className="p-header">
                     <div className="container-fluid">
-                        <div class="row">
+                        <div className="row">
                             {this.props.children}
                         </div>
                     </div>
