@@ -1,6 +1,5 @@
 import React from 'react';
-import store from '../stores/SettingsStore';
-import actions from '../actions/SettingsActions';
+
 import Button from './base/Button';
 import DownloadButton from './DownloadButton';
 
@@ -8,60 +7,30 @@ export default class UserAuthentication extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = store.getState();
-        this.onChange = this.onChange.bind(this);
-    }
-    
-    componentDidMount() {
-        store.listen(this.onChange);
+        this.state = {
+            "public_key"   : "",
+            "private_key"  : "",
+        }
     }
 
-    componentWillUnmount() {
-        store.unlisten(this.onChange);
-    }
-
-    // listen to the Store once something changes
-    onChange(state) {
-        this.setState(state);
-    }
-
-/*   // change the state and view
-    updateLastname(event) {
-        actions.updateLastname(event.target.value);
-    }
-
-    updateFirstname(event) {
-        actions.updateFirstname(event.target.value);
-    }
-
-    updateBio(event) {
-        actions.updateBio(event.target.value);
-    }
-
-    updateUrl(event) {
-        actions.updateUrl(event.target.value);
-    }
-*/
-    generateNewKeys() {
+    generateKeys() {
         console.log('generateKeys');
-        actions.generateKeys();
+        this.props.generateKeys();
     }
 
     downloadPublicKeys() {
-        actions.fetchProfile();
         return {
             mime: 'text/plain',
             filename:'publickey',
-            contents: this.state.public_key,
+            contents: this.props.public_key,
         }
     }
 
     downloadPrivateKeys() {
-        actions.fetchProfile();
         return {
             mime: 'text/plain',
             filename:'privatekey',
-            contents: this.state.private_key,
+            contents: this.props.private_key
         }
 
     }
@@ -75,14 +44,14 @@ export default class UserAuthentication extends React.Component {
         return (
                 <div>
                     {this.state.message}
-                    <Button label="Generate New Keys" handleClick={this.generateNewKeys.bind(this)}/> 
+                    <Button label="Generate New Keys" handleClick={this.generateKeys.bind(this)}/> 
                     <DownloadButton 
                             downloadTitle="Download Pubic Keys" 
                             genFile={this.downloadPublicKeys.bind(this)}
                             /> 
                     <DownloadButton 
                             downloadTitle="Download Private Keys" 
-                            genFile= {this.downloadPrivateKeys.bind(this)} 
+                            genFile={this.downloadPrivateKeys.bind(this)}
                             />
                     <form onSubmit={this.submitForm}>
                         <div>

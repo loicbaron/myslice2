@@ -1,69 +1,56 @@
 import React from 'react';
-import store from '../stores/ProfileStore';
-import actions from '../actions/ProfileActions';
 
 import AuthorityName from './AuthorityName';
-import LoadingPanel from './LoadingPanel';
 import Avatar from 'react-avatar';
-
 
 class SettingsProfile extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = store.getState();
-        this.onChange = this.onChange.bind(this);
+        this.state = {  "email"      : "",
+                        "first_name" : "",
+                        "last_name"  : "",
+                        "authority"  : "",
+                        "bio"        : "",
+                        "url"        : "",
+        }
     }
 
     componentDidMount() {
-        store.listen(this.onChange);
-        actions.fetchProfile();
+        if (this.props.profile) {
+            this.setState(this.props.profile);
+        }
     }
 
-    componentWillUnmount() {
-        store.unlisten(this.onChange);
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.profile) {
+            this.setState(nextProps.profile);
+        }
     }
     
-    // listen to the Store once something changes
-    onChange(state) {
-        this.setState(state);
-    }
-
-    // change the state and view
-    updateLastname(event) {
-        actions.updateLastname(event.target.value);
-    }
-
-    updateFirstname(event) {
-        actions.updateFirstname(event.target.value);
-    }
-
-    updateBio(event) {
-        actions.updateBio(event.target.value);
-    }
-
-    updateUrl(event) {
-        actions.updateUrl(event.target.value);
+    // The fields in Default Store is empty string
+    handleChange(event) {
+        this.setState({[event.target.name] : event.target.value})
     }
 
     submitForm(event) {
         event.preventDefault();
-        actions.onSubmit();
+        this.props.onSubmit();
     }
 
     render() {
-        let name = [this.state.first_name,this.state.last_name].join(' ');
+        let name = [this.state.first_name, this.state.last_name].join(' ');
 
         return (
             <div>
                 <Avatar className="avatar" email={this.state.email} name={name} round={true} />
-                <form onSubmit={this.submitForm}>
+                <form onSubmit={this.submitForm.bind(this)}>
                     <div>
                         <input  value={this.state.first_name} 
                                 placeholder="First name" 
                                 type="text" 
                                 name="first_name"
-                                onChange={this.updateFirstname.bind(this)}
+                                onChange={this.handleChange.bind(this)}
                                 />
                     </div>
                     <div>
@@ -71,7 +58,7 @@ class SettingsProfile extends React.Component {
                                 placeholder="Last name" 
                                 type="text" 
                                 name="last_name"
-                                onChange={this.updateLastname.bind(this)}
+                                onChange={this.handleChange.bind(this)}
                                 />
                     </div>
                     <div>
@@ -90,7 +77,7 @@ class SettingsProfile extends React.Component {
                                 placeholder="Bio"
                                 type="text"
                                 name="bio"
-                                onChange={this.updateBio.bind(this)}
+                                onChange={this.handleChange.bind(this)}
                                 />
                     </div>
                     <div>
@@ -98,13 +85,11 @@ class SettingsProfile extends React.Component {
                                 placeholder="Your Url"
                                 type="text"
                                 name="url"
-                                onChange={this.updateUrl.bind(this)}
+                                onChange={this.handleChange.bind(this)}
                                 />
                     </div>
-                    
                     <button type="submit" className="btn btn-default">Update Profile</button>  
                 </form>
-                <LoadingPanel show={this.state.loading} />
             </div>
             )
     }

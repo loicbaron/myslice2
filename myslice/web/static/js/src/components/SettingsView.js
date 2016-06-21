@@ -8,6 +8,10 @@ import PanelMenu from './base/PanelMenu';
 import PanelMenuEntry from './base/PanelMenuEntry';
 import Title from './base/Title';
 
+import actions from '../actions/SettingsActions'
+import store from '../stores/SettingsStore'
+
+import LoadingPanel from './LoadingPanel'
 import SettingsProfile from './SettingsProfile';
 import SettingsSsh from './SettingsSsh';
 
@@ -15,14 +19,34 @@ class SettingsView extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state ={
-            'menuSelected' : 'profile'
-        };
-        this.handleSelect = this.handleSelect.bind(this)
+        this.state = store.getState();
+        this.handleSelect = this.handleSelect.bind(this);
+        this.onChange = this.onChange.bind(this);
+        this.onSubmit = this.onSubmit.bind(this);
+    }
+
+    componentDidMount() {
+        store.listen(this.onChange);
+        actions.fetchSettings();
+    }
+
+    componentWillUnmount(){
+        store.unlisten(this.onChange);
+    }
+
+    onChange(state) {
+        this.setState(state);
+    }
+
+    onSubmit() {
+        actions.onSubmit();
+    }
+
+    generateKeys() {
+        actions.generateKeys();
     }
 
     handleSelect(name) {
-        console.log(name)
         this.setState({
             'menuSelected' : name
         })
@@ -54,7 +78,10 @@ class SettingsView extends React.Component {
                         <Title title="Profile" />
                     </PanelHeader>
                     <PanelBody>
-                        <SettingsProfile />
+                        <SettingsProfile profile={this.state.settings}
+                                         onSubmit={this.onSubmit}
+                            />
+                        <LoadingPanel show={this.state.loading}/>
                     </PanelBody>
                 </Panel>);
                 break;
@@ -64,46 +91,27 @@ class SettingsView extends React.Component {
                         <Title title="SSH" />
                     </PanelHeader>
                     <PanelBody>
-                        <SettingsSsh />
+                        <SettingsSsh generateKeys={this.generateKeys.bind(this)}
+                                     public_key={this.state.settings.public_key}
+                                     private_key={this.state.settings.private_key}
+                                     />            
+                        <LoadingPanel show={this.state.loading}/>
                     </PanelBody>
                 </Panel>);
                 break;
         }
 
         return (
+
             <View>
                 {menuElement}
                 {panel}
             </View>
-
+            
                 
         );
     }
 
 }
 
-/*
-<Tabs onSelect={this.handleSelect} SelectedIndex={2}>
-                    <TabList>
-                        <Tab> Profile </Tab>
-                        <Tab> Authentication </Tab>
-                        <Tab> Account </Tab>
-                        <Tab> xxxx </Tab>
-                    </TabList>
-
-                    <TabPanel>
-                        <UserProfile />
-                    </TabPanel>
-                    <TabPanel>
-                        <UserAuthentication />
-                    </TabPanel>
-                    <TabPanel>
-                        <h2>Hello from Baz</h2>
-                    </TabPanel>
-                    <TabPanel>
-                        <h2>Hello from Baz</h2>
-                    </TabPanel>
-
-                </Tabs>
- */
 export default SettingsView;

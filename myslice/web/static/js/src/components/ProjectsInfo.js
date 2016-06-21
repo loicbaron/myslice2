@@ -42,7 +42,7 @@ class ProjectsInfo extends React.Component {
                     <UsersList belongTo={filter} />
                 </SectionBody>
             </Section>
-
+            
             <Section>
                 <SectionHeader>
                     <SectionTitle title="Slices" />
