@@ -32,7 +32,9 @@ h1 {
     font-weight:100;
 }
 h2 {
+    font-size:18pt;
     font-weight:100;
+    margin:0;
 }
 h3 {
     font-weight:400;
@@ -266,6 +268,24 @@ div.registrationForm {
     text-align:center;
     width:32px;
     margin-right:8px;
+}
+
+/*
+    Sections
+*/
+.section {
+}
+
+.s-header {
+    margin-bottom:15px;
+    margin-top:25px;
+    border-bottom:1px solid #DCDCF8;
+}
+
+.s-header-right {
+
+}
+.s-body {
 }
 
 /*
