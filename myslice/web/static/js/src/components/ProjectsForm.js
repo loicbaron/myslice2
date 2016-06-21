@@ -3,7 +3,6 @@ import store from '../stores/ProjectsFormStore';
 import actions from '../actions/ProjectsFormActions';
 
 import LoadingPanel from './LoadingPanel';
-import UserAuthority from './UserAuthority';
 
 class ProjectsForm extends React.Component {
 
@@ -105,7 +104,6 @@ class ProjectsForm extends React.Component {
                         <div className="col-md-12">
                             <div id="project-form">
                                 <form className="experimentForm" onSubmit={this.handleSubmit}>
-                                <UserAuthority handleUpdateAuthority={this.updateAuthority} />
                                 <input type="text" placeholder="Name" value={this.state.label} onChange={this.handleLabelChange} />
                                 <div>{this.state.name}</div>
                                 <input type="radio" value={this.state.v_public} checked={this.state.v_public === true } onChange={this.onPublicChanged} /> Public

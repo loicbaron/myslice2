@@ -54,7 +54,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _RegistrationForm = __webpack_require__(413);
+	var _RegistrationForm = __webpack_require__(424);
 
 	var _RegistrationForm2 = _interopRequireDefault(_RegistrationForm);
 
@@ -20346,6 +20346,10 @@
 
 	'use strict';
 
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
 	var _alt = __webpack_require__(179);
 
 	var _alt2 = _interopRequireDefault(_alt);
@@ -20354,7 +20358,7 @@
 
 	var alt = new _alt2.default();
 
-	module.exports = alt;
+	exports.default = alt;
 
 /***/ },
 /* 179 */
@@ -25063,7 +25067,18 @@
 /* 410 */,
 /* 411 */,
 /* 412 */,
-/* 413 */
+/* 413 */,
+/* 414 */,
+/* 415 */,
+/* 416 */,
+/* 417 */,
+/* 418 */,
+/* 419 */,
+/* 420 */,
+/* 421 */,
+/* 422 */,
+/* 423 */,
+/* 424 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25078,19 +25093,19 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _RegistrationActions = __webpack_require__(414);
+	var _RegistrationActions = __webpack_require__(425);
 
 	var _RegistrationActions2 = _interopRequireDefault(_RegistrationActions);
 
-	var _RegistrationStore = __webpack_require__(415);
+	var _RegistrationStore = __webpack_require__(426);
 
 	var _RegistrationStore2 = _interopRequireDefault(_RegistrationStore);
 
-	var _AuthoritiesSelect = __webpack_require__(417);
+	var _AuthoritiesSelect = __webpack_require__(428);
 
 	var _AuthoritiesSelect2 = _interopRequireDefault(_AuthoritiesSelect);
 
-	var _EmailInput = __webpack_require__(421);
+	var _EmailInput = __webpack_require__(432);
 
 	var _EmailInput2 = _interopRequireDefault(_EmailInput);
 
@@ -25296,7 +25311,7 @@
 	exports.default = RegistrationForm;
 
 /***/ },
-/* 414 */
+/* 425 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25371,7 +25386,7 @@
 	exports.default = _alt2.default.createActions(RegistrationActions);
 
 /***/ },
-/* 415 */
+/* 426 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25386,11 +25401,11 @@
 
 	var _alt2 = _interopRequireDefault(_alt);
 
-	var _RegistrationActions = __webpack_require__(414);
+	var _RegistrationActions = __webpack_require__(425);
 
 	var _RegistrationActions2 = _interopRequireDefault(_RegistrationActions);
 
-	var _RegistrationSource = __webpack_require__(416);
+	var _RegistrationSource = __webpack_require__(427);
 
 	var _RegistrationSource2 = _interopRequireDefault(_RegistrationSource);
 
@@ -25476,7 +25491,7 @@
 	exports.default = _alt2.default.createStore(RegistrationStore, 'RegistrationStore');
 
 /***/ },
-/* 416 */
+/* 427 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25489,7 +25504,7 @@
 
 	var _axios2 = _interopRequireDefault(_axios);
 
-	var _RegistrationActions = __webpack_require__(414);
+	var _RegistrationActions = __webpack_require__(425);
 
 	var _RegistrationActions2 = _interopRequireDefault(_RegistrationActions);
 
@@ -25533,7 +25548,7 @@
 	exports.default = RegistrationSource;
 
 /***/ },
-/* 417 */
+/* 428 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25552,11 +25567,11 @@
 
 	var _reactSelect2 = _interopRequireDefault(_reactSelect);
 
-	var _AuthoritiesStore = __webpack_require__(418);
+	var _AuthoritiesStore = __webpack_require__(429);
 
 	var _AuthoritiesStore2 = _interopRequireDefault(_AuthoritiesStore);
 
-	var _AuthoritiesActions = __webpack_require__(419);
+	var _AuthoritiesActions = __webpack_require__(430);
 
 	var _AuthoritiesActions2 = _interopRequireDefault(_AuthoritiesActions);
 
@@ -25690,7 +25705,7 @@
 	exports.default = AuthoritiesSelect;
 
 /***/ },
-/* 418 */
+/* 429 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25705,11 +25720,11 @@
 
 	var _alt2 = _interopRequireDefault(_alt);
 
-	var _AuthoritiesActions = __webpack_require__(419);
+	var _AuthoritiesActions = __webpack_require__(430);
 
 	var _AuthoritiesActions2 = _interopRequireDefault(_AuthoritiesActions);
 
-	var _AuthoritiesSource = __webpack_require__(420);
+	var _AuthoritiesSource = __webpack_require__(431);
 
 	var _AuthoritiesSource2 = _interopRequireDefault(_AuthoritiesSource);
 
@@ -25759,7 +25774,7 @@
 	exports.default = _alt2.default.createStore(AuthoritiesStore, 'AuthoritiesStore');
 
 /***/ },
-/* 419 */
+/* 430 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25806,7 +25821,7 @@
 	exports.default = _alt2.default.createActions(AuthoritiesActions);
 
 /***/ },
-/* 420 */
+/* 431 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25819,7 +25834,7 @@
 
 	var _axios2 = _interopRequireDefault(_axios);
 
-	var _AuthoritiesActions = __webpack_require__(419);
+	var _AuthoritiesActions = __webpack_require__(430);
 
 	var _AuthoritiesActions2 = _interopRequireDefault(_AuthoritiesActions);
 
@@ -25852,7 +25867,7 @@
 	exports.default = AuthoritiesSource;
 
 /***/ },
-/* 421 */
+/* 432 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
