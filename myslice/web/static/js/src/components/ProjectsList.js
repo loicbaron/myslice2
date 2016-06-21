@@ -17,11 +17,9 @@ class ProjectsList extends React.Component {
     componentDidMount() {
         store.listen(this.onChange);
 
-        actions.fetchProjects(
-            {
-                of: this.props.of
-            }
-        );
+        actions.fetchProjects({
+                belongTo: this.props.belongTo
+        });
 
 
     }

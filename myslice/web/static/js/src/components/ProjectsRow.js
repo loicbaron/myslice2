@@ -11,7 +11,7 @@ class ProjectsRow extends React.Component {
 
     render() {
         var label = this.props.project.name || this.props.project.shortname;
-        var authority = this.props.project.authority_details.name || this.props.project.authority_details.shortname;
+        var authority = this.props.project.authority.name || this.props.project.authority.shortname;
 
         return (
              <Element element={this.props.project} type="project" select={this.props.select}>
@@ -28,19 +28,13 @@ class ProjectsRow extends React.Component {
                  </div>
                  <div className="row elementDate">
                      <div className="col-sm-3">
-                         <span className="elementLabel">Created</span>
-                         <br />
-                         <DateTime timestamp={this.props.project.created} />
+                         <DateTime label="Created" timestamp={this.props.project.created} />
                      </div>
                      <div className="col-sm-3">
-                         <span className="elementLabel">Enabled</span>
-                         <br />
-                         <DateTime timestamp={this.props.project.enabled} />
+                         <DateTime label="Enabled" timestamp={this.props.project.enabled} />
                      </div>
                      <div className="col-sm-3">
-                         <span className="elementLabel">Updated</span>
-                         <br />
-                         <DateTime timestamp={this.props.project.updated} />
+                         <DateTime label="Updated" timestamp={this.props.project.updated} />
                      </div>
                  </div>
              </Element>

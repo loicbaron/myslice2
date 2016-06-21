@@ -74,7 +74,7 @@ class ProjectsView extends React.Component {
                         <Title title={this.state.selected.shortname} subtitle={this.state.selected.hrn} />
                     </PanelHeader>
                     <PanelBody>
-                        <ProjectsInfo selected={this.state.selected} />
+                        <ProjectsInfo project={this.state.selected} />
                     </PanelBody>
                 </Panel>
 

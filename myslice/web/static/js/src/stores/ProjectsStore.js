@@ -7,7 +7,13 @@ class ProjectsStore {
     constructor() {
         this.projects = [];
         this.selected = null;
-        this.filter = {};
+        this.options = {
+            filter: [],
+            belongTo: {
+                type: null,
+                object: null
+            }
+        };
         this.errorMessage = null;
 
         this.bindListeners({
@@ -22,9 +28,9 @@ class ProjectsStore {
         this.registerAsync(source);
     }
 
-    fetchProjects(filter) {
+    fetchProjects(options) {
 
-        this.filter = filter;
+        this.options = options;
 
         if (!this.getInstance().isLoading()) {
             this.getInstance().fetch();

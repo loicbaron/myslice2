@@ -5,11 +5,12 @@ import formactions from '../actions/ProjectsFormActions';
 const ProjectsSource = () => {
     return {
         fetch: {
-            // remotely fetch something (required)
+
             remote(state) {
-                switch(state.filter.name) {
+                let type = state.options.belongTo.type || null;
+                switch(type) {
                     case 'authority':
-                        return axios.get('/api/v1/authorities/' + state.filter.value + '/projects');
+                        return axios.get('/api/v1/authorities/'+state.options.belongTo.id+'/projects');
                     default:
                         return axios.get('/api/v1/projects');
                 }
