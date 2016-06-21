@@ -111,7 +111,7 @@ class ProjectsHandler(Api):
         self.write(json.dumps({"result": response}, cls=myJSONEncoder))
 
     @gen.coroutine
-    def post(self, params):
+    def post(self, id=None, o=None):
         """
         POST /projects
         { name: string, label: string, description: string }
