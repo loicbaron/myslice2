@@ -13,6 +13,7 @@ class SettingsStore {
 
         this.bindListeners({
             updateLoading: actions.UPDATE_LOADING,
+            updateSelected: actions.UPDATE_SELECTED,
 
             fetchProfile: actions.FETCH_SETTINGS,
             onSubmit: actions.ON_SUBMIT,
@@ -30,8 +31,8 @@ class SettingsStore {
         this.getInstance().fetchSettings();
     }
 
-    onSubmit() {
-        this.getInstance().onSubmit();
+    onSubmit(childstate) {
+        this.getInstance().onSubmit(childstate);
     }
 
     generateKeys() {
@@ -48,6 +49,10 @@ class SettingsStore {
 
     updateLoading(loading) {
         this.loading = loading;
+    }
+
+    updateSelected(name) {
+        this.menuSelected = name;
     }
 
 

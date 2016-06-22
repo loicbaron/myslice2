@@ -38,8 +38,8 @@ class SettingsView extends React.Component {
         this.setState(state);
     }
 
-    onSubmit() {
-        actions.onSubmit();
+    onSubmit(childstate) {
+        actions.onSubmit(childstate);
     }
 
     generateKeys() {
@@ -47,9 +47,7 @@ class SettingsView extends React.Component {
     }
 
     handleSelect(name) {
-        this.setState({
-            'menuSelected' : name
-        })
+        actions.updateSelected(name)
     }
 
     render () {
