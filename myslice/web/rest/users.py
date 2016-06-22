@@ -49,11 +49,16 @@ class LoginHandler(Api):
             self.userError("Wrong Email address")
             return
 
-        feed = yield r.table('users').filter({"email": email}).run(self.application.dbconnection)
-        yield feed.fetch_next()
-        user = yield feed.next()
+        try:
+            feed = yield r.table('users').filter({"email": email}).run(self.application.dbconnection)
+            yield feed.fetch_next()
+            user = yield feed.next()
 
-        if not user:
+            if not user:
+                self.userError("User does not exists")
+                return
+
+        except Exception as e:
             self.userError("User does not exists")
             return
 

@@ -6,6 +6,7 @@ module.exports = {
   context: __dirname,
   entry: {
           settings :"./settings.js",
+          password :"./password.js",
           projects: "./projects.js",
           users: "./users.js",
           registration: "./registration.js",
