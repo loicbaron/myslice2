@@ -1,64 +1,65 @@
 import React from 'react';
 
+import ElementTitle from './base/ElementTitle';
+import ElementId from './base/ElementId';
+import Section from './base/Section';
+import SectionHeader from './base/SectionHeader';
+import SectionBody from './base/SectionBody';
+import SectionTitle from './base/SectionTitle';
+import DateTime from './base/DateTime';
+
 import UsersList from './UsersList';
+import SlicesList from './SlicesList';
 
 class ProjectsInfo extends React.Component {
 
     render() {
-        var p = this.props.selected;
+        var project = this.props.project;
 
-        var user_filter = {
+        var filter = {
             type: 'project',
-            id: p.id
+            id: project.id
         };
 
         return (
         <div>
-            
-            <dl>
-                <dt>visibility:</dt>
-                <dd>{p.visibility}&nbsp;</dd>
-                <dt>url:</dt>
-                <dd><a href="{p.url}" target="_blank">{p.url}</a>&nbsp;</dd>
-                <dt>description:</dt>
-                <dd>{p.description}&nbsp;</dd>
-                <dt>start:</dt>
-                <dd>{p.start_date}&nbsp;</dd>
-                <dt>end:</dt>
-                <dd>{p.end_date}&nbsp;</dd>
-            </dl>
-            
-            <UsersList belongTo={user_filter} />
+            <ElementTitle label={this.props.project.shortname} />
+            <ElementId id={this.props.project.id} />
+            <p>
+                <a href={project.url} target="_blank">{project.url}</a>
+            </p>
+            <p>
+                {project.description}
+            </p>
+            <DateTime label="Start" timestamp={project.start_date} />
+            <DateTime label="End" timestamp={project.end_date} />
 
-            <div className="panel panel-default">
-              <div className="panel-heading">
-                <h3 className="panel-title">Users</h3>
-              </div>
-              <div className="panel-body">
-                <ul>
-                {p.pi_users.map(function(listValue, i){
-                  return <li key={i}>{listValue}</li>;
-                })}
-                </ul>
-              </div>
-            </div>
+            <Section>
+                <SectionHeader>
+                    <SectionTitle title="Users" />
+                </SectionHeader>
+                <SectionBody>
+                    <UsersList belongTo={filter} />
+                </SectionBody>
+            </Section>
             
-            <div className="panel panel-default">
-              <div className="panel-heading">
-                <h3 className="panel-title">Experiments</h3>
-              </div>
-              <div className="panel-body">
-                <ul>
-                {p.slices.map(function(listValue, i){
-                  return <li key={i}>{listValue}</li>;
-                })}
-                <SliceRow />
-                </ul>
-              </div>
-            </div>
+            <Section>
+                <SectionHeader>
+                    <SectionTitle title="Slices" />
+                </SectionHeader>
+                <SectionBody>
+                    <SlicesList belongTo={filter} />
+                </SectionBody>
+            </Section>
+
         </div>
         );
     }
 }
+
+
+ProjectsInfo.propTypes = {
+    project: React.PropTypes.object.isRequired
+};
 
 export default ProjectsInfo;

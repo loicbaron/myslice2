@@ -37,69 +37,96 @@ def emails_run(qEmails):
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
         else:
-            try:
 
-                # Recipients
-                # TODO: Send specific emails
-                # Status did NOT changed
-                # Comments about an event with a message
-                if event.status == event.previous_status:
-                    print("TODO: send specific emails with messages")
-                recipients = set()
+            # Recipients
+            # TODO: Send specific emails
+            # Status did NOT changed
+            # Comments about an event with a message
+            if event.status == event.previous_status:
+                print("TODO: send specific emails with messages")
+            recipients = set()
 
-                if event.isPending():
+            if event.isPending():
 
-                    # Find the authoirty of the event object
-                    # Then according the authority, put the pi_emails in pis_email
-                    authority = Authority(db.get(dbconnection, table='authorities', id=event.data['authority']))
-                    for pi_user in authority.pi_users:
-                        pis = User(db.get(dbconnection, table='users', id=pi_user))
-                        recipients.add(pis)
+                # Find the authoirty of the event object
+                # Then according the authority, put the pi_emails in pis_email
+                try:
+                    authority_id = event.data['authority']
+                except KeyError:
+                    msg = 'Authority id not specified ({})'.format(event.id)
+                    logger.error(msg)
+                    event.logDebug(msg)
+                    event.logWarning('Authority not specified, email not sent')
+                    event.notify = False
+                    dispatch(dbconnection, event)
+                    continue
 
-                    if not recipients:
-                        raise Exception('Emails cannot be sent because no one is the PI of {}'.format(event.object.id))
+                authority = Authority(db.get(dbconnection, table='authorities', id=authority_id))
+                for pi_id in authority.pi_users:
+                    pi = User(db.get(dbconnection, table='users', id=pi_id))
+                    recipients.add(pi)
+
+                if not recipients:
+                    msg = 'Emails cannot be sent because no one is the PI of {}'.format(event.object.id)
+                    logger.error(msg)
+                    event.logDebug(msg)
+                    event.logWarning('No recipients could be found, email not sent')
+                    event.notify = False
+                    dispatch(dbconnection, event)
+                    continue
+            else:
+                # USER REQEUST in body
+                if event.object.type == ObjectType.USER:
+                    recipients.add(User(event.data))
+
+                # SLICE/ PROJECT REQUEST
                 else:
-                    # USER REQEUST in body
-                    if event.object.type == ObjectType.USER:
-                        recipients.add(User(event.data))
-
-                    # SLICE/ PROJECT REQUEST
-                    else:
-                        recipients.add(User(db.get(dbconnection, table='users', id=event.user)))
+                    recipients.add(User(db.get(dbconnection, table='users', id=event.user)))
 
 
-                if event.isPending():
-                    subject, template = build_subject_and_template('request', event.object.type)
+            if event.isPending():
+                subject, template = build_subject_and_template('request', event.object.type)
 
-                elif event.isDenied():
-                    subject, template = build_subject_and_template('approve', event.object.type)
+            elif event.isDenied():
+                subject, template = build_subject_and_template('approve', event.object.type)
 
-                elif event.isApproved():
-                    subject, template = build_subject_and_template('deny', event.object.type)
+            elif event.isApproved():
+                subject, template = build_subject_and_template('deny', event.object.type)
 
-                mail_to = []
-                for r in recipients:
-                    mail_to.append("{} {} <{}>".format(r.first_name, r.last_name, r.email))
+            mail_to = []
+            for r in recipients:
+                try:
+                    username = "{} {}".format(r.first_name, r.last_name)
+                except:
+                    r.first_name = ''
+                    r.last_name = ''
+                    username = "{} {}".format(r.first_name, r.last_name)
 
-                mail_body = template.generate(
-                                title = subject,
-                                entity = str(event.object.type),
-                                theme = s.email.theme,
-                                recipients = recipients,
-                                url = ''
-                                )
-                
-                m = Message(mail_from=('OneLab Support', 'zhouquantest16@gmail.com'),
-                            mail_to = mail_to,
-                            subject = subject,
-                            rich = mail_body
+                mail_to.append("{} <{}>".format(username, r.email))
+
+            mail_body = template.generate(
+                            title = subject,
+                            entity = str(event.object.type),
+                            theme = s.email.theme,
+                            recipients = recipients,
+                            url = ''
                             )
-                
-                Mailer().send(m)
 
+            m = Message(mail_from=('OneLab Support', 'zhouquantest16@gmail.com'),
+                        mail_to = mail_to,
+                        subject = subject,
+                        rich = mail_body
+                        )
+            try:
+                Mailer().send(m)
+                event.logInfo("The PIs of {} have been contacted".format(authority.name))
+                logger.info("The PIs of {} have been contacted".format(authority.name))
             except Exception as e:
-                import traceback
-                traceback.print_exc()
-                event.logError(str(e))
-                dispatch(dbconnection,event)
-                logger.error("There is something wrong with email system {}".format(e))
+                msg = '{} {}'.format(e, event.object.id)
+                logger.error(msg)
+                event.logDebug(msg)
+                event.logWarning('could not send email to PI users')
+            finally:
+                event.notify = False
+                dispatch(dbconnection, event)
+

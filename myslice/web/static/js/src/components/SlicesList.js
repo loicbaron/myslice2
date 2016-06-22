@@ -1,12 +1,12 @@
 import React from 'react';
 
-import store from '../stores/ProjectsStore';
-import actions from '../actions/ProjectsActions';
+import store from '../stores/SlicesStore';
+import actions from '../actions/SlicesActions';
 
 import List from './base/List';
-import ProjectsRow from'./ProjectsRow';
+import SlicesRow from'./SlicesRow';
 
-class ProjectsList extends React.Component {
+class SlicesList extends React.Component {
 
     constructor(props) {
         super(props);
@@ -17,7 +17,7 @@ class ProjectsList extends React.Component {
     componentDidMount() {
         store.listen(this.onChange);
 
-        actions.fetchProjects({
+        actions.fetchSlices({
                 belongTo: this.props.belongTo
         });
 
@@ -36,8 +36,8 @@ class ProjectsList extends React.Component {
         return (
             <List>
             {
-                this.state.projects.map(function(project) {
-                    return <ProjectsRow key={project.id} project={project} select={this.props.select} />;
+                this.state.slices.map(function(slice) {
+                    return <SlicesRow key={slice.id} slice={slice} select={this.props.select} />;
                 }.bind(this))
             }
             </List>
@@ -45,14 +45,14 @@ class ProjectsList extends React.Component {
     }
 }
 
-ProjectsList.propTypes = {
+SlicesList.propTypes = {
     belongTo: React.PropTypes.object,
     select: React.PropTypes.bool
 };
 
-ProjectsList.defaultProps = {
+SlicesList.defaultProps = {
     belongTo: { type: null, id: null},
     select: false
 };
 
-export default ProjectsList;
+export default SlicesList;

@@ -5,12 +5,14 @@ import actions from '../actions/UsersActions';
 const UsersSource = () => {
     return {
         fetch: {
-            // remotely fetch something (required)
             remote(state) {
-                //console.log(state.options);
-                switch(state.options.belongTo.type) {
+                let type = state.options.belongTo.type || null;
+                switch(type) {
                     case 'project':
                         return axios.get('/api/v1/projects/'+state.options.belongTo.id+'/users');
+                        break;
+                    case 'authority':
+                        return axios.get('/api/v1/authority/'+state.options.belongTo.id+'/users');
                         break;
                     default:
                         return axios.get('/api/v1/users');
