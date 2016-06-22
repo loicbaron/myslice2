@@ -3,6 +3,6 @@ from myslice.web.controllers import BaseController
 
 class Index(BaseController):
 
-    #@web.authenticated
+    @web.authenticated
     def get(self):
         self.render(self.application.templates + "/activity.html")
