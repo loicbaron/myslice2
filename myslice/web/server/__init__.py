@@ -61,6 +61,7 @@ def run():
 # http://localhost:8111/authorize?response_type=token&client_id=abc&redirect_uri=http%3A%2F%2Flocalhost%3A8111%2Fevents&scope=scope_write
 
 class Application(web.Application):
+    urn_regex = "urn:[a-z0-9][a-z0-9-]{0,31}:[a-zA-Z0-9()+,\-.:=@;$_!*'%?#]+"
 
     def __init__(self, dbconnection):
         self.templates = os.path.join(os.path.dirname(__file__), "../templates")
@@ -130,7 +131,7 @@ class Application(web.Application):
 
         ##
         # REST API
-        urn_regex = "urn:[a-z0-9][a-z0-9-]{0,31}:[a-zA-Z0-9()+,\-.:=@;$_!*'%?#]+"
+
         rest_handlers = [
 
             web.url(r'/api/v1/activity?([A-Za-z0-9-]+)?', ActivityHandler),
@@ -145,10 +146,10 @@ class Application(web.Application):
 
             web.url(r'/api/v1/profile$', ProfileHandler),
 
-            web.url(r'/api/v1/users/?(' + urn_regex + ')?/?(projects|slices)?$', UsersHandler),
-            web.url(r'/api/v1/authorities/?(' + urn_regex + ')?/?(users|projects)?$', AuthoritiesHandler),
-            web.url(r'/api/v1/projects/?('+urn_regex+')?/?(users|slices)?$', ProjectsHandler),
-            web.url(r'/api/v1/slices/?(' + urn_regex + ')?/?(resources)?$', SlicesHandler),
+            web.url(r'/api/v1/users/?(' + self.urn_regex + ')?/?(projects|slices)?$', UsersHandler),
+            web.url(r'/api/v1/authorities/?(' + self.urn_regex + ')?/?(users|projects)?$', AuthoritiesHandler),
+            web.url(r'/api/v1/projects/?(' + self.urn_regex + ')?/?(users|slices)?$', ProjectsHandler),
+            web.url(r'/api/v1/slices/?(' + self.urn_regex + ')?/?(resources)?$', SlicesHandler),
         ]
 
         ##

@@ -12,70 +12,82 @@ class AuthoritiesHandler(Api):
     @gen.coroutine
     def get(self, id=None, o=None):
         """
-            GET /authorities/[<id>[/(users|projects)]]
+            - GET /authorities
+                (public) Authorities list
 
-            Authority list or authority with <id>
-            User or Slice list part of authority with <id>
+            - GET /authorities/<id>
+                (public) Authority with <id>
+
+            - GET /authorities/(users|projects)
+                (auth) Users/Projects list of the authority of the
+                logged in user
+
+            - GET /authorities/<id>/(users|projects)
+                (auth) Users/Projects list of the authority with <id>
 
             :return:
             """
 
-        authority = None
         response = []
+        current_user = self.get_current_user()
 
-        if id:
-            # get the project
-            cursor = yield r.table('authorities').filter({'id': id}).filter(lambda authority:
-                                                                        authority["pi_users"].contains(
-                                                                             self.get_current_user_id())
-                                                                          or
-                                                                        authority["users"].contains(
-                                                                            self.get_current_user_id())
-                                                                        ).run(self.dbconnection)
-
+        # GET /authorities
+        if not id and not o:
+            cursor = yield r.table('authorities') \
+                            .pluck(self.fields['authorities']) \
+                            .run(self.dbconnection)
             while (yield cursor.fetch_next()):
                 authority = yield cursor.next()
-
-            if not authority:
-                self.userError("no authority found or permission denied")
-                return
-
-            # GET /authority/<id>/users
-            if o == 'users':
-                # users in a project
-                cursor = yield r.table('users').filter({"authority": id}).run(self.dbconnection)
-                while (yield cursor.fetch_next()):
-                    item = yield cursor.next()
-                    response.append(item)
-
-            # GET /authority/<id>/projects
-            elif o == 'projects':
-                # users in a project
-                cursor = yield r.table('projects').filter({"authority": id}).run(self.dbconnection)
-
-                while (yield cursor.fetch_next()):
-                    item = yield cursor.next()
-                    response.append(item)
-
-            # GET /authority/<id>
-            elif o is None:
                 response.append(authority)
 
-            else:
-                self.userError("invalid request")
+
+        # GET /authorities/<id>
+        elif not o and id and self.isUrn(id):
+            if not current_user:
+                self.userError('permission denied')
                 return
 
-        # GET /authority
-        else:
-            # list of projects of a user
-            cursor = yield r.table('authorities').run(self.dbconnection)
+            cursor = yield r.table('authorities') \
+                            .pluck(self.fields['authorities']) \
+                            .filter({'id': id}) \
+                            .filter(lambda authority:
+                                           authority["pi_users"].contains(current_user['id'])
+                                           or
+                                           authority["users"].contains(current_user['id'])) \
+                            .run(self.dbconnection)
+            while (yield cursor.fetch_next()):
+                authority = yield cursor.next()
+                response.append(authority)
 
+        # GET /authorities/(users|projects)
+        elif not id and o in ['users', 'projects']:
+            if not current_user:
+                self.userError('permission denied')
+                return
+
+            cursor = yield r.table(o) \
+                            .pluck(self.fields[o]) \
+                            .filter({"authority": current_user['authority']}) \
+                            .run(self.dbconnection)
             while (yield cursor.fetch_next()):
                 item = yield cursor.next()
                 response.append(item)
 
-        self.write(json.dumps({"result": response}, cls=myJSONEncoder))
+        # GET /authorities/<id>/(users|projects)
+        elif id and self.isUrn(id) and o in ['users', 'projects']:
+            cursor = yield r.table(o) \
+                            .pluck(self.fields[o]) \
+                            .filter({"authority": id}) \
+                            .run(self.dbconnection)
+            while (yield cursor.fetch_next()):
+                item = yield cursor.next()
+                response.append(item)
 
+        else:
+            self.userError("invalid request {} {}".format(id, o))
+            return
+
+        self.finish(json.dumps({"result": response}, cls=myJSONEncoder))
 
     @gen.coroutine
     def post(self):
