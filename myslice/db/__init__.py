@@ -106,7 +106,7 @@ def get(dbconnection=None, table=None, id=None, filter=None):
     return r.db(s.db.name).table(table).run(dbconnection)
 
 
-def users(dbconnection=None, data=None, id=None, email=None):
+def users(dbconnection=None, data=None, id=None, email=None, hashing=None):
     if not dbconnection:
         dbconnection = connect()
 
@@ -128,7 +128,12 @@ def users(dbconnection=None, data=None, id=None, email=None):
     ##
     # Search user by email
     if email:
-        return r.db(s.db.name).table('users').filter(email).run(dbconnection)
+        return r.db(s.db.name).table('users').filter({'email':email}).run(dbconnection)
+
+    ##
+    # Search user by hashing when reset passord
+    if hashing:
+        return r.db(s.db.name).table('users').filter({'hashing':hashing}).run(dbconnection)
 
     return r.db(s.db.name).table('users').run(dbconnection)
 
