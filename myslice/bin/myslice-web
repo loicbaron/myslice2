@@ -18,7 +18,7 @@ logger = logging.getLogger("myslice-web")
 
 if __name__ == '__main__':
 
-    logger.info("Starting web thread")
+    logger.info("Starting web server")
 
     IOLoop.current().run_sync(WebServer)
 
