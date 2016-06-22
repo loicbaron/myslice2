@@ -1,13 +1,9 @@
 {% extends "layout.html" %}
 {% block title %}- Registration{% end %}
 {% block head %}
-
-<!--<script type="text/babel" src="/static/js/actions/authorities.js"></script>-->
-<!--<script type="text/babel" src="/static/js/stores/authorities.js"></script>-->
-<!--<script type="text/babel" src="/static/js/components/authoritySelect.js"></script>-->
-<!--<script type="text/babel" src="/static/js/actions/registration.js"></script>-->
-<!--<script type="text/babel" src="/static/js/stores/registration.js"></script>-->
-<!--<script type="text/babel" src="/static/js/forms/registration.js"></script>-->
+{% end %}
+{% block js %}
+<script type="text/javascript" src="/static/js/build/registration.js"></script>
 {% end %}
 {% block body %}
 <div class="container">
@@ -19,16 +15,6 @@
             <h1>Registration</h1>
         </div>
     </div>
-    <div class="row">
-        <div class="col-sm-4 col-sm-offset-3">
-            <div id="registrationForm" class="registration-form"></div>
-        </div>
-    </div>
-    <div class="">
-        <div class="col-sm-4 col-sm-offset-3">
-            {{ message }}
-        </div>
-    </div>
+    <div id="registrationForm" class="registrationForm form"></div>
 </div>
-<script type="text/javascript" src="/static/js/build/registration.js"></script>
 {% end %}
