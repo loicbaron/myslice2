@@ -2,8 +2,8 @@ import alt from '../alt';
 
 class UsersActions {
 
-    fetchUsers(options) {
-        return options;
+    fetchUsers(filter = {}) {
+        return filter;
     }
 
     updateUserElement(user) {
