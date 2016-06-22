@@ -1,31 +1,20 @@
 import React from 'react';
 
-import store from '../../stores/base/ElementStore';
-import actions from '../../actions/base/ElementActions';
-
 class Element extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = store.getState();
-        this.onChange = this.onChange.bind(this);
         this.handleClick = this.handleClick.bind(this);
     }
 
     componentDidMount() {
-        store.listen(this.onChange);
     }
 
     componentWillUnmount() {
-        store.unlisten(this.onChange);
-    }
-
-    onChange(state) {
-        this.setState(state);
     }
 
     handleClick() {
-        actions.selectElement(this.props.element);
+        this.props.setCurrent(this.props.element);
     }
 
     render() {
@@ -35,10 +24,10 @@ class Element extends React.Component {
             className += ' ' + this.props.type;
         }
 
-        if (this.props.select) {
+        if (this.props.setCurrent) {
             className += ' pointer';
 
-            if (this.props.element == this.state.selected) {
+            if (this.props.element == this.props.current) {
                 className += ' selected';
             }
 
@@ -61,11 +50,14 @@ class Element extends React.Component {
 Element.propTypes = {
     element: React.PropTypes.object.isRequired,
     type: React.PropTypes.string,
-    select: React.PropTypes.bool
+    current: React.PropTypes.object,
+    setCurrent: React.PropTypes.func
 };
 
 Element.defaultProps = {
-    select: false
+    type: null,
+    current: null,
+    setCurrent: null
 };
 
 export default Element;
