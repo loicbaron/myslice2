@@ -35,7 +35,7 @@ class SettingsProfile extends React.Component {
 
     submitForm(event) {
         event.preventDefault();
-        this.props.onSubmit();
+        this.props.onSubmit(this.state);
     }
 
     render() {

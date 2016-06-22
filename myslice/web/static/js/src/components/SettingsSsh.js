@@ -53,27 +53,6 @@ export default class UserAuthentication extends React.Component {
                             downloadTitle="Download Private Keys" 
                             genFile={this.downloadPrivateKeys.bind(this)}
                             />
-                    <form onSubmit={this.submitForm}>
-                        <div>
-                            <input  defaultvalue=''
-                                    placeholder="Current Password" 
-                                    type="text" 
-                                    name="current_password"
-                                    />
-                            <input  defaultvalue=''
-                                    placeholder="New Password" 
-                                    type="text" 
-                                    name="new_password"
-                                    />
-                            <input  defaultvalue=''
-                                    placeholder="Repeat Password" 
-                                    type="text" 
-                                    name="repeat_password"
-                                    />
-                        </div>
-                        
-                        <button type="submit" className="btn btn-default">Reset</button>  
-                    </form>
                 </div>
             );
     }

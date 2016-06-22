@@ -34,6 +34,7 @@ class User(myslicelibUser):
         self.generate_keys = data.get('generate_keys', False)
         self.keys = data.get('keys', [])
         self.credentials = data.get('credentials', [])
+        self.hashing = data.get('hashing', '')
 
     def has_privilege(self, event):
         '''
@@ -48,9 +49,6 @@ class User(myslicelibUser):
         if event.object.type == ObjectType.SLICE and event.object.id in self.slices:
             return True
 
-        from pprint import pprint
-        print('aaaaaaa'*10)
-        pprint(self.pi_authorities)
         for auth in self.pi_authorities:
             if hasattr(event.data, 'authority') and auth == event.data.authority:
                 return True

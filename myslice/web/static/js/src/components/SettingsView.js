@@ -14,6 +14,7 @@ import store from '../stores/SettingsStore'
 import LoadingPanel from './LoadingPanel'
 import SettingsProfile from './SettingsProfile';
 import SettingsSsh from './SettingsSsh';
+import SettingsPassword from './SettingsPassword';
 
 class SettingsView extends React.Component {
 
@@ -38,8 +39,8 @@ class SettingsView extends React.Component {
         this.setState(state);
     }
 
-    onSubmit() {
-        actions.onSubmit();
+    onSubmit(childstate) {
+        actions.onSubmit(childstate);
     }
 
     generateKeys() {
@@ -47,9 +48,7 @@ class SettingsView extends React.Component {
     }
 
     handleSelect(name) {
-        this.setState({
-            'menuSelected' : name
-        })
+        actions.updateSelected(name)
     }
 
     render () {
@@ -99,6 +98,19 @@ class SettingsView extends React.Component {
                     </PanelBody>
                 </Panel>);
                 break;
+
+            case 'password':
+                panel = (<Panel>
+                    <PanelHeader>
+                        <Title title="Reset Password" />
+                    </PanelHeader>
+                    <PanelBody>
+                        <SettingsPassword />            
+                        <LoadingPanel show={this.state.loading}/>
+                    </PanelBody>
+                </Panel>);
+                break;
+
         }
 
         return (

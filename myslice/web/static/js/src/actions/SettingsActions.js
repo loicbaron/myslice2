@@ -16,10 +16,9 @@ class SettingsActions {
         return response;
     }
 
-    onSubmit() {
-        console.log('set loading ture')
+    onSubmit(childstate) {
         this.updateLoading(true);
-        return true;
+        return childstate;
     }
 
     generateKeys(){
@@ -29,6 +28,10 @@ class SettingsActions {
 
     updateLoading(loading) {
         return loading;
+    }
+
+    updateSelected(name) {
+        return name;
     }
         
 
