@@ -14,17 +14,36 @@ import SlicesList from './SlicesList';
 class ProjectsInfo extends React.Component {
 
     render() {
-        var project = this.props.project;
+        var project = this.props.element.project;
+        var users = null;
+        var slices = null;
 
-        var filter = {
-            type: 'project',
-            id: project.id
-        };
+        if (this.props.element.users.length > 0) {
+            users = <Section>
+                        <SectionHeader>
+                            <SectionTitle title="Users" />
+                        </SectionHeader>
+                        <SectionBody>
+                            <UsersList users={this.props.element.users} />
+                        </SectionBody>
+                    </Section>
+        }
+
+        if (this.props.element.slices.length > 0) {
+            slices = <Section>
+                        <SectionHeader>
+                            <SectionTitle title="Slices" />
+                        </SectionHeader>
+                        <SectionBody>
+                            <SlicesList slices={this.props.element.slices} />
+                        </SectionBody>
+                    </Section>
+        }
 
         return (
         <div>
-            <ElementTitle label={this.props.project.shortname} />
-            <ElementId id={this.props.project.id} />
+            <ElementTitle label={project.shortname} />
+            <ElementId id={project.id} />
             <p>
                 <a href={project.url} target="_blank">{project.url}</a>
             </p>
@@ -34,23 +53,9 @@ class ProjectsInfo extends React.Component {
             <DateTime label="Start" timestamp={project.start_date} />
             <DateTime label="End" timestamp={project.end_date} />
 
-            <Section>
-                <SectionHeader>
-                    <SectionTitle title="Users" />
-                </SectionHeader>
-                <SectionBody>
-                    <UsersList belongTo={filter} />
-                </SectionBody>
-            </Section>
+            {users}
             
-            <Section>
-                <SectionHeader>
-                    <SectionTitle title="Slices" />
-                </SectionHeader>
-                <SectionBody>
-                    <SlicesList belongTo={filter} />
-                </SectionBody>
-            </Section>
+            {slices}
 
         </div>
         );
@@ -59,7 +64,7 @@ class ProjectsInfo extends React.Component {
 
 
 ProjectsInfo.propTypes = {
-    project: React.PropTypes.object.isRequired
+    element: React.PropTypes.object.isRequired
 };
 
 export default ProjectsInfo;

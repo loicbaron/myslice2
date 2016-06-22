@@ -7,10 +7,10 @@ const ProjectsSource = () => {
         fetch: {
 
             remote(state) {
-                let type = state.options.belongTo.type || null;
+                var type = null;
                 switch(type) {
                     case 'authority':
-                        return axios.get('/api/v1/authorities/'+state.options.belongTo.id+'/projects');
+                        return axios.get('/api/v1/authorities/projects');
                     default:
                         return axios.get('/api/v1/projects');
                 }
@@ -27,6 +27,56 @@ const ProjectsSource = () => {
             //loading: actions.loadingResults, // (optional)
             success: actions.updateProjects, // (required)
             error: actions.errorProjects, // (required)
+
+            // should fetch has precedence over the value returned by local in determining whether remote should be called
+            // in this particular example if the value is present locally it would return but still fire off the remote request (optional)
+            shouldFetch(state) {
+                return true
+            }
+        },
+
+        users: {
+
+            remote(state) {
+                if (state.current.project) {
+                    return axios.get('/api/v1/projects/' + state.current.project.id + '/users');
+                }
+
+            },
+
+            // local(state) {
+            //     return state.authorities ? state.authorities : null;
+            // },
+
+            // here we setup some actions to handle our response
+            //loading: actions.loadingResults, // (optional)
+            success: actions.updateUsers, // (required)
+            error: actions.errorUsers, // (required)
+
+            // should fetch has precedence over the value returned by local in determining whether remote should be called
+            // in this particular example if the value is present locally it would return but still fire off the remote request (optional)
+            shouldFetch(state) {
+                return true
+            }
+        },
+
+        slices: {
+
+            remote(state) {
+                if (state.current.project) {
+                    return axios.get('/api/v1/projects/' + state.current.project.id + '/slices');
+                }
+
+            },
+
+            // local(state) {
+            //     return state.authorities ? state.authorities : null;
+            // },
+
+            // here we setup some actions to handle our response
+            //loading: actions.loadingResults, // (optional)
+            success: actions.updateSlices, // (required)
+            error: actions.errorSlices, // (required)
 
             // should fetch has precedence over the value returned by local in determining whether remote should be called
             // in this particular example if the value is present locally it would return but still fire off the remote request (optional)
