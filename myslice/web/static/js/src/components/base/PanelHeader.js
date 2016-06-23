@@ -8,10 +8,10 @@ class PanelHeader extends React.Component {
                 <div className="p-header">
                     <div className="container-fluid">
                         <div className="row">
-                            <div className="col-sm-6">
+                            <div className="col-sm-8">
                                 {this.props.children[0]}
                             </div>
-                            <div className="col-sm-6 p-header-right">
+                            <div className="col-sm-4 p-header-right">
                                 {this.props.children.slice(1)}
                             </div>
                         </div>

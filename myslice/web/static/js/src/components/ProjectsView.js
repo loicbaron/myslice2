@@ -100,10 +100,11 @@ class ProjectsView extends React.Component {
         }
 
         if (this.state.current.project) {
+            let project_title = this.state.current.project.name || this.state.current.project.shortname;
             panelRight =
                 <Panel>
                     <PanelHeader>
-                        <Title title={this.state.current.project.shortname} subtitle={this.state.current.project.hrn} />
+                        <Title title={project_title} subtitle={this.state.current.project.shortname} />
                         <Button label="Add Users" icon="plus" handleClick={this.addUsers} />
                     </PanelHeader>
                     <PanelBody>
