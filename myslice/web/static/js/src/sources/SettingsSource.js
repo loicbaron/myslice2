@@ -26,14 +26,14 @@ const SettingsSource = () => {
             }, 
 
             submitProfile: {
-                remote(state, childstate) {
+                remote(state) {
                     return axios.put('/api/v1/profile',
                         {
                             data: {
-                                "first_name": childstate.first_name,
-                                "last_name": childstate.last_name,
-                                "bio": childstate.bio,
-                                "url": childstate.url
+                                "first_name": state.profile.first_name,
+                                "last_name": state.profile.last_name,
+                                "bio": state.profile.bio,
+                                "url": state.profile.url
                             }
                         });
                 },
@@ -69,7 +69,7 @@ const SettingsSource = () => {
             submitPassword:{
                 remote(state) {
                     console.log(this.state.newPassword);
-                    console.log(this.state.settings.password);
+                    console.log(this.state.profile.password);
 
                 },
 
