@@ -72,7 +72,6 @@ class PasswordInput extends React.Component {
     }
 
     render() {
-        
         let message = <div>{this.state.helperText}</div>;
         let reavealed = this.props.reavealed ? "text" : "password";
 

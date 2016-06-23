@@ -16,9 +16,9 @@ class SettingsActions {
         return response;
     }
 
-    submitProfile(childstate) {
+    submitProfile() {
         this.updateLoading(true);
-        return childstate;
+        return true;
     }
 
     submitPassword() {
@@ -45,6 +45,10 @@ class SettingsActions {
 
     resetPassword(newPassword) {
         return newPassword;
+    }
+
+    updateProfile(name, value) {
+        return [name, value];
     }
         
 

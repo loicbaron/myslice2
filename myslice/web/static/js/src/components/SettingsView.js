@@ -38,8 +38,12 @@ class SettingsView extends React.Component {
         this.setState(state);
     }
     // for Profile
-    submitProfile(childstate) {
-        actions.submitProfile(childstate);
+    submitProfile() {
+        actions.submitProfile();
+    }
+
+    updateProfile(name, value) {
+        actions.updateProfile(name, value);
     }
 
     // for Keys
@@ -90,9 +94,10 @@ class SettingsView extends React.Component {
                         <Title title="Profile" />
                     </PanelHeader>
                     <PanelBody>
-                        <SettingsProfile profile={this.state.settings}
+                        <SettingsProfile profile={this.state.profile}
                                          submitProfile={this.submitProfile.bind(this)}
-                            />
+                                         updateProfile={this.updateProfile.bind(this)}
+                                        />
                         <LoadingPanel show={this.state.loading}/>
                     </PanelBody>
                 </Panel>);
@@ -104,8 +109,8 @@ class SettingsView extends React.Component {
                     </PanelHeader>
                     <PanelBody>
                         <SettingsSsh generateKeys={this.generateKeys.bind(this)}
-                                     public_key={this.state.settings.public_key}
-                                     private_key={this.state.settings.private_key}
+                                     public_key={this.state.profile.public_key}
+                                     private_key={this.state.profile.private_key}
                                      />            
                         <LoadingPanel show={this.state.loading}/>
                     </PanelBody>
@@ -121,7 +126,7 @@ class SettingsView extends React.Component {
                         <SettingsPassword repeatPassword={this.repeatPassword.bind(this)}
                                           resetPassword={this.resetPassword.bind(this)}
                                           submitPassword={this.submitPassword.bind(this)}
-                                    />            
+                                        />            
                         <LoadingPanel show={this.state.loading}/>
                     </PanelBody>
                 </Panel>);

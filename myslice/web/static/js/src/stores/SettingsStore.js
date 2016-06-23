@@ -6,7 +6,14 @@ class SettingsStore {
 
     constructor() {
         //set profile as default pannel to see
-        this.settings = null;
+        this.profile = {   "email"      : "",
+
+                            "first_name" : "",
+                            "last_name"  : "",
+                            "authority"  : "",
+                            "bio"        : "",
+                            "url"        : "",
+            }
         this.menuSelected = 'profile';
         this.newPassword = '';
 
@@ -15,6 +22,7 @@ class SettingsStore {
         this.bindListeners({
             updateLoading: actions.UPDATE_LOADING,
             updateSelected: actions.UPDATE_SELECTED,
+            updateProfile: actions.UPDATE_PROFILE,
 
             fetchProfile: actions.FETCH_SETTINGS,
             submitProfile: actions.SUBMIT_PROFILE,
@@ -36,8 +44,12 @@ class SettingsStore {
         this.getInstance().fetchSettings();
     }
 
-    submitProfile(childstate) {
-        this.getInstance().submitProfile(childstate);
+    submitProfile() {
+        this.getInstance().submitProfile();
+    }
+
+    submitPassword() {
+        this.getInstance().submitPassword();
     }
 
     generateKeys() {
@@ -45,7 +57,7 @@ class SettingsStore {
     }
 
     updateSettings (response) {
-        this.setState({ settings: response.data.result});
+        this.setState({ profile: response.data.result});
     }
 
     errorupdateSettings (error) {
@@ -60,17 +72,19 @@ class SettingsStore {
         this.menuSelected = name;
     }
 
+    updateProfile(array) {
+        this.profile[array[0]] = array[1];
+    }
+
     repeatPassword(oldPassword) {
-        this.settings.password = oldPassword;
+        this.profile.password = oldPassword;
     }
 
     resetPassword(newPassword) {
         this.newPassword = newPassword;
     }
 
-    submitPassword() {
-        this.getInstance().submitPassword();
-    }
+
 
 }
 
