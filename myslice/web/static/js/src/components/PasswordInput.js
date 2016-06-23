@@ -7,14 +7,16 @@ class PasswordInput extends React.Component {
 
         this.state = {
             'class' : '',
-            'helperText': ''
+            'helperText': '',
         };
 
         this.updatePassword = this.updatePassword.bind(this);
     }
 
     validatePassword(password) {
-        var re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,25}$/;
+        //Minimum 8 characters at least 1 Uppercase Alphabet, 1 Lowercase Alphabet, 1 Number
+        //Special Character is allowed but not required
+        var re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d$@$!%*?&]{8,25}/;
         return re.test(password);
     }
 
@@ -24,9 +26,9 @@ class PasswordInput extends React.Component {
         if (this.validatePassword(password)) {
             this.setState({
                         'class' : '',
-                        'helperText': ''
+                        'helperText': '',
                         });
-            this.props.handleChange(email);
+            this.props.checkedPassword(password);
         
         } else {
             this.setState({
@@ -36,7 +38,6 @@ class PasswordInput extends React.Component {
             if (this.props.showPattern) {
                 this.checkPattern(password);
             }
-            console.log('new')
         }
     }
 
@@ -70,9 +71,7 @@ class PasswordInput extends React.Component {
         }
     }
 
-
     render() {
-        
         let message = <div>{this.state.helperText}</div>;
         let reavealed = this.props.reavealed ? "text" : "password";
 
@@ -93,7 +92,8 @@ PasswordInput.propTypes = {
     name: React.PropTypes.string,
     placeholder: React.PropTypes.string,
     showPattern: React.PropTypes.bool,
-    reavealed: React.PropTypes.bool
+    reavealed: React.PropTypes.bool,
+    checkedPassword: React.PropTypes.func
 }
 
 PasswordInput.defaultProps = {

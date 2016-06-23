@@ -6,18 +6,31 @@ class SettingsStore {
 
     constructor() {
         //set profile as default pannel to see
-        this.settings = null;
+        this.profile = {   "email"      : "",
+
+                            "first_name" : "",
+                            "last_name"  : "",
+                            "authority"  : "",
+                            "bio"        : "",
+                            "url"        : "",
+            }
         this.menuSelected = 'profile';
+        this.newPassword = '';
 
         this.loading = false;
 
         this.bindListeners({
             updateLoading: actions.UPDATE_LOADING,
             updateSelected: actions.UPDATE_SELECTED,
+            updateProfile: actions.UPDATE_PROFILE,
 
             fetchProfile: actions.FETCH_SETTINGS,
-            onSubmit: actions.ON_SUBMIT,
+            submitProfile: actions.SUBMIT_PROFILE,
             generateKeys: actions.GENERATE_KEYS,
+            submitPassword: actions.SUBMIT_PASSWORD,
+            
+            repeatPassword: actions.REPEAT_PASSWORD,
+            resetPassword: actions.RESET_PASSWORD,
 
             updateSettings: actions.UPDATE_SETTINGS,
             errorupdateSettings: actions.ERRORUPDATE_SETTINGS,
@@ -31,8 +44,12 @@ class SettingsStore {
         this.getInstance().fetchSettings();
     }
 
-    onSubmit(childstate) {
-        this.getInstance().onSubmit(childstate);
+    submitProfile() {
+        this.getInstance().submitProfile();
+    }
+
+    submitPassword() {
+        this.getInstance().submitPassword();
     }
 
     generateKeys() {
@@ -40,7 +57,7 @@ class SettingsStore {
     }
 
     updateSettings (response) {
-        this.setState({ settings: response.data.result});
+        this.setState({ profile: response.data.result});
     }
 
     errorupdateSettings (error) {
@@ -55,6 +72,17 @@ class SettingsStore {
         this.menuSelected = name;
     }
 
+    updateProfile(array) {
+        this.profile[array[0]] = array[1];
+    }
+
+    repeatPassword(oldPassword) {
+        this.profile.password = oldPassword;
+    }
+
+    resetPassword(newPassword) {
+        this.newPassword = newPassword;
+    }
 
 
 

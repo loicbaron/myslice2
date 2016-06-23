@@ -7,46 +7,27 @@ class SettingsProfile extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {  "email"      : "",
-                        "first_name" : "",
-                        "last_name"  : "",
-                        "authority"  : "",
-                        "bio"        : "",
-                        "url"        : "",
-        }
-    }
-
-    componentDidMount() {
-        if (this.props.profile) {
-            this.setState(this.props.profile);
-        }
-    }
-
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.profile) {
-            this.setState(nextProps.profile);
-        }
     }
     
     // The fields in Default Store is empty string
     handleChange(event) {
-        this.setState({[event.target.name] : event.target.value})
+        this.props.updateProfile(event.target.name, event.target.value)
     }
 
     submitForm(event) {
         event.preventDefault();
-        this.props.onSubmit(this.state);
+        this.props.submitProfile(this.state);
     }
 
     render() {
-        let name = [this.state.first_name, this.state.last_name].join(' ');
+        //let name = [this.props.profile.first_name, this.props.profile.last_name].join(' ');
 
         return (
             <div>
-                <Avatar className="avatar" email={this.state.email} name={name} round={true} />
+                <Avatar className="avatar" email={this.props.profile.email} name={name} round={true} />
                 <form onSubmit={this.submitForm.bind(this)}>
                     <div>
-                        <input  value={this.state.first_name} 
+                        <input  value={this.props.profile.first_name} 
                                 placeholder="First name" 
                                 type="text" 
                                 name="first_name"
@@ -54,7 +35,7 @@ class SettingsProfile extends React.Component {
                                 />
                     </div>
                     <div>
-                        <input  value={this.state.last_name} 
+                        <input  value={this.props.profile.last_name} 
                                 placeholder="Last name" 
                                 type="text" 
                                 name="last_name"
@@ -62,7 +43,7 @@ class SettingsProfile extends React.Component {
                                 />
                     </div>
                     <div>
-                        <input  value={this.state.email} 
+                        <input  value={this.props.profile.email} 
                                 name="email"
                                 placeholder="Email address"
                                 type="text"
@@ -70,10 +51,10 @@ class SettingsProfile extends React.Component {
                                 />
                     </div>
                     <div>
-                        <AuthorityName id={this.state.authority} />
+                        <AuthorityName id={this.props.profile.authority} />
                     </div>
                     <div>
-                        <input  value={this.state.bio}
+                        <input  value={this.props.profile.bio}
                                 placeholder="Bio"
                                 type="text"
                                 name="bio"
@@ -81,7 +62,7 @@ class SettingsProfile extends React.Component {
                                 />
                     </div>
                     <div>
-                        <input  value={this.state.url}
+                        <input  value={this.props.profile.url}
                                 placeholder="Your Url"
                                 type="text"
                                 name="url"
@@ -94,6 +75,12 @@ class SettingsProfile extends React.Component {
             )
     }
 
+}
+
+SettingsProfile.propTypes = {
+    profile: React.PropTypes.object,
+    submitProfile: React.PropTypes.func,
+    updateProfile: React.PropTypes.func.isRequired
 }
 
 export default SettingsProfile;
