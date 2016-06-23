@@ -1,20 +1,38 @@
 from email.utils import parseaddr
 import crypt
 from hmac import compare_digest as compare_hash
+import json
 from tornado.web import MissingArgumentError
 from tornado import gen
 from rethinkdb import r
 
+from myslice.lib.util import myJSONEncoder
 from myslice.web.controllers import BaseController
 
 class Index(BaseController):
 
+    @gen.coroutine
     def get(self):
         """
         Renders the login page
 
         :return:
         """
+
+        id = 'urn:publicid:IDN+onelab:upmc+user+loic_baron'
+
+        user = yield r.table('users').get(id).run(self.application.dbconnection)
+        if not user:
+            pass
+
+        self.set_secure_cookie("user", json.dumps({
+            'id': user['id'],
+            'email': user['email'],
+            'firstname': user.get('firstname', ''),
+            'lastname': user.get('lastname', ''),
+            'authority': user['authority']
+        }, cls=myJSONEncoder))
+
         self.render(self.application.templates + "/login.html", message='')
 
     @gen.coroutine
@@ -58,7 +76,6 @@ class Index(BaseController):
             self.render(self.application.templates + "/login.html", message="password does not match")
             return
 
-        self.set_current_user(user['id'])
         self.redirect("/")
 
 
