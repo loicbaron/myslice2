@@ -23,7 +23,6 @@ class SettingsView extends React.Component {
         this.state = store.getState();
         this.handleSelect = this.handleSelect.bind(this);
         this.onChange = this.onChange.bind(this);
-        this.onSubmit = this.onSubmit.bind(this);
     }
 
     componentDidMount() {
@@ -38,17 +37,31 @@ class SettingsView extends React.Component {
     onChange(state) {
         this.setState(state);
     }
-
-    onSubmit(childstate) {
-        actions.onSubmit(childstate);
+    // for Profile
+    submitProfile(childstate) {
+        actions.submitProfile(childstate);
     }
 
+    // for Keys
     generateKeys() {
         actions.generateKeys();
     }
 
+    // for Password
+    repeatPassword(oldPassword){
+        actions.repeatPassword(oldPassword);
+    }
+
+    resetPassword(newPassword){
+        actions.resetPassword(newPassword);
+    }
+
+    submitPassword(){
+        actions.submitPassword();
+    }
+
     handleSelect(name) {
-        actions.updateSelected(name)
+        actions.updateSelected(name);
     }
 
     render () {
@@ -78,7 +91,7 @@ class SettingsView extends React.Component {
                     </PanelHeader>
                     <PanelBody>
                         <SettingsProfile profile={this.state.settings}
-                                         onSubmit={this.onSubmit}
+                                         submitProfile={this.submitProfile.bind(this)}
                             />
                         <LoadingPanel show={this.state.loading}/>
                     </PanelBody>
@@ -105,7 +118,10 @@ class SettingsView extends React.Component {
                         <Title title="Reset Password" />
                     </PanelHeader>
                     <PanelBody>
-                        <SettingsPassword />            
+                        <SettingsPassword repeatPassword={this.repeatPassword.bind(this)}
+                                          resetPassword={this.resetPassword.bind(this)}
+                                          submitPassword={this.submitPassword.bind(this)}
+                                    />            
                         <LoadingPanel show={this.state.loading}/>
                     </PanelBody>
                 </Panel>);
@@ -114,7 +130,6 @@ class SettingsView extends React.Component {
         }
 
         return (
-
             <View>
                 {menuElement}
                 {panel}

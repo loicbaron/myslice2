@@ -8,6 +8,7 @@ class SettingsStore {
         //set profile as default pannel to see
         this.settings = null;
         this.menuSelected = 'profile';
+        this.newPassword = '';
 
         this.loading = false;
 
@@ -16,8 +17,12 @@ class SettingsStore {
             updateSelected: actions.UPDATE_SELECTED,
 
             fetchProfile: actions.FETCH_SETTINGS,
-            onSubmit: actions.ON_SUBMIT,
+            submitProfile: actions.SUBMIT_PROFILE,
             generateKeys: actions.GENERATE_KEYS,
+            submitPassword: actions.SUBMIT_PASSWORD,
+            
+            repeatPassword: actions.REPEAT_PASSWORD,
+            resetPassword: actions.RESET_PASSWORD,
 
             updateSettings: actions.UPDATE_SETTINGS,
             errorupdateSettings: actions.ERRORUPDATE_SETTINGS,
@@ -31,8 +36,8 @@ class SettingsStore {
         this.getInstance().fetchSettings();
     }
 
-    onSubmit(childstate) {
-        this.getInstance().onSubmit(childstate);
+    submitProfile(childstate) {
+        this.getInstance().submitProfile(childstate);
     }
 
     generateKeys() {
@@ -55,8 +60,17 @@ class SettingsStore {
         this.menuSelected = name;
     }
 
+    repeatPassword(oldPassword) {
+        this.settings.password = oldPassword;
+    }
 
+    resetPassword(newPassword) {
+        this.newPassword = newPassword;
+    }
 
+    submitPassword() {
+        this.getInstance().submitPassword();
+    }
 
 }
 

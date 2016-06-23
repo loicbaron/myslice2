@@ -25,7 +25,7 @@ const SettingsSource = () => {
                 }
             }, 
 
-            onSubmit: {
+            submitProfile: {
                 remote(state, childstate) {
                     return axios.put('/api/v1/profile',
                         {
@@ -64,6 +64,22 @@ const SettingsSource = () => {
                 shouldFetch(state) {
                     return true
                 }
+            },
+
+            submitPassword:{
+                remote(state) {
+                    console.log(this.state.newPassword);
+                    console.log(this.state.settings.password);
+
+                },
+
+                success: actions.updateSettings,  // (required)
+                error: actions.errorupdateSettings, 
+
+                shouldFetch(state) {
+                    return true
+                }
+
             }
     }
 };
