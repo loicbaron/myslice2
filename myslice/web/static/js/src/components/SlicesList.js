@@ -1,43 +1,16 @@
 import React from 'react';
 
-import store from '../stores/SlicesStore';
-import actions from '../actions/SlicesActions';
-
 import List from './base/List';
 import SlicesRow from'./SlicesRow';
 
 class SlicesList extends React.Component {
 
-    constructor(props) {
-        super(props);
-        this.state = store.getState();
-        this.onChange = this.onChange.bind(this);
-    }
-
-    componentDidMount() {
-        store.listen(this.onChange);
-
-        actions.fetchSlices({
-                belongTo: this.props.belongTo
-        });
-
-
-    }
-
-    componentWillUnmount() {
-        store.unlisten(this.onChange);
-    }
-
-    onChange(state) {
-        this.setState(state);
-    }
-
     render() {
         return (
             <List>
             {
-                this.state.slices.map(function(slice) {
-                    return <SlicesRow key={slice.id} slice={slice} select={this.props.select} />;
+                this.props.slices.map(function(slice) {
+                    return <SlicesRow key={slice.id} slice={slice} setCurrent={this.props.setCurrent} current={this.props.current} />;
                 }.bind(this))
             }
             </List>
@@ -46,13 +19,14 @@ class SlicesList extends React.Component {
 }
 
 SlicesList.propTypes = {
-    belongTo: React.PropTypes.object,
-    select: React.PropTypes.bool
+    slices: React.PropTypes.array.isRequired,
+    current: React.PropTypes.object,
+    setCurrent: React.PropTypes.func
 };
 
 SlicesList.defaultProps = {
-    belongTo: { type: null, id: null},
-    select: false
+    current: null,
+    setCurrent: null
 };
 
 export default SlicesList;

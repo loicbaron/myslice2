@@ -1,7 +1,7 @@
 import React from 'react';
 
-import store from '../stores/base/ElementStore';
-import actions from '../actions/base/ElementActions';
+import store from '../stores/UsersStore';
+import actions from '../actions/UsersActions';
 
 import View from './base/View';
 import Panel from './base/Panel';

@@ -1,23 +1,11 @@
 import axios from 'axios';
 import actions from '../actions/UsersActions';
-//import formactions from '../actions/UsersFormActions';
 
 const UsersSource = () => {
     return {
         fetch: {
             remote(state) {
-                let type = state.options.belongTo.type || null;
-                switch(type) {
-                    case 'project':
-                        return axios.get('/api/v1/projects/'+state.options.belongTo.id+'/users');
-                        break;
-                    case 'authority':
-                        return axios.get('/api/v1/authority/'+state.options.belongTo.id+'/users');
-                        break;
-                    default:
-                        return axios.get('/api/v1/users');
-                }
-
+                return axios.get('/api/v1/users');
 
             },
 

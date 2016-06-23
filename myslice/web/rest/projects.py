@@ -11,104 +11,90 @@ from myslice.db import dispatch
 from tornado import gen, escape
 
 class ProjectsHandler(Api):
-
     @gen.coroutine
     def get(self, id=None, o=None):
         """
-        GET /projects/[<id>[/(users|slices)]]
+            - GET /projects
+                (public) Projects list
 
-        Project list or project with <id>
-        User or Slice list part of project with <id>
+            - GET /projects/<id>
+                (public) Project with <id>
 
-        :return:
-        """
+            - GET /projects/<id>/(users|slices)
+                (auth) Users/Slices list of the project with <id>
 
-        project = None
+            :return:
+            """
+
         response = []
+        current_user = self.get_current_user()
 
-        if id:
-            # get the project
+        # GET /projects
+        if not id and not o:
             cursor = yield r.table('projects') \
                 .pluck(self.fields['projects']) \
+                .filter(lambda project: project["pi_users"].contains(current_user['id'])) \
+                .merge(lambda project: {
+                    'authority': r.table('authorities').get(project['authority']).pluck(self.fields_short['authorities'])
+                    }) \
+                .run(self.dbconnection)
+            while (yield cursor.fetch_next()):
+                project = yield cursor.next()
+                response.append(project)
+
+
+        # GET /projects/<id>
+        elif not o and id and self.isUrn(id):
+            if not current_user:
+                self.userError('permission denied')
+                return
+
+            cursor = yield r.table('projects') \
+                .pluck(self.fields['projects']) \
+                .filter({'id': id}) \
                 .filter(lambda project:
-                        project["id"].contains(id) and
-                        project["pi_users"].contains(self.get_current_user_id())
-                ) \
+                        project["pi_users"].contains(current_user['id']) or
+                        project["users"].contains(current_user['id'])) \
                 .merge(lambda project: {
                     'authority': r.table('authorities').get(project['authority']).pluck(self.fields_short['authorities'])
                 }) \
                 .run(self.dbconnection)
-
             while (yield cursor.fetch_next()):
                 project = yield cursor.next()
-
-            if not project:
-                self.userError("no project found or permission denied")
-                return
-
-            # GET /projects/<id>/users
-            if o == 'users':
-                # users in a project
-                cursor = yield r.table('users') \
-                                .pluck(self.fields['users']) \
-                                .filter(lambda user:
-                                    user["projects"].contains(id)
-                                ) \
-                                .merge(lambda project: {
-                                    'authority': r.table('authorities').get(project['authority']).pluck(
-                                        self.fields_short['authorities'])
-                                }) \
-                                .run(self.dbconnection)
-
-                while (yield cursor.fetch_next()):
-                    item = yield cursor.next()
-                    response.append(item)
-
-            # GET /projects/<id>/slices
-            elif o == 'slices':
-                # users in a project
-                cursor = yield r.table('slices') \
-                                .pluck(self.fields['slices']) \
-                                .filter({"project": id}) \
-                                .merge(lambda slice: {
-                                    'project': r.table('projects').get(slice['project']).pluck(
-                                    self.fields_short['projects'])
-                                }) \
-                                .merge(lambda slice: {
-                                    'authority': r.table('authorities').get(slice['project']['authority']).pluck(
-                                        self.fields_short['authorities'])
-                                }) \
-                                .run(self.dbconnection)
-
-
-
-                while (yield cursor.fetch_next()):
-                    item = yield cursor.next()
-                    response.append(item)
-
-            # GET /projects/<id>
-            elif o is None:
                 response.append(project)
 
-            else:
-                self.userError("invalid request")
-                return
-
-        # GET /projects
-        else:
-            # list of projects of a user
-            cursor = yield r.table('projects') \
-                            .pluck(self.fields['projects']) \
-                            .filter(lambda project: project["pi_users"].contains(self.get_current_user_id()))\
-                            .merge(lambda project: {
-                                'authority': r.table('authorities').get(project['authority']).pluck(self.fields_short['authorities'])
-                            }).run(self.dbconnection)
-
+        # GET /projects/<id>/users
+        elif id and self.isUrn(id) and o == 'users':
+            cursor = yield r.table(o) \
+                .pluck(self.fields[o]) \
+                .filter(lambda user: user["projects"].contains(id)) \
+                .merge(lambda user: {
+                    'authority': r.table('authorities').get(user['authority']).pluck(self.fields_short['authorities'])
+                }) \
+                .run(self.dbconnection)
             while (yield cursor.fetch_next()):
                 item = yield cursor.next()
                 response.append(item)
 
-        self.write(json.dumps({"result": response}, cls=myJSONEncoder))
+        # GET /projects/<id>/slices
+        elif id and self.isUrn(id) and o == 'slices':
+            cursor = yield r.table(o) \
+                .pluck(self.fields[o]) \
+                .filter({ "project": id }) \
+                .merge(lambda slice: {
+                    'authority': r.table('projects').get(slice['project']).pluck(self.fields_short['projects'])
+                }) \
+                .run(self.dbconnection)
+            while (yield cursor.fetch_next()):
+                item = yield cursor.next()
+                response.append(item)
+
+        else:
+            self.userError("invalid request")
+            return
+
+        self.finish(json.dumps({"result": response}, cls=myJSONEncoder))
+
 
     @gen.coroutine
     def post(self, id=None, o=None):
@@ -129,13 +115,15 @@ class ProjectsHandler(Api):
             return
 
         try:
-            if not 'authority' in data:
-                self.userError("missing required parameter authority")
-                return
+            data['authority'] = self.current_user['authority']
+        except Exception:
+            self.userError("not authenticated")
+            return
 
+        try:
             event = Event({
                 'action': EventAction.CREATE,
-                'user': self.get_current_user_id(), 
+                'user': self.current_user['id'],
                 'object': {
                     'type': ObjectType.PROJECT,
                     'id': None,
@@ -143,10 +131,10 @@ class ProjectsHandler(Api):
                 'data': data
             })
         except AttributeError as e:
-            self.userError("Can't create request", str(e))
+            self.userError("Can't create request", e)
             return
         except Exception as e:
-            self.userError("Can't create request", e.message)
+            self.userError("Can't create request", e)
             return
         else:
             result = yield dispatch(self.dbconnection, event)

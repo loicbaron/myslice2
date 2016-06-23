@@ -5,32 +5,39 @@ import source from '../sources/ProjectsSource';
 class ProjectsStore {
 
     constructor() {
+
         this.projects = [];
-        this.selected = null;
-        this.options = {
-            filter: [],
-            belongTo: {
-                type: null,
-                object: null
-            }
+
+        /* the currently active project */
+        this.current = {
+            project: null,
+            users: [],
+            slices: []
         };
+
+        this.filter = [];
+
+        this.dialog = null;
+
         this.errorMessage = null;
 
         this.bindListeners({
             updateProjectElement: actions.UPDATE_PROJECT_ELEMENT,
             updateProjects: actions.UPDATE_PROJECTS,
-            selectProject: actions.SELECT_PROJECT,
+            setCurrentProject: actions.SET_CURRENT_PROJECT,
+            updateUsers: actions.UPDATE_USERS,
+            updateSlices: actions.UPDATE_SLICES,
             fetchProjects: actions.FETCH_PROJECTS,
-            errorProjects: actions.ERROR_PROJECTS
-            
+            errorProjects: actions.ERROR_PROJECTS,
+            showDialog: actions.SHOW_DIALOG,
         });
 
         this.registerAsync(source);
     }
 
-    fetchProjects(options) {
+    fetchProjects(filter) {
 
-        this.options = options;
+        this.filter = filter;
 
         if (!this.getInstance().isLoading()) {
             this.getInstance().fetch();
@@ -39,13 +46,10 @@ class ProjectsStore {
     }
 
     updateProjectElement(project) {
-        console.log("STORAGE UPD ACTIVITY:" + project.id)
-        // Check if we already have this project in the state
         let index = this.projects.findIndex(function(projectElement) {
             return (projectElement.id === project.id);
         });
-        /*  If we do we update it, otherwise we add a new
-            project event to the state (at the top of the array) */
+
         if (index !== -1) {
             this.projects[index] = project;
         } else {
@@ -53,7 +57,17 @@ class ProjectsStore {
         }
 
         this.errorMessage = null;
-        // optionally return false to suppress the store change event
+    }
+
+    setCurrentProject(project) {
+        this.current.users = [];
+        this.current.slices = [];
+        this.current.project = project;
+
+        if (!this.getInstance().isLoading()) {
+            this.getInstance().users();
+            this.getInstance().slices();
+        }
     }
 
     updateProjects(projects) {
@@ -64,14 +78,37 @@ class ProjectsStore {
         }
     }
 
-    selectProject(project) {
-        this.selected = project;
-    }
-
     errorProjects(errorMessage) {
         console.log(errorMessage);
-    } 
+    }
 
+    updateUsers(users) {
+        if (users.hasOwnProperty('data')) {
+            this.current.users = users.data.result;
+        } else {
+            this.current.users = users;
+        }
+    }
+
+    errorUsers(errorMessage) {
+        console.log(errorMessage);
+    }
+
+    updateSlices(slices) {
+        if (slices.hasOwnProperty('data')) {
+            this.current.slices = slices.data.result;
+        } else {
+            this.current.slices = slices;
+        }
+    }
+
+    errorSlices(errorMessage) {
+        console.log(errorMessage);
+    }
+
+    showDialog(dialog) {
+        this.dialog = dialog;
+    }
 }
 
 

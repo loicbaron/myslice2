@@ -39,7 +39,7 @@
                     <a href="#"><i class="fa fa-bar-chart fa-lg"></i> Status</a>
                 </li>
                 <li class="{% if request.path == '/settings' %}active{% end %}">
-                    <a href="/settings"><i class="fa fa-user fa-lg"></i></a>
+                    <a href="/settings"><i class="fa fa-user fa-lg"></i> {{current_user['email']}}</a>
                 </li>
             </ul>
         </div>

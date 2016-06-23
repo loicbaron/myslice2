@@ -1,10 +1,8 @@
 import json
+import re
 import logging
 import tornado_cors as cors
-from rethinkdb import r
-from tornado import web, escape, gen
-
-from myslice.db.user import User
+from tornado import web
 
 
 logger = logging.getLogger(__name__)
@@ -13,7 +11,6 @@ class Api(cors.CorsMixin, web.RequestHandler):
 
     def initialize(self):
         self.dbconnection = self.application.dbconnection
-        self.set_current_user()
 
         self.fields_short = {
             'authorities': [ 'id', 'hrn', 'name', 'status' ],
@@ -29,28 +26,13 @@ class Api(cors.CorsMixin, web.RequestHandler):
             'slices': self.fields_short['slices'] + [ 'authority', 'users', 'created', 'updated', 'enabled']
         }
 
-    def set_current_user(self, user=None):
-        # XXX To be Removed
-        user = 'urn:publicid:IDN+onelab:upmc+user+loic_baron'
-        if user:
-            self.set_secure_cookie("user", escape.json_encode(user))
-        else:
-            self.clear_cookie("user")
-
-    def get_current_user_id(self):
-        user = 'urn:publicid:IDN+onelab:upmc+user+loic_baron'
-        return user
-        return self.get_secure_cookie("user").decode("utf-8")
-        #logger.debug("COOKIE USER ID: {}".format(cookie))
-        # return cookie
-
     def get_current_user(self):
-        return self.get_secure_cookie("user").decode("utf-8")
-        ret = r.table('users').get(self.get_current_user_id()).run(self.dbconnection)
-        if not ret:
-            self.serverError("Access Denied")
 
-        user = User(ret)
+        cookie = self.get_secure_cookie("user")
+        if not cookie:
+            return False
+
+        user = json.loads(str(cookie, "utf-8"))
 
         return user
 
@@ -58,6 +40,9 @@ class Api(cors.CorsMixin, web.RequestHandler):
         # Allow CORS
         self.set_header("Access-Control-Allow-Origin", "*")
         self.set_header("Content-Type", "application/json")
+
+    def isUrn(self, urn):
+        return re.match(self.application.urn_regex, urn)
 
     def userError(self, message, debug = None):
         self.set_status(400)

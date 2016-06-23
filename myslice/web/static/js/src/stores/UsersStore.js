@@ -5,14 +5,17 @@ import source from '../sources/UsersSource';
 class UsersStore {
 
     constructor() {
+
         this.users = [];
-        this.options = {
-            filter: [],
-            belongTo: {
-                type: null,
-                object: null
-            }
+
+        /* the currently active user */
+        this.current = {
+            user: null,
+            projects: []
         };
+
+        this.filter = [];
+
         this.errorMessage = null;
 
         this.bindListeners({
@@ -26,9 +29,9 @@ class UsersStore {
         this.registerAsync(source);
     }
 
-    fetchUsers(options) {
+    fetchUsers(filter) {
 
-        this.options = options;
+        this.filter = filter;
 
         if (!this.getInstance().isLoading()) {
             this.getInstance().fetch();
