@@ -18,6 +18,7 @@ class ObjectType(Enum):
     SLICE = "SLICE"
     USER = "USER"
     RESOURCE = "RESOURCE"
+    PASSWORD = "PASSWORD"
 
     def __str__(self):
         return str(self.value)

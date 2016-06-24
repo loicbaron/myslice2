@@ -5,18 +5,13 @@ const PasswordSource = () => {
     return {
             onSubmit: {
                 remote(state) {
-                    return axios.put('/api/v1/profile',
+                    return axios.put('/api/v1/password/'+state.hashing,
                         {
-                            data: {
-                                "password": childstate.first_name,
-                                "last_name": childstate.last_name,
-                                "bio": childstate.bio,
-                                "url": childstate.url
-                            }
+                            "password": state.password,
                         });
                 },
 
-                success: actions.updatePassword, // (required)
+                success: actions.submitSuccess, // (required)
                 error: actions.errorupdatePassword, // (required)
 
                 shouldFetch(state) {

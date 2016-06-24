@@ -21,7 +21,9 @@ class PasswordActions {
     onSubmit() {
         return true;
     }
-
+    submitSuccess() {
+        return true;
+    }
 }
 
 export default alt.createActions(PasswordActions);

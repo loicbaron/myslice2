@@ -150,6 +150,8 @@ def build_subject_and_template( action,
         subject = 'REQUEST {} APPROVED'.format(entity.upper())
     if action == 'deny':
         subject = 'REQUEST {} DENIED'.format(entity.upper())
+    if action == 'password':
+        subject = 'RESET PASSWORD'
 
     loader = template.Loader(path)
     filename = action + '_email.html'
