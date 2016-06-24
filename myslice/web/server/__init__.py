@@ -120,6 +120,7 @@ class Application(web.Application):
         web_handlers = [
             web.url(r"/login", login.Index),
             web.url(r"/password/(.*)", password.Index),
+            web.url(r"/forgot_password", password.Forgot),
             web.url(r"/registration", registration.Index),
             web.url(r'/', home.Index),
             web.url(r'/settings', home.User),

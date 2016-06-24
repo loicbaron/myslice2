@@ -41,3 +41,11 @@ class Index(BaseController):
                 msg = "This link is not valid, please generate a new one."
 
         self.render(self.application.templates + "/password.html", message=msg, new_hashing=new_hashing)
+
+class Forgot(BaseController):
+
+    #@web.authenticated
+    @gen.coroutine
+    def get(self):
+        msg = ''
+        self.render(self.application.templates + "/password_forgot.html", message=msg)
