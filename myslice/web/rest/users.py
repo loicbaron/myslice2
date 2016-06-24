@@ -85,7 +85,7 @@ class LoginHandler(Api):
         # try:
         #     event = Event({
         #         'action': EventAction.CREATE,
-        #         'user': self.get_current_user_id(),
+        #         'user': self.get_current_user()['id'],
         #         'object': {
         #             'type': ObjectType.USER
         #         },
@@ -202,7 +202,7 @@ class UsersHandler(Api):
         try:
             event = Event({
                 'action': EventAction.CREATE,
-                'user': self.get_current_user_id(),
+                'user': self.get_current_user()['id'],
                 'object': {
                     'type': ObjectType.USER
                 },
@@ -249,7 +249,7 @@ class ProfileHandler(Api):
         """
         # TODO: id must be a valid URN
 
-        profile = yield r.table('users').get(self.get_current_user_id()).run(self.dbconnection)
+        profile = yield r.table('users').get(self.get_current_user()['id']).run(self.dbconnection)
 
         self.write(json.dumps({"result": profile}, cls=myJSONEncoder))
 
@@ -268,10 +268,10 @@ class ProfileHandler(Api):
         try:
             event = Event({
                 'action': EventAction.UPDATE,
-                'user': self.get_current_user_id(),
+                'user': self.get_current_user()['id'],
                 'object': {
                     'type': ObjectType.USER,
-                    'id': self.get_current_user_id(),
+                    'id': self.get_current_user()['id'],
                 },
                 'data': data
             })
@@ -290,6 +290,7 @@ class ProfileHandler(Api):
             while (yield feed.fetch_next()):
                 result = yield feed.next()
                 if result['new_val']['status'] == 'SUCCESS':
-                    self.finish(json.dumps({"result": result['new_val']}, cls=myJSONEncoder))
+                    user = yield r.table('users').get(self.get_current_user()['id']).run(self.dbconnection)
+                    self.finish(json.dumps({"result": user}, cls=myJSONEncoder))
                 else:
                     self.userError("updated failed", result['new_val'])
