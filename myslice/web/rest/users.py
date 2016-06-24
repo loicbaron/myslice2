@@ -109,68 +109,128 @@ class UsersHandler(Api):
 
     @gen.coroutine
     def get(self, id=None, o=None):
-
         """
-            GET /users/[<id>[/(projects)]]
+            - GET /users
+                (auth) Users list
 
-            User list or user with <id>
-            User or Slice list part of project with <id>
+            - GET /users/<id>
+                (auth) User with <id>
+
+            - GET /users/(projects|slices)
+                (auth) Projects/Slices list of the authenticated user
+
+            - GET /users/<id>/(projects|slices)
+                (auth) Projects/Slices list of the user with <id>
 
             :return:
             """
 
-        user = None
         response = []
-
-        if id:
-            # get the user
-            cursor = yield r.table('users').get(id).run(self.dbconnection)
-
-            while (yield cursor.fetch_next()):
-                user = yield cursor.next()
-
-            if not user:
-                self.userError("no user found or permission denied")
-                return
-
-            # GET /users/<id>/projects
-            if o == 'projects':
-                # users in a project
-                cursor = yield r.table('projects').filter(lambda project:
-                                                       project["pi_users"].contains(id)
-                                                       ).run(self.dbconnection)
-                while (yield cursor.fetch_next()):
-                    item = yield cursor.next()
-                    response.append(item)
-
-            # GET /users/<id>/slices
-            if o == 'slices':
-                # users in a project
-                cursor = yield r.table('slices').filter(lambda project:
-                                                          project["users"].contains(id)
-                                                          ).run(self.dbconnection)
-                while (yield cursor.fetch_next()):
-                    item = yield cursor.next()
-                    response.append(item)
-
-            # GET /users/<id>
-            elif o is None:
-                response.append(user)
-
-            else:
-                self.userError("invalid request")
-                return
+        current_user = self.get_current_user()
 
         # GET /users
-        else:
-            # list of users
-            cursor = yield r.table('users').run(self.dbconnection)
+        if not id and not o:
+            cursor = yield r.table('users') \
+                .pluck(self.fields['users']) \
+                .merge(lambda user: {
+                    'authority': r.table('authorities').get(user['authority']) \
+                                                        .pluck(self.fields_short['authorities']) \
+                                                        .default({'id' : user['authority']})
+                }) \
+                .run(self.dbconnection)
+            while (yield cursor.fetch_next()):
+                users = yield cursor.next()
+                response.append(users)
 
+
+        # GET /users/<id>
+        elif not o and id and self.isUrn(id):
+            if not current_user:
+                self.userError('permission denied')
+                return
+
+            cursor = yield r.table('users') \
+                .pluck(self.fields['users']) \
+                .filter({'id': id}) \
+                .merge(lambda user: {
+                    'authority': r.table('authorities').get(user['authority']) \
+                                                       .pluck(self.fields_short['authorities']) \
+                                                       .default({'id': user['authority']})
+                }) \
+                .run(self.dbconnection)
+            while (yield cursor.fetch_next()):
+                user = yield cursor.next()
+                response.append(user)
+
+        # GET /users/[<id>/]projects
+        elif o == 'projects':
+
+            if not id or not self.isUrn(id):
+                id = current_user['id']
+
+            cursor = yield r.table(o) \
+                .pluck(self.fields[o]) \
+                .filter(lambda project: project["pi_users"].contains(id)) \
+                .merge(lambda project: {
+                    'authority': r.table('authorities').get(project['authority']) \
+                           .pluck(self.fields_short['authorities']) \
+                           .default({'id': project['authority']})
+                }) \
+                .run(self.dbconnection)
             while (yield cursor.fetch_next()):
                 item = yield cursor.next()
                 response.append(item)
 
-        self.write(json.dumps({"result": response}, cls=myJSONEncoder))
+        # GET /users/[<id>/]slices
+        elif o == 'slices':
+
+            if not id or not self.isUrn(id):
+                id = current_user['id']
+
+            cursor = yield r.table(o) \
+                .pluck(self.fields[o]) \
+                .filter(lambda slice: slice["users"].contains(id)) \
+                .merge(lambda slice: {
+                    'project': r.table('projects').get(slice['project']) \
+                           .pluck(self.fields_short['projects']) \
+                           .default({'id': slice['project']})
+                }) \
+                .merge(lambda slice: {
+                    'authority': r.table('authorities').get(slice['authority']) \
+                           .pluck(self.fields_short['authorities']) \
+                           .default({'id': slice['authority']})
+                }) \
+                .run(self.dbconnection)
+            while (yield cursor.fetch_next()):
+                item = yield cursor.next()
+                response.append(item)
+
+        # GET /users/authorities
+        elif not id and o == 'authorities':
+
+            if not current_user:
+                self.userError('permission denied')
+                return
+
+            cursor = yield r.table('authorities') \
+                .pluck(self.fields['authorities']) \
+                .filter(lambda authority:
+                        authority["pi_users"].contains(current_user['id'])
+                        or
+                        authority["users"].contains(current_user['id'])) \
+                .run(self.dbconnection)
+            while (yield cursor.fetch_next()):
+                authority = yield cursor.next()
+                response.append(authority)
+
+
+        else:
+            self.userError("invalid request")
+            return
+
+        self.finish(json.dumps({"result": response}, cls=myJSONEncoder))
+
+
 
     @gen.coroutine
     def post(self, p):

@@ -1,6 +1,5 @@
 import React from 'react';
 
-import ElementTitle from './base/ElementTitle';
 import ElementId from './base/ElementId';
 import Section from './base/Section';
 import SectionHeader from './base/SectionHeader';
@@ -41,23 +40,19 @@ class ProjectsInfo extends React.Component {
         }
 
         return (
-        <div>
-            <ElementTitle label={project.shortname} />
-            <ElementId id={project.id} />
-            <p>
-                <a href={project.url} target="_blank">{project.url}</a>
-            </p>
-            <p>
-                {project.description}
-            </p>
-            <DateTime label="Start" timestamp={project.start_date} />
-            <DateTime label="End" timestamp={project.end_date} />
-
-            {users}
-            
-            {slices}
-
-        </div>
+            <div>
+                <ElementId id={project.id} />
+                <p>
+                    <a href={project.url} target="_blank">{project.url}</a>
+                </p>
+                <p>
+                    {project.description}
+                </p>
+                <DateTime label="Start" timestamp={project.start_date} />
+                <DateTime label="End" timestamp={project.end_date} />
+                {slices}
+                {users}
+            </div>
         );
     }
 }

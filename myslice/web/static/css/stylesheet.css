@@ -8,7 +8,6 @@ body {
     height: 100%;
     color:#2C2C2C;
     background-color:#F6F6F6;
-    margin-top:135px;
 }
 
 body.login {
@@ -21,9 +20,43 @@ header {
     left:0;
     right:0;
     z-index:100;
-    padding-top:15px;
     background-color:#FFFFFF;
 }
+
+header .logo {
+    padding-top:15px;
+    padding-bottom:15px;
+}
+header .logo-image {
+    float:left;
+    padding-right:25px;
+}
+header .logo-image img {
+    height:60px;
+}
+header .logo-title {
+    float:left;
+    height:60px;
+    padding:15px 0 15px 25px;
+    border-left:1pt solid #2C2C2C;
+
+}
+header .logo-title h1 {
+    margin:0;
+    padding:0;
+}
+
+header .menu {
+    font-size:10pt;
+    font-weight:100;
+    text-align:right;
+    margin:0;
+    padding:35px 0;
+}
+header .menu li {
+    margin-left:15px;
+}
+
 
 a {
     color:#2C2C2C;
@@ -33,10 +66,11 @@ a:hover, a:focus {
     text-decoration:none;
 }
 h1 {
+    font-size:20pt;
     font-weight:100;
 }
 h2 {
-    font-size:18pt;
+    font-size:32pt;
     font-weight:100;
     margin:0;
 }
@@ -71,10 +105,15 @@ input[type=email]:focus {
     box-shadow: none;
 }
 
+textarea {
+	width: 100%;
+    margin-top: 10px;
+}
+
 button {
     border:none;
     background-color:transparent;
-    padding:10px;
+    padding-bottom:5px;
 }
 button:hover, button.active {
     border-bottom:solid 4px #221144;
@@ -95,9 +134,6 @@ div.loading {
     right:0;
     z-index:999;
     background-color: rgba(246, 246, 246, 0.6);
-}
-div.loading.hidden {
-    display:none;
 }
 div.loading img {
     position:absolute;
@@ -126,11 +162,6 @@ p.inputDescription {
     color:#5e5e5e;
 }
 
-textarea {
-	width: 100%;
-    margin-top: 10px;
-}
-
 div.inputSubmit {
 
 }
@@ -142,84 +173,73 @@ div.registrationForm {
 .avatar {
     margin:15px 0;
 }
+
 /*
     LOGIN
 */
 
-.logo-image {
+.login-view .logo-image {
     padding-right:30px;
 }
-.logo-title {
+.login-view .logo-title {
     border-left:1pt solid #2C2C2C;
     padding-left:30px;
 }
-.login-form {
+.login-view .login-form {
     padding:50px 0;
 }
-.login-email {
+.login-view .login-email {
     padding-bottom:25px;
 }
-.login-password {
+.login-view .login-password {
     padding-bottom:25px;
 }
-.login-submit {
+.login-view .login-submit {
 
 }
 
-
-.green {
-    color:#0F880A;
-}
-
-.header-menu {
-    font-size:10pt;
-    font-weight:100;
-    text-align:right;
+/*
+    VIEW
+*/
+.view {
     margin:0;
-    padding:15px 0;
+    padding:0;
 }
-.header-menu li {
-    margin-left:15px;
-}
-
-
 
 /*
     PANELS
 */
-.p-left .p-header {
+.p-header {
     position:fixed;
-    right:50%;
-    left:0;
-    top:138px;
-    background-color:#F6F6F6;
+    top:148px;
+    width:50%;
+    padding:15px 0;
+    z-index:91;
+}
+.p-body {
+    position:fixed;
+    top:225px;
+    bottom:15px;
+    width:50%;
+    overflow-y:auto;
     z-index:90;
 }
-.p-left .p-body {
-    position:fixed;
+.p-left .p-header {
     left:0;
-    bottom:15px;
-    top:212px;
-    width:50%;
-    overflow-y: auto;
+    background-color:#F6F6F6;
+}
+.p-left .p-body {
+    left:0;
     border-right:1px solid #DCDCF8;
 }
 .p-right .p-header {
-    position:fixed;
-    left:50%;
     right:0;
-    top:138px;
     background-color:#F6F6F6;
-    z-index:90;
+
 }
 .p-right .p-body {
-    position:fixed;
-    width:50%;
     right:0;
-    bottom:15px;
-    top:212px;
     background-color:#F6F6F6;
-    overflow-y: auto;
 }
 
 .p-center .p-header {
@@ -229,12 +249,11 @@ div.registrationForm {
     text-align:center;
 }
 
-.p-header h1 {
-    padding:0 0 0 0;
-    margin:18px 0 0 0;
-    line-height:1em;
+.p-header h2 {
+    padding:0;
+    margin:0;
 }
-.p-header h1 span {
+.p-header h2 span {
     color:gray;
     font-size:10pt;
 }
@@ -250,10 +269,9 @@ div.registrationForm {
     Panel Menu
 */
 .p-menu {
-
 }
 .p-menu ul {
-    margin:100px 0 0 50%;
+    margin:245px 0 0 50%;
     padding:0;
     list-style:none;
     border-right:1px solid #DCDCF8;
@@ -325,6 +343,10 @@ div.registrationForm {
     margin-top:25px;
     border-bottom:1px solid #DCDCF8;
 }
+.s-header h3 {
+    font-size:20pt;
+    font-weight:100;
+}
 
 .s-header-right {
 
@@ -349,7 +371,7 @@ div.registrationForm {
     padding:10px 15px 15px 30px;
     margin-bottom:6px;
     box-shadow: none;
-    transition: box-shadow 0.2s ease-in, background-color 0.1s ease-in;
+    transition: box-shadow 0.1s ease-in;
 }
 .elementBox.pointer {
     cursor:pointer;
@@ -357,7 +379,11 @@ div.registrationForm {
 .elementBox.selected {
     background-color: #f5fafa;
     box-shadow: 1px 1px 3px 0 rgba(0, 0, 0, 0.2), -1px -1px 3px 0 rgba(0, 0, 0, 0.2);
-
+}
+.elementBox .arrow-right {
+    position:absolute;
+    bottom:15px;
+    right:15px;
 }
 
 .elementIcon {
