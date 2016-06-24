@@ -11,6 +11,7 @@ from myslice.db import dispatch
 from tornado import gen, escape
 
 class ProjectsHandler(Api):
+
     @gen.coroutine
     def get(self, id=None, o=None):
         """
@@ -35,7 +36,9 @@ class ProjectsHandler(Api):
                 .pluck(self.fields['projects']) \
                 .filter(lambda project: project["pi_users"].contains(current_user['id'])) \
                 .merge(lambda project: {
-                    'authority': r.table('authorities').get(project['authority']).pluck(self.fields_short['authorities'])
+                    'authority': r.table('authorities').get(project['authority']) \
+                                                        .pluck(self.fields_short['authorities']) \
+                                                        .default({'id': project['authority']})
                     }) \
                 .run(self.dbconnection)
             while (yield cursor.fetch_next()):
@@ -56,7 +59,9 @@ class ProjectsHandler(Api):
                         project["pi_users"].contains(current_user['id']) or
                         project["users"].contains(current_user['id'])) \
                 .merge(lambda project: {
-                    'authority': r.table('authorities').get(project['authority']).pluck(self.fields_short['authorities'])
+                    'authority': r.table('authorities').get(project['authority']) \
+                                                        .pluck(self.fields_short['authorities']) \
+                                                        .default({'id': project['authority']})
                 }) \
                 .run(self.dbconnection)
             while (yield cursor.fetch_next()):
@@ -69,7 +74,9 @@ class ProjectsHandler(Api):
                 .pluck(self.fields[o]) \
                 .filter(lambda user: user["projects"].contains(id)) \
                 .merge(lambda user: {
-                    'authority': r.table('authorities').get(user['authority']).pluck(self.fields_short['authorities'])
+                    'authority': r.table('authorities').get(user['authority']) \
+                                                        .pluck(self.fields_short['authorities']) \
+                                                        .default({'id': user['authority']})
                 }) \
                 .run(self.dbconnection)
             while (yield cursor.fetch_next()):
@@ -82,7 +89,14 @@ class ProjectsHandler(Api):
                 .pluck(self.fields[o]) \
                 .filter({ "project": id }) \
                 .merge(lambda slice: {
-                    'authority': r.table('projects').get(slice['project']).pluck(self.fields_short['projects'])
+                    'project': r.table('projects').get(slice['project']) \
+                                                .pluck(self.fields_short['projects']) \
+                                                .default({'id': slice['project']})
+                }) \
+                .merge(lambda slice: {
+                    'authority': r.table('authorities').get(slice['authority']) \
+                           .pluck(self.fields_short['authorities']) \
+                           .default({'id': slice['authority']})
                 }) \
                 .run(self.dbconnection)
             while (yield cursor.fetch_next()):

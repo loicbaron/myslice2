@@ -16,9 +16,14 @@ class SettingsActions {
         return response;
     }
 
-    onSubmit(childstate) {
+    submitProfile() {
         this.updateLoading(true);
-        return childstate;
+        return true;
+    }
+
+    submitPassword() {
+        this.updateLoading(true);
+        return true;
     }
 
     generateKeys(){
@@ -32,6 +37,18 @@ class SettingsActions {
 
     updateSelected(name) {
         return name;
+    }
+
+    repeatPassword(oldPassword) {
+        return oldPassword;
+    }
+
+    resetPassword(newPassword) {
+        return newPassword;
+    }
+
+    updateProfile(name, value) {
+        return [name, value];
     }
         
 

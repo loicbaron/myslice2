@@ -3,7 +3,7 @@ import React from 'react';
 class SectionTitle extends React.Component {
   render() {
 
-      return <h2>{this.props.title} <span>{this.props.subtitle}</span></h2>;
+      return <h3>{this.props.title} <span>{this.props.subtitle}</span></h3>;
   }
 }
 

@@ -9,7 +9,7 @@ class View extends React.Component {
         if (num == 1) {
             return (
                 <Container>
-                    <div className="col-sm-12 p-center">
+                    <div className="col-sm-12 panel p-center">
                         {this.props.children}
                     </div>
                 </Container>
@@ -20,11 +20,15 @@ class View extends React.Component {
             if (leftPanel == 'Panel') {
                 return (
                     <Container>
-                        <div className="col-sm-6 p-left">
-                            {this.props.children[0]}
+                        <div className="col-sm-6">
+                            <div className="panel p-left">
+                                {this.props.children[0]}
+                            </div>
                         </div>
-                        <div className="col-sm-6 p-right">
-                            {this.props.children[1]}
+                        <div className="col-sm-6">
+                             <div className="panel p-right">
+                                 {this.props.children[1]}
+                             </div>
                         </div>
                     </Container>
                 );
@@ -34,7 +38,7 @@ class View extends React.Component {
                         <div className="col-sm-3 p-menu">
                             {this.props.children[0]}
                         </div>
-                        <div className="col-sm-6 p-center">
+                        <div className="col-sm-6 panel p-center">
                             {this.props.children[1]}
                         </div>
                     </Container>
@@ -43,7 +47,7 @@ class View extends React.Component {
         } else {
             return (
                 <Container>
-                    <div className="col-sm-12 p-center">
+                    <div className="col-sm-12 panel p-center">
                         not supported (too many children)
                     </div>
                 </Container>

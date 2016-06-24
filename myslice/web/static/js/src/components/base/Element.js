@@ -19,6 +19,7 @@ class Element extends React.Component {
 
     render() {
         var className = 'elementBox';
+        var arrow = null;
 
         if (this.props.type) {
             className += ' ' + this.props.type;
@@ -29,11 +30,13 @@ class Element extends React.Component {
 
             if (this.props.element == this.props.current) {
                 className += ' selected';
+                arrow = <i className="fa fa-arrow-right fa-lg arrow-right"></i>
             }
 
             return (
                 <li className={className} onClick={this.handleClick}>
                     {this.props.children}
+                    {arrow}
                 </li>
             );
         } else {
