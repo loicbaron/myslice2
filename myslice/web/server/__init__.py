@@ -25,6 +25,7 @@ from myslice.web.rest.projects import ProjectsHandler
 from myslice.web.rest.slices import SlicesHandler
 from myslice.web.rest.users import UsersHandler, ProfileHandler, LoginHandler
 from myslice.web.rest.resources import ResourcesHandler
+from myslice.web.rest.password import PasswordHandler
 
 from myslice.web.rest.activity import ActivityHandler
 
@@ -141,6 +142,8 @@ class Application(web.Application):
             web.url(r'/api/v1/requests/([a-fA-F\d]{8}(-[a-fA-F\d]{4}){3}-[a-fA-F\d]{12})?', RequestsHandler),
 
             web.url(r'/api/v1/login', LoginHandler),
+            web.url(r'/api/v1/password', PasswordHandler),
+            web.url(r'/api/v1/password/(.*)', PasswordHandler),
 
             web.url(r'/api/v1/resources$', ResourcesHandler),
             web.url(r'/api/v1/resources/()$', ResourcesHandler),

@@ -46,52 +46,60 @@ def emails_run(qEmails):
                 print("TODO: send specific emails with messages")
             recipients = set()
 
-            if event.isPending():
+            url = s.web.url
+            if s.web.port and s.web.port != 80:
+                url = url +':'+ s.web.port
 
-                # Find the authoirty of the event object
-                # Then according the authority, put the pi_emails in pis_email
-                try:
-                    authority_id = event.data['authority']
-                except KeyError:
-                    msg = 'Authority id not specified ({})'.format(event.id)
-                    logger.error(msg)
-                    event.logDebug(msg)
-                    event.logWarning('Authority not specified, email not sent')
-                    event.notify = False
-                    dispatch(dbconnection, event)
-                    continue
-
-                authority = Authority(db.get(dbconnection, table='authorities', id=authority_id))
-                for pi_id in authority.pi_users:
-                    pi = User(db.get(dbconnection, table='users', id=pi_id))
-                    recipients.add(pi)
-
-                if not recipients:
-                    msg = 'Emails cannot be sent because no one is the PI of {}'.format(event.object.id)
-                    logger.error(msg)
-                    event.logDebug(msg)
-                    event.logWarning('No recipients could be found, email not sent')
-                    event.notify = False
-                    dispatch(dbconnection, event)
-                    continue
+            if event.object.type == ObjectType.PASSWORD:
+                recipients.add(User(db.get(dbconnection, table='users', id=event.object.id)))
+                url = url+'/password/'+event.data['hashing']
+                subject, template = build_subject_and_template('password', event.object.type)
             else:
-                # USER REQEUST in body
-                if event.object.type == ObjectType.USER:
-                    recipients.add(User(event.data))
+                if event.isPending():
 
-                # SLICE/ PROJECT REQUEST
+                    # Find the authoirty of the event object
+                    # Then according the authority, put the pi_emails in pis_email
+                    try:
+                        authority_id = event.data['authority']
+                    except KeyError:
+                        msg = 'Authority id not specified ({})'.format(event.id)
+                        logger.error(msg)
+                        event.logDebug(msg)
+                        event.logWarning('Authority not specified, email not sent')
+                        event.notify = False
+                        dispatch(dbconnection, event)
+                        continue
+
+                    authority = Authority(db.get(dbconnection, table='authorities', id=authority_id))
+                    for pi_id in authority.pi_users:
+                        pi = User(db.get(dbconnection, table='users', id=pi_id))
+                        recipients.add(pi)
+
+                    if not recipients:
+                        msg = 'Emails cannot be sent because no one is the PI of {}'.format(event.object.id)
+                        logger.error(msg)
+                        event.logDebug(msg)
+                        event.logWarning('No recipients could be found, email not sent')
+                        event.notify = False
+                        dispatch(dbconnection, event)
+                        continue
                 else:
-                    recipients.add(User(db.get(dbconnection, table='users', id=event.user)))
+                    # USER REQUEST in body
+                    if event.object.type == ObjectType.USER:
+                        recipients.add(User(event.data))
 
+                    # SLICE/ PROJECT REQUEST
+                    else:
+                        recipients.add(User(db.get(dbconnection, table='users', id=event.user)))
 
-            if event.isPending():
-                subject, template = build_subject_and_template('request', event.object.type)
+                if event.isPending():
+                    subject, template = build_subject_and_template('request', event.object.type)
 
-            elif event.isDenied():
-                subject, template = build_subject_and_template('approve', event.object.type)
+                elif event.isDenied():
+                    subject, template = build_subject_and_template('approve', event.object.type)
 
-            elif event.isApproved():
-                subject, template = build_subject_and_template('deny', event.object.type)
+                elif event.isApproved():
+                    subject, template = build_subject_and_template('deny', event.object.type)
 
             mail_to = []
             for r in recipients:
@@ -109,7 +117,7 @@ def emails_run(qEmails):
                             entity = str(event.object.type),
                             theme = s.email.theme,
                             recipients = recipients,
-                            url = ''
+                            url = url,
                             )
 
             m = Message(mail_from=('OneLab Support', 'zhouquantest16@gmail.com'),
@@ -119,8 +127,11 @@ def emails_run(qEmails):
                         )
             try:
                 Mailer().send(m)
-                event.logInfo("The PIs of {} have been contacted".format(authority.name))
-                logger.info("The PIs of {} have been contacted".format(authority.name))
+                
+                # TODO: better handle email cases
+
+                #event.logInfo("The PIs of {} have been contacted".format(authority.name))
+                #logger.info("The PIs of {} have been contacted".format(authority.name))
             except Exception as e:
                 msg = '{} {}'.format(e, event.object.id)
                 logger.error(msg)
