@@ -72,11 +72,16 @@ class Index(BaseController):
             self.render(self.application.templates + "/login.html", message="user does not exist")
             return
 
-        if not compare_hash(crypt.crypt(password, user['password']), user['password']):
+        if not compare_hash(crypt.crypt(password, user['password']), user['password']) and not compare_legacy_password(password, user['password']):
             self.render(self.application.templates + "/login.html", message="password does not match")
             return
 
         self.redirect("/")
 
-
-
+def compare_legacy_password(plain_password, stored_password):
+    # Compare plaintext against encrypted password stored in the DB
+    # Protect against blank passwords in the DB
+    if stored_password is None or stored_password[:12] == "" or \
+        crypt.crypt(plain_password, stored_password[:12]) != stored_password:
+        return False
+    return True
