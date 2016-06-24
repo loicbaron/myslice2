@@ -91,6 +91,10 @@ class settings(object):
         user = 'zhouquantest16@gmail.com'
         password = 'zqtest123'
 
+    class web(object):
+        url = 'http://dev.myslice.info'
+        port = '8111'
+
 ## override with configuration file
 #parser = SafeConfigParser()
 #s = parser.read(self.files)

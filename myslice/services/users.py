@@ -13,6 +13,7 @@ from queue import Queue
 from myslice.db.activity import Event, ObjectType
 from myslice.db import connect, changes, events
 from myslice.services.workers.users import events_run as manageUsersEvents
+from myslice.services.workers.password import events_run as managePasswordEvents
 from myslice.services.workers.users import sync as syncUsers
 
 logger = logging.getLogger('myslice.service.activity')
@@ -34,11 +35,18 @@ def run():
 
     # db connection is shared between threads
     qUserEvents = Queue()
+    qPasswordEvents = Queue()
     lock = threading.Lock()
 
     threads = []
     for y in range(1):
         t = threading.Thread(target=manageUsersEvents, args=(lock, qUserEvents))
+        t.daemon = True
+        threads.append(t)
+        t.start()
+
+    for y in range(1):
+        t = threading.Thread(target=managePasswordEvents, args=(lock, qPasswordEvents))
         t.daemon = True
         threads.append(t)
         t.start()
@@ -68,6 +76,9 @@ def run():
             if event.object.type == ObjectType.USER:
                 qUserEvents.put(event)
 
+            if event.object.type == ObjectType.PASSWORD:
+                qPasswordEvents.put(event)
+
     for activity in feed:
         try:
             event = Event(activity['new_val'])
@@ -75,8 +86,10 @@ def run():
             logger.error("Problem with event: {}".format(e)) 
         else:
             if event.object.type == ObjectType.USER:
-                # event.isReady() = Request APPROVED or Event WAITING
                 qUserEvents.put(event)
+
+            if event.object.type == ObjectType.PASSWORD:
+                qPasswordEvents.put(event)
 
                 
     for x in threads:

@@ -28,8 +28,8 @@ def run(q):
         try:
             event = Event(q.get())
         except Exception as e:
-            import traceback
-            traceback.print_exc()
+            #import traceback
+            #traceback.print_exc()
             event.setError()
             logger.error("Problem with event: {}".format(e))
         else:
@@ -44,7 +44,6 @@ def run(q):
                     event.setPending()
                 else:
                     db_user = db.get(dbconnection, table='users', id=event.user)
-                    print(db_user)
                     if db_user:
                         user = User(db_user)
                         if user.has_privilege(event):
@@ -58,8 +57,8 @@ def run(q):
                         # raising an Exception here, blocks the REST API
                         #raise Exception("User %s not found" % event.user)
             except Exception as e:
-                import traceback
-                traceback.print_exc()
+                #import traceback
+                #traceback.print_exc()
                 event.setError()
                 event.logError(str(e))
                 logger.error("Unable to fetch the user from db {}".format(e))
