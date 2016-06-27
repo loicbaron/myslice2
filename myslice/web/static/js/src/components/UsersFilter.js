@@ -30,7 +30,6 @@ export default class UsersFilter extends React.Component {
 	}
 
     render() {
-        let options = this.getOptions();
         return <input 
             type="text" 
             onChange={this.setValue}

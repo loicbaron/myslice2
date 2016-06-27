@@ -5,12 +5,7 @@ const UsersSource = () => {
     return {
         fetch: {
             remote(state) {
-                return axios.get('/api/v1/users', {
-                    params: {
-                        filter: state.filter
-                    }
-                });
-
+                return axios.get('/api/v1/users');
             },
 
             // this function checks in our local cache first
@@ -32,11 +27,7 @@ const UsersSource = () => {
         },
         fetchFromAuthority: {
             remote(state) {
-                return axios.get('/api/v1/authorities/users', {
-                    params: {
-                        filter: state.filter
-                    }
-                });
+                return axios.get('/api/v1/authorities/users');
             },
             success: actions.updateUsers, // (required)
             error: actions.errorUsers, // (required)
