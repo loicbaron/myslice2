@@ -83,7 +83,7 @@ class ProjectsView extends React.Component {
 
         switch(this.state.dialog) {
             case 'users':
-                dialog = <UsersDialog close={this.closeDialog} />;
+                dialog = <UsersDialog close={this.closeDialog} from='authority' />;
                 break;
             case 'project':
                 dialog = <Dialog close={this.closeDialog}>
