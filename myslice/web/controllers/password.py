@@ -1,7 +1,9 @@
 import uuid
+import requests
 from tornado import web
 from tornado import gen, escape
 import rethinkdb as r
+from myslice import settings as s
 from myslice.db import dispatch, changes
 from myslice.db.activity import Event
 from myslice.web.controllers import BaseController
@@ -49,3 +51,25 @@ class Forgot(BaseController):
     def get(self):
         msg = ''
         self.render(self.application.templates + "/password_forgot.html", message=msg)
+
+    @gen.coroutine
+    def post(self):
+        """
+           Create an Event PASSWORD 
+        """
+        try:
+            post_email = self.get_argument("email")
+            payload = {"email":post_email}
+            url = s.web.url
+            if s.web.port and s.web.port != 80:
+                url = url +':'+ s.web.port
+            headers = {'Content-type': 'application/json'}
+            url = url+"/api/v1/password"
+            r = requests.put(url, data=payload, headers=headers)
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            self.render(self.application.templates + "/password_forgot.html", message="Something went wrong...")
+            return
+
+        self.redirect("/")

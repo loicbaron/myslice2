@@ -18,7 +18,21 @@ const PasswordSource = () => {
                     return true
                 }
             },
+            submitEmail: {
+                remote(state) {
+                    return axios.put('/api/v1/password/',
+                        {
+                            "email": state.email,
+                        });
+                },
 
+                success: actions.successEmail, // (required)
+                error: actions.errorupdateEmail, // (required)
+
+                shouldFetch(state) {
+                    return true
+                }
+            },
     }
 };
 

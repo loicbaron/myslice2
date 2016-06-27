@@ -10,6 +10,7 @@ module.exports = {
         projects: "./projects.js",
         users: "./users.js",
         registration: "./registration.js",
+        password_forgot :"./password_forgot.js",
         login: "./login.js",
         navbar: "./navbar.js",
         activity: "./activity.js"
