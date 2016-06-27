@@ -151,7 +151,7 @@ class Application(web.Application):
 
             web.url(r'/api/v1/profile$', ProfileHandler),
 
-            web.url(r'/api/v1/users/?(' + self.urn_regex + ')?/?(projects|slices)?$', UsersHandler),
+            web.url(r'/api/v1/users/?(' + self.urn_regex + ')?/?(authorities|projects|slices)?$', UsersHandler),
             web.url(r'/api/v1/authorities/?(' + self.urn_regex + ')?/?(users|projects)?$', AuthoritiesHandler),
             web.url(r'/api/v1/projects/?(' + self.urn_regex + ')?/?(users|slices)?$', ProjectsHandler),
             web.url(r'/api/v1/slices/?(' + self.urn_regex + ')?/?(resources)?$', SlicesHandler),

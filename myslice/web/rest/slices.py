@@ -12,26 +12,62 @@ class SlicesHandler(Api):
     @gen.coroutine
     def get(self, id=None, o=None):
         """
-        GET /slices/[<id>]
+            - GET /slices
+                (public) Slices list
 
-        Slice list or slice with <id>
+            - GET /slices/<id>
+                (public) Slices with <id>
 
-        :return:
-        """
-        slices = []
+            - GET /slices/<id>/(users|resources)
+                (auth) Users/Resources list of the slice with <id>
 
-        # TODO: id must be a valid URN
-        if id:
-            result = yield r.table('slices').get(id).run(self.dbconnection)
-            slices.append(result)
-        else:
-            cursor = yield r.table('slices').run(self.dbconnection)
+            :return:
+            """
 
+        response = []
+        current_user = self.get_current_user()
+
+        # GET /slices
+        if not id and not o:
+            cursor = yield r.table('slices') \
+                .pluck(self.fields['slices']) \
+                .merge(lambda slice: {
+                    'authority': r.table('authorities').get(slice['authority']) \
+                           .pluck(self.fields_short['authorities']) \
+                           .default({'id': slice['authority']})
+                }) \
+                .merge(lambda slice: {
+                    'project': r.table('projects').get(slice['project']) \
+                           .pluck(self.fields_short['projects']) \
+                           .default({'id': slice['project']})
+                }) \
+                .run(self.dbconnection)
             while (yield cursor.fetch_next()):
-                result = yield cursor.next()
-                slices.append(result)
+                project = yield cursor.next()
+                response.append(project)
 
-        self.write(json.dumps({"result": slices}, cls=myJSONEncoder))
+
+        # GET /slices/<id>
+        elif not o and id and self.isUrn(id):
+            if not current_user:
+                self.userError('permission denied')
+                return
+
+            cursor = yield r.table('projects') \
+                .pluck(self.fields['projects']) \
+                .filter({'id': id}) \
+                .filter(lambda project:
+                        project["pi_users"].contains(current_user['id']) or
+                        project["users"].contains(current_user['id'])) \
+                .merge(lambda project: {
+                'authority': r.table('authorities').get(project['authority']) \
+                       .pluck(self.fields_short['authorities']) \
+                       .default({'id': project['authority']})
+            }) \
+                .run(self.dbconnection)
+            while (yield cursor.fetch_next()):
+                project = yield cursor.next()
+                response.append(project)
 
     @gen.coroutine
     def post(self):
