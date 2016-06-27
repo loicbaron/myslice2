@@ -7,12 +7,6 @@ class Element extends React.Component {
         this.handleClick = this.handleClick.bind(this);
     }
 
-    componentDidMount() {
-    }
-
-    componentWillUnmount() {
-    }
-
     handleClick() {
         this.props.setCurrent(this.props.element);
     }
