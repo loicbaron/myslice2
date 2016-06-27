@@ -7,6 +7,7 @@ module.exports = {
   entry: {
           settings :"./settings.js",
           password :"./password.js",
+          password_forgot :"./password_forgot.js",
           projects: "./projects.js",
           users: "./users.js",
           registration: "./registration.js",

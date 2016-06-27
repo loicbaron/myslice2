@@ -5,7 +5,9 @@ class PasswordActions {
     updatePassword(password) {
         return password;
     }
-
+    updateEmail(email) {
+        return email;
+    }
     updateHashing(hashing) {
         return hashing;
     }
@@ -13,7 +15,9 @@ class PasswordActions {
     errorupdatePassword() {
         return true;
     }
-
+    errorupdateEmail() {
+        return true;
+    }
     matchingPassword() {
         return true;
     }
@@ -21,7 +25,13 @@ class PasswordActions {
     onSubmit() {
         return true;
     }
+    submitEmail() {
+        return true;
+    }
     submitSuccess() {
+        return true;
+    }
+    successEmail(){
         return true;
     }
 }
