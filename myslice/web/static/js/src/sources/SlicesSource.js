@@ -5,18 +5,10 @@ const SlicesSource = () => {
     return {
         fetch: {
             remote(state) {
-                let type = state.options.belongTo.type || null;
-                switch (type) {
-                    case 'project':
-                        return axios.get('/api/v1/projects/' + state.options.belongTo.id + '/slices');
-                        break;
-                    case 'users':
-                        return axios.get('/api/v1/users/' + state.options.belongTo.id + '/slices');
-                        break;
-                    default:
-                        return axios.get('/api/v1/slices');
-                }
-
+                /*
+                    fetch the slices of the user
+                 */
+                return axios.get('/api/v1/users/slices');
 
             },
 
