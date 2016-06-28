@@ -14,8 +14,11 @@ class UsersActions {
         return user;
     }
 
-    updateUsers(user) {
-        return user;
+    updateUsers(users) {
+        return users;
+    }
+    updateExcludeUsers(users) {
+        return users;
     }
     updateFilter(filter) {
         return filter;

@@ -161,12 +161,54 @@ class ProjectsHandler(Api):
                 }, cls=myJSONEncoder))
 
     @gen.coroutine
-    def put(self):
+    def put(self, id=None, o=None):
         """
         PUT /projects/<id>
+        { ‘users’ : [ <id user>, <id user>, … ] }
         :return:
         """
-        pass
+        if not self.request.body:
+            self.userError("empty request")
+            return
+
+        try:
+            data = escape.json_decode(self.request.body)
+        except json.decoder.JSONDecodeError as e:
+            self.userError("malformed request", e.message)
+            return
+
+        if 'users' in data:
+            data['type'] = "USER"
+            data['values'] = data['users']
+            del data['users']
+        else:
+            self.userError("ObjectType not supported")
+            
+        try:
+            event = Event({
+                'action': EventAction.ADD,
+                'user': self.current_user['id'],
+                'object': {
+                    'type': ObjectType.PROJECT,
+                    'id': id,
+                },
+                'data': data
+            })
+        except AttributeError as e:
+            self.userError("Can't create request", e)
+            return
+        except Exception as e:
+            self.userError("Can't create request", e)
+            return
+        else:
+            result = yield dispatch(self.dbconnection, event)
+
+            self.write(json.dumps(
+                {
+                    "result": "success",
+                    "error": None,
+                    "debug": None
+                }, cls=myJSONEncoder))
 
     @gen.coroutine
     def delete(self):

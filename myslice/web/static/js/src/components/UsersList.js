@@ -12,7 +12,7 @@ class UsersList extends React.Component {
                 <List>
                 {
                     this.props.users.map(function(user) {
-                        return <UsersRow key={user.id} user={user} setCurrent={this.props.setCurrent} current={this.props.current} />;
+                        return <UsersRow key={user.id} user={user} setCurrent={this.props.setCurrent} current={this.props.current} addUser={this.props.addUser} />;
                     }.bind(this))
                 }
                 </List>

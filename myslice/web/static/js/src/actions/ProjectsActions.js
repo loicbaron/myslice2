@@ -26,6 +26,10 @@ class ProjectsActions {
         return users;
     }
 
+    addUser(user) {
+        return user;
+    }
+
     errorUsers(errorMessage) {
         return errorMessage
     }

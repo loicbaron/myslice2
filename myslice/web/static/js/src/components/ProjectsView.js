@@ -44,6 +44,10 @@ class ProjectsView extends React.Component {
     onChange(state) {
         this.setState(state);
     }
+    addUser(value){
+        console.log(value);
+        actions.addUser(value);
+    }
 
     /* fetch the project list */
     fetchProjects() {
@@ -83,7 +87,7 @@ class ProjectsView extends React.Component {
 
         switch(this.state.dialog) {
             case 'users':
-                dialog = <UsersDialog close={this.closeDialog} from='authority' />;
+                dialog = <UsersDialog close={this.closeDialog} from='authority' exclude={this.state.current.project.pi_users} addUser={this.addUser} />;
                 break;
             case 'project':
                 dialog = <Dialog close={this.closeDialog}>

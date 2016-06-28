@@ -17,6 +17,8 @@ class ProjectsStore {
 
         this.filter = [];
 
+        this.addUserToProject = null;
+
         this.dialog = null;
 
         this.errorMessage = null;
@@ -26,6 +28,7 @@ class ProjectsStore {
             updateProjects: actions.UPDATE_PROJECTS,
             setCurrentProject: actions.SET_CURRENT_PROJECT,
             updateUsers: actions.UPDATE_USERS,
+            addUser: actions.ADD_USER,
             updateSlices: actions.UPDATE_SLICES,
             fetchProjects: actions.FETCH_PROJECTS,
             errorProjects: actions.ERROR_PROJECTS,
@@ -89,7 +92,10 @@ class ProjectsStore {
             this.current.users = users;
         }
     }
-
+    addUser(user) {
+        this.addUserToProject = user;
+        this.getInstance().addUser();
+    }
     errorUsers(errorMessage) {
         console.log(errorMessage);
     }

@@ -8,6 +8,15 @@ import ElementIcon from './base/ElementIcon';
 import DateTime from './base/DateTime';
 
 class UsersRow extends React.Component {
+    constructor(props) {
+        super(props);
+        this.addUser = this.addUser.bind(this);
+        this.state = {'loading':false}
+    }
+    addUser(value){
+        this.setState({'loading':true});
+        this.props.addUser(this.props.user);
+    }
 
     render() {
         var authority = this.props.user.authority.name || this.props.user.authority.shortname;
@@ -32,6 +41,14 @@ class UsersRow extends React.Component {
         if (this.props.user.hasOwnProperty('projects')) {
             num_projects = this.props.user.projects.length
         }
+        var addButton = '';
+        if(this.props.addUser){
+            if(this.state.loading){
+                addButton = <div className="elementButton"><i className="fa fa-lg fa-cog fa-spin" /></div>
+            }else{
+                addButton = <div className="elementButton"><button type="button" onClick={this.addUser} >Add user</button></div>
+            }
+        }
 
         return (
              <Element element={this.props.user} type="user" select={this.props.select}>
@@ -39,6 +56,7 @@ class UsersRow extends React.Component {
                  <ElementIcon icon="user" />
                  <ElementTitle label={label} detail={this.props.user.email} />
                  <ElementId id={this.props.user.id} />
+                 {addButton}
                  <div className="elementDetail">
                      <span className="elementLabel">Projects</span> {num_projects}
                      &nbsp;&nbsp;&nbsp;&nbsp;
@@ -53,6 +71,7 @@ class UsersRow extends React.Component {
 
 UsersRow.propTypes = {
     user: React.PropTypes.object.isRequired,
+    addUser: React.PropTypes.func,
     select: React.PropTypes.bool
 };
 
