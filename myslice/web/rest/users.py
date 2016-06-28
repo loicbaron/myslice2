@@ -309,7 +309,18 @@ class ProfileHandler(Api):
         """
         # TODO: id must be a valid URN
 
-        profile = yield r.table('users').get(self.get_current_user()['id']).run(self.dbconnection)
+        feed = yield r.table('users') \
+                .pluck(self.fields['profile']) \
+                .filter({'id': self.get_current_user()['id']}) \
+                .merge(lambda user: {
+                'authority': r.table('authorities').get(user['authority']) \
+                                                       .pluck(self.fields_short['authorities']) \
+                                                       .default({'id': user['authority']})
+                 }) \
+                .run(self.dbconnection)
+
+        yield feed.fetch_next()
+        profile = yield feed.next()
 
         self.write(json.dumps({"result": profile}, cls=myJSONEncoder))
 
@@ -321,17 +332,37 @@ class ProfileHandler(Api):
         :return:
         """
         try:
-            data = escape.json_decode(self.request.body)['data']
+            data = escape.json_decode(self.request.body)
         except json.decoder.JSONDecodeError as e:
             self.userError("malformed request", e)
             return
+        except Exception as e:
+            self.userError("malformed request", e)
+            return
+
+        # filter fileds  
+        try:
+            data = {
+                "first_name":  data["first_name"],
+                "last_name": data["last_name"],
+                "url" : data['url'],
+                "bio" : data['bio'],
+            }
+        except KeyError as e:
+            self.userError("Malformed request", e)
+            return
+        except Exception as e:
+            return
+
+        user_id = self.get_current_user()['id']
+
         try:
             event = Event({
                 'action': EventAction.UPDATE,
-                'user': self.get_current_user()['id'],
+                'user': user_id ,
                 'object': {
                     'type': ObjectType.USER,
-                    'id': self.get_current_user()['id'],
+                    'id': user_id ,
                 },
                 'data': data
             })
@@ -341,6 +372,7 @@ class ProfileHandler(Api):
         else:
             activity = yield dispatch(self.dbconnection, event)
 
+            #TODO change to zmq client
             feed = yield changes(self.dbconnection, 
                             table='activity', 
                             status=['ERROR', 'SUCCESS'], 
@@ -350,7 +382,20 @@ class ProfileHandler(Api):
             while (yield feed.fetch_next()):
                 result = yield feed.next()
                 if result['new_val']['status'] == 'SUCCESS':
-                    user = yield r.table('users').get(self.get_current_user()['id']).run(self.dbconnection)
-                    self.finish(json.dumps({"result": user}, cls=myJSONEncoder))
+
+                    feed = yield r.table('users') \
+                        .pluck(self.fields['profile']) \
+                        .filter({'id': user_id}) \
+                        .merge(lambda user: {
+                        'authority': r.table('authorities').get(user['authority']) \
+                                                       .pluck(self.fields_short['authorities']) \
+                                                       .default({'id': user['authority']})
+                        }) \
+                        .run(self.dbconnection)
+
+                    yield feed.fetch_next()
+                    profile = yield feed.next()
+                    self.finish(json.dumps({"result": profile}, cls=myJSONEncoder))
+                
                 else:
                     self.userError("updated failed", result['new_val'])
