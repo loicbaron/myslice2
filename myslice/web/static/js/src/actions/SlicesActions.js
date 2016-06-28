@@ -2,24 +2,20 @@ import alt from '../alt';
 
 class SlicesActions {
 
-    fetchSlices(options) {
-        return options;
+    constructor() {
+        this.generateActions(
+            'fetchSlices',
+            'setCurrentSlice',
+            'getCurrentSlice',
+            'updateSlices',
+            'updateSliceElement',
+            'errorSlices',
+            'showMenu'
+        );
     }
 
-    updateSliceElement(slice) {
-        return slice;
-    }
-
-    updateSlices(slices) {
-        return slices;
-    }
-
-    selectSlice(slice) {
-        return slice;
-    }
-
-    errorSlices(errorMessage) {
-        return errorMessage
+    getCurrentSlice() {
+        return;
     }
 
 }

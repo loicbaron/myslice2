@@ -32,9 +32,10 @@ class AuthoritiesHandler(Api):
         current_user = self.get_current_user()
 
         # GET /authorities
+        # TODO: If user is Admin, PI or User of the authority access to detailed info
         if not id and not o:
             cursor = yield r.table('authorities') \
-                            .pluck(self.fields['authorities']) \
+                            .pluck(self.fields_short['authorities']) \
                             .run(self.dbconnection)
             while (yield cursor.fetch_next()):
                 authority = yield cursor.next()
@@ -42,7 +43,9 @@ class AuthoritiesHandler(Api):
 
 
         # GET /authorities/<id>
+        # TODO: Accessbile by Admin or
         elif not o and id and self.isUrn(id):
+
             if not current_user:
                 self.userError('permission denied')
                 return
@@ -61,10 +64,11 @@ class AuthoritiesHandler(Api):
 
         # GET /authorities/(users|projects)
         elif not id and o in ['users', 'projects']:
+        
             if not current_user:
                 self.userError('permission denied')
                 return
-
+        
             cursor = yield r.table(o) \
                             .pluck(self.fields[o]) \
                             .filter({"authority": current_user['authority']}) \
@@ -73,11 +77,23 @@ class AuthoritiesHandler(Api):
                 item = yield cursor.next()
                 response.append(item)
 
-        # GET /authorities/<id>/(users|projects)
+        # GET /authorities/[<id>/](users|projects)
         elif id and self.isUrn(id) and o in ['users', 'projects']:
+
+            if not id or not self.isUrn(id) and current_user:
+                id = current_user['authority']
+            elif not self.isUrn(id):
+                self.userError('permission denied')
+                return
+
             cursor = yield r.table(o) \
                             .pluck(self.fields[o]) \
                             .filter({"authority": id}) \
+                            .merge(lambda project: {
+                            'authority': r.table('authorities').get(project['authority']) \
+                                                               .pluck(self.fields_short['authorities']) \
+                                                               .default({'id': project['authority']})
+                            }) \
                             .run(self.dbconnection)
             while (yield cursor.fetch_next()):
                 item = yield cursor.next()
