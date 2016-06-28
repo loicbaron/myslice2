@@ -98,6 +98,10 @@ input[type=email] {
     width:100%;
 }
 
+input[type="text"]:disabled {
+    color: #000000;
+}
+
 input[type=text]:focus,
 input[type=password]:focus,
 input[type=email]:focus {
@@ -465,7 +469,7 @@ div.registrationForm {
     color:#8E7CC3;
 }
 
-.elementStatus .success, .elementStatus .enabled, .elementStatus .success {
+.elementStatus .success, .elementStatus .enabled, {
     color:#93C47D;
 }
 .elementStatus .error, .elementStatus .denied {
@@ -500,5 +504,67 @@ div.registrationForm {
     margin:0 8px;
 }
 .logMessage {
+
+}
+
+/*
+    SETTINGS general for profile,password
+*/
+
+.settings-span {
+    float: left;
+    padding:0 12px 0 12px;
+    font-size: 70%;
+    font-weight: bold;
+    color: #808080;
+}
+
+.settings-group {
+    padding-bottom: 7.5px;
+}
+
+/*
+    PROFILE
+*/
+
+.profileFirstName {
+    padding-left: 7.5px;
+    float: left;
+    width: 50%;
+}
+
+.profileLastName {
+    padding-right: 7.5px;
+    float: left;
+    width: 50%;
+}
+
+.profileAvatar {
+    margin-bottom: 5px;
+}
+
+/*
+    Password
+*/
+
+.helpBlock {
+    /*Light Yellow*/
+    font-size: 85%;
+    color: #FFA500; 
+}
+
+.WarningBlock {
+    font-size: 85%;
+    color: red;
+    padding-bottom: 2px;
+}
+
+.inputIcon {
+    float: right;
+    margin-right: 35px;
+    margin-top: -26px;
+    position: relative;
+    color: green;
+    z-index: 91
 
 }

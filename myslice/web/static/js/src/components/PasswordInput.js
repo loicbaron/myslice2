@@ -25,7 +25,7 @@ class PasswordInput extends React.Component {
 
         if (this.validatePassword(password)) {
             this.setState({
-                        'class' : '',
+                        'class' : 'correct',
                         'helperText': '',
                         });
             this.props.checkedPassword(password);
@@ -44,6 +44,11 @@ class PasswordInput extends React.Component {
     checkPattern(password){
         if (password.length < 8) {
             this.setState({ 'helperText': 'Must be at least 8 characters long.'});
+            return;
+        }
+
+        if (password.length > 25) {
+            this.setState({ 'helperText': 'Too long, at most 25 characters.'});
             return;
         }
         
@@ -65,24 +70,30 @@ class PasswordInput extends React.Component {
             return;
         }
 
-        if (password.length > 25) {
-            this.setState({ 'helperText': 'Too long, at most 25 characters.'});
-            return;
-        }
+
     }
 
     render() {
-        let message = <div>{this.state.helperText}</div>;
         let reavealed = this.props.reavealed ? "text" : "password";
 
+        let message = (<div></div>);
+        if (this.state.helperText) {
+            message = (<span className="helpBlock">{this.state.helperText}</span>);
+        }
+
+        let icon = (this.props.correct) ? <i className="fa fa-check inputIcon"></i>: <i></i>;
+
         return (
-            <div>
+            <div className="settings-group resetPassword">
+                <span className="settings-span">{this.props.description}</span>
                 <input  onChange={this.updatePassword} 
                         className={this.state.class} 
                         placeholder={this.props.placeholder} 
                         type={reavealed}
-                        name={this.props.name} />
-                {message}
+                        name={this.props.name}
+                        />
+                {icon}
+            {message}
             </div>
         );
     }

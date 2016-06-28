@@ -27,14 +27,13 @@ const SettingsSource = () => {
 
             submitProfile: {
                 remote(state) {
+                    console.log(state)
                     return axios.put('/api/v1/profile',
                         {
-                            data: {
-                                "first_name": state.profile.first_name,
-                                "last_name": state.profile.last_name,
-                                "bio": state.profile.bio,
-                                "url": state.profile.url
-                            }
+                            "first_name": state.profile.first_name,
+                            "last_name": state.profile.last_name,
+                            "bio": state.profile.bio,
+                            "url": state.profile.url
                         });
                 },
 
@@ -52,9 +51,7 @@ const SettingsSource = () => {
                 remote(state) {
                     return axios.put('/api/v1/profile',
                         {
-                            data: {
                                 "generate_keys": "True"
-                            }
                         });
                 },
                 
@@ -68,9 +65,11 @@ const SettingsSource = () => {
 
             submitPassword:{
                 remote(state) {
-                    console.log(this.state.newPassword);
-                    console.log(this.state.profile.password);
-
+                    return axios.put('/api/v1/password',
+                    {   
+                            "old_password": state.oldPassword,
+                            "new_password": state.newPassword
+                    });
                 },
 
                 success: actions.updateSettings,  // (required)

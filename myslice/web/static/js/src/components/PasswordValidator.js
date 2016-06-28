@@ -22,9 +22,12 @@ class PasswordValidator extends React.Component {
         if (this.state.newPassword === this.state.repeatPassword){
             this.props.validatedPassword(this.state.newPassword);
             this.state.isSame = true;
+            this.props.isSamePassword(this.state.isSame);
             this.forceUpdate();
         } else {
             this.state.isSame = false;
+            this.props.isSamePassword(this.state.isSame);
+            this.forceUpdate();
         }
 
     }
@@ -40,20 +43,26 @@ class PasswordValidator extends React.Component {
     }
 
     render() {
-
-            let message = <div> {(this.state.isSame) ? "Same Password" : ""} </div>
+            let message =   <span id="WarningMessage" className="WarningBlock">
+                                {(this.state.isSame) ? "" : this.props.helpMessage}
+                            </span>
             
             return (
+                
                 <div>
                     <PasswordInput  placeholder="New Password" 
                                     name="new_password"
                                     showPattern={this.props.showPattern}
                                     checkedPassword={this.updateNewPassword}
+                                    description="New Password"
+                                    correct={this.state.isSame}
                                     />
                     <PasswordInput  placeholder="Repeat Password" 
                                     name="repeat_password"
                                     showPattern={this.props.showPattern}
                                     checkedPassword={this.updateRepeatPassword}
+                                    description="Repeat Password"
+                                    correct={this.state.isSame}
                                     />
                     {message}
                 </div>
@@ -64,13 +73,12 @@ class PasswordValidator extends React.Component {
 
 PasswordInput.propTypes = {
     showPattern: React.PropTypes.bool,
-    showSameMessage: React.PropTypes.bool,
     validatedPassword : React.PropTypes.func,
+    isSamePassword: React.PropTypes.func
 }
 
 PasswordInput.defaultProps = {
     showPattern: true,
-    showSameMessage: true,
     validatedPassword: null
 }
 

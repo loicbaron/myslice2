@@ -5,7 +5,7 @@ const PasswordSource = () => {
     return {
             onSubmit: {
                 remote(state) {
-                    return axios.put('/api/v1/password/'+state.hashing,
+                    return axios.post('/api/v1/password/'+state.hashing,
                         {
                             "password": state.password,
                         });
@@ -20,7 +20,7 @@ const PasswordSource = () => {
             },
             submitEmail: {
                 remote(state) {
-                    return axios.put('/api/v1/password/',
+                    return axios.post('/api/v1/password/',
                         {
                             "email": state.email,
                         });
