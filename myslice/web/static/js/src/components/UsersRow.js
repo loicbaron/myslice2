@@ -7,17 +7,12 @@ import ElementStatus from './base/ElementStatus';
 import ElementIcon from './base/ElementIcon';
 import DateTime from './base/DateTime';
 
+import AddUserToProject from './AddUserToProject';
+
 class UsersRow extends React.Component {
     constructor(props) {
         super(props);
-        this.addUser = this.addUser.bind(this);
-        this.state = {'loading':false}
     }
-    addUser(value){
-        this.setState({'loading':true});
-        this.props.addUser(this.props.user);
-    }
-
     render() {
         var authority = this.props.user.authority.name || this.props.user.authority.shortname;
 
@@ -43,11 +38,7 @@ class UsersRow extends React.Component {
         }
         var addButton = '';
         if(this.props.addUser){
-            if(this.state.loading){
-                addButton = <div className="elementButton"><i className="fa fa-lg fa-cog fa-spin" /></div>
-            }else{
-                addButton = <div className="elementButton"><button type="button" onClick={this.addUser} >Add user</button></div>
-            }
+            addButton = <AddUserToProject user={this.props.user} />
         }
 
         return (
@@ -71,12 +62,13 @@ class UsersRow extends React.Component {
 
 UsersRow.propTypes = {
     user: React.PropTypes.object.isRequired,
-    addUser: React.PropTypes.func,
+    addUser: React.PropTypes.bool,
     select: React.PropTypes.bool
 };
 
 UsersRow.defaultProps = {
-    select: false
+    select: false,
+    addUser: false,
 };
 
 export default UsersRow;

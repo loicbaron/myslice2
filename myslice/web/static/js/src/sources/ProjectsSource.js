@@ -68,8 +68,8 @@ const ProjectsSource = () => {
 
             },
 
-            success: actions.updateUsers, // (required)
-            error: actions.errorUsers, // (required)
+            success: actions.updateAddUser, // (required)
+            error: actions.errorAddUser, // (required)
 
             shouldFetch(state) {
                 return true

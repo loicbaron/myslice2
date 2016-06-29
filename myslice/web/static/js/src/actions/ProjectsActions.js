@@ -29,7 +29,12 @@ class ProjectsActions {
     addUser(user) {
         return user;
     }
-
+    updateAddUser(message) {
+        return message;
+    }
+    errorAddUser(errorMessage) {
+        return errorMessage
+    }
     errorUsers(errorMessage) {
         return errorMessage
     }
