@@ -10,9 +10,11 @@ from xmlrpc.client import Fault as SFAError
 class Slice(myslicelibSlice):
 
     def save(self, dbconnection, setup=None):
+        # Get Slice from local DB 
+        # to update the users after Save
+        current = db.get(dbconnection, table='slices', id=self.id)
         result = super(Slice, self).save(setup)
-        #print(self.dict())
-        #print(result['data'][0])
+
         if result['errors']:
             raise Exception('errors: %s' % result['errors'] )
         else:
@@ -24,11 +26,14 @@ class Slice(myslicelibSlice):
 
             db.slices(dbconnection, result, self.id)
 
-            for user in self.users:
-                db.users(dbconnection, q(User).id(user).get().dict()) 
+            for user in current['users']:
+                db.users(dbconnection, q(User).id(user).get().dict())
             return True
 
     def delete(self, dbconnection, setup=None):
+        # Get Slice from local DB 
+        # to update the users after Save
+        current = db.get(dbconnection, table='slices', id=self.id)
         result = super(Slice, self).delete(setup)
         
         if result['errors']:
@@ -36,8 +41,8 @@ class Slice(myslicelibSlice):
         else:
             db.delete(dbconnection, 'slices', self.id)
             
-            for user in self.users:
-                db.users(dbconnection, q(User).id(user).get().dict()) 
+            for user in current['users']:
+                db.users(dbconnection, q(User).id(user).get().dict())
             return True
 
 

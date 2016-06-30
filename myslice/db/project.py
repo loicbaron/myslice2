@@ -10,6 +10,9 @@ from xmlrpc.client import Fault as SFAError
 class Project(myslicelibProject):
 
     def save(self, dbconnection, setup=None):
+        # Get Project from local DB 
+        # to update the pi_users after Save
+        current = db.get(dbconnection, table='projects', id=self.id)
         result = super(Project, self).save(setup)
         
         if result['errors']:
@@ -23,11 +26,14 @@ class Project(myslicelibProject):
 
             db.projects(dbconnection, result, self.id)
             
-            for user in self.pi_users:
-                db.users(dbconnection, q(User).id(user).get().dict()) 
+            for user in current['pi_users']:
+                db.users(dbconnection, q(User).id(user).get().dict())
             return True
 
     def delete(self, dbconnection,  setup=None):
+        # Get Project from local DB 
+        # to update the pi_users after Save
+        current = db.get(dbconnection, table='projects', id=self.id)
         result = super(Project, self).delete(setup)
         
         if result['errors']:
@@ -35,8 +41,8 @@ class Project(myslicelibProject):
         else:
             db.delete(dbconnection, 'projects', self.id)
 
-            for user in self.pi_users:
-                db.users(dbconnection, q(User).id(user).get().dict()) 
+            for user in current['pi_users']:
+                db.users(dbconnection, q(User).id(user).get().dict())
             return True
 
 
