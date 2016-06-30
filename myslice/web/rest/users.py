@@ -137,6 +137,12 @@ class UsersHandler(Api):
                                                         .pluck(self.fields_short['authorities']) \
                                                         .default({'id' : user['authority']})
                 }) \
+                .merge(lambda user: {
+                    'slices': r.table('slices') \
+                           .get_all(r.args(user['slices'])) \
+                           .pluck(self.fields_short['slices']) \
+                           .coerce_to('array')
+                }) \
                 .run(self.dbconnection)
             while (yield cursor.fetch_next()):
                 users = yield cursor.next()
@@ -156,6 +162,12 @@ class UsersHandler(Api):
                     'authority': r.table('authorities').get(user['authority']) \
                                                        .pluck(self.fields_short['authorities']) \
                                                        .default({'id': user['authority']})
+                }) \
+                .merge(lambda user: {
+                    'slices': r.table('slices') \
+                           .get_all(r.args(user['slices'])) \
+                           .pluck(self.fields_short['slices']) \
+                           .coerce_to('array')
                 }) \
                 .run(self.dbconnection)
             while (yield cursor.fetch_next()):

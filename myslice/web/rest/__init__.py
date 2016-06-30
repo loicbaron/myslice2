@@ -45,6 +45,9 @@ class Api(cors.CorsMixin, web.RequestHandler):
     def isUrn(self, urn):
         return re.match(self.application.urn_regex, urn)
 
+    def isHrn(self, hrn):
+        return re.match(self.application.hrn_regex, hrn)
+
     def userError(self, message, debug = None):
         self.set_status(400)
         self.finish({"error": message, "debug": debug})

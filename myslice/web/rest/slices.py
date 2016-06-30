@@ -15,11 +15,11 @@ class SlicesHandler(Api):
             - GET /slices
                 (public) Slices list
 
-            - GET /slices/<id>
-                (public) Slices with <id>
+            - GET /slices/<id|hrn>
+                (public) Slices with <id|hrn>
 
-            - GET /slices/<id>/(users|resources)
-                (auth) Users/Resources list of the slice with <id>
+            - GET /slices/<id|hrn>/(users|resources)
+                (auth) Users/Resources list of the slice with <id|hrn>
 
             :return:
             """
@@ -48,26 +48,39 @@ class SlicesHandler(Api):
 
 
         # GET /slices/<id>
-        elif not o and id and self.isUrn(id):
+        elif not o and id:
+
             if not current_user:
                 self.userError('permission denied')
                 return
 
-            cursor = yield r.table('projects') \
-                .pluck(self.fields['projects']) \
-                .filter({'id': id}) \
-                .filter(lambda project:
-                        project["pi_users"].contains(current_user['id']) or
-                        project["users"].contains(current_user['id'])) \
-                .merge(lambda project: {
-                'authority': r.table('authorities').get(project['authority']) \
+            if self.isUrn(id):
+                filter = {'id' : id}
+
+            elif self.isHrn(id):
+                filter = {'hrn': id}
+
+            else:
+                self.userError('id or hrn format error')
+                return
+
+            cursor = yield r.table('slices') \
+                .pluck(self.fields['slices']) \
+                .filter(filter) \
+                .merge(lambda slice: {
+                    'authority': r.table('authorities').get(slice['authority']) \
                        .pluck(self.fields_short['authorities']) \
-                       .default({'id': project['authority']})
-            }) \
+                       .default({'id': slice['authority']})
+                }) \
+                .merge(lambda slice: {
+                    'project': r.table('projects').get(slice['project']) \
+                           .pluck(self.fields_short['projects']) \
+                           .default({'id': slice['project']})
+                }) \
                 .run(self.dbconnection)
             while (yield cursor.fetch_next()):
-                project = yield cursor.next()
-                response.append(project)
+                slice = yield cursor.next()
+                response.append(slice)
 
     @gen.coroutine
     def post(self):
