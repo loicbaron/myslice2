@@ -53,9 +53,9 @@ class UsersDialog extends React.Component {
 
     render() {
         if(Object.keys(this.state.filter).length>0){
-            var usersList = <UsersList users={this.state.filteredUsers} addUser={true} />
+            var usersList = <UsersList users={this.state.filteredUsers} addUser={this.props.addUser} />
         }else{
-            var usersList = <UsersList users={this.state.users} project={this.props.project} />
+            var usersList = <UsersList users={this.state.users} addUser={this.props.addUser} />
         }
 
         return (

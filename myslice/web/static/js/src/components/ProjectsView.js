@@ -18,7 +18,6 @@ import ProjectsInfo from './ProjectsInfo';
 import ProjectsForm from './ProjectsForm';
 import ProjectsList from './ProjectsList';
 
-import UsersList from './UsersList';
 import UsersDialog from './UsersDialog';
 
 class ProjectsView extends React.Component {

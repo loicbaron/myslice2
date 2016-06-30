@@ -62,10 +62,7 @@ const ProjectsSource = () => {
         addUser: {
 
             remote(state) {
-                if (state.addUserToProject) {
-                    return axios.put('/api/v1/projects/' + state.current.project.id, {users:[state.addUserToProject.id]} );
-                }
-
+                return axios.put('/api/v1/projects/' + state.current.project.id, {'action':'add','users':[state.addUserToProject.id]});
             },
 
             success: actions.updateAddUser, // (required)
@@ -75,6 +72,20 @@ const ProjectsSource = () => {
                 return true
             }
         },
+        removeUser: {
+
+            remote(state) {
+                return axios.put('/api/v1/projects/' + state.current.project.id, {'action':'remove','users':[state.removeUserFromProject.id]});
+            },
+
+            success: actions.updateRemoveUser, // (required)
+            error: actions.errorRemoveUser, // (required)
+
+            shouldFetch(state) {
+                return true
+            }
+        },
+
         slices: {
 
             remote(state) {
