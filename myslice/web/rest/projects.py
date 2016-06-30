@@ -164,7 +164,7 @@ class ProjectsHandler(Api):
     def put(self, id=None, o=None):
         """
         PUT /projects/<id>
-        { ‘users’ : [ <id user>, <id user>, … ] }
+        { 'action':'add|remove', ‘users’ : [ <id user>, <id user>, … ] }
         :return:
         """
         if not self.request.body:
@@ -183,10 +183,20 @@ class ProjectsHandler(Api):
             del data['users']
         else:
             self.userError("ObjectType not supported")
-            
+
+        try:
+            if data['action'].lower() == 'add':
+                action = EventAction.ADD
+            elif data['action'].lower() == 'remove':
+                action = EventAction.REMOVE
+            else:
+                raise ValueError("action %s not supported" % data['action'])
+        except Exception as e:
+            self.userError("malformed request", e)
+
         try:
             event = Event({
-                'action': EventAction.ADD,
+                'action': action,
                 'user': self.current_user['id'],
                 'object': {
                     'type': ObjectType.PROJECT,
