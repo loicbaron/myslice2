@@ -49,7 +49,7 @@ class User(myslicelibUser):
         if event.object.type == ObjectType.SLICE and event.object.id in self.slices:
             return True
 
-        for auth in self.pi_authorities:
+        for auth in self.getAttribute('pi_authorities'):
             if hasattr(event.data, 'authority') and auth == event.data.authority:
                 return True
             if auth == event.object.id:

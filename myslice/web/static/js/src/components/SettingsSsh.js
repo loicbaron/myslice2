@@ -45,7 +45,7 @@ export default class UserAuthentication extends React.Component {
                 <div>
                     {this.state.message}
                     <Button label="Generate New Keys" handleClick={this.generateKeys.bind(this)}/> 
-                    <DownloadButton 
+                    <DownloadButton
                             downloadTitle="Download Pubic Keys" 
                             genFile={this.downloadPublicKeys.bind(this)}
                             /> 

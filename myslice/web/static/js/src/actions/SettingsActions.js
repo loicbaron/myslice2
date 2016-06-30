@@ -39,11 +39,11 @@ class SettingsActions {
         return name;
     }
 
-    repeatPassword(oldPassword) {
+    updateOldpassword(oldPassword) {
         return oldPassword;
     }
 
-    resetPassword(newPassword) {
+    updateNewpassword(newPassword) {
         return newPassword;
     }
 

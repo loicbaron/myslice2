@@ -67,10 +67,6 @@ class ProjectsView extends React.Component {
         actions.showDialog(null);
     }
 
-
-
-
-
     render() {
         var panelRight = null;
         var dialog = null;
@@ -83,7 +79,7 @@ class ProjectsView extends React.Component {
 
         switch(this.state.dialog) {
             case 'users':
-                dialog = <UsersDialog close={this.closeDialog} />;
+                dialog = <UsersDialog close={this.closeDialog} from='authority' exclude={this.state.current.project.pi_users} addUser={true} />;
                 break;
             case 'project':
                 dialog = <Dialog close={this.closeDialog}>

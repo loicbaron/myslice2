@@ -9,6 +9,7 @@ import DialogHeader from './base/DialogHeader';
 import DialogBody from './base/DialogBody';
 import Title from './base/Title';
 import UsersList from './UsersList';
+import UsersFilter from './UsersFilter';
 
 class UsersDialog extends React.Component {
 
@@ -16,11 +17,15 @@ class UsersDialog extends React.Component {
         super(props);
         this.state = store.getState();
         this.onChange = this.onChange.bind(this);
+        this.handleFilter = this.handleFilter.bind(this);
     }
 
     componentDidMount() {
         store.listen(this.onChange);
         this.fetchUsers();
+        if(this.props.exclude.length>0){
+            actions.updateExcludeUsers(this.props.exclude);
+        }
     }
 
     componentWillUnmount() {
@@ -30,13 +35,29 @@ class UsersDialog extends React.Component {
     onChange(state) {
         this.setState(state);
     }
-
+    handleFilter(value) {
+        var f = {'email':value,'shortname':value}
+        actions.updateFilter(f);
+        actions.updateFilteredUsers();
+    }
     /* fetch the users list */
-    fetchUsers() {
-        actions.fetchUsers();
+    fetchUsers(filter={}) {
+        switch (this.props.from){
+            case 'authority':
+                actions.fetchFromAuthority(filter);
+                break;
+            default:
+                actions.fetchUsers(filter);
+        }
     }
 
     render() {
+        if(Object.keys(this.state.filter).length>0){
+            var usersList = <UsersList users={this.state.filteredUsers} addUser={true} />
+        }else{
+            var usersList = <UsersList users={this.state.users} project={this.props.project} />
+        }
+
         return (
             <Dialog close={this.props.close}>
                 <DialogPanel>
@@ -44,7 +65,8 @@ class UsersDialog extends React.Component {
                         <Title title="Add Users" />
                     </DialogHeader>
                     <DialogBody>
-                        <UsersList users={this.state.users} />
+                        <UsersFilter handleChange={this.handleFilter} users={this.state.users} />
+                        {usersList}
                     </DialogBody>
                 </DialogPanel>
             </Dialog>
@@ -53,11 +75,13 @@ class UsersDialog extends React.Component {
 }
 
 UsersDialog.propTypes = {
-    close: React.PropTypes.func
+    close: React.PropTypes.func,
+    addUser: React.PropTypes.bool,
 };
 
 UsersDialog.defaultProps = {
-    close: null
+    close: null,
+    addUser: false,
 };
 
 export default UsersDialog;

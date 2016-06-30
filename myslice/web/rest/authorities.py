@@ -62,20 +62,20 @@ class AuthoritiesHandler(Api):
                 authority = yield cursor.next()
                 response.append(authority)
 
-        # # GET /authorities/(users|projects)
-        # elif not id and o in ['users', 'projects']:
-        #
-        #     if not current_user:
-        #         self.userError('permission denied')
-        #         return
-        #
-        #     cursor = yield r.table(o) \
-        #                     .pluck(self.fields[o]) \
-        #                     .filter({"authority": current_user['authority']}) \
-        #                     .run(self.dbconnection)
-        #     while (yield cursor.fetch_next()):
-        #         item = yield cursor.next()
-        #         response.append(item)
+        # GET /authorities/(users|projects)
+        elif not id and o in ['users', 'projects']:
+        
+            if not current_user:
+                self.userError('permission denied')
+                return
+        
+            cursor = yield r.table(o) \
+                            .pluck(self.fields[o]) \
+                            .filter({"authority": current_user['authority']}) \
+                            .run(self.dbconnection)
+            while (yield cursor.fetch_next()):
+                item = yield cursor.next()
+                response.append(item)
 
         # GET /authorities/[<id>/](users|projects)
         elif id and self.isUrn(id) and o in ['users', 'projects']:

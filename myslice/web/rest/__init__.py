@@ -16,14 +16,15 @@ class Api(cors.CorsMixin, web.RequestHandler):
             'authorities': [ 'id', 'hrn', 'name', 'status' ],
             'users': [ 'id', 'hrn', 'email', 'firstname', 'lastname', 'shortname', 'authority', 'status' ],
             'projects': [ 'id', 'hrn', 'name', 'shortname', 'authority', 'status' ],
-            'slices': [ 'id', 'hrn',  'name', 'shortname', 'project', 'status' ]
+            'slices': [ 'id', 'hrn',  'name', 'shortname', 'project', 'status']
         }
 
         self.fields = {
             'authorities': self.fields_short['authorities'] + [ 'authority', 'pi_users', 'users', 'projects', 'slices', 'created', 'updated', 'enabled'],
             'users': self.fields_short['users'] + [ 'projects', 'status', 'created', 'updated', 'enabled'],
             'projects': self.fields_short['projects'] + [ 'pi_users', 'users', 'slices', 'created', 'updated', 'enabled'],
-            'slices': self.fields_short['slices'] + [ 'authority', 'users', 'created', 'updated', 'enabled']
+            'slices': self.fields_short['slices'] + [ 'authority', 'users', 'created', 'updated', 'enabled'],
+            'profile': ['id', 'email','first_name', 'last_name', 'bio', 'url', 'public_key', 'private_key', 'authority', 'url']
         }
 
     def get_current_user(self):

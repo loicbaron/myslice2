@@ -6,7 +6,7 @@ class SettingsStore {
 
     constructor() {
         //set profile as default pannel to see
-        this.profile = {   "email"      : "",
+        this.profile = {    "email"      : "",
 
                             "first_name" : "",
                             "last_name"  : "",
@@ -15,6 +15,7 @@ class SettingsStore {
                             "url"        : "",
             }
         this.menuSelected = 'profile';
+        this.oldPassword = '';
         this.newPassword = '';
 
         this.loading = false;
@@ -29,8 +30,8 @@ class SettingsStore {
             generateKeys: actions.GENERATE_KEYS,
             submitPassword: actions.SUBMIT_PASSWORD,
             
-            repeatPassword: actions.REPEAT_PASSWORD,
-            resetPassword: actions.RESET_PASSWORD,
+            updateOldpassword: actions.UPDATE_OLDPASSWORD,
+            updateNewpassword: actions.UPDATE_NEWPASSWORD,
 
             updateSettings: actions.UPDATE_SETTINGS,
             errorupdateSettings: actions.ERRORUPDATE_SETTINGS,
@@ -76,15 +77,13 @@ class SettingsStore {
         this.profile[array[0]] = array[1];
     }
 
-    repeatPassword(oldPassword) {
-        this.profile.password = oldPassword;
+    updateOldpassword(oldPassword) {
+        this.oldPassword = oldPassword;
     }
 
-    resetPassword(newPassword) {
+    updateNewpassword(newPassword) {
         this.newPassword = newPassword;
     }
-
-
 
 }
 

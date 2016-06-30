@@ -52,12 +52,12 @@ class SettingsView extends React.Component {
     }
 
     // for Password
-    repeatPassword(oldPassword){
-        actions.repeatPassword(oldPassword);
+    updateOldpassword(oldPassword){
+        actions.updateOldpassword(oldPassword);
     }
 
-    resetPassword(newPassword){
-        actions.resetPassword(newPassword);
+    updateNewpassword(newPassword){
+        actions.updateNewpassword(newPassword);
     }
 
     submitPassword(){
@@ -95,9 +95,9 @@ class SettingsView extends React.Component {
                     </PanelHeader>
                     <PanelBody>
                         <SettingsProfile profile={this.state.profile}
-                                         submitProfile={this.submitProfile.bind(this)}
-                                         updateProfile={this.updateProfile.bind(this)}
-                                        />
+                                             submitProfile={this.submitProfile.bind(this)}
+                                             updateProfile={this.updateProfile.bind(this)}
+                                            />
                         <LoadingPanel show={this.state.loading}/>
                     </PanelBody>
                 </Panel>);
@@ -123,8 +123,8 @@ class SettingsView extends React.Component {
                         <Title title="Reset Password" />
                     </PanelHeader>
                     <PanelBody>
-                        <SettingsPassword repeatPassword={this.repeatPassword.bind(this)}
-                                          resetPassword={this.resetPassword.bind(this)}
+                        <SettingsPassword newPassword={this.updateNewpassword.bind(this)}
+                                          oldPassword={this.updateOldpassword.bind(this)}
                                           submitPassword={this.submitPassword.bind(this)}
                                         />            
                         <LoadingPanel show={this.state.loading}/>
