@@ -11,6 +11,9 @@ from xmlrpc.client import Fault as SFAError
 class Authority(myslicelibAuthority):
 
     def save(self, dbconnection, setup=None):
+        # Get Authority from local DB 
+        # to update the pi_users after Save
+        current = db.get(dbconnection, table='authorities', id=self.id)
         result = super(Authority, self).save(setup)
         
         if result['errors']:
@@ -24,11 +27,16 @@ class Authority(myslicelibAuthority):
 
             db.authorities(dbconnection, result, self.id)
             
-            for user in self.pi_users:
-                db.users(dbconnection, q(User).id(user).get().dict()) 
+            for user in current['pi_users']:
+                db.users(dbconnection, q(User).id(user).get().dict())
+            for user in current['users']:
+                db.users(dbconnection, q(User).id(user).get().dict())
             return True
 
     def delete(self, dbconnection, setup=None):
+        # Get Authority from local DB 
+        # to update the pi_users after Save
+        current = db.get(dbconnection, table='authorities', id=self.id)
         result = super(Authority, self).delete(setup)
         
         if result['errors']:
@@ -36,8 +44,11 @@ class Authority(myslicelibAuthority):
         else:
             db.delete(dbconnection, 'authorities', self.id)
 
-            for user in self.pi_users:
-                db.users(dbconnection, q(User).id(user).get().dict()) 
+            for user in current['pi_users']:
+                db.users(dbconnection, q(User).id(user).get().dict())
+            for user in current['users']:
+                db.users(dbconnection, q(User).id(user).get().dict())
+
             return True
 
 
