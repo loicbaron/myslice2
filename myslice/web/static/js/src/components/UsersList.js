@@ -12,7 +12,7 @@ class UsersList extends React.Component {
                 <List>
                 {
                     this.props.users.map(function(user) {
-                        return <UsersRow key={user.id} user={user} setCurrent={this.props.setCurrent} current={this.props.current} />;
+                        return <UsersRow key={user.id} user={user} setCurrent={this.props.setCurrent} current={this.props.current} addUser={true} />;
                     }.bind(this))
                 }
                 </List>
@@ -24,12 +24,14 @@ class UsersList extends React.Component {
 UsersList.propTypes = {
     users: React.PropTypes.array.isRequired,
     current: React.PropTypes.object,
+    addUser: React.PropTypes.bool,
     setCurrent: React.PropTypes.func
 };
 
 UsersList.defaultProps = {
     current: null,
-    setCurrent: null
+    setCurrent: null,
+    addUser: false,
 };
 
 export default UsersList;

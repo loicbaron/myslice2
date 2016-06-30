@@ -459,6 +459,11 @@ div.registrationForm {
 .elementDate {
     font-size:9pt;
 }
+.elementButton {
+	top:85px;
+    position:absolute;
+    right:25px;
+}
 .elementStatus {
     position:absolute;
     top:15px;

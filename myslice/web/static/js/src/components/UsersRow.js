@@ -7,8 +7,12 @@ import ElementStatus from './base/ElementStatus';
 import ElementIcon from './base/ElementIcon';
 import DateTime from './base/DateTime';
 
-class UsersRow extends React.Component {
+import AddUserToProject from './AddUserToProject';
 
+class UsersRow extends React.Component {
+    constructor(props) {
+        super(props);
+    }
     render() {
         var authority = this.props.user.authority.name || this.props.user.authority.shortname;
 
@@ -32,6 +36,10 @@ class UsersRow extends React.Component {
         if (this.props.user.hasOwnProperty('projects')) {
             num_projects = this.props.user.projects.length
         }
+        var addButton = '';
+        if(this.props.addUser){
+            addButton = <AddUserToProject user={this.props.user} />
+        }
 
         return (
              <Element element={this.props.user} type="user" select={this.props.select}>
@@ -39,6 +47,7 @@ class UsersRow extends React.Component {
                  <ElementIcon icon="user" />
                  <ElementTitle label={label} detail={this.props.user.email} />
                  <ElementId id={this.props.user.id} />
+                 {addButton}
                  <div className="elementDetail">
                      <span className="elementLabel">Projects</span> {num_projects}
                      &nbsp;&nbsp;&nbsp;&nbsp;
@@ -53,11 +62,13 @@ class UsersRow extends React.Component {
 
 UsersRow.propTypes = {
     user: React.PropTypes.object.isRequired,
+    addUser: React.PropTypes.bool,
     select: React.PropTypes.bool
 };
 
 UsersRow.defaultProps = {
-    select: false
+    select: false,
+    addUser: false,
 };
 
 export default UsersRow;

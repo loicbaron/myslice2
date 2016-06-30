@@ -59,7 +59,22 @@ const ProjectsSource = () => {
                 return true
             }
         },
+        addUser: {
 
+            remote(state) {
+                if (state.addUserToProject) {
+                    return axios.put('/api/v1/projects/' + state.current.project.id, {users:[state.addUserToProject.id]} );
+                }
+
+            },
+
+            success: actions.updateAddUser, // (required)
+            error: actions.errorAddUser, // (required)
+
+            shouldFetch(state) {
+                return true
+            }
+        },
         slices: {
 
             remote(state) {

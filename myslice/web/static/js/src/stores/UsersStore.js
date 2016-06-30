@@ -8,6 +8,7 @@ class UsersStore {
 
         this.users = [];
         this.filteredUsers = [];
+        this.excludeUsers = [];
 
         /* the currently active user */
         this.current = {
@@ -22,6 +23,7 @@ class UsersStore {
         this.bindListeners({
             updateUserElement: actions.UPDATE_USER_ELEMENT,
             updateUsers: actions.UPDATE_USERS,
+            updateExcludeUsers: actions.UPDATE_EXCLUDE_USERS,
             updateFilter: actions.UPDATE_FILTER,
             updateFilteredUsers: actions.UPDATE_FILTERED_USERS,
             fetchUsers: actions.FETCH_USERS,
@@ -65,19 +67,45 @@ class UsersStore {
     }
 
     updateUsers(users) {
+        var exUsers = this.excludeUsers;
+        var excludeU = function(el){
+            for (var i=0; i<exUsers.length; i++) {
+                if(exUsers[i] == el.id){
+                    return false;
+                    break;
+                }
+            }
+            return true;
+        };
+
         if(Object.keys(this.filter).length>0){
             if (users.hasOwnProperty('data')) {
                 this.filteredUsers = users.data.result;
             } else {
                 this.filteredUsers = users;
             }
+            if(exUsers.length>0){
+                this.filteredUsers = this.filteredUsers.filter(function(el){
+                    return excludeU(el);
+                });
+            }
+
         }else{
             if (users.hasOwnProperty('data')) {
                 this.users = users.data.result;
             } else {
                 this.users = users;
             }
+            if(exUsers.length>0){
+                this.users = this.users.filter(function(el){
+                    return excludeU(el);
+                });
+            }
+
         }
+    }
+    updateExcludeUsers(users) {
+        this.excludeUsers = users;
     }
     updateFilter(filter) {
         this.filter = filter;

@@ -23,6 +23,9 @@ class UsersDialog extends React.Component {
     componentDidMount() {
         store.listen(this.onChange);
         this.fetchUsers();
+        if(this.props.exclude.length>0){
+            actions.updateExcludeUsers(this.props.exclude);
+        }
     }
 
     componentWillUnmount() {
@@ -50,9 +53,9 @@ class UsersDialog extends React.Component {
 
     render() {
         if(Object.keys(this.state.filter).length>0){
-            var usersList = <UsersList users={this.state.filteredUsers} />
+            var usersList = <UsersList users={this.state.filteredUsers} addUser={true} />
         }else{
-            var usersList = <UsersList users={this.state.users} />
+            var usersList = <UsersList users={this.state.users} project={this.props.project} />
         }
 
         return (
@@ -72,11 +75,13 @@ class UsersDialog extends React.Component {
 }
 
 UsersDialog.propTypes = {
-    close: React.PropTypes.func
+    close: React.PropTypes.func,
+    addUser: React.PropTypes.bool,
 };
 
 UsersDialog.defaultProps = {
-    close: null
+    close: null,
+    addUser: false,
 };
 
 export default UsersDialog;
