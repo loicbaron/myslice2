@@ -105,7 +105,6 @@ class ProjectsForm extends React.Component {
                             <div id="project-form">
                                 <form className="experimentForm" onSubmit={this.handleSubmit}>
                                 <input type="text" placeholder="Name" value={this.state.label} onChange={this.handleLabelChange} />
-                                <div>{this.state.name}</div>
                                 <input type="radio" value={this.state.v_public} checked={this.state.v_public === true } onChange={this.onPublicChanged} /> Public
                                 <input type="radio" value={this.state.v_protected} checked={this.state.v_protected === true } onChange={this.onProtectedChanged} /> Protected
                                 <input type="radio" value={this.state.v_private} checked={this.state.v_private === true } onChange={this.onPrivateChanged} /> Private <br/>
@@ -117,7 +116,10 @@ class ProjectsForm extends React.Component {
                                 <br/>
                                 <div><i><b>Important: </b>quote in your papers</i></div>
                                 <div>Experiments leading to the publication of this paper have been performed using the OneLab Federation of testbeds.</div>
-                                <input type="submit" value="Save"/>
+                                <br/>
+                                <button className="large" type="submit" value="Save">
+                                <i className="fa fa-floppy-o" aria-hidden="true"></i> Save
+                                </button>
                                 </form>
                                 <div className="">
                                     {this.state.message}
