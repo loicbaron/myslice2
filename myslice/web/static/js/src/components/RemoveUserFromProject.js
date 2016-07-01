@@ -48,7 +48,11 @@ class RemoveUserFromProject extends React.Component {
         }else{
             return(
                 <div className="elementButton">
-                    <button type="button" onClick={this.removeUser} >Remove user</button>
+                    <button type="button" onClick={this.removeUser} >
+                    <i className="fa fa-ban" aria-hidden="true"></i>
+                    &nbsp;
+                    Remove user
+                    </button>
                 </div>
             );
         }

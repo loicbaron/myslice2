@@ -48,7 +48,11 @@ class AddUserToProject extends React.Component {
         }else{
             return(
                 <div className="elementButton">
-                    <button type="button" onClick={this.addUser} >Add user</button>
+                    <button type="button" onClick={this.addUser} >
+                        <i className="fa fa-plus" aria-hidden="true"></i>
+                        &nbsp;
+                        Add user
+                    </button>
                 </div>
             );
         }
