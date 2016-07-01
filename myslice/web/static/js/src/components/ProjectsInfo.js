@@ -23,7 +23,7 @@ class ProjectsInfo extends React.Component {
                             <SectionTitle title="Users" />
                         </SectionHeader>
                         <SectionBody>
-                            <UsersList users={this.props.element.users} />
+                            <UsersList users={this.props.element.users} removeUser={true} />
                         </SectionBody>
                     </Section>
         }

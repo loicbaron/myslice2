@@ -73,7 +73,6 @@ def events_run(lock, qProjectEvents):
 
                         if event.data.type == DataType.USER:
                             logger.info("Project only supports PI at the moment, need new feature in SFA Reg")
-                        # XXX : why or DataType.USER
                         if event.data.type == DataType.PI or event.data.type == DataType.USER:
                             proj = Project(db.get(dbconnection, table='projects', id=event.object.id))
                             for val in event.data.values:

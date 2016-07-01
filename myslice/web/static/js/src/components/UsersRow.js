@@ -8,6 +8,7 @@ import ElementIcon from './base/ElementIcon';
 import DateTime from './base/DateTime';
 
 import AddUserToProject from './AddUserToProject';
+import RemoveUserFromProject from './RemoveUserFromProject';
 
 class UsersRow extends React.Component {
     constructor(props) {
@@ -36,9 +37,12 @@ class UsersRow extends React.Component {
         if (this.props.user.hasOwnProperty('projects')) {
             num_projects = this.props.user.projects.length
         }
-        var addButton = '';
+        var button = '';
         if(this.props.addUser){
-            addButton = <AddUserToProject user={this.props.user} />
+            button = <AddUserToProject user={this.props.user} />
+        }
+        if(this.props.removeUser){
+            button = <RemoveUserFromProject user={this.props.user} />
         }
 
         return (
@@ -47,7 +51,7 @@ class UsersRow extends React.Component {
                  <ElementIcon icon="user" />
                  <ElementTitle label={label} detail={this.props.user.email} />
                  <ElementId id={this.props.user.id} />
-                 {addButton}
+                 {button}
                  <div className="elementDetail">
                      <span className="elementLabel">Projects</span> {num_projects}
                      &nbsp;&nbsp;&nbsp;&nbsp;
@@ -63,12 +67,14 @@ class UsersRow extends React.Component {
 UsersRow.propTypes = {
     user: React.PropTypes.object.isRequired,
     addUser: React.PropTypes.bool,
+    removeUser: React.PropTypes.bool,
     select: React.PropTypes.bool
 };
 
 UsersRow.defaultProps = {
     select: false,
     addUser: false,
+    removeUser: false,
 };
 
 export default UsersRow;

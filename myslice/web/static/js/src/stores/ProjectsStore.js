@@ -18,6 +18,8 @@ class ProjectsStore {
         this.filter = [];
 
         this.addUserToProject = null;
+        this.removeUserFromProject = null;
+        this.removedUsers = {};
 
         this.dialog = null;
 
@@ -31,6 +33,9 @@ class ProjectsStore {
             addUser: actions.ADD_USER,
             updateAddUser: actions.UPDATE_ADD_USER,
             errorAddUser: actions.ERROR_ADD_USER,
+            removeUser: actions.REMOVE_USER,
+            updateRemoveUser: actions.UPDATE_REMOVE_USER,
+            errorRemoveUser: actions.ERROR_REMOVE_USER,
             updateSlices: actions.UPDATE_SLICES,
             fetchProjects: actions.FETCH_PROJECTS,
             errorProjects: actions.ERROR_PROJECTS,
@@ -68,6 +73,9 @@ class ProjectsStore {
         this.current.users = [];
         this.current.slices = [];
         this.current.project = project;
+        if(!(project.id in this.removedUsers)){
+            this.removedUsers[project.id] = [];
+        }
 
         if (!this.getInstance().isLoading()) {
             this.getInstance().users();
@@ -105,6 +113,30 @@ class ProjectsStore {
     errorAddUser(errorMessage) {
         console.log(errorMessage);
     }
+
+    removeUser(user) {
+        this.removeUserFromProject = user;
+        this.getInstance().removeUser();
+    }
+    updateRemoveUser(message) {
+        this.removedUsers[this.current.project.id].push(this.removeUserFromProject);
+        var removeFromArray = function(myArray, searchTerm, property) {
+                for(var i = 0, len = myArray.length; i < len; i++) {
+                    if (myArray[i][property] === searchTerm){
+                        myArray.splice(i, 1);
+                        return myArray;
+                    }
+                }
+                return myArray;
+        };
+        this.current.project.pi_users = removeFromArray(this.current.project.pi_users, this.removeUserFromProject.id, 'id');
+        this.removeUserFromProject=null;
+        //this.current.users = removeFromArray(this.current.users, this.removeUserFromProject.id, 'id');
+    }
+    errorRemoveUser(errorMessage) {
+        console.log(errorMessage);
+    }
+
     errorUsers(errorMessage) {
         console.log(errorMessage);
     }

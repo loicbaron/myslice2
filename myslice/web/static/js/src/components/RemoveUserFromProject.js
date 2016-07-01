@@ -3,12 +3,12 @@ import React from 'react';
 import store from '../stores/ProjectsStore';
 import actions from '../actions/ProjectsActions';
 
-class AddUserToProject extends React.Component {
+class RemoveUserFromProject extends React.Component {
     constructor(props) {
         super(props);
         this.state = store.getState();
         this.onChange = this.onChange.bind(this);
-        this.addUser = this.addUser.bind(this);
+        this.removeUser = this.removeUser.bind(this);
 
     }
     onChange(state) {
@@ -21,8 +21,8 @@ class AddUserToProject extends React.Component {
     componentWillUnmount() {
         store.unlisten(this.onChange);
     }
-    addUser(){
-        actions.addUser(this.props.user);
+    removeUser(){
+        actions.removeUser(this.props.user);
     }
     render() {
         var containsUser = function(user, list){
@@ -33,25 +33,25 @@ class AddUserToProject extends React.Component {
             }
             return false;
         };
-        if(this.state.addUserToProject==this.props.user){
+        if(this.state.removeUserFromProject==this.props.user){
             return(
                 <div className="elementButton">
                     <i className="fa fa-lg fa-cog fa-spin" />
                 </div>
             );
-        }else if(containsUser(this.props.user, this.state.current.users)){
+        }else if(containsUser(this.props.user, this.state.removedUsers[this.state.current.project.id])){
             return(
-                <div className="elementButton bg-success">
-                    <span className="success"> Added </span>
+                <div className="elementButton bg-danger">
+                    <span className="text-danger"> Removed </span>
                 </div>
             );
         }else{
             return(
                 <div className="elementButton">
-                    <button type="button" onClick={this.addUser} >
-                        <i className="fa fa-plus" aria-hidden="true"></i>
-                        &nbsp;
-                        Add user
+                    <button type="button" onClick={this.removeUser} >
+                    <i className="fa fa-ban" aria-hidden="true"></i>
+                    &nbsp;
+                    Remove user
                     </button>
                 </div>
             );
@@ -59,8 +59,8 @@ class AddUserToProject extends React.Component {
     }
  }
 
-AddUserToProject.propTypes = {
+RemoveUserFromProject.propTypes = {
     user: React.PropTypes.object.isRequired,
 };
 
-export default AddUserToProject;
+export default RemoveUserFromProject;

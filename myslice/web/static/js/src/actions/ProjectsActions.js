@@ -35,6 +35,17 @@ class ProjectsActions {
     errorAddUser(errorMessage) {
         return errorMessage
     }
+
+    removeUser(user) {
+        return user;
+    }
+    updateRemoveUser(message) {
+        return message;
+    }
+    errorRemoveUser(errorMessage) {
+        return errorMessage
+    }
+
     errorUsers(errorMessage) {
         return errorMessage
     }

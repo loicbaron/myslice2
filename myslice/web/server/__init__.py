@@ -35,7 +35,7 @@ from myslice.web.websocket import WebsocketsHandler
 
 ##
 # Web controllers
-from myslice.web.controllers import login, password, registration, home, activity, projects, users
+from myslice.web.controllers import login, password, registration, home, activity, projects, slices, users
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -64,6 +64,8 @@ def run():
 class Application(web.Application):
     urn_regex = "urn:[a-z0-9][a-z0-9-]{0,31}:[a-zA-Z0-9()+,\-.:=@;$_!*'%?#]+"
     uuid_regex = "[a-fA-F\d]{8}-[a-fA-F\d]{4}-[a-fA-F\d]{4}-[a-fA-F\d]{4}-[a-fA-F\d]{12}"
+    hrn_regex = "[a-zA-Z0-9\-\.\_]+"
+
 
     def __init__(self, dbconnection):
         self.templates = os.path.join(os.path.dirname(__file__), "../templates")
@@ -126,6 +128,7 @@ class Application(web.Application):
             web.url(r'/', home.Index),
             web.url(r'/settings', home.User),
             web.url(r'/projects', projects.Projects),
+            web.url(r'/slices/([a-z0-9\._\-]+)', slices.Slices),
             web.url(r'/users', users.Users),
             web.url(r'/activity', activity.Index),
             web.url(r'/static/(.*)', web.StaticFileHandler, {'path': self.static}),
@@ -139,7 +142,7 @@ class Application(web.Application):
         rest_handlers = [
 
             web.url(r'/api/v1/activity?([A-Za-z0-9-]+)?', ActivityHandler),
-            web.url(r'/api/v1/activity/([a-z0-9\-]*)$', ActivityHandler),
+            web.url(r'/api/v1/activity/(' + self.uuid_regex + ')?', ActivityHandler),
 
             web.url(r'/api/v1/requests?([A-Za-z0-9-]+)?', RequestsHandler),
             web.url(r'/api/v1/requests/(' + self.uuid_regex + ')?', RequestsHandler),
@@ -152,10 +155,16 @@ class Application(web.Application):
             web.url(r'/api/v1/resources/()$', ResourcesHandler),
 
             web.url(r'/api/v1/profile$', ProfileHandler),
+            
             web.url(r'/api/v1/users$', UsersHandler),
-            web.url(r'/api/v1/users/?(' + self.urn_regex + ')?/?(projects|slices)?$', UsersHandler),
+
+            web.url(r'/api/v1/users/?(' + self.urn_regex + ')?/?(authorities|projects|slices)?$', UsersHandler),
+            # authorities
             web.url(r'/api/v1/authorities/?(' + self.urn_regex + ')?/?(users|projects)?$', AuthoritiesHandler),
+            # projects
             web.url(r'/api/v1/projects/?(' + self.urn_regex + ')?/?(users|slices)?$', ProjectsHandler),
+            # slices
+            web.url(r'/api/v1/slices/?(' + self.hrn_regex + ')?/?(resources)?$', SlicesHandler),
             web.url(r'/api/v1/slices/?(' + self.urn_regex + ')?/?(resources)?$', SlicesHandler),
         ]
 

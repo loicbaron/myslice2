@@ -203,6 +203,89 @@ div.registrationForm {
 }
 
 /*
+    SLICES MENU
+*/
+.dropdown {
+    position:relative;
+}
+.slices-menu-button {
+    position:absolute;
+    top:0;
+    bottom:0;
+    right:0;
+    left:0;
+    border:1px solid red;
+}
+.slices-menu-button div {
+    width:100%;
+    height:100%;
+
+}
+.slices-menu {
+    position:absolute;
+    top:80px;
+    min-width:30%;
+    min-height:250px;
+    margin-right:15px;
+    padding:10px;
+    color:black;
+    border:2pt solid #221144;
+    background-color:white;
+    z-index:88;
+}
+.slices-menu::before {
+    content: '';
+    position: absolute;
+    left: 40px;
+    top: -16px;
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 15px solid #221144;
+    clear: both;
+}
+
+.slices-menu ul {
+    padding:0;
+    margin:0;
+    list-style:none;
+}
+.slices-menu li {
+    float:left;
+    margin-right:25px;
+    margin-bottom:25px;
+    padding:15px;
+    cursor:pointer;
+}
+.slices-menu li:hover {
+    background-color:#D0C1F2;
+}
+.slices-menu li.active {
+    background-color:#D0C1F2;
+}
+.slices-menu li h4 {
+    font-size:13pt;
+    font-weight:400;
+}
+.slices-menu li h4:hover {
+    text-decoration:underline;
+}
+.slices-menu li span {
+    font-size:9pt;
+    font-weight:100;
+    font-style:italic;
+    color:gray;
+
+}
+.slices-menu li h5 {
+    font-size:9pt;
+    font-weight:100;
+    margin:0;
+    padding:0;
+}
+
+/*
     VIEW
 */
 .view {
@@ -562,6 +645,11 @@ div.registrationForm {
     margin-top: 0px;
     width:100%;
     resize:none;
+}
+
+.profileBio textarea:focus{
+    border:1px solid #251A50;
+    box-shadow: none;
 }
 
 /*
