@@ -1,18 +1,21 @@
 import alt from '../alt';
-import actions from '../actions/ActivityActions';
-import source from '../sources/ActivitySource';
+import actions from '../actions/RequestsActions';
+import source from '../sources/RequestsSource';
 
-class ActivityStore {
+class RequestsStore {
 
     constructor() {
-        this.activity = [];
+        this.requests = [];
         this.errorMessage = null;
+        this.action = {}
+        this.id = "";
 
         this.bindListeners({
-            updateActivity: actions.UPDATE_ACTIVITY,
             updateActivityElement: actions.UPDATE_ACTIVITY_ELEMENT,
-            
-            fetchActivity: actions.FETCH_ACTIVITY,
+            updateRequests: actions.UPDATE_REQUESTS,
+
+            handleAction: actions.HANDLE_ACTION,
+            fetchRequests: actions.FETCH_REQUESTS,
             watchActivity: actions.WATCH_ACTIVITY,
         });
 
@@ -20,37 +23,31 @@ class ActivityStore {
 
     }
 
-    fetchActivity(filter) {
-        this.activity = [];
+    fetchRequests(filter) {
+        this.requests = [];
         this.filter = {
             'action': [],
             'status': [],
             'object': []
         };
 
-        /*
-            filter: {
-                action: [ a, b, c ],
-                status: [ x, y, z ]
-            }
-         */
         if (filter.length > 0) {
             filter.map(function (f) {
                 this.filter[f.name].push(f.value);
             }.bind(this));
         }
 
-        this.getInstance().fetchActivity();
+        this.getInstance().fetchRequests();
 
     }
 
     watchActivity() {}
 
-    updateActivity(activity) {
-        if (activity.hasOwnProperty('data')) {
-            this.activity = activity.data.result;
+    updateRequests(requests) {
+        if (requests.hasOwnProperty('data')) {
+            this.requests = requests.data.result;
         } else {
-            this.activity = activity;
+            this.requests = requests;
         }
     }
 
@@ -72,8 +69,13 @@ class ActivityStore {
         // optionally return false to suppress the store change event
     }
 
+    handleAction(data) {
+        this.data = data;
+        this.getInstance().handleAction();
+    }
+
 }
 
 
-export default alt.createStore(ActivityStore, 'ActivityStore');
+export default alt.createStore(RequestsStore, 'RequestsStore');
 

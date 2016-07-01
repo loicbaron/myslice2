@@ -44,7 +44,8 @@ class Index(BaseController):
                 'email': user['email'],
                 'firstname': user.get('firstname', ''),
                 'lastname': user.get('lastname', ''),
-                'authority': user['authority']
+                'authority': user['authority'],
+                "pi_authorities": user['pi_authorities'],
             }, cls=myJSONEncoder))
 
         except Exception as e:

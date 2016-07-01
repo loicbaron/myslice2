@@ -67,15 +67,7 @@ class SettingsProfile extends React.Component {
                                         disabled
                                         />
                             </div>
-                            <div className="settings-group profileBio">
-                                <span className="settings-span">Biography</span>
-                                <input  value={this.props.profile.bio}
-                                        placeholder="Biography"
-                                        type="text"
-                                        name="bio"
-                                        onChange={this.handleChange.bind(this)}
-                                        />
-                            </div>
+
                             <div className="settings-group profileUrl">
                                 <span className="settings-span">Your Url</span>
                                 <input  value={this.props.profile.url}
@@ -84,6 +76,15 @@ class SettingsProfile extends React.Component {
                                         name="url"
                                         onChange={this.handleChange.bind(this)}
                                         />
+                            </div>
+                            <div className="settings-group profileBio">
+                                <span className="settings-span">Biography</span>
+                                <textarea   value={this.props.profile.bio}
+                                            placeholder="Biography"
+                                            name="bio"
+                                            onChange={this.handleChange.bind(this)}
+                                            rows="5"></textarea>
+                                
                             </div>
                             <button type="submit" className="btn btn-default">Update Profile</button>  
                         </form>

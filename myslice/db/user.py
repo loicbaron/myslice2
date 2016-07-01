@@ -40,6 +40,12 @@ class User(myslicelibUser):
         '''
         Return True if user has the privlege over the object.
         '''
+        def get_header(string):
+            '''
+            Return the header of urn in order to check privilege
+            '''
+            return string.split('+authority')[0]
+
         # user updates its own property
         # user updates its own slices(experiments)
         # user is Pi of the obj he wants to update
@@ -49,21 +55,17 @@ class User(myslicelibUser):
         if event.object.type == ObjectType.SLICE and event.object.id in self.slices:
             return True
 
-        for auth in self.getAttribute('pi_authorities'):
-            if hasattr(event.data, 'authority') and auth == event.data.authority:
-                return True
+        for auth in self.getPiAuthorities(attribute=True):
+            ev_auth = event.data.get('authority', [])
+            if ev_auth:
+                if auth == ev_auth:
+                    return True
+                if get_header(ev_auth).startswith(get_header(auth)):
+                    return True
             if auth == event.object.id:
                 return True
+
         return False
-
-    #private_key = None
-    #public_key = None
-    #generate_keys = False
-
-    # def isRemoteUpdate(self):
-    #     if set(self.attributes()) & set(self.remote_fields):
-    #         return True
-    #     return False
 
     def save(self, dbconnection, setup=None):
         if self.generate_keys:
@@ -73,6 +75,7 @@ class User(myslicelibUser):
             self.keys.append(self.public_key)
 
         result = super(User, self).save(setup)
+
         if result['errors']:
             raise Exception('errors: %s' % result['errors'] )
         else:

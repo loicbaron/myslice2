@@ -52,6 +52,49 @@ class ActivityHandler(Api):
             filter['action'] = list(action.upper() for action in filter['action'])
             filter['object'] = list(object.upper() for object in filter['object'])
 
+            # user's activities
+            current_user_id = self.get_current_user()['id']
+
+            pi_auth = self.get_current_user()['pi_authorities']
+            
+            for auth in pi_auth:
+                m = self.auth_pattern.match(auth)
+                hrn_length = len(m.group('hrn').split(':'))
+                    
+                if hrn_length == 1:
+                    pi_auth = []
+                    
+                    cursor = yield r.table('authorities') \
+                            .pluck('id') \
+                            .run(self.dbconnection)
+                    
+                    while (yield cursor.fetch_next()):
+                        authority = yield cursor.next()
+                        pi_auth.append(authority['id'])
+
+                    break
+
+            cursor = yield r.table('activity').filter(lambda activity:
+
+                (len(filter['action']) == 0 or r.expr(filter['action']).contains(activity['action']))
+                                                        ).filter(lambda activity:
+
+                (len(filter['status']) == 0 or r.expr(filter['status']).contains(activity['status']))
+                                                        ).filter(lambda activity:
+
+                (len(filter['object']) == 0 or r.expr(filter['object']).contains(activity['object']['type']))
+                                                        ).filter(lambda activity:
+                                                        
+                (r.expr(pi_auth).contains(activity['data']['authority']))
+                                                        ).filter(lambda activity:
+                    
+                (activity['user'] != current_user_id)
+                                                        ).run(self.dbconnection)
+                                                        
+            while (yield cursor.fetch_next()):
+                item = yield cursor.next()
+                activity.append(item)
+
             cursor = yield r.table('activity').filter(lambda activity:
 
                 (len(filter['action']) == 0 or r.expr(filter['action']).contains(activity['action']))
@@ -62,15 +105,17 @@ class ActivityHandler(Api):
 
                 (len(filter['object']) == 0 or r.expr(filter['object']).contains(activity['object']['type']))
 
+                                                        ).filter(lambda activity:
+                (activity['user'] == current_user_id)
                                                         ).run(self.dbconnection)
 
             while (yield cursor.fetch_next()):
                 item = yield cursor.next()
                 activity.append(item)
 
-        self.finish(json.dumps({"result": activity}, cls=myJSONEncoder))
+            self.finish(json.dumps({"result": activity}, cls=myJSONEncoder))
 
-
+            
 
     @gen.coroutine
     def post(self):

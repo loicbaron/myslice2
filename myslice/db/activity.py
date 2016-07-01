@@ -266,9 +266,9 @@ class Event(Dict):
         #    self.data = {}
 
         try:
-            self.created = format_date(event['created'])
+            self['created'] = format_date(event['created'])
         except KeyError:
-            self.created = format_date()
+            self['created'] = format_date()
 
         try:
             self.updated(format_date(event['updated']))
@@ -290,8 +290,7 @@ class Event(Dict):
     @notify.setter
     def notify(self, value=True):
         self['notify'] = value
-
-
+        
     ##
     # Id
     @property

@@ -245,11 +245,12 @@ class UsersHandler(Api):
 
 
     @gen.coroutine
-    def post(self, p):
+    def post(self):
         """
         POST /users
         :return:
         """
+
         if not self.request.body:
             self.userError("empty request")
             return
@@ -271,12 +272,21 @@ class UsersHandler(Api):
             self.userError("Email not specified")
             return
 
+
+        if not self.get_current_user():
+            # usr registration
+            current_user_id = None
+        else:
+            # admin create user directly
+            current_user_id = self.get_current_user()['id']
+
         try:
             event = Event({
                 'action': EventAction.CREATE,
-                'user': self.get_current_user()['id'],
+                'user': current_user_id,
                 'object': {
-                    'type': ObjectType.USER
+                    'type': ObjectType.USER,
+                    'id': None
                 },
                 'data': data
             })

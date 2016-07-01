@@ -95,10 +95,10 @@ def emails_run(qEmails):
                 if event.isPending():
                     subject, template = build_subject_and_template('request', event.object.type)
 
-                elif event.isDenied():
+                elif event.isSuccess():
                     subject, template = build_subject_and_template('approve', event.object.type)
 
-                elif event.isApproved():
+                elif event.isDenied():
                     subject, template = build_subject_and_template('deny', event.object.type)
 
             mail_to = []
@@ -106,8 +106,8 @@ def emails_run(qEmails):
                 try:
                     username = "{} {}".format(r.first_name, r.last_name)
                 except:
-                    r.first_name = ''
-                    r.last_name = ''
+                    r.first_name = 'Onelab'
+                    r.last_name = 'User'
                     username = "{} {}".format(r.first_name, r.last_name)
 
                 mail_to.append("{} <{}>".format(username, r.email))

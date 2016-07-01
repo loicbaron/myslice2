@@ -640,6 +640,27 @@ div.registrationForm {
     margin-bottom: 5px;
 }
 
+
+.profileBio textarea{
+    font-size:11pt;
+    padding:8px 12px;
+    border-color: #d9d9d9 #ccc #b3b3b3;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    color: #333;
+    background-color:white;
+    outline: none;
+    box-shadow: none;
+    margin-top: 0px;
+    width:100%;
+    resize:none;
+}
+
+.profileBio textarea:focus{
+    border:1px solid #251A50;
+    box-shadow: none;
+}
+
 /*
     Password
 */
