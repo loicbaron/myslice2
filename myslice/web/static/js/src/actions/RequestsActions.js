@@ -1,9 +1,9 @@
 import alt from '../alt';
 import SockJS from 'sockjs-client';
 
-class ActivityActions {
+class RequestsActions {
 
-    fetchActivity(filter = {}) {
+    fetchRequests(filter = {}){
         return filter;
     }
 
@@ -26,19 +26,21 @@ class ActivityActions {
         return true;
     }
 
-    updateActivity(activity) {
-        return activity;
+    updateRequests(requests) {
+        return requests;
     }
 
     updateActivityElement(activityElement) {
         return activityElement;
     }
 
-    errorActivity(errorMessage) {
+    errorRequests(errorMessage) {
         return errorMessage;
     }
 
-
+    handleAction(data) {
+        return data;
+    }
 }
 
-export default alt.createActions(ActivityActions);
+export default alt.createActions(RequestsActions);

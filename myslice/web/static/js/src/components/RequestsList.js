@@ -1,26 +1,26 @@
 import React from 'react';
-import store from '../stores/ActivityStore';
-import actions from '../actions/ActivityActions';
 
+import store from '../stores/RequestsStore';
+import actions from '../actions/RequestsActions';
 import List from './base/List';
 import LoadingPanel from './LoadingPanel';
 
-import ActivityFilter from './ActivityFilter';
-import ActivityRow from'./ActivityRow';
+import RequestsFilter from './RequestsFilter';
 import RequestsRow from './RequestsRow';
-class ActivityList extends React.Component {
+
+class RequestsList extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = store.getState();
         this.onChange = this.onChange.bind(this);
         this.handleFilter = this.handleFilter.bind(this);
+        this.handleAction = this.handleAction.bind(this);
     }
 
     componentWillMount() {
         store.listen(this.onChange);
-        actions.fetchActivity();
-       
+        actions.fetchRequests();
     }
 
     componentWillUnmount() {
@@ -32,8 +32,11 @@ class ActivityList extends React.Component {
     }
 
     handleFilter(filter) {
-        return actions.fetchActivity(filter);
+        actions.fetchRequests(filter);
+    }
 
+    handleAction(data) {
+        actions.handleAction(data); 
     }
 
     render() {
@@ -43,40 +46,44 @@ class ActivityList extends React.Component {
                 <div>Something is wrong</div>
             );
         }
-
-        if (!this.state.activity) {
-                return <LoadingPanel show="true" />;
-        } else {
-                
+        
+        if (!this.state.requests) {
+            
+            return <LoadingPanel show="true" />;
+        
+        } else { 
+            // closure
             let self = this;
-            this.state.activity.sort(function(x, y) {
+            this.state.requests.sort(function(x, y) {
                 return new Date(y.updated).getTime() - new Date(x.updated).getTime();
             })
 
             return (
                 <div>
-                    <ActivityFilter handleChange={this.handleFilter} type={this.props.type}/>
+                    <RequestsFilter handleChange={this.handleFilter} />
                     <List>
                         {
-                            this.state.activity.map(function (activity) {
-                                return <ActivityRow key={activity.id} activity={activity}/>;
+                            this.state.requests.map(function (request) {
+                                return <RequestsRow key={request.id} 
+                                                    request={request} 
+                                                    handleAction={self.handleAction}
+                                                    />;
                             })
                         }
                     </List>
                 </div>
             );
         }
-
-
+        
     }
 }
 
-ActivityList.propTypes = {
+RequestsList.propTypes = {
     type: React.PropTypes.string,
 }
 
-ActivityList.defaultProps = {
-    type: "activity"
+RequestsList.defaultProps = {
+    type: "requests"
 }
 
-export default ActivityList;
+export default RequestsList;

@@ -3,10 +3,9 @@ import actions from '../actions/ActivityActions';
 
 const ActivitySource = () => {
     return {
-        fetch: {
+        fetchActivity: {
             // remotely fetch something (required)
             remote(state) {
-
                 return axios.get('/api/v1/activity', {
                     params: {
                         filter: state.filter
