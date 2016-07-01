@@ -51,7 +51,7 @@ def run():
     dbconnection = yield db.connect()
 
     http_server = httpserver.HTTPServer(Application(dbconnection))
-    http_server.listen(8111)
+    http_server.listen(80)
     #http_server.start(num_processes=None)
 
     # drop root privileges
@@ -63,6 +63,7 @@ def run():
 
 class Application(web.Application):
     urn_regex = "urn:[a-z0-9][a-z0-9-]{0,31}:[a-zA-Z0-9()+,\-.:=@;$_!*'%?#]+"
+    uuid_regex = "[a-fA-F\d]{8}-[a-fA-F\d]{4}-[a-fA-F\d]{4}-[a-fA-F\d]{4}-[a-fA-F\d]{12}"
 
     def __init__(self, dbconnection):
         self.templates = os.path.join(os.path.dirname(__file__), "../templates")
@@ -140,7 +141,8 @@ class Application(web.Application):
             web.url(r'/api/v1/activity?([A-Za-z0-9-]+)?', ActivityHandler),
             web.url(r'/api/v1/activity/([a-z0-9\-]*)$', ActivityHandler),
 
-            web.url(r'/api/v1/requests/([a-fA-F\d]{8}(-[a-fA-F\d]{4}){3}-[a-fA-F\d]{12})?', RequestsHandler),
+            web.url(r'/api/v1/requests?([A-Za-z0-9-]+)?', RequestsHandler),
+            web.url(r'/api/v1/requests/(' + self.uuid_regex + ')?', RequestsHandler),
 
             web.url(r'/api/v1/login', LoginHandler),
             web.url(r'/api/v1/password', PasswordHandler),
@@ -150,8 +152,8 @@ class Application(web.Application):
             web.url(r'/api/v1/resources/()$', ResourcesHandler),
 
             web.url(r'/api/v1/profile$', ProfileHandler),
-
-            web.url(r'/api/v1/users/?(' + self.urn_regex + ')?/?(authorities|projects|slices)?$', UsersHandler),
+            web.url(r'/api/v1/users$', UsersHandler),
+            web.url(r'/api/v1/users/?(' + self.urn_regex + ')?/?(projects|slices)?$', UsersHandler),
             web.url(r'/api/v1/authorities/?(' + self.urn_regex + ')?/?(users|projects)?$', AuthoritiesHandler),
             web.url(r'/api/v1/projects/?(' + self.urn_regex + ')?/?(users|slices)?$', ProjectsHandler),
             web.url(r'/api/v1/slices/?(' + self.urn_regex + ')?/?(resources)?$', SlicesHandler),

@@ -3,6 +3,7 @@ import re
 import logging
 import tornado_cors as cors
 from tornado import web
+import re
 
 
 logger = logging.getLogger(__name__)
@@ -26,6 +27,8 @@ class Api(cors.CorsMixin, web.RequestHandler):
             'slices': self.fields_short['slices'] + [ 'authority', 'users', 'created', 'updated', 'enabled'],
             'profile': ['id', 'email','first_name', 'last_name', 'bio', 'url', 'public_key', 'private_key', 'authority', 'url']
         }
+
+        self.auth_pattern = re.compile(r"(urn:publicid:IDN\+)(?P<hrn>[\:]*[a-zA-Z]*)(\+authority\+sa)")
 
     def get_current_user(self):
 
