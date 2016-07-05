@@ -7,16 +7,18 @@ class RequestsStore {
     constructor() {
         this.requests = [];
         this.errorMessage = null;
-        this.action = {}
-        this.id = "";
 
         this.bindListeners({
-            updateActivityElement: actions.UPDATE_ACTIVITY_ELEMENT,
+            updateRequestElement: actions.UPDATE_REQUEST_ELEMENT,
             updateRequests: actions.UPDATE_REQUESTS,
+            errorRequests: actions.ERROR_REQUESTS,
 
-            handleAction: actions.HANDLE_ACTION,
+            executeSuccess: actions.EXECUTE_SUCCESS,
+            executeError: actions.EXECUTE_ERROR,
+
+            executeAction: actions.EXECUTE_ACTION,
             fetchRequests: actions.FETCH_REQUESTS,
-            watchActivity: actions.WATCH_ACTIVITY,
+            watchRequest: actions.WATCH_REQUEST,
         });
 
         this.registerAsync(source);
@@ -41,7 +43,7 @@ class RequestsStore {
 
     }
 
-    watchActivity() {}
+    watchRequest() {}
 
     updateRequests(requests) {
         if (requests.hasOwnProperty('data')) {
@@ -51,28 +53,43 @@ class RequestsStore {
         }
     }
 
+    errorRequests(errorRequests) {}
 
-    updateActivityElement(activityElement) {
-        // Check if we already have this activity in the state
-        let index = this.activity.findIndex(function(needle) {
-            return (needle.id === activityElement.id);
+    updateRequestElement(requestElement) {
+        // Check if we already have this requests in the state
+
+        let index = this.requests.findIndex(function(needle) {
+            return (needle.id === requestElement.id);
         });
         /*  If we do we update it, otherwise we add a new
-            activity event to the state (at the top of the array) */
+            requests event to the state (at the top of the array) */
+        
         if (index !== -1) {
-            this.activity[index] = activityElement;
+            this.requests[index] = requestElement;
         } else {
-            this.activity.unshift(activityElement);
+            this.requests.unshift(requestElement);
         }
 
         this.errorMessage = null;
         // optionally return false to suppress the store change event
     }
 
-    handleAction(data) {
+    executeAction(data) {
+        
+        // find the request we are executing and remove it.
+        let index = this.requests.findIndex(function(needle) {
+            return (needle.id === data.id);
+        });
+        this.requests.splice(index, 1);
+        
         this.data = data;
-        this.getInstance().handleAction();
+        this.getInstance().executeAction();
     }
+
+    executeSuccess(data) {}
+
+    executeError(errorMessage) {}
+
 
 }
 

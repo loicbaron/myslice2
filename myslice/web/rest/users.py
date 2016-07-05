@@ -1,7 +1,9 @@
 import json
-from email.utils import parseaddr
+import jwt
 import crypt
+
 from hmac import compare_digest as compare_hash
+from email.utils import parseaddr
 
 import rethinkdb as r
 from myslice.db import dispatch, changes
@@ -331,18 +333,15 @@ class ProfileHandler(Api):
         """
         # TODO: id must be a valid URN
 
-        feed = yield r.table('users') \
+        profile = yield r.table('users')\
+                .get(self.get_current_user()['id']) \
                 .pluck(self.fields['profile']) \
-                .filter({'id': self.get_current_user()['id']}) \
                 .merge(lambda user: {
                 'authority': r.table('authorities').get(user['authority']) \
                                                        .pluck(self.fields_short['authorities']) \
                                                        .default({'id': user['authority']})
                  }) \
                 .run(self.dbconnection)
-
-        yield feed.fetch_next()
-        profile = yield feed.next()
 
         self.write(json.dumps({"result": profile}, cls=myJSONEncoder))
 
@@ -421,3 +420,36 @@ class ProfileHandler(Api):
                 
                 else:
                     self.userError("updated failed", result['new_val'])
+
+class UserTokenHandler(Api):
+    """
+    PUT /usertoken
+
+    :return:
+    """
+
+    @gen.coroutine
+    def get(self):
+        admin = self.isAdmin()
+        pi_auth = []
+        current_user_id = self.get_current_user()['id']
+        
+        # if not admin
+        if not admin:
+            user = yield r.table('users').get(current_user_id).run(self.dbconnection)
+            pi_auth = user['pi_authorities']
+
+        try:
+            secret = self.application.settings['token_secret'] # used in websockets
+            token = jwt.encode({
+                                "id" : current_user_id,
+                                "admin" : admin,
+                                "pi_auth" : pi_auth,
+                                },
+                                secret, algorithm='HS256')
+        except Exception as e:
+            self.serverError("token encryption failed", e)
+        
+        self.finish(token)
+
+

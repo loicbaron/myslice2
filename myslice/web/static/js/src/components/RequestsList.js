@@ -15,7 +15,7 @@ class RequestsList extends React.Component {
         this.state = store.getState();
         this.onChange = this.onChange.bind(this);
         this.handleFilter = this.handleFilter.bind(this);
-        this.handleAction = this.handleAction.bind(this);
+        this.executeAction = this.executeAction.bind(this);
     }
 
     componentWillMount() {
@@ -23,6 +23,10 @@ class RequestsList extends React.Component {
         actions.fetchRequests();
     }
 
+    componentDidMount() {
+        actions.watchRequest();
+    }
+    
     componentWillUnmount() {
         store.unlisten(this.onChange);
     }
@@ -35,8 +39,8 @@ class RequestsList extends React.Component {
         actions.fetchRequests(filter);
     }
 
-    handleAction(data) {
-        actions.handleAction(data); 
+    executeAction(data) {
+        actions.executeAction(data); 
     }
 
     render() {
@@ -66,7 +70,7 @@ class RequestsList extends React.Component {
                             this.state.requests.map(function (request) {
                                 return <RequestsRow key={request.id} 
                                                     request={request} 
-                                                    handleAction={self.handleAction}
+                                                    executeAction={self.executeAction}
                                                     />;
                             })
                         }

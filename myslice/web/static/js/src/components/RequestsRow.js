@@ -42,7 +42,7 @@ class RequestsRow extends React.Component {
 
     approve(e){
         e.preventDefault();
-        this.props.handleAction({   
+        this.props.executeAction({   
                 id : this.props.request.id,
                 action: 'approve',
                 message: this.refs.message.value
@@ -52,7 +52,7 @@ class RequestsRow extends React.Component {
 
     deny(e){
         e.preventDefault();
-        this.props.handleAction(
+        this.props.executeAction(
             {   
                 id : this.props.request.id,
                 action: 'deny',
@@ -65,7 +65,7 @@ class RequestsRow extends React.Component {
         var status = this.props.request.status.toLowerCase();
 
         var executePanel = <div></div>; 
-        
+
         if (this.props.request.executable) {
             var executePanel = (
                         <div>
@@ -76,21 +76,22 @@ class RequestsRow extends React.Component {
                                             ref="message"
                                                 />
                                     </div>
-                            </div>    
-
+                            </div>
 
                             <div className="row">
-                                <div className="col-sm-3 col-sm-offset-9">
+                                <div className="col-sm-3 col-sm-offset-6">
                                     <button type="button" 
                                             className="btn btn-default"
                                             name="approve"
                                             value="approve"
-                                            onClick={this.approve.bind(this)}>Approve</button>  
+                                            onClick={this.approve.bind(this)}>Approve</button>
+                                </div>
+                                <div className="col-sm-3">
                                     <button type="button"
                                             className="btn btn-default"
                                             name="deny"
                                             value="deny"
-                                            onClick={this.deny.bind(this)}>Deny</button>  
+                                            onClick={this.deny.bind(this)}>Deny</button>
                                 </div>
                             </div>
                             
@@ -118,7 +119,7 @@ class RequestsRow extends React.Component {
  }
 
 RequestsRow.propTypes = {
-    handleAction: React.PropTypes.func
+    executeAction: React.PropTypes.func
 }
 
 export default RequestsRow;

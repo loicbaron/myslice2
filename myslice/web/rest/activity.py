@@ -53,27 +53,22 @@ class ActivityHandler(Api):
             filter['object'] = list(object.upper() for object in filter['object'])
 
             # user's activities
-            current_user_id = self.get_current_user()['id']
+            # user's requests
+            current_user = self.get_current_user()
+            current_user_id = current_user['id']
 
-            pi_auth = self.get_current_user()['pi_authorities']
-            
-            for auth in pi_auth:
-                m = self.auth_pattern.match(auth)
-                hrn_length = len(m.group('hrn').split(':'))
-                    
-                if hrn_length == 1:
-                    pi_auth = []
-                    
-                    cursor = yield r.table('authorities') \
-                            .pluck('id') \
-                            .run(self.dbconnection)
-                    
-                    while (yield cursor.fetch_next()):
-                        authority = yield cursor.next()
-                        pi_auth.append(authority['id'])
+            if self.isAdmin():
+                pi_auth = []
+                cursor = yield r.table('authorities').pluck('id').run(self.dbconnection)
+                
+                while (yield cursor.fetch_next()):
+                    authority = yield cursor.next()
+                    pi_auth.append(authority['id'])
+            else:
+                pi_auth = current_user['pi_authorities']
 
-                    break
 
+            # get all the activities when user is a PI or admin over
             cursor = yield r.table('activity').filter(lambda activity:
 
                 (len(filter['action']) == 0 or r.expr(filter['action']).contains(activity['action']))
@@ -95,6 +90,7 @@ class ActivityHandler(Api):
                 item = yield cursor.next()
                 activity.append(item)
 
+            # get all the activities that are triggered by user
             cursor = yield r.table('activity').filter(lambda activity:
 
                 (len(filter['action']) == 0 or r.expr(filter['action']).contains(activity['action']))

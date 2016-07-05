@@ -23,7 +23,7 @@ from myslice.web.rest.requests import RequestsHandler
 from myslice.web.rest.authorities import AuthoritiesHandler
 from myslice.web.rest.projects import ProjectsHandler
 from myslice.web.rest.slices import SlicesHandler
-from myslice.web.rest.users import UsersHandler, ProfileHandler, LoginHandler
+from myslice.web.rest.users import UsersHandler, ProfileHandler, LoginHandler, UserTokenHandler
 from myslice.web.rest.resources import ResourcesHandler
 from myslice.web.rest.password import PasswordHandler
 
@@ -51,7 +51,7 @@ def run():
     dbconnection = yield db.connect()
 
     http_server = httpserver.HTTPServer(Application(dbconnection))
-    http_server.listen(80)
+    http_server.listen(8111)
     #http_server.start(num_processes=None)
 
     # drop root privileges
@@ -146,6 +146,7 @@ class Application(web.Application):
 
             web.url(r'/api/v1/requests?([A-Za-z0-9-]+)?', RequestsHandler),
             web.url(r'/api/v1/requests/(' + self.uuid_regex + ')?', RequestsHandler),
+            web.url(r'/api/v1/usertoken?', UserTokenHandler),
 
             web.url(r'/api/v1/login', LoginHandler),
             web.url(r'/api/v1/password', PasswordHandler),
@@ -179,6 +180,7 @@ class Application(web.Application):
 
         settings = dict(cookie_secret="x&7G1d2!5MhG9SWkXu",
                         login_url="/login",
+                        token_secret = 'u636vbJV6Ph[EJB;Q',
                         template_path=self.templates,
                         static_path=self.static,
                         #xsrf_cookies=True,

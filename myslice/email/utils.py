@@ -2,7 +2,9 @@ import os
 from random import randrange
 from datetime import datetime
 
-from myslice.email import settings as s
+from myslice.settings import s
+
+DOMAIN = s.email.domain
 
 class MessageID:
     """Returns a string suitable for RFC 2822 compliant Message-ID, e.g:
@@ -12,8 +14,8 @@ class MessageID:
 
     """
 
-    def __init__(self, domain=None, idstring=None):
-        self.domain = str(domain or s.email.domain)
+    def __init__(self, idstring=None):
+        self.domain = DOMAIN
         try:
             pid = os.getpid()
         except AttributeError:

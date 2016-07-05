@@ -11,6 +11,9 @@ from tornado import gen, escape
 
 class RequestsHandler(Api):
 
+
+
+
     @gen.coroutine
     def get(self, id=None):
         """
@@ -45,27 +48,19 @@ class RequestsHandler(Api):
             filter['object'] = list(object.upper() for object in filter['object'])
 
             # user's requests
-            current_user_id = self.get_current_user()['id']
+            current_user = self.get_current_user()
+            current_user_id = current_user['id']
 
-            pi_auth = self.get_current_user()['pi_authorities']
-
-            
-            for auth in pi_auth:
-                m = self.auth_pattern.match(auth)
-                hrn_length = len(m.group('hrn').split(':'))
+            if self.isAdmin():
+                pi_auth = []
+                cursor = yield r.table('authorities').pluck('id').run(self.dbconnection)
                 
-                if hrn_length == 1:
-                    pi_auth = []
-                    
-                    cursor = yield r.table('authorities') \
-                            .pluck('id') \
-                            .run(self.dbconnection)
-                    
-                    while (yield cursor.fetch_next()):
-                        authority = yield cursor.next()
-                        pi_auth.append(authority['id'])
+                while (yield cursor.fetch_next()):
+                    authority = yield cursor.next()
+                    pi_auth.append(authority['id'])
+            else:
+                pi_auth = current_user['pi_authorities']
 
-                    break
 
             # filter based on who is in charge of the auth
             # merge is for actions in the front-end
@@ -93,8 +88,8 @@ class RequestsHandler(Api):
                 requests.append(item)
 
             # show the requests of user did in pending(not usual case)
-            # this is based on the fact that 1. if event is in pending, and  2. user triggers the event
-            #  Then user must not have prilevge over this. Check myslice/db/user
+            # this is based on the fact that when user initates a new event, but event turns into pending
+            #  Then we can infer that user have prilevge over this event. Check myslice/db/user
 
             cursor = yield r.table('activity').filter(lambda activity:
                 

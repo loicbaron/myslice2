@@ -7,7 +7,7 @@ import LoadingPanel from './LoadingPanel';
 
 import ActivityFilter from './ActivityFilter';
 import ActivityRow from'./ActivityRow';
-import RequestsRow from './RequestsRow';
+
 class ActivityList extends React.Component {
 
     constructor(props) {
@@ -20,7 +20,10 @@ class ActivityList extends React.Component {
     componentWillMount() {
         store.listen(this.onChange);
         actions.fetchActivity();
-       
+    }
+
+    componentDidMount() {
+        actions.watchActivity()
     }
 
     componentWillUnmount() {
@@ -32,7 +35,7 @@ class ActivityList extends React.Component {
     }
 
     handleFilter(filter) {
-        return actions.fetchActivity(filter);
+        actions.fetchActivity(filter);
 
     }
 

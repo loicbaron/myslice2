@@ -29,12 +29,6 @@ class ReuqestsFilter extends React.Component {
 
     getOptions() {
         return [
-
-            { value: 'pending', label: 'Pending', name: 'status' },
-            { value: 'approved', label: 'Approved', name: 'status' },
-            { value: 'denied', label: 'Denied', name: 'status' },
-            { value: 'success', label: 'Success', name: 'status' },
-            
             { value: 'authority', label: 'Authority', name: 'object' },
             { value: 'user', label: 'User', name: 'object' },
             { value: 'project', label: 'Project', name: 'object' },
