@@ -34,7 +34,7 @@ class WebsocketsHandler(SockJSConnection):
     def on_message(self, message):
         logger.info("Received: {}".format(message))
         data = json.loads(message)
-        print(data)
+        
         if not self.authenticated:
             if not 'auth' in data:
                 return

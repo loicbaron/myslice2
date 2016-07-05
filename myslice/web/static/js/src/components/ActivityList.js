@@ -20,6 +20,7 @@ class ActivityList extends React.Component {
     componentWillMount() {
         store.listen(this.onChange);
         actions.fetchActivity();
+        actions.getUserToken();
     }
 
     componentDidMount() {

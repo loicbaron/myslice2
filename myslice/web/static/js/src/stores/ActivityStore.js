@@ -12,12 +12,27 @@ class ActivityStore {
             updateActivity: actions.UPDATE_ACTIVITY,
             updateActivityElement: actions.UPDATE_ACTIVITY_ELEMENT,
             
+            getUserToken: actions.GET_USER_TOKEN,
+            setUserToken: actions.SET_USER_TOKEN,
+
             fetchActivity: actions.FETCH_ACTIVITY,
             watchActivity: actions.WATCH_ACTIVITY,
         });
 
         this.registerAsync(source);
 
+    }
+
+    getUserToken() {
+        let token = sessionStorage.getItem('token') 
+        
+        if (!token) {
+            this.getInstance().getUserToken();
+        }
+    }
+
+    setUserToken(data) {
+        sessionStorage.setItem('token' , data['data']);
     }
 
     fetchActivity(filter) {

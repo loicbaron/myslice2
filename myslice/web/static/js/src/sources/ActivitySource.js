@@ -29,6 +29,16 @@ const ActivitySource = () => {
             shouldFetch(state) {
                 return true
             }
+        },
+
+        getUserToken: {
+
+            remote(state) {
+                return axios.get('/api/v1/usertoken');
+            },
+
+            success: actions.setUserToken,
+            error: actions.errorUserToken,
         }
     }
 };
