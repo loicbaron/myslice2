@@ -122,8 +122,17 @@ button {
 button:hover, button.active {
     border-bottom:solid 4px #221144;
 }
-
-
+button.large {
+    border: none;
+    background-color: rgba(0, 0, 0, 0.27);
+    padding-bottom: 10px;
+    padding-top: 10px;
+    padding-left: 50px;
+    padding-right: 50px;
+}
+button.large:hover, button.large.active {
+    background-color: rgb(193, 154, 236);
+}
 div.form {
     position:relative;
     padding-top:50px;

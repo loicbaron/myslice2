@@ -34,7 +34,7 @@ class ProjectsInfo extends React.Component {
                             <SectionTitle title="Slices" />
                         </SectionHeader>
                         <SectionBody>
-                            <SlicesList slices={this.props.element.slices} />
+                            <SlicesList slices={this.props.element.slices} removeSlice={true} />
                         </SectionBody>
                     </Section>
         }

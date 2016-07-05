@@ -318,6 +318,8 @@ class UsersHandler(Api):
         DELETE /users/<id>
         :return:
         """
+        # Check if the current user is PI of the authority of the user 
+        # Or an upper authority 
         pass
 
 class ProfileHandler(Api):

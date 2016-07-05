@@ -226,4 +226,5 @@ class ProjectsHandler(Api):
         DELETE /projects/<id>
         :return:
         """
+        # Check if the user is PI of the Project
         pass

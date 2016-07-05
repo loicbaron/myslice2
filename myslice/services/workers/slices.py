@@ -23,7 +23,7 @@ from myslice.db.activity import Event, ObjectType, DataType
 from myslice.db import changes, connect
 from myslicelib.model.lease import Lease
 from myslicelib.model.resource import Resource
-from myslice.db.slice import Slice
+from myslice.db.slice import Slice, SliceException
 from myslice.db.user import User
 from myslicelib.query import q
 
@@ -118,6 +118,26 @@ def events_run(lock, qSliceEvents):
                                 sli.addLease(l)
                             isSuccess = sli.save(dbconnection, user_setup)
 
+                except SliceException as e:
+                    # CREATE, UPDATE, DELETE
+                    # Calls toward Registry
+                    # If an AM sends an Error it is not blocking
+                    if event.creatingObject() or event.updatingObject() or event.deletingObject():
+                        for err in e.stack:
+                            if err['type'] == 'Reg':
+                                event.setError()
+                                break
+                            else:
+                                # XXX TO BE REFINED
+                                event.setSuccess()
+                                #event.setWarning()
+                    # TODO:
+                    # if ALL AMs have failed -> Error
+                    # if One AM succeeded -> Warning
+                    else:
+                        # XXX TO BE REFINED
+                        event.setError()
+
                 except Exception as e:
                     import traceback
                     traceback.print_exc()
@@ -126,8 +146,6 @@ def events_run(lock, qSliceEvents):
                      
                 if isSuccess:
                     event.setSuccess()
-                else:
-                    event.setError()
 
                 db.dispatch(dbconnection, event)
 
@@ -168,7 +186,8 @@ def sync(lock):
 
                         # Synchronize resources of the slice only if we have the user's private key or its credentials
                         # XXX Should use delegated Credentials
-                        if (hasattr(u,'private_key') and len(u.private_key)>0) or (hasattr(u,'credentials') and len(u.credentials)>0):
+                        #if (hasattr(u,'private_key') and u.private_key is not None and len(u.private_key)>0) or (hasattr(u,'credentials') and len(u.credentials)>0):
+                        if u.private_key or (hasattr(u,'credentials') and len(u.credentials)>0):
                             user_setup = UserSetup(u,myslicelibsetup.endpoints)
                             s = q(Slice, user_setup).id(slice.id).get()
                             pprint(s)

@@ -86,6 +86,20 @@ const ProjectsSource = () => {
             }
         },
 
+        deleteSlice: {
+
+            remote(state) {
+                return axios.delete('/api/v1/slices/' + state.deleteSliceFromProject.id);
+            },
+
+            success: actions.updateDeleteSlice, // (required)
+            error: actions.errorDeleteSlice, // (required)
+
+            shouldFetch(state) {
+                return true
+            }
+        },
+
         slices: {
 
             remote(state) {
