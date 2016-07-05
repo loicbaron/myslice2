@@ -149,9 +149,41 @@ class SlicesHandler(Api):
         pass
 
     @gen.coroutine
-    def delete(self):
+    def delete(self, id, o=None):
         """
         DELETE /slices/<id>
         :return:
         """
-        pass
+        try:
+            # Check if the user has the right to delete a slice
+            s = yield r.table('slices').get(id).run(self.dbconnection)
+            if not self.current_user['id'] in s['users']:
+                self.userError("your user has no rights on slice: %s" % id)
+        except Exception:
+            self.userError("not authenticated or project not specified")
+            return
+
+        try:
+            event = Event({
+                'action': EventAction.DELETE,
+                'user': self.current_user['id'],
+                'object': {
+                    'type': ObjectType.SLICE,
+                    'id': id,
+                }
+            })
+        except AttributeError as e:
+            self.userError("Can't create request", e)
+            return
+        except Exception as e:
+            self.userError("Can't create request", e)
+            return
+        else:
+            result = yield dispatch(self.dbconnection, event)
+
+            self.write(json.dumps(
+                {
+                    "result": "success",
+                    "error": None,
+                    "debug": None
+                }, cls=myJSONEncoder))
