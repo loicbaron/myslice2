@@ -2,7 +2,7 @@ import os
 from random import randrange
 from datetime import datetime
 
-from myslice.settings import s
+from myslice import settings as s
 
 DOMAIN = s.email.domain
 
@@ -28,3 +28,6 @@ class MessageID:
                       str(randrange(100000)),
                       self.idstring])
         return "".join(['<', r, '@', self.domain, '>'])
+
+if __name__ == '__main__':
+    print(MessageID()())

@@ -103,6 +103,7 @@ def emails_run(qEmails):
 
             mail_to = []
             for r in recipients:
+                print(r)
                 try:
                     username = "{} {}".format(r.first_name, r.last_name)
                 except:
@@ -120,14 +121,13 @@ def emails_run(qEmails):
                             url = url,
                             )
 
-            m = Message(mail_from=('OneLab Support', 'zhouquantest16@gmail.com'),
+            m = Message(mail_from=['OneLab Support', 'zhouquantest16@gmail.com'],
                         mail_to = mail_to,
                         subject = subject,
-                        rich = mail_body
+                        html_content = mail_body
                         )
             try:
                 Mailer().send(m)
-                
                 # TODO: better handle email cases
 
                 #event.logInfo("The PIs of {} have been contacted".format(authority.name))
