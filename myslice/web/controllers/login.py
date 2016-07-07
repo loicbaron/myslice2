@@ -1,7 +1,8 @@
-from email.utils import parseaddr
-import crypt
-from hmac import compare_digest as compare_hash
+from passlib.hash import md5_crypt
 import json
+from email.utils import parseaddr
+from hmac import compare_digest as compare_hash
+import crypt
 from tornado.web import MissingArgumentError
 from tornado import gen
 from rethinkdb import r
@@ -29,34 +30,80 @@ class Index(BaseController):
 
         try:
             post_email = self.get_argument("email")
-            post_password = self.get_argument("password")
-            _, email = parseaddr(post_email)
-            password = post_password
-            feed = yield r.table('users').filter({"email" : email}).run(self.application.dbconnection)
-            yield feed.fetch_next()
-            user = yield feed.next()
-
-            if not compare_hash(crypt.crypt(password, user['password']), user['password']) and not compare_legacy_password(password, user['password']):
-                raise ValueError('password does not match')
-
-            self.set_secure_cookie("user", json.dumps({
-                'id': user['id'],
-                'email': user['email'],
-                'firstname': user.get('firstname', ''),
-                'lastname': user.get('lastname', ''),
-                'authority': user['authority']
-            }, cls=myJSONEncoder))
-
-        except Exception as e:
-            self.render(self.application.templates + "/login.html", message="Invalid email or password")
+        except MissingArgumentError as e:
+            self.render(self.application.templates + "/login.html", message="email missing")
             return
+
+        try:
+            post_password = self.get_argument("password")
+        except MissingArgumentError as e:
+            self.render(self.application.templates + "/login.html", message="password missing")
+            return
+
+        _, email = parseaddr(post_email)
+        if not email:
+            self.render(self.application.templates + "/login.html", message="wrong email")
+            return
+
+        if not post_password:
+            self.render(self.application.templates + "/login.html", message="empty password")
+            return
+        else:
+            password = post_password
+
+        feed = yield r.table('users') \
+                        .filter({"email": email}) \
+                        .merge(lambda user: {
+                                'slices': r.table('slices') \
+                                            .get_all(r.args(user['slices'])) \
+                                            .pluck(['id', 'hrn',  'name', 'shortname']) \
+                                            .coerce_to('array')
+                        }) \
+                        .run(self.application.dbconnection)
+        yield feed.fetch_next()
+        user = yield feed.next()
+
+        if not user:
+            self.render(self.application.templates + "/login.html", message="user does not exist")
+            return
+
+        if not self.check_password(password, user['password']):
+            self.render(self.application.templates + "/login.html", message="password does not match")
+            return
+
+        # set the first available slice as active, or None
+        active_slice = None
+        if user['slices'][0]:
+            active_slice = user['slices'][0]
+
+        self.set_secure_cookie("user", json.dumps({
+            'id': user['id'],
+            'email': user['email'],
+            'firstname': user.get('firstname', ''),
+            'lastname': user.get('lastname', ''),
+            'authority': user['authority'],
+            'slices': user['slices'],
+            'active_slice': active_slice
+        }, cls=myJSONEncoder))
 
         self.redirect("/")
 
-def compare_legacy_password(plain_password, stored_password):
-    # Compare plaintext against encrypted password stored in the DB
-    # Protect against blank passwords in the DB
-    if stored_password is None or stored_password[:12] == "" or \
-        crypt.crypt(plain_password, stored_password[:12]) != stored_password:
+
+    def check_password(self, plain_password, encrypted_password):
+
+        if md5_crypt.verify(plain_password, encrypted_password):
+            return True
+
+        # ##
+        # # legacy method used to store passwords
+        # if encrypted_password or encrypted_password[:12] != "" or \
+        #                 crypt.crypt(plain_password, encrypted_password[:12]) == encrypted_password:
+        #     return True
+
         return False
-    return True
+
+    ##
+    # TODO: MD5 hash are not secure, should migrate bcrypt
+    #
+    # https://github.com/pyca/bcrypt
+
