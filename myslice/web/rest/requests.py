@@ -4,15 +4,18 @@ import rethinkdb as r
 
 from myslice.db import dispatch
 from myslice.db.activity import Event
+from myslice.db.user import User
 from myslice.lib.util import myJSONEncoder
 from myslice.web.rest import Api
-
 from tornado import gen, escape
 
 class RequestsHandler(Api):
 
+
+
+
     @gen.coroutine
-    def get(self, id):
+    def get(self, id=None):
         """
         GET /requests/[<id>]
 
@@ -21,20 +24,87 @@ class RequestsHandler(Api):
         :return:
         """
 
-        users = []
+        requests = []
 
-        # TODO: id must be a valid URN
+        #self.filter = {'status': ['pending']}
+        #self.filter = {}
+
+
+        # TODO: id must be a valid UUID
         if id:
-            result = yield r.table('users').get(id).run(self.dbconnection)
-            users.append(result)
+            result = yield r.table('activity').get(id).run(self.dbconnection)
+            requests.append(result)
+            # return status code
+            if not requests:
+                self.NotFoundError('No such activity is found')
         else:
-            cursor = yield r.table('users').run(self.dbconnection)
 
+            # filter based on Requests
+            filter = json.loads(self.get_argument("filter", default={}, strip=False))
+
+            # status are uppercase
+            filter['status'] = ["PENDING"]
+            filter['action'] = list(action.upper() for action in filter['action'])
+            filter['object'] = list(object.upper() for object in filter['object'])
+
+            # user's requests
+            current_user = self.get_current_user()
+            current_user_id = current_user['id']
+
+            if self.isAdmin():
+                pi_auth = []
+                cursor = yield r.table('authorities').pluck('id').run(self.dbconnection)
+                
+                while (yield cursor.fetch_next()):
+                    authority = yield cursor.next()
+                    pi_auth.append(authority['id'])
+            else:
+                pi_auth = current_user['pi_authorities']
+
+
+            # filter based on who is in charge of the auth
+            # merge is for actions in the front-end
+            cursor = yield r.table('activity').filter(lambda activity:
+
+                (len(filter['action']) == 0 or r.expr(filter['action']).contains(activity['action']))
+                                                        ).filter(lambda activity:
+
+                (len(filter['status']) == 0 or r.expr(filter['status']).contains(activity['status']))
+                                                        ).filter(lambda activity:
+
+                (len(filter['object']) == 0 or r.expr(filter['object']).contains(activity['object']['type']))
+                                                        ).filter(lambda activity:
+                                                        
+                (r.expr(pi_auth).contains(activity['data']['authority']))
+                                                        ).filter(lambda activity:
+                    
+                (activity['user'] != current_user_id)
+                                                        ).merge(
+                {"executable": True}
+                                                        ).run(self.dbconnection)
+                                                        
             while (yield cursor.fetch_next()):
-                result = yield cursor.next()
-                users.append(result)
+                item = yield cursor.next()
+                requests.append(item)
 
-        self.write(json.dumps({"result": users}, cls=myJSONEncoder))
+            # show the requests of user did in pending(not usual case)
+            # this is based on the fact that when user initates a new event, but event turns into pending
+            #  Then we can infer that user have prilevge over this event. Check myslice/db/user
+
+            cursor = yield r.table('activity').filter(lambda activity:
+                
+                (activity['user'] == current_user_id)).filter(lambda activity:
+
+                (len(filter['status']) == 0 or r.expr(filter['status']).contains(activity['status']))
+                                                        ).merge(
+                {"executable": False}
+                                                        ).run(self.dbconnection)
+            
+            while (yield cursor.fetch_next()):
+                item = yield cursor.next()
+                requests.append(item)
+
+        self.finish(json.dumps({"result": requests}, cls=myJSONEncoder))
 
     @gen.coroutine
     def put(self, id):
@@ -62,7 +132,7 @@ class RequestsHandler(Api):
             self.userError("malformed request", e.message)
             return
 
-        if action != 'approve' or action != 'deny':
+        if action != 'approve' and action != 'deny':
             self.userError("action must be approve or deny")
             return
 
@@ -77,8 +147,8 @@ class RequestsHandler(Api):
             self.serverError("malformed request")
             return
 
-        user = self.get_current_user()
-
+        user = User(self.get_current_user())
+        
         if not user.has_privilege(event):
             self.userError("Permission denied")
             return
@@ -89,7 +159,25 @@ class RequestsHandler(Api):
         if action == 'deny':
             event.setDenied()
 
+        event.notify = True
+
         if message:
-            event.message(self.get_current_user_id(), message)
+            event.message(self.get_current_user()['id'], message)
 
         yield dispatch(self.dbconnection, event)
+
+
+        requests = []
+
+        cursor = yield r.table('activity').filter(lambda activity:
+                r.expr(['PENDING']).contains(activity['status'])
+                                                        ).run(self.dbconnection)
+
+        while (yield cursor.fetch_next()):
+                item = yield cursor.next()
+                requests.append(item)
+        
+
+        self.finish(json.dumps({"result": requests}, cls=myJSONEncoder))
+
+

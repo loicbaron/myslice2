@@ -1,7 +1,9 @@
 import json
-from email.utils import parseaddr
+import jwt
 import crypt
+
 from hmac import compare_digest as compare_hash
+from email.utils import parseaddr
 
 import rethinkdb as r
 from myslice.db import dispatch, changes
@@ -245,11 +247,12 @@ class UsersHandler(Api):
 
 
     @gen.coroutine
-    def post(self, p):
+    def post(self):
         """
         POST /users
         :return:
         """
+
         if not self.request.body:
             self.userError("empty request")
             return
@@ -271,12 +274,21 @@ class UsersHandler(Api):
             self.userError("Email not specified")
             return
 
+
+        if not self.get_current_user():
+            # usr registration
+            current_user_id = None
+        else:
+            # admin create user directly
+            current_user_id = self.get_current_user()['id']
+
         try:
             event = Event({
                 'action': EventAction.CREATE,
-                'user': self.get_current_user()['id'],
+                'user': current_user_id,
                 'object': {
-                    'type': ObjectType.USER
+                    'type': ObjectType.USER,
+                    'id': None
                 },
                 'data': data
             })
@@ -306,6 +318,8 @@ class UsersHandler(Api):
         DELETE /users/<id>
         :return:
         """
+        # Check if the current user is PI of the authority of the user 
+        # Or an upper authority 
         pass
 
 class ProfileHandler(Api):
@@ -321,18 +335,15 @@ class ProfileHandler(Api):
         """
         # TODO: id must be a valid URN
 
-        feed = yield r.table('users') \
+        profile = yield r.table('users')\
+                .get(self.get_current_user()['id']) \
                 .pluck(self.fields['profile']) \
-                .filter({'id': self.get_current_user()['id']}) \
                 .merge(lambda user: {
                 'authority': r.table('authorities').get(user['authority']) \
                                                        .pluck(self.fields_short['authorities']) \
                                                        .default({'id': user['authority']})
                  }) \
                 .run(self.dbconnection)
-
-        yield feed.fetch_next()
-        profile = yield feed.next()
 
         self.write(json.dumps({"result": profile}, cls=myJSONEncoder))
 
@@ -411,3 +422,36 @@ class ProfileHandler(Api):
                 
                 else:
                     self.userError("updated failed", result['new_val'])
+
+class UserTokenHandler(Api):
+    """
+    PUT /usertoken
+
+    :return:
+    """
+
+    @gen.coroutine
+    def get(self):
+        admin = self.isAdmin()
+        pi_auth = []
+        current_user_id = self.get_current_user()['id']
+        
+        # if not admin
+        if not admin:
+            user = yield r.table('users').get(current_user_id).run(self.dbconnection)
+            pi_auth = user['pi_authorities']
+
+        try:
+            secret = self.application.settings['token_secret'] # used in websockets
+            token = jwt.encode({
+                                "id" : current_user_id,
+                                "admin" : admin,
+                                "pi_auth" : pi_auth,
+                                },
+                                secret, algorithm='HS256')
+        except Exception as e:
+            self.serverError("token encryption failed", e)
+        
+        self.finish(token)
+
+

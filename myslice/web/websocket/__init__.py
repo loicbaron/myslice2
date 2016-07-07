@@ -1,4 +1,7 @@
+import zmq
+import jwt
 import logging, json
+
 from tornado import gen
 from sockjs.tornado import SockJSConnection
 from myslice.lib.util import myJSONEncoder
@@ -37,10 +40,22 @@ class ZMQPubSub(object):
 
 
 class WebsocketsHandler(SockJSConnection):
+    '''
+    We are using token as user authentication(Cookie is not offically supported and not secure)
+    user token is encrypted and get through rest "/api/v1/usertoken"
+    
+    Read more:
+    http://blog.kristian.io/post/47460001334/sockjs-and-tornado-for-python-real-time-web-projects/
+    https://groups.google.com/forum/#!topic/sockjs/2iyik3G0PFc
+    '''
+
     clients = set()
-    current_user = 'urn:publicid:IDN+onelab:upmc+user+loic_baron'
+    #zmq_publisher = 'tcp://127.0.0.1:6001'
 
     def on_open(self, request):
+        self.authenticated = False
+        self.current_user_id = None
+        self.pi_auth = []
         self.clients.add(self)
         self.pubsub = ZMQPubSub(self.on_data)
         self.pubsub.connect()
@@ -49,37 +64,34 @@ class WebsocketsHandler(SockJSConnection):
     def on_message(self, message):
         logger.info("user {} subscribed to {}".format(self.current_user, message))
         data = json.loads(message)
+        logger.info("Received: {}".format(message))
+        data = json.loads(message)
+        
+        if not self.authenticated:
+            if not 'auth' in data:
+                return
 
-        # watch is a list of tables to watch
-        try:
-            self.watch = data['watch']
-        except Exception:
-            self.send(
-                json.dumps({
-                    'error': 'malformed request',
-                    'debug': None,
-                    'result': []
-                })
-            )
-            # close websocket
-            self.close()
+            try:
+                encrypted_string = data['auth']
+                json_object = jwt.decode( encrypted_string, 'u636vbJV6Ph[EJB;Q', algorithms=['HS256'])
+            except Exception as e:
+                logger.error('Token Decrption errors %s' % e)
+                return
 
-        # check if all the specified entities exist
-        for w in self.watch:
-            if w not in tables:
-                self.send(
-                    json.dumps({
-                        'error': '{} not supported'.format(w),
-                        'debug': None,
-                        'result': []
-                    })
-                )
-                # close websocket
-                self.close()
+            else:
+                self.current_user_id = json_object['id']
+                self.admin = json_object['admin']
+                self.pi_auth = json_object['pi_auth']
+                self.authenticated = True
 
-        # subscribe to the zmq socket
-        if self.pubsub.isConnected():
-            self.pubsub.subscribe()
+        if self.authenticated and 'watch' in data:
+            if data['watch'] == 'activity':
+
+            if data['watch'] == 'requests':
+                self.requests()
+
+            if data['watch'] == 'projects':
+                self.projects()
 
     def on_close(self):
         if not self.pubsub.isConnected():
@@ -91,6 +103,7 @@ class WebsocketsHandler(SockJSConnection):
     def on_data(self, data):
         for d in data:
             o = json.loads(str(d, "utf-8"))
+
 
             #for k in o:
 
@@ -111,23 +124,69 @@ class WebsocketsHandler(SockJSConnection):
 
 
     @gen.coroutine
-    def activity(self, obj=None):
-
+    def requests(self, obj=None):
+        
         dbconnection = yield connect()
         feed = yield changes(dbconnection, table='activity')
 
         while (yield feed.fetch_next()):
             change = yield feed.next()
-            print('--->  websocket activity()')
-            print(change)
-            print(obj)
-            if obj:
-                if change['new_val']['object']['type'] == obj:
-                    if change['new_val']['user'] == self.current_user:
-                        self.send(json.dumps({ 'activity': change['new_val'] }, ensure_ascii=False, cls=myJSONEncoder).encode('utf8'))
-            else:
-                if change['new_val']['user'] == self.current_user:
-                    self.send(json.dumps({ 'activity': change['new_val'] }, ensure_ascii=False, cls=myJSONEncoder).encode('utf8'))
+
+            # if obj:
+            #     if change['new_val']['object']['type'] == obj:
+            #         if change['new_val']['user'] == self.current_user_id:
+            #             self.send(json.dumps({ 'activity': change['new_val'] }, ensure_ascii=False, cls=myJSONEncoder).encode('utf8'))
+            # else:
+            if change['new_val']['status'] == "PENDING":
+                
+                # 
+                if  self.admin or \
+                    change['new_val']['data']['authority'] in self.pi_auth:
+
+                    activity = change['new_val']
+                    activity.update({"executable": True})
+
+                    self.send(json.dumps({ 'request': change['new_val'] }, ensure_ascii=False, cls=myJSONEncoder).encode('utf8'))
+                    
+                if change['new_val']['user'] == self.current_user_id:
+ 
+                    self.send(json.dumps({ 'request': change['new_val'] }, ensure_ascii=False, cls=myJSONEncoder).encode('utf8'))
+
+    @gen.coroutine
+    def activity(self):
+
+        # try:
+        #     context = zmq.Context()
+        #     sock = context.socket(zmq.SUB)
+        #     sock.connect(self.zmq_publisher)
+
+        # except Exception as e:
+        #     logger.error('Error happens when setting a ZeroMQ client (%s)' % e)
+        # else:
+        #     json = sock.recv_json(ensure_ascii=False, cls=myJSONEncoder)
+
+        #     print(json)
+
+        
+        dbconnection = yield connect()
+        feed = yield changes(dbconnection, table='activity')
+
+        while (yield feed.fetch_next()):
+            change = yield feed.next()
+
+            # if obj:
+            #     if change['new_val']['object']['type'] == obj:
+            #         if change['new_val']['user'] == self.current_user_id:
+            #             self.send(json.dumps({ 'activity': change['new_val'] }, ensure_ascii=False, cls=myJSONEncoder).encode('utf8'))
+            # else:
+
+            if  self.admin or \
+                change['new_val']['data']['authority'] in self.pi_auth or \
+                change['new_val']['user'] == self.current_user_id:
+                
+                self.send(json.dumps({ 'activity': change['new_val'] }, ensure_ascii=False, cls=myJSONEncoder).encode('utf8'))  
+
+
 
     @gen.coroutine
     def projects(self):

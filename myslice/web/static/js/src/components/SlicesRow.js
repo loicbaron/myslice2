@@ -7,19 +7,25 @@ import ElementStatus from './base/ElementStatus';
 import ElementIcon from './base/ElementIcon';
 import DateTime from './base/DateTime';
 
+import DeleteSliceFromProject from './DeleteSliceFromProject';
+
 class SlicesRow extends React.Component {
 
     render() {
         var label = this.props.slice.name || this.props.slice.shortname;
         var project = this.props.slice.project.name || this.props.slice.project.shortname;
         var authority = this.props.slice.authority.name || this.props.slice.authority.shortname;
-
+        var button = '';
+        if(this.props.removeSlice){
+            button = <DeleteSliceFromProject slice={this.props.slice} />
+        }
         return (
              <Element element={this.props.slice} type="project" select={this.props.select}>
                  <ElementStatus status={this.props.slice.status} />
                  <ElementIcon icon="slice" />
                  <ElementTitle label={label} detail={this.props.slice.shortname} />
                  <ElementId id={this.props.slice.id} />
+                 {button}
                  <div className="elementDetail">
                      <span className="elementLabel">Part of project</span> {project}
                      <br />
@@ -49,11 +55,13 @@ class SlicesRow extends React.Component {
 
 SlicesRow.propTypes = {
     slice: React.PropTypes.object.isRequired,
+    removeSlice: React.PropTypes.bool,
     select: React.PropTypes.bool
 };
 
 SlicesRow.defaultProps = {
-    select: false
+    select: false,
+    removeSlice: false,
 };
 
 export default SlicesRow;

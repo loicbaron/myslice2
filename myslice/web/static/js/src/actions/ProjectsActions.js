@@ -46,6 +46,16 @@ class ProjectsActions {
         return errorMessage
     }
 
+    deleteSlice(slice) {
+        return slice;
+    }
+    updateDeleteSlice(message) {
+        return message;
+    }
+    errorDeleteSlice(errorMessage) {
+        return errorMessage
+    }
+
     errorUsers(errorMessage) {
         return errorMessage
     }

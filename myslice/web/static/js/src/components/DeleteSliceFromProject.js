@@ -3,12 +3,12 @@ import React from 'react';
 import store from '../stores/ProjectsStore';
 import actions from '../actions/ProjectsActions';
 
-class RemoveUserFromProject extends React.Component {
+class DeleteSliceFromProject extends React.Component {
     constructor(props) {
         super(props);
         this.state = store.getState();
         this.onChange = this.onChange.bind(this);
-        this.removeUser = this.removeUser.bind(this);
+        this.deleteSlice = this.deleteSlice.bind(this);
 
     }
     onChange(state) {
@@ -21,37 +21,37 @@ class RemoveUserFromProject extends React.Component {
     componentWillUnmount() {
         store.unlisten(this.onChange);
     }
-    removeUser(){
-        actions.removeUser(this.props.user);
+    deleteSlice(){
+        actions.deleteSlice(this.props.slice);
     }
     render() {
-        var containsUser = function(user, list){
+        var containsObject = function(obj, list){
             for(var i=0; i<list.length; i++){            
-                if(list[i].id==user.id){
+                if(list[i].id==obj.id){
                     return true;
                 }
             }
             return false;
         };
-        if(this.state.removeUserFromProject==this.props.user){
+        if(this.state.deleteSliceFromProject==this.props.slice){
             return(
                 <div className="elementButton">
                     <i className="fa fa-lg fa-cog fa-spin" />
                 </div>
             );
-        }else if(containsUser(this.props.user, this.state.removedUsers[this.state.current.project.id])){
+        }else if(containsObject(this.props.slice, this.state.deletedSlices[this.state.current.project.id])){
             return(
                 <div className="elementButton bg-danger">
-                    <span className="text-danger"> Removed </span>
+                    <span className="text-danger"> Deleted </span>
                 </div>
             );
         }else{
             return(
                 <div className="elementButton">
-                    <button type="button" onClick={this.removeUser} >
-                    <i className="fa fa-ban" aria-hidden="true"></i>
+                    <button type="button" onClick={this.deleteSlice} >
+                    <i className="fa fa-trash" aria-hidden="true"></i>
                     &nbsp;
-                    Remove user
+                    Delete
                     </button>
                 </div>
             );
@@ -59,8 +59,8 @@ class RemoveUserFromProject extends React.Component {
     }
  }
 
-RemoveUserFromProject.propTypes = {
-    user: React.PropTypes.object.isRequired,
+DeleteSliceFromProject.propTypes = {
+    slice: React.PropTypes.object.isRequired,
 };
 
-export default RemoveUserFromProject;
+export default DeleteSliceFromProject;

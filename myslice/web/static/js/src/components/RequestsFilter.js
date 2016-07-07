@@ -1,7 +1,7 @@
 import React from 'react';
 import Select from 'react-select';
 
-class ActivityFilter extends React.Component {
+class ReuqestsFilter extends React.Component {
 
     constructor(props) {
         super(props);
@@ -23,22 +23,12 @@ class ActivityFilter extends React.Component {
 
 
     setValue(value) {
-		this.setState({ 'selected': value });
+        this.setState({ 'selected': value });
         this.props.handleChange(value);
-	}
+    }
 
     getOptions() {
         return [
-            { value: 'new', label: 'New', name: 'status' },
-            { value: 'success', label: 'Success', name: 'status' },
-            { value: 'pending', label: 'Pending', name: 'status' },
-            { value: 'approved', label: 'Approved', name: 'status' },
-            { value: 'denied', label: 'Denied', name: 'status' },
-            { value: 'waiting', label: 'Waiting', name: 'status' },
-            { value: 'running', label: 'Running', name: 'status' },
-            { value: 'error', label: 'Error', name: 'status' },
-            { value: 'warning', label: 'Warning', name: 'status' },
-
             { value: 'authority', label: 'Authority', name: 'object' },
             { value: 'user', label: 'User', name: 'object' },
             { value: 'project', label: 'Project', name: 'object' },
@@ -54,27 +44,27 @@ class ActivityFilter extends React.Component {
     }
 
     renderLink() {
-		return <a style={{ marginLeft: 5 }} href="/upgrade" target="_blank">C Upgrade here!</a>;
-	}
+        return <a style={{ marginLeft: 5 }} href="/upgrade" target="_blank">C Upgrade here!</a>;
+    }
 
-	renderOption(option) {
-		return (
+    renderOption(option) {
+        return (
             <span>
                 <span className="selectShortname">{option.name}</span><br />
                 <span className="selectLabel">{option.label}</span>
             </span>
         );
-	}
+    }
 
-	renderValue(option) {
-		return (
+    renderValue(option) {
+        return (
             <span>
                 <span className="selectShortname">{option.name}</span>&nbsp;
                 <span className="selectLabel">{option.label}</span>
             </span>
         );
 
-	}
+    }
 
     render() {
         let options = this.getOptions();
@@ -93,15 +83,9 @@ class ActivityFilter extends React.Component {
     }
 }
 
-ActivityFilter.propTypes = {
-    handleChange: React.PropTypes.func,
-    type: React.PropTypes.string
-}
-
-ActivityFilter.defaultProps = {
-    type: "activity"
+ReuqestsFilter.propTypes = {
+    handleChange: React.PropTypes.func 
 }
 
 
-
-export default ActivityFilter;
+export default ReuqestsFilter;

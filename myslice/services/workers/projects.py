@@ -34,8 +34,6 @@ def events_run(lock, qProjectEvents):
     # db connection is shared between threads
     dbconnection = connect()
 
-    isSuccess = None
-
     while True:
 
         try:
@@ -97,11 +95,8 @@ def events_run(lock, qProjectEvents):
                     traceback.print_exc()
                     logger.error("Problem with event: {}".format(e))
                     event.logError(str(e))
-
-                if isSuccess:
-                    event.setSuccess()
                 else:
-                    event.setError()
+                    event.setSuccess()
                 
                 db.dispatch(dbconnection, event)
 

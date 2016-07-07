@@ -11,6 +11,10 @@ class ActivityStore {
         this.bindListeners({
             updateActivity: actions.UPDATE_ACTIVITY,
             updateActivityElement: actions.UPDATE_ACTIVITY_ELEMENT,
+            
+            getUserToken: actions.GET_USER_TOKEN,
+            setUserToken: actions.SET_USER_TOKEN,
+
             fetchActivity: actions.FETCH_ACTIVITY,
             watchActivity: actions.WATCH_ACTIVITY,
         });
@@ -19,8 +23,19 @@ class ActivityStore {
 
     }
 
-    fetchActivity(filter) {
+    getUserToken() {
+        let token = sessionStorage.getItem('token') 
+        
+        if (!token) {
+            this.getInstance().getUserToken();
+        }
+    }
 
+    setUserToken(data) {
+        sessionStorage.setItem('token' , data['data']);
+    }
+
+    fetchActivity(filter) {
         this.activity = [];
         this.filter = {
             'action': [],
@@ -40,9 +55,7 @@ class ActivityStore {
             }.bind(this));
         }
 
-        if (!this.getInstance().isLoading()) {
-            this.getInstance().fetch();
-        }
+        this.getInstance().fetchActivity();
 
     }
 
@@ -55,6 +68,7 @@ class ActivityStore {
             this.activity = activity;
         }
     }
+
 
     updateActivityElement(activityElement) {
         // Check if we already have this activity in the state

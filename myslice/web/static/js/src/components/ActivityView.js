@@ -8,6 +8,7 @@ import Title from './base/Title';
 import Button from './base/Button';
 
 import ActivityList from './ActivityList';
+import RequestsList from './RequestsList';
 
 class ActivityView extends React.Component {
 
@@ -32,7 +33,7 @@ class ActivityView extends React.Component {
                         <Title title="Requests" />
                     </PanelHeader>
                     <PanelBody>
-                        <ActivityList type="" />
+                        <RequestsList />
                     </PanelBody>
                 </Panel>
             </View>

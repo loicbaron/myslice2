@@ -23,7 +23,7 @@ from myslice.web.rest.requests import RequestsHandler
 from myslice.web.rest.authorities import AuthoritiesHandler
 from myslice.web.rest.projects import ProjectsHandler
 from myslice.web.rest.slices import SlicesHandler
-from myslice.web.rest.users import UsersHandler, ProfileHandler, LoginHandler
+from myslice.web.rest.users import UsersHandler, ProfileHandler, LoginHandler, UserTokenHandler
 from myslice.web.rest.resources import ResourcesHandler
 from myslice.web.rest.password import PasswordHandler
 
@@ -63,7 +63,9 @@ def run():
 
 class Application(web.Application):
     urn_regex = "urn:[a-z0-9][a-z0-9-]{0,31}:[a-zA-Z0-9()+,\-.:=@;$_!*'%?#]+"
+    uuid_regex = "[a-fA-F\d]{8}-[a-fA-F\d]{4}-[a-fA-F\d]{4}-[a-fA-F\d]{4}-[a-fA-F\d]{12}"
     hrn_regex = "[a-zA-Z0-9\-\.\_]+"
+
 
     def __init__(self, dbconnection):
         self.templates = os.path.join(os.path.dirname(__file__), "../templates")
@@ -140,9 +142,11 @@ class Application(web.Application):
         rest_handlers = [
 
             web.url(r'/api/v1/activity?([A-Za-z0-9-]+)?', ActivityHandler),
-            web.url(r'/api/v1/activity/([a-z0-9\-]*)$', ActivityHandler),
+            web.url(r'/api/v1/activity/(' + self.uuid_regex + ')?', ActivityHandler),
 
-            web.url(r'/api/v1/requests/([a-fA-F\d]{8}(-[a-fA-F\d]{4}){3}-[a-fA-F\d]{12})?', RequestsHandler),
+            web.url(r'/api/v1/requests?([A-Za-z0-9-]+)?', RequestsHandler),
+            web.url(r'/api/v1/requests/(' + self.uuid_regex + ')?', RequestsHandler),
+            web.url(r'/api/v1/usertoken?', UserTokenHandler),
 
             web.url(r'/api/v1/login', LoginHandler),
             web.url(r'/api/v1/password', PasswordHandler),
@@ -152,8 +156,9 @@ class Application(web.Application):
             web.url(r'/api/v1/resources/()$', ResourcesHandler),
 
             web.url(r'/api/v1/profile$', ProfileHandler),
+            
+            web.url(r'/api/v1/users$', UsersHandler),
 
-            # users
             web.url(r'/api/v1/users/?(' + self.urn_regex + ')?/?(authorities|projects|slices)?$', UsersHandler),
             # authorities
             web.url(r'/api/v1/authorities/?(' + self.urn_regex + ')?/?(users|projects)?$', AuthoritiesHandler),
@@ -175,6 +180,7 @@ class Application(web.Application):
 
         settings = dict(cookie_secret="x&7G1d2!5MhG9SWkXu",
                         login_url="/login",
+                        token_secret = 'u636vbJV6Ph[EJB;Q',
                         template_path=self.templates,
                         static_path=self.static,
                         #xsrf_cookies=True,

@@ -25,73 +25,83 @@ def generate_RSA(bits=2048):
         traceback.print_exc()
     return private_key, public_key
 
+class UserException(Exception):
+    def __init__(self, errors):
+        self.stack = errors
+
 class User(myslicelibUser):
     
     def __init__(self, data = {}):
+        data = data if data is not None else {}
+        data['generate_keys'] = data.get('generate_keys', False)
+        data['private_key'] = data.get('private_key', None)
+        data['public_key'] = data.get('public_key', None)
+        data['keys'] = data.get('keys', [])
+        data['credentials'] = data.get('credentials', [])
         super(User, self).__init__(data)
-        if data is None:
-            data = {}
-        self.generate_keys = data.get('generate_keys', False)
-        self.keys = data.get('keys', [])
-        self.credentials = data.get('credentials', [])
-        self.hashing = data.get('hashing', '')
 
     def has_privilege(self, event):
         '''
         Return True if user has the privlege over the object.
         '''
+        def get_header(string):
+            '''
+            Return the header of urn in order to check privilege
+            '''
+            return string.split('+authority')[0]
+
         # user updates its own property
         # user updates its own slices(experiments)
         # user is Pi of the obj he wants to update
-        if self.id == event.object.id:
+        if self.getAttribute('id') == event.object.id:
             return True
 
-        if event.object.type == ObjectType.SLICE and event.object.id in self.slices:
+        if event.object.type == ObjectType.SLICE and event.object.id in self.getAttribute('slices'):
             return True
 
-        for auth in self.getAttribute('pi_authorities'):
-            if hasattr(event.data, 'authority') and auth == event.data.authority:
-                return True
+        for auth in self.getPiAuthorities(attribute=True):
+            ev_auth = event.data.get('authority', [])
+            if ev_auth:
+                if auth == ev_auth:
+                    return True
+                if get_header(ev_auth).startswith(get_header(auth)):
+                    return True
             if auth == event.object.id:
                 return True
+
         return False
 
-    #private_key = None
-    #public_key = None
-    #generate_keys = False
-
-    # def isRemoteUpdate(self):
-    #     if set(self.attributes()) & set(self.remote_fields):
-    #         return True
-    #     return False
-
     def save(self, dbconnection, setup=None):
-        if self.generate_keys:
+        if self.getAttribute('generate_keys'):
             private_key, public_key = generate_RSA()
-            self.private_key = private_key.decode('utf-8')
-            self.public_key = public_key.decode('utf-8')
-            self.keys.append(self.public_key)
+            self.setAttribute('private_key', private_key.decode('utf-8'))
+            self.setAttribute('public_key', public_key.decode('utf-8'))
+            self.appendAttribute('keys', self.getAttribute('public_key'))
 
         result = super(User, self).save(setup)
-        if result['errors']:
-            raise Exception('errors: %s' % result['errors'] )
-        else:
-            result = { **(self.dict()), **result['data'][0]}
-            # add status if not present and update on db
-            if not 'status' in result:
-                result['status'] = Status.ENABLED
-                result['enabled'] = format_date()
+        errors = result['errors']
 
-            db.users(dbconnection, result, self.id)
+        result = { **(self.dict()), **result['data'][0]}
+        # add status if not present and update on db
+        if not 'status' in result:
+            result['status'] = Status.ENABLED
+            result['enabled'] = format_date()
+
+        db.users(dbconnection, result, self.getAttribute('id'))
+        if errors:
+            raise UserException(errors)
+        else:
             return True
 
     def delete(self, dbconnection, setup=None):
         result = super(User, self).delete(setup)
+        errors = result['errors']
         
-        if result['errors']:
-            raise Exception('errors: %s' % result['errors'])
+        db.delete(dbconnection, 'users', self.getAttribute('id'))
+
+        if errors:
+            raise UserException(errors)
         else:
-            db.delete(dbconnection, 'users', self.id)
             return True
 
 

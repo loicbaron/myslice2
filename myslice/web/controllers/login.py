@@ -63,9 +63,14 @@ class Index(BaseController):
         yield feed.fetch_next()
         user = yield feed.next()
 
-        if not user:
-            self.render(self.application.templates + "/login.html", message="user does not exist")
-            return
+            self.set_secure_cookie("user", json.dumps({
+                'id': user['id'],
+                'email': user['email'],
+                'firstname': user.get('firstname', ''),
+                'lastname': user.get('lastname', ''),
+                'authority': user['authority'],
+                "pi_authorities": user['pi_authorities'],
+            }, cls=myJSONEncoder))
 
         if not self.check_password(password, user['password']):
             self.render(self.application.templates + "/login.html", message="password does not match")

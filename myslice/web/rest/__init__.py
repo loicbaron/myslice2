@@ -3,6 +3,7 @@ import re
 import logging
 import tornado_cors as cors
 from tornado import web
+import re
 
 
 logger = logging.getLogger(__name__)
@@ -41,6 +42,19 @@ class Api(cors.CorsMixin, web.RequestHandler):
         # Allow CORS
         self.set_header("Access-Control-Allow-Origin", "*")
         self.set_header("Content-Type", "application/json")
+
+    def isAdmin(self):
+        auth_pattern = re.compile(r"(urn:publicid:IDN\+)(?P<hrn>[\:]*[a-zA-Z]*)(\+authority\+sa)")
+        
+        # XXX not sure if it is a clean way to decide a admin
+        pi_auth = self.get_current_user()['pi_authorities']
+        for auth in pi_auth:
+            m = auth_pattern.match(auth)
+            hrn_length = len(m.group('hrn').split(':'))
+            if hrn_length == 1:
+                return True
+
+        return False
 
     def isUrn(self, urn):
         return re.match(self.application.urn_regex, urn)

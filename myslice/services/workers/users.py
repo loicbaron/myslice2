@@ -42,72 +42,52 @@ def events_run(lock, qUserEvents):
             logger.error("Problem with event: {}".format(e))
         else:
             logger.info("Processing event from user {}".format(event.user))
-
-            event.setRunning()
-
-            ##
-            # Creating a new user
-            if event.creatingObject():
-                logger.info("Creating user {}".format(event.object.id))
-
+            with lock:
                 try:
-                    user = User()
-                    # email
-                    # authority
-                    user.email = event.data['email']
-                    user.authority = event.data['authority']
-                    ret = user.save(dbconnection)
-                except Exception as e:
-                    logger.error("Problem creating user: {} - {}".format(event.object.id, e))
-                    event.logError(str(e))
-                    event.setError()
-                else:
-                    event.setSuccess()
-
-            ##
-            # Deleting user
-            if event.deletingObject():
-                logger.info("Deleting user {}".format(event.object.id))
-
-                try:
-                    user = User(db.users(dbconnection, id=event.object.id))
-                    if not user:
-                        raise Exception("User doesn't exist")
-                    user.id = event.object.id
-                    ret = user.delete(dbconnection)
-                except Exception as e:
-                    logger.error("Problem deleting user: {} - {}".format(event.object.id, e))
-                    event.logError(str(e))
-                    event.setError()
-                else:
-                    event.setSuccess()
-
-            if event.updatingObject():
-                logger.info("Updating user {}".format(event.object.id))
-
-                try:
-                    user = User(event.data)
-                    user.email = db.users(dbconnection, id=event.object.id)['email']
-                    user.id = event.object.id
-                    ret = user.save(dbconnection)
+                    event.setRunning()
+                    isSuccess = False
+                    ##
+                    # Creating a new user
+                    if event.creatingObject():
+                        logger.info("Creating user {}".format(event.object.id))
+                        user = User()
+                        # email
+                        # authority
+                        user.email = event.data['email']
+                        user.authority = event.data['authority']
+                        isSuccess = user.save(dbconnection)
+                    ##
+                    # Deleting user
+                    if event.deletingObject():
+                        logger.info("Deleting user {}".format(event.object.id))
+                        user = User(db.users(dbconnection, id=event.object.id))
+                        if not user:
+                            raise Exception("User doesn't exist")
+                        user.id = event.object.id
+                        isSuccess = user.delete(dbconnection)
+                    ##
+                    # Updating user
+                    if event.updatingObject():
+                        logger.info("Updating user {}".format(event.object.id))
+                        user = User(event.data)
+                        user.email = db.users(dbconnection, id=event.object.id)['email']
+                        user.id = event.object.id
+                        isSuccess = user.save(dbconnection)
                 except Exception as e:
                     logger.error("Problem updating user: {} - {}".format(event.object.id, e))
                     event.logError(str(e))
                     event.setError()
                 else:
                     event.setSuccess()
-
             ##
             # we then dispatch the event
             db.dispatch(dbconnection, event)
-
-
 
 def update_credentials(users):
     # Get users in RethinkDB
     for u_db in db.users():
         # We can only get credentials for users that have a private key stored in db
-        if 'private_key' in u_db:
+        if 'private_key' in u_db and u_db['private_key'] is not None:
             for u in users:
                 u_db_object = User(u_db)
                 if u.id == u_db['id']:

@@ -18,6 +18,8 @@ import ProjectsInfo from './ProjectsInfo';
 import ProjectsForm from './ProjectsForm';
 import ProjectsList from './ProjectsList';
 
+import SlicesForm from './SlicesForm';
+
 import UsersDialog from './UsersDialog';
 
 class ProjectsView extends React.Component {
@@ -51,6 +53,8 @@ class ProjectsView extends React.Component {
 
     /* set the current project */
     setCurrentProject(project) {
+        console.log('current project = ');
+        console.log(project);
         actions.setCurrentProject(project);
     }
 
@@ -61,7 +65,9 @@ class ProjectsView extends React.Component {
     addUsers() {
         actions.showDialog('users');
     }
-
+    createSlice() {
+        actions.showDialog('slice');
+    }
     closeDialog() {
         actions.showDialog(null);
     }
@@ -79,6 +85,18 @@ class ProjectsView extends React.Component {
         switch(this.state.dialog) {
             case 'users':
                 dialog = <UsersDialog close={this.closeDialog} from='authority' exclude={this.state.current.project.pi_users} addUser={true} />;
+                break;
+            case 'slice':
+                dialog = <Dialog close={this.closeDialog}>
+                            <DialogPanel>
+                                <DialogHeader>
+                                    <Title title="New Slice" />
+                                </DialogHeader>
+                                <DialogBody>
+                                    <SlicesForm project={this.state.current.project} />
+                                </DialogBody>
+                            </DialogPanel>
+                        </Dialog>;
                 break;
             case 'project':
                 dialog = <Dialog close={this.closeDialog}>
@@ -100,6 +118,7 @@ class ProjectsView extends React.Component {
                 <Panel>
                     <PanelHeader>
                         <Title title={project_title} subtitle={this.state.current.project.shortname} />
+                        <Button label="Create Slice" icon="plus" handleClick={this.createSlice} />
                         <Button label="Add Users" icon="plus" handleClick={this.addUsers} />
                     </PanelHeader>
                     <PanelBody>

@@ -14,12 +14,17 @@ class ActivityList extends React.Component {
         super(props);
         this.state = store.getState();
         this.onChange = this.onChange.bind(this);
+        this.handleFilter = this.handleFilter.bind(this);
+    }
+
+    componentWillMount() {
+        store.listen(this.onChange);
+        actions.fetchActivity();
+        actions.getUserToken();
     }
 
     componentDidMount() {
-        store.listen(this.onChange);
-        actions.fetchActivity();
-        //actions.watchActivity();
+        actions.watchActivity()
     }
 
     componentWillUnmount() {
@@ -30,9 +35,9 @@ class ActivityList extends React.Component {
         this.setState(state);
     }
 
-    handleFilter(value) {
-        console.log(value);
-        actions.fetchActivity(value);
+    handleFilter(filter) {
+        actions.fetchActivity(filter);
+
     }
 
     render() {
@@ -44,11 +49,17 @@ class ActivityList extends React.Component {
         }
 
         if (!this.state.activity) {
-            return <LoadingPanel show="true" />;
+                return <LoadingPanel show="true" />;
         } else {
+                
+            let self = this;
+            this.state.activity.sort(function(x, y) {
+                return new Date(y.updated).getTime() - new Date(x.updated).getTime();
+            })
+
             return (
                 <div>
-                    <ActivityFilter handleChange={this.handleFilter} />
+                    <ActivityFilter handleChange={this.handleFilter} type={this.props.type}/>
                     <List>
                         {
                             this.state.activity.map(function (activity) {
@@ -59,7 +70,17 @@ class ActivityList extends React.Component {
                 </div>
             );
         }
+
+
     }
+}
+
+ActivityList.propTypes = {
+    type: React.PropTypes.string,
+}
+
+ActivityList.defaultProps = {
+    type: "activity"
 }
 
 export default ActivityList;
