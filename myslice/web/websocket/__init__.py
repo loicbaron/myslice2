@@ -86,6 +86,7 @@ class WebsocketsHandler(SockJSConnection):
 
         if self.authenticated and 'watch' in data:
             if data['watch'] == 'activity':
+                self.activity()
 
             if data['watch'] == 'requests':
                 self.requests()
