@@ -10,3 +10,5 @@ python-dateutil
 premailer
 python-oauth2
 zmq
+jwt
+passlib
