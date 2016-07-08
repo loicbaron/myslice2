@@ -89,8 +89,8 @@ def update_credentials(users):
         # We can only get credentials for users that have a private key stored in db
         if 'private_key' in u_db and u_db['private_key'] is not None:
             for u in users:
-                u_db_object = User(u_db)
                 if u.id == u_db['id']:
+                    u_db_object = User(u_db)
                     user_setup = UserSetup(u_db_object, myslicelibsetup.endpoints)
                     c = u.getCredentials(setup=user_setup, delegate_to="onelab.myslice")
     return users

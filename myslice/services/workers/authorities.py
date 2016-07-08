@@ -96,6 +96,7 @@ def events_run(lock, qAuthorityEvents):
                     traceback.print_exc()
                     logger.error("Problem with event: {}".format(e))
                     event.logError(str(e)) 
+                    event.setError()
                 else:
                     event.setSuccess()
                 
