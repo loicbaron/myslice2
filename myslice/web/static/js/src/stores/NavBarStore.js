@@ -1,24 +1,24 @@
 import alt from '../alt';
-import actions from '../actions/SlicesActions';
-import source from '../sources/SlicesSource';
+import actions from '../actions/NavBarActions';
+import source from '../sources/NavBarSource';
 
-class NavStore {
+class NavBarStore {
 
     constructor() {
+        /* the list of user slices to show on the menu */
         this.slices = [];
 
         /* the currently active slice */
-        this.current = {};
+        this.currentSlice = {};
 
-        /* for slices we also have a menu */
-        this.menu = false;
-        
+        /* show/hide the Slices menu */
+        this.slicesMenu = false;
+
         this.bindListeners({
             setCurrentSlice: actions.SET_CURRENT_SLICE,
             updateSliceElement: actions.UPDATE_SLICE_ELEMENT,
             updateSlices: actions.UPDATE_SLICES,
             fetchSlices: actions.FETCH_SLICES,
-            errorSlices: actions.ERROR_SLICES,
             showMenu: actions.SHOW_MENU
         });
 
@@ -27,46 +27,46 @@ class NavStore {
 
     }
 
+    fetchSlices() {
+
+        if (!this.getInstance().isLoading()) {
+            this.getInstance().fetch();
+        }
+
+    }
+
     /*
         set the current slice
+        - from the url if we are in /slices/example.slice.hrn
         - from the localstorage if available
         - if the slice is not found defaults to the first one
         - or empty otherwise
      */
     setCurrentSlice(hrn = null) {
+        var index = null;
 
         if (hrn) {
-            var index = this.slices.findIndex(function(s) {
+            index = this.slices.findIndex(function(s) {
                 return (s.hrn === hrn);
             });
         } else {
             let id = localStorage.getItem('slice');
-            var index = this.slices.findIndex(function(s) {
+            index = this.slices.findIndex(function(s) {
                 return (s.id === id);
             });
         }
 
         if (index !== -1) {
-            this.current = this.slices[index];
+            this.currentSlice = this.slices[index];
         } else if (this.slices.length > 0) {
-            this.current = this.slices[0];
+            this.currentSlice = this.slices[0];
         } else {
-            this.current = {
+            this.currentSlice = {
                     id: null
             }
         }
 
-        localStorage.setItem('slice', this.current.id);
-
-    }
-
-    fetchSlices(filter) {
-
-        this.filter = filter;
-
-        if (!this.getInstance().isLoading()) {
-            this.getInstance().fetch();
-        }
+        localStorage.setItem('slice', this.currentSlice.id);
 
     }
 
@@ -84,6 +84,10 @@ class NavStore {
         this.errorMessage = null;
     }
 
+    /*
+        Every time we update the slice list we also check the
+        current slice
+     */
     updateSlices(slices) {
         if (slices.hasOwnProperty('data')) {
             this.slices = slices.data.result;
@@ -91,29 +95,23 @@ class NavStore {
             this.slices = slices;
         }
 
-        // check URL
         var u = window.location.href.toString().split(window.location.host)[1].split('/');
-        var hrn = u.pop();
-        var ctl = u.pop();
+        var hrn = u[2];
+        var ctl = u[1];
 
         if (ctl === 'slices') {
             this.setCurrentSlice(hrn);
         } else {
             this.setCurrentSlice();
         }
-
-    }
-
-    errorSlices(errorMessage) {
-        console.log(errorMessage);
     }
 
     showMenu(show) {
-        this.menu = show;
+        this.slicesMenu = show;
     }
 
 }
 
 
-export default alt.createStore(NavStore, 'NavStore');
+export default alt.createStore(NavBarStore, 'NavBarStore');
 
