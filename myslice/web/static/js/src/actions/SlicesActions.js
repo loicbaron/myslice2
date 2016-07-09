@@ -5,17 +5,10 @@ class SlicesActions {
     constructor() {
         this.generateActions(
             'fetchSlices',
-            'setCurrentSlice',
-            'getCurrentSlice',
             'updateSlices',
             'updateSliceElement',
-            'errorSlices',
-            'showMenu'
+            'errorSlices'
         );
-    }
-
-    getCurrentSlice() {
-        return;
     }
 
 }
