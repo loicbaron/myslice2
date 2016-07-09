@@ -107,7 +107,6 @@ class WebsocketsHandler(SockJSConnection):
                 return
 
         if self.authenticated and 'watch' in data:
-            if data['watch'] == 'activity':
 
             logger.info("user {} subscribed to {}".format(self.auth_user['id'], message))
             
