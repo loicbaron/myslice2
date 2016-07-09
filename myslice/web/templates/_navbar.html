@@ -14,29 +14,47 @@
         <div class="collapse navbar-collapse">
 
             <ul class="nav navbar-nav" >
-                <li id="slicesMenuButton" class="dropdown{% if request.path.startswith('/slices') %} active{% end %}">
+                <li class="dropdown{% if request.path.startswith('/slices') %} active{% end %}">
+                    <div id="slicesMenu"></div>
                 </li>
-
                 <li class="{% if request.path == '/projects' %}active{% end %}">
-                    <a href="/projects"><i class="fa fa-flask fa-lg"></i> Projects</a>
+                    <div>
+                        <div>
+                            <a href="/projects"><i class="fa fa-flask fa-lg"></i> Projects</a>
+                        </div>
+                    </div>
                 </li>
                 <li class="{% if request.path == '/activity' %}active{% end %}">
-                    <a href="/activity"><i class="fa fa-cog fa-lg"></i> Activity</a>
+                    <div>
+                        <div>
+                            <a href="/activity"><i class="fa fa-cog fa-lg"></i> Activity</a>
+                        </div>
+                    </div>
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li class="{% if request.path == '/support' %}active{% end %}">
-                    <a href="#"><i class="fa fa-life-ring fa-lg"></i> Support</a>
+                    <div>
+                        <div>
+                            <a href="#"><i class="fa fa-life-ring fa-lg"></i> Support</a>
+                        </div>
+                    </div>
                 </li>
                 <li class="{% if request.path == '/status' %}active{% end %}">
-                    <a href="#"><i class="fa fa-bar-chart fa-lg"></i> Status</a>
+                    <div>
+                        <div>
+                            <a href="#"><i class="fa fa-bar-chart fa-lg"></i> Status</a>
+                        </div>
+                    </div>
                 </li>
                 <li class="{% if request.path == '/settings' %}active{% end %}">
-                    <a href="/settings"><i class="fa fa-user fa-lg"></i> {{current_user['email']}}</a>
+                    <div>
+                        <div>
+                            <a href="/settings"><i class="fa fa-user fa-lg"></i> {{ current_user['email'] }}</a>
+                        </div>
+                    </div>
                 </li>
             </ul>
-
-            <div id="slicesMenu"></div>
 
         </div>
     </div>
