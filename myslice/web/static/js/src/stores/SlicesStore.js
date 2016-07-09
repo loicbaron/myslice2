@@ -7,69 +7,24 @@ class SlicesStore {
     constructor() {
         this.slices = [];
 
-        /* the currently active slice */
-        this.current = {
-            slice: {},
-            users: [],
-            resources: []
-        };
-
         this.filter = [];
 
         this.dialog = null;
 
-        /* for slices we also have a menu */
-        this.menu = false;
-
         this.errorMessage = null;
 
         this.bindListeners({
-            setCurrentSlice: actions.SET_CURRENT_SLICE,
-            getCurrentSlice: actions.GET_CURRENT_SLICE,
             updateSliceElement: actions.UPDATE_SLICE_ELEMENT,
             updateSlices: actions.UPDATE_SLICES,
             fetchSlices: actions.FETCH_SLICES,
             errorSlices: actions.ERROR_SLICES,
-            showMenu: actions.SHOW_MENU
         });
 
         this.registerAsync(source);
 
+
     }
 
-    setCurrentSlice(slice) {
-        this.current = {
-            slice: slice,
-            users: [],
-            resources: []
-        };
-
-        if (!this.getInstance().isLoading()) {
-            //this.getInstance().users();
-            //this.getInstance().slices();
-
-        }
-
-        localStorage.setItem('slice', this.current.slice.id);
-    }
-
-    /*
-        returns the id of the current slice
-     */
-    getCurrentSlice() {
-        var current = null;
-        var id = localStorage.getItem('slice') || null;
-        if (!id) {
-            // retrieve the first slice
-            current = this.slices[0];
-        } else {
-            current = this.slices.findIndex(function(sliceElement) {
-                return (sliceElement.id === id);
-            });
-        }
-
-        this.setCurrentSlice(current)
-    }
 
     fetchSlices(filter) {
 
@@ -101,14 +56,22 @@ class SlicesStore {
         } else {
             this.slices = slices;
         }
+
+        // check URL
+        var u = window.location.href.toString().split(window.location.host)[1].split('/');
+        var hrn = u.pop();
+        var ctl = u.pop();
+
+        if (ctl === 'slices') {
+            this.setCurrentSlice(hrn);
+        } else {
+            this.setCurrentSlice();
+        }
+
     }
 
     errorSlices(errorMessage) {
         console.log(errorMessage);
-    }
-
-    showMenu(show) {
-        this.menu = show;
     }
 
 }
