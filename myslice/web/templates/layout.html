@@ -21,6 +21,8 @@
         {% block body %}{% end %}
         {% block js %}
         {% end %}
-    <script src="/static/js/build/navbar.js"></script>
+        {% if current_user %}
+        <script src="/static/js/build/navbar.js"></script>
+        {% end %}
     </body>
 </html>

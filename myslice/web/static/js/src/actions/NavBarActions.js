@@ -1,6 +1,6 @@
 import alt from '../alt';
 
-class NavActions {
+class NavBarActions {
 
     constructor() {
         this.generateActions(
@@ -9,13 +9,12 @@ class NavActions {
             'getCurrentSlice',
             'updateSlices',
             'updateSliceElement',
-            'errorSlices',
             'showMenu'
         );
     }
 
 }
 
-export default alt.createActions(NavActions);
+export default alt.createActions(NavBarActions);
 
 

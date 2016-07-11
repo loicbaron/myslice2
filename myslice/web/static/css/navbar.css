@@ -14,42 +14,43 @@
 
 .navbar-default .navbar-text {
 }
-.navbar-default .navbar-nav > li > div {
-    margin-top:18px;
-    border:1px solid red;
+.navbar-default .navbar-nav > li {
+    height:50px;
 }
-.navbar-default .navbar-nav > li > a,
-.navbar-default .navbar-nav > li > div > a {
-    padding:15px;
-    margin:0 15px 0 0;
-    color:white;
+.navbar-default .navbar-nav > li > div {
     border-top:4px solid #221144;
     border-bottom:4px solid #221144;
+    margin:0 15px 0 0;
+    padding:12px 12px 10px 12px;
     cursor:pointer;
 }
-.navbar-default .navbar-nav > li > div > a {
-    padding-top:17px;
-    padding-bottom:16px;
-}
-.navbar-default .navbar-nav > li > div > a {
+.navbar-default .navbar-nav > li > div > div > a {
     color:white;
 }
-.navbar-default .navbar-nav > li > a:hover,
-.navbar-default .navbar-nav > li > a:focus {
+.navbar-default .navbar-nav > li > div > div {
+    margin:0;
+    padding:0;
+}
+
+.navbar-default .navbar-nav > li > div > div > a {
+}
+
+.navbar-default .navbar-nav > li > div:hover,
+.navbar-default .navbar-nav > li > div:focus {
     color:white;
     border-bottom:4px solid #F6F6F6;
 }
-.navbar-default .navbar-nav > .active > a,
-.navbar-default .navbar-nav > .active > a:hover,
-.navbar-default .navbar-nav > .active > a:focus,
-.navbar-default .navbar-nav > .active > div > a,
-.navbar-default .navbar-nav > .active > div > a:hover,
-.navbar-default .navbar-nav > .active > div > a:focus {
-    font-weight:400;
-    color: #2C2C2C;
+
+.navbar-default .navbar-nav > .active > div,
+.navbar-default .navbar-nav > .active > div:hover,
+.navbar-default .navbar-nav > .active > div:focus {
     border-top:4px solid #F6F6F6;
     border-bottom:4px solid #F6F6F6;
     background-color: #F6F6F6;
+}
+.navbar-default .navbar-nav > .active > div > div > a {
+    font-weight:400;
+    color: #2C2C2C;
 }
 .navbar-default .navbar-nav > .open > a,
 .navbar-default .navbar-nav > .open > a:hover,
