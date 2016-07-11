@@ -18,26 +18,17 @@ import logging
 import json
 import signal
 import threading
-from queue import Queue
 import zmq
+from queue import Queue
 
 from pprint import pprint
+
+from zmq.utils.strtypes import asbytes
 
 from myslice.lib.util import myJSONEncoder
 from myslice.db import connect, changes, tables
 
 logger = logging.getLogger("myslice-live")
-
-# Node Coordination
-
-# def sync():
-#     context = zmq.Context.instance()
-#     s = context.socket(zmq.REP)
-#     s.bind('tcp://127.0.0.1:6002')
-#     logger.info("Waiting for subscriber to connect...")
-#     s.recv()
-#     logger.info("Sync Done.")
-#     s.send('GO')
 
 def receive_signal(signum, stack):
     logger.info('Received signal %s', signum)
@@ -51,7 +42,9 @@ def watch(table, q):
     # Watch for changes on the activity table and send the event/request
     feed = changes(dbconnection, table=table)
     for c in feed:
-        q.put({ table: c['new_val'] })
+        table = asbytes(table)
+        serialized_c = asbytes(json.dumps(c['new_val'], ensure_ascii=False, cls=myJSONEncoder))
+        q.put([ table, serialized_c ])
 
 if __name__ == '__main__':
 
@@ -64,12 +57,10 @@ if __name__ == '__main__':
         context = zmq.Context()
         sock = context.socket(zmq.PUB)
         sock.bind('tcp://127.0.0.1:6001')
-        
         #sync()
 
         # setup the Queue
         q = Queue()
-        print("starting...")
         # spawn one thread for each table
         watchers = []
         for table in tables:
@@ -81,8 +72,8 @@ if __name__ == '__main__':
         # receive changes from the queue and broadcast it through the zmq socket
         while True:
             r = q.get()
-            print(r)
-            sock.send_json(r, ensure_ascii=False, cls=myJSONEncoder)
+            sock.send_multipart(r)
+            
     
     except SystemExit:
         # clean up

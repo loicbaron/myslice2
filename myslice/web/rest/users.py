@@ -324,6 +324,7 @@ class UsersHandler(Api):
 
 class ProfileHandler(Api):
 
+
     @gen.coroutine
     def get(self):
         """
@@ -363,19 +364,15 @@ class ProfileHandler(Api):
             self.userError("malformed request", e)
             return
 
-        # filter fileds  
+        # filter fields
         try:
-            data = {
-                "first_name":  data["first_name"],
-                "last_name": data["last_name"],
-                "url" : data['url'],
-                "bio" : data['bio'],
-            }
-        except KeyError as e:
-            self.userError("Malformed request", e)
-            return
+            for key in data:
+                if key not in ['first_name', 'last_name', 'bio', 'url', 'generate_keys']:
+                    raise KeyError
         except Exception as e:
+            self.userError("malformed request", e)
             return
+
 
         user_id = self.get_current_user()['id']
 
@@ -395,7 +392,6 @@ class ProfileHandler(Api):
         else:
             activity = yield dispatch(self.dbconnection, event)
 
-            #TODO change to zmq client
             feed = yield changes(self.dbconnection, 
                             table='activity', 
                             status=['ERROR', 'SUCCESS'], 
