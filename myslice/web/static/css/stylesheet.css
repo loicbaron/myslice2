@@ -4,7 +4,7 @@ html,body {
 
 body {
     font-family: 'Roboto', sans-serif;
-    letter-spacing:0.6px;
+    letter-spacing:.6px;
     height: 100%;
     color:#2C2C2C;
     background-color:#F6F6F6;
@@ -214,33 +214,18 @@ div.registrationForm {
 /*
     SLICES MENU
 */
-.dropdown {
-    position:relative;
-}
-.slices-menu-button {
-    position:absolute;
-    top:0;
-    bottom:0;
-    right:0;
-    left:0;
-    border:1px solid red;
-}
-.slices-menu-button div {
-    width:100%;
-    height:100%;
-
-}
 .slices-menu {
-    position:absolute;
-    top:80px;
-    min-width:30%;
-    min-height:250px;
+    position:fixed;
+    top:165px;
+    left:15px;
+    max-width:60%;
     margin-right:15px;
     padding:10px;
     color:black;
-    border:2pt solid #221144;
+    border:1pt solid white;
     background-color:white;
     z-index:88;
+    box-shadow: 1px 1px 3px 0 rgba(0, 0, 0, 0.2);
 }
 .slices-menu::before {
     content: '';
@@ -251,7 +236,7 @@ div.registrationForm {
     height: 0;
     border-left: 15px solid transparent;
     border-right: 15px solid transparent;
-    border-bottom: 15px solid #221144;
+    border-bottom: 15px solid white;
     clear: both;
 }
 
@@ -262,23 +247,21 @@ div.registrationForm {
 }
 .slices-menu li {
     float:left;
-    margin-right:25px;
-    margin-bottom:25px;
+    width:50%;
     padding:15px;
     cursor:pointer;
 }
 .slices-menu li:hover {
-    background-color:#D0C1F2;
+    background-color:#F6F6F6;
 }
 .slices-menu li.active {
-    background-color:#D0C1F2;
+    background-color:#F6F6F6;
 }
 .slices-menu li h4 {
     font-size:13pt;
     font-weight:400;
 }
 .slices-menu li h4:hover {
-    text-decoration:underline;
 }
 .slices-menu li span {
     font-size:9pt;
@@ -566,7 +549,7 @@ div.registrationForm {
     color:#8E7CC3;
 }
 
-.elementStatus .success, .elementStatus .enabled, {
+.elementStatus .success, .elementStatus .enabled {
     color:#93C47D;
 }
 .elementStatus .error, .elementStatus .denied {

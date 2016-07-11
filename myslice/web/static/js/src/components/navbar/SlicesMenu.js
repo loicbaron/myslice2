@@ -8,6 +8,7 @@ class SlicesMenuEntry extends React.Component {
 
     constructor(props) {
         super(props);
+        this.handleClick = this.handleClick.bind(this);
     }
 
     sliceLabel() {
@@ -18,28 +19,55 @@ class SlicesMenuEntry extends React.Component {
         return this.props.slice.project.name || this.props.slice.project.shortname;
     }
 
-    static setCurrentSlice(slice) {
-        actions.setCurrentSlice(slice);
-        //window.location.href = "/slices/" + slice.hrn;
+    handleClick() {
+        window.location.href = "/slices/" + this.props.slice.hrn;
     }
 
     render() {
+        var className = "slice-menu-entry";
+        if (this.props.current) {
+            className += " active";
+        }
 
-        return <li className="slice-menu-entry" onClick={this.setCurrentSlice}>
-            <h5><i className="fa fa-flask"></i> {this.projectLabel()}</h5>
-            <h4>{this.sliceLabel()}</h4>
-            <span>{this.props.slice.shortname}</span>
-        </li>;
+        return (<li className={className} onClick={this.handleClick}>
+                    <h5><i className="fa fa-flask"></i> {this.projectLabel()}</h5>
+                    <h4>{this.sliceLabel()}</h4>
+                    <span>{this.props.slice.shortname}</span>
+                </li>);
 
     }
 }
 
 SlicesMenuEntry.propTypes = {
-    slice: React.PropTypes.object.isRequired
+    slice: React.PropTypes.object.isRequired,
+    active: React.PropTypes.bool
 };
 
 SlicesMenuEntry.defaultProps = {
+    active: false
 };
+
+class SlicesMenuButton extends React.Component {
+
+    constructor(props) {
+        super(props);
+    }
+
+    showMenu() {
+        console.log('hello')
+        actions.showMenu(true);
+    }
+
+    render() {
+        var url = "/slices/" + this.props.currentSlice.hrn;
+        if (this.props.currentSlice) {
+            return (<a href={url} onMouseEnter={this.showMenu}>
+                        <i className="fa fa-tasks fa-lg"></i> {this.props.currentSlice.shortname}
+                    </a>);
+        }
+    }
+}
+
 
 
 class SlicesMenu extends React.Component {
@@ -53,12 +81,11 @@ class SlicesMenu extends React.Component {
     }
 
     componentWillMount() {
-
+        store.listen(this.onChange);
+        actions.fetchSlices();
     }
 
     componentDidMount() {
-        store.listen(this.onChange);
-        actions.fetchSlices({});
 
     }
 
@@ -86,29 +113,27 @@ class SlicesMenu extends React.Component {
     }
 
     render() {
-        if (!this.state.slice) {
-            //console.log(this.state.slices)
-            //actions.setCurrentSlice(this.state.slices[0])
+        var menu = null;
+
+        if (this.state.slicesMenu) {
+            menu = (<div className="slices-menu" onMouseLeave={this.hideMenu} onMouseEnter={this.showMenu}>
+                        <ul>
+                            {
+                                this.state.slices.map(function(slice) {
+                                    let current = this.state.currentSlice.id === slice.id;
+                                    return <SlicesMenuEntry key={slice.id} slice={slice} current={current} />
+                                }.bind(this))
+                            }
+                        </ul>
+                    </div>);
+
         }
-        //console.log(this.state.current);
-        var menuBox = null;
 
-        if (this.state.slices.length) {
-            var menu = this.state.slices.map(function(slice) {
-                return <SlicesMenuEntry key={slice.id} slice={slice}>
-                    {slice.shortname}
-                </SlicesMenuEntry>
-            }.bind(this))
-
-        }
-
-
-        if (this.state.menu) {
-             return <div className="slices-menu" onMouseLeave={this.hideMenu} onMouseEnter={this.showMenu}>
-                    <ul>
-                    {menu}
-                    </ul>
-            </div>;
+        if (this.state.currentSlice) {
+             return <div>
+                        <SlicesMenuButton currentSlice={this.state.currentSlice} />
+                        {menu}
+                    </div>;
         } else {
             return null;
         }
@@ -117,7 +142,6 @@ class SlicesMenu extends React.Component {
 }
 
 SlicesMenu.propTypes = {
-    // slices: React.PropTypes.object.isRequired,
 };
 
 SlicesMenu.defaultProps = {
