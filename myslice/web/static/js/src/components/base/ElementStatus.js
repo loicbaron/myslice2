@@ -1,13 +1,11 @@
 import React from 'react';
 
-class ElementStatus extends React.Component {
+const ElementStatus = ({status}) => {
 
-    render() {
-        var status = this.props.status.toLowerCase() || '';
+        var elementStatus = status.toLowerCase() || '';
         var iconClass = 'fa fa-lg fa-';
 
-
-        switch(status) {
+        switch(elementStatus) {
             case 'approved':
             case 'enabled':
             case 'success':
@@ -37,15 +35,14 @@ class ElementStatus extends React.Component {
                 break;
         }
 
-        iconClass += ' ' + status + ' fa-fw';
+        iconClass += ' ' + elementStatus + ' fa-fw';
 
         return (
                 <div className="elementStatus">
-                    {status}&nbsp;<i className={iconClass}></i>
+                    {elementStatus}&nbsp;<i className={iconClass}></i>
                 </div>
         );
 
-    }
-}
+};
 
 export default ElementStatus;

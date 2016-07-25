@@ -1,11 +1,7 @@
 import React from 'react';
 
-class Title extends React.Component {
-  render() {
-
-      return <h2>{this.props.title} <span>{this.props.subtitle}</span></h2>;
-  }
-}
+const Title = ({title, subtitle}) =>
+    <h2>{title} <span>{subtitle}</span></h2>;
 
 Title.propTypes = {
     title: React.PropTypes.string.isRequired,

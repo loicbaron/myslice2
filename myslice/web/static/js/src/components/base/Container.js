@@ -1,19 +1,12 @@
 import React from 'react';
 
-class Container extends React.Component {
-
-    render() {
-        return (
+const Container = ({children}) =>
             <div className="view">
                 <div className="container-fluid">
                     <div className="row">
-                    {this.props.children}
+                    {children}
                     </div>
                 </div>
-            </div>
-        );
-    }
-
-}
+            </div>;
 
 export default Container;
