@@ -218,14 +218,16 @@ div.registrationForm {
     position:fixed;
     top:165px;
     left:15px;
+    bottom:15px;
     max-width:60%;
     margin-right:15px;
     padding:10px;
     color:black;
     border:1pt solid white;
+    box-shadow: 1px 1px 3px 0 rgba(0, 0, 0, 0.2);
     background-color:white;
     z-index:88;
-    box-shadow: 1px 1px 3px 0 rgba(0, 0, 0, 0.2);
+
 }
 .slices-menu::before {
     content: '';
@@ -238,8 +240,13 @@ div.registrationForm {
     border-right: 15px solid transparent;
     border-bottom: 15px solid white;
     clear: both;
+    z-index:89;
 }
 
+.slices-menu > div {
+    height:100%;
+    overflow-y: auto;
+}
 .slices-menu ul {
     padding:0;
     margin:0;
