@@ -1,6 +1,7 @@
 *.pic
 __pycache__
 .idea
+.DS_Store
 myslice.egg-info
 build
 node_modules
