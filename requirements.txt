@@ -9,3 +9,5 @@ python-dateutil>=2.5.3
 premailer>=3.0.1
 python-oauth2>=1.0.0
 pyzmq>=15.3.0
+jwt>=0.3.2
+passlib>=1.6.5
