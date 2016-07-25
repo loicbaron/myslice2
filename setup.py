@@ -15,12 +15,11 @@ setup(name='myslice',
           'rethinkdb',
           'requests',
           'pycryptodome',
-          'rethinkdb',
           'pytz',
           'python-dateutil',
           'premailer',
           'python-oauth2',
-          'zmq'
+          'pyzmq'
 
           ],
       #scripts=['myslice/bin/myslice-sync', 'myslice/bin/myslice-web'],
