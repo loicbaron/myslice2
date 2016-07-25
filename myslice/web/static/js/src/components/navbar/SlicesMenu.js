@@ -4,39 +4,21 @@ import store from '../../stores/NavBarStore';
 import actions from '../../actions/NavBarActions';
 
 
-class SlicesMenuEntry extends React.Component {
+const SlicesMenuEntry = ({slice, active}) => {
+    var sliceLabel = slice.name || slice.shortname;
+    var projectLabel = slice.project.name || slice.project.shortname;
+    var className = "slice-menu-entry";
 
-    constructor(props) {
-        super(props);
-        this.handleClick = this.handleClick.bind(this);
+    if (active) {
+        className += " active";
     }
 
-    sliceLabel() {
-        return (this.props.slice.name || this.props.slice.shortname);
-    }
-
-    projectLabel() {
-        return this.props.slice.project.name || this.props.slice.project.shortname;
-    }
-
-    handleClick() {
-        window.location.href = "/slices/" + this.props.slice.hrn;
-    }
-
-    render() {
-        var className = "slice-menu-entry";
-        if (this.props.current) {
-            className += " active";
-        }
-
-        return (<li className={className} onClick={this.handleClick}>
-                    <h5><i className="fa fa-flask"></i> {this.projectLabel()}</h5>
-                    <h4>{this.sliceLabel()}</h4>
-                    <span>{this.props.slice.shortname}</span>
-                </li>);
-
-    }
-}
+    return (<li className={className} onClick={() => window.location.href = "/slices/" + slice.hrn}>
+                <h5><i className="fa fa-flask"></i> {projectLabel}</h5>
+                <h4>{sliceLabel}</h4>
+                <span>{slice.shortname}</span>
+            </li>);
+};
 
 SlicesMenuEntry.propTypes = {
     slice: React.PropTypes.object.isRequired,
@@ -47,28 +29,16 @@ SlicesMenuEntry.defaultProps = {
     active: false
 };
 
-class SlicesMenuButton extends React.Component {
+const SlicesMenuButton = ({currentSlice}) => {
 
-    constructor(props) {
-        super(props);
+    var url = "/slices/" + currentSlice.hrn;
+
+    if (currentSlice) {
+        return (<a href={url} onMouseEnter={() => actions.showMenu(true)}>
+                    <i className="fa fa-tasks fa-lg"></i> {currentSlice.shortname}
+                </a>);
     }
-
-    showMenu() {
-        console.log('hello')
-        actions.showMenu(true);
-    }
-
-    render() {
-        var url = "/slices/" + this.props.currentSlice.hrn;
-        if (this.props.currentSlice) {
-            return (<a href={url} onMouseEnter={this.showMenu}>
-                        <i className="fa fa-tasks fa-lg"></i> {this.props.currentSlice.shortname}
-                    </a>);
-        }
-    }
-}
-
-
+};
 
 class SlicesMenu extends React.Component {
 
@@ -116,16 +86,18 @@ class SlicesMenu extends React.Component {
         var menu = null;
 
         if (this.state.slicesMenu) {
-            menu = (<div className="slices-menu" onMouseLeave={this.hideMenu} onMouseEnter={this.showMenu}>
-                        <ul>
-                            {
-                                this.state.slices.map(function(slice) {
-                                    let current = this.state.currentSlice.id === slice.id;
-                                    return <SlicesMenuEntry key={slice.id} slice={slice} current={current} />
-                                }.bind(this))
-                            }
-                        </ul>
-                    </div>);
+            menu = <div className="slices-menu" onMouseLeave={this.hideMenu} onMouseEnter={this.showMenu}>
+                        <div>
+                            <ul>
+                                {
+                                    this.state.slices.map(function(slice) {
+                                        let active = this.state.currentSlice.id === slice.id;
+                                        return <SlicesMenuEntry key={slice.id} slice={slice} active={active} />
+                                    }.bind(this))
+                                }
+                            </ul>
+                        </div>
+                    </div>;
 
         }
 
