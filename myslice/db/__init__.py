@@ -96,7 +96,7 @@ def syncTestbeds(testbeds):
             logger.info('deleting testbed {} ({})'.format(t['name'], t['type']))
             r.table('testbeds').get(t['id']).delete().run(dbconnection)
 
-    # with the remaining elements check if there are any new
+    # check new testbeds with the remaining elements
     for n in testbeds:
         # new
         logger.info('new testbed {} ({})'.format(n.name, n.type))
