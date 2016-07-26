@@ -138,7 +138,7 @@ def syncResources(resources):
             logger.info('deleting resource {} ({})'.format(t['name'], 'PLE'))
             r.table('resources').get(t['id']).delete().run(dbconnection)
 
-    # check new testbeds with the remaining elements
+    # check new resources with the remaining elements
     for n in resources:
         # new
         logger.info('new resource {} ({})'.format(n.name, 'PLE'))
