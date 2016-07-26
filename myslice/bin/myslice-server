@@ -9,17 +9,10 @@
     (c) 2016 Ciro Scognamiglio <ciro.scognamiglio@lip6.fr>
 '''
 
-import sys
-import os
 import signal
-import time
-import datetime
 import logging
-import threading
 import multiprocessing
 
-#from myslice.lib.queue import OrderedSetQueue
-from myslice import settings as s
 import myslice.db as db
 
 # workers
@@ -27,74 +20,21 @@ from myslice.services.activity import run as serviceActivity
 from myslice.services.authorities import run as serviceAuthorities
 from myslice.services.experiments import run as serviceExperiments
 from myslice.services.users import run as serviceUsers
-from myslice.services.resources import run as serviceResources
 from myslice.services.emails import run as serviceEmails
-
-#from myslice.monitor.workers.resources import sync, queue
 
 logger = logging.getLogger("myslice-sync")
 
-
 def receive_signal(signum, stack):
-    #logger = logging.getLogger("myslice.main")
     logger.info('Received signal %s', signum)
     raise SystemExit('Exiting')
 
 
 
-
-#
-# def agent(num, input):
-#     """
-#     A thread that will check resource availability and information
-#     """
-#     logging.info("Agent %s starting" % num)
-#
-#     while True:
-#         resource = input.get()
-#
-#         node = Query('Nodes').hostname(resource).execute().first()
-#
-#         if not node.enabled:
-#             print "+=> (%s) %s is not enabled" % (node.boot, node.hostname)
-#             availability = 0
-#             status = "disabled"
-#
-#         elif not node.is_running():
-#             print "+=> (%s) %s is not running" % (node.boot, node.hostname)
-#             availability = 0
-#             status = "down"
-#         else:
-#             # if not r:
-#             #     print "+=> (%s) %s is not accessible" % (node.boot, node.hostname)
-#             #     availability = 0
-#             #     status = "no access"
-#             # else :
-#             #     print "+=> (%s) %s is ok" % (node.boot, node.hostname)
-#             availability = 1
-#             status = "up"
-#                 #updates info about the node (testing)
-#                 # d.info_resource(node.hostname, {
-#                 #     #'ipv4' : node.ip(4),
-#                 #     'ipv6' : node.ip(6),
-#                 # })
-#
-#         s.update({
-#             "hostname": node.hostname,
-#             "bootstate": node.boot,
-#             "status": status
-#         })
-#         ''' send OML stream '''
-#         # oml.availability(node.hostname, availability)
-
-            
 if __name__ == '__main__':
 
     signal.signal(signal.SIGINT, receive_signal)
     signal.signal(signal.SIGTERM, receive_signal)
     signal.signal(signal.SIGHUP, receive_signal)
-
-    logger = logging.getLogger("myslice.main")
 
     """
     Setup DB (Rethinkdb)
@@ -132,13 +72,6 @@ if __name__ == '__main__':
     p.start()
 
     ##
-    #Process: resources
-    #
-    p = multiprocessing.Process(target=serviceResources)
-    processes.append(p)
-    p.start()
-
-    ##
     #Process: emails
     #
     p = multiprocessing.Process(target=serviceEmails)
@@ -147,72 +80,3 @@ if __name__ == '__main__':
 
     for proc in processes:
         proc.join()
-
-    # """
-    # Thread: Endpoints
-    # """
-    # logger.info("Starting endpoints thread")
-    # t = threading.Thread(target=myslice.workers.endpoints.run)
-    # t.daemon = True
-    # t.start()
-    #
-    # t.join()
-
-    # s.testbeds()
-    #
-    # #
-    # # '''
-    # #     resource discovery thread: will retrieve resources from a remote end
-    # # '''
-    # # logger.info("Starting resources thread")
-    # # t = threading.Thread(target=sync)
-    # # t.daemon = True
-    # # t.start()
-    #
-    # ''' input queue '''
-    # input = OrderedSetQueue()
-    #
-    # # agent threads
-    # threads = []
-    # for y in range(10):
-    #     t = threading.Thread(target=agent, args=(y, input))
-    #     t.daemon = True
-    #     threads.append(t)
-    #     t.start()
-    #
-    #
-    #
-    #
-    # while True:
-    #
-    #     try:
-    #         nodes = Query('Nodes').peer(None).execute()
-    #
-    #         c = s.connect()
-    #
-    #         for node in nodes:
-    #             #site = node.site
-    #             s.resource(c,
-    #                 {
-    #                     "testbed": "ple",
-    #                     "hostname": node.hostname
-    #                     # "site": {
-    #                     #     "id": site.site_id,
-    #                     #     "name" : site.name,
-    #                     #     "short": site.abbreviated_name,
-    #                     #     "login_base": site.login_base
-    #                     # }
-    #                 }
-    #             )
-    #             input.put(node.hostname)
-    #
-    #         #s.resources()
-    #
-    #
-    #
-    #     except Exception as e:
-    #         logger.exception("Service does not seem to be available")
-    #
-    #     time.sleep(86400)
-
-    #t.join()
