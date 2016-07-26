@@ -8,7 +8,7 @@ module.exports = {
         settings :"./settings.js",
         password :"./password.js",
         projects: "./projects.js",
-        slices: "./slices.js",
+        slice: "./slice.js",
         users: "./users.js",
         registration: "./registration.js",
         password_forgot :"./password_forgot.js",
