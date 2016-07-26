@@ -7,14 +7,12 @@ const PanelHeader = ({children}) => {
     if (num >= 2) {
         return (
             <div className="p-header">
-                <div className="container-fluid">
-                    <div className="row">
-                        <div className="col-sm-8">
-                            {children[0]}
-                        </div>
-                        <div className="col-sm-4 p-header-right">
-                            {children.slice(1)}
-                        </div>
+                <div className="row">
+                    <div className="col-sm-8">
+                        {children[0]}
+                    </div>
+                    <div className="col-sm-4 p-header-right">
+                        {children.slice(1)}
                     </div>
                 </div>
             </div>
@@ -22,10 +20,8 @@ const PanelHeader = ({children}) => {
     } else {
         return (
             <div className="p-header">
-                <div className="container-fluid">
-                    <div className="row">
-                        {children}
-                    </div>
+                <div className="row">
+                    {children}
                 </div>
             </div>
         );

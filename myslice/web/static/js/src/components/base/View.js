@@ -1,56 +1,52 @@
 import React from 'react';
 
-import Container from './Container';
 
 const View = ({children}) => {
 
     var num = React.Children.count(children);
 
     if (num == 1) {
-        return (
-            <Container>
-                <div className="col-sm-12 panel p-center">
+
+        return <div className="p-center">
                     {children}
-                </div>
-            </Container>
-        );
+                </div>;
+
     } else if (num == 2) {
         let leftPanel = children[0].type.name;
 
         if (leftPanel == 'Panel') {
-            return (
-                <Container>
+            return <div className="row">
                     <div className="col-sm-6">
-                        <div className="panel p-left">
+                        <div className="p-left">
                             {children[0]}
                         </div>
                     </div>
                     <div className="col-sm-6">
-                         <div className="panel p-right">
+                         <div className="p-right">
                              {children[1]}
                          </div>
                     </div>
-                </Container>
-            );
+                </div>;
         } else if (leftPanel == 'PanelMenu') {
-            return (
-                <Container>
-                    <div className="col-sm-3 p-menu">
-                        {children[0]}
+            return <div className="row">
+                    <div className="col-sm-3">
+                        <div className="p-menu">
+                            {children[0]}
+                        </div>
                     </div>
-                    <div className="col-sm-6 panel p-center">
-                        {children[1]}
+                    <div className="col-sm-6">
+                        <div className="p-center">
+                            {children[1]}
+                        </div>
                     </div>
-                </Container>
-            );
+            </div>
+
         }
     } else {
         return (
-            <Container>
-                <div className="col-sm-12 panel p-center">
+                <div className="p-center">
                     not supported (too many children)
                 </div>
-            </Container>
         );
     }
     

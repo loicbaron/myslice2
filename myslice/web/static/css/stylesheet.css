@@ -1,4 +1,4 @@
-html,body {
+html, body {
     height:100%;
 }
 
@@ -15,7 +15,7 @@ body.login {
 }
 
 header {
-    position:fixed;
+    position:absolute;
     top:0;
     left:0;
     right:0;
@@ -215,11 +215,10 @@ div.registrationForm {
     SLICES MENU
 */
 .slices-menu {
-    position:fixed;
-    top:165px;
-    left:15px;
-    bottom:15px;
-    max-width:60%;
+    position:absolute;
+    top:75px;
+    left:5px;
+    margin-bottom:15px;
     margin-right:15px;
     padding:10px;
     color:black;
@@ -244,7 +243,7 @@ div.registrationForm {
 }
 
 .slices-menu > div {
-    height:100%;
+    max-height:400px;
     overflow-y: auto;
 }
 .slices-menu ul {
@@ -254,7 +253,7 @@ div.registrationForm {
 }
 .slices-menu li {
     float:left;
-    width:50%;
+    width:100%;
     padding:15px;
     cursor:pointer;
 }
@@ -285,30 +284,25 @@ div.registrationForm {
 }
 
 /*
-    VIEW
-*/
-.view {
-    margin:0;
-    padding:0;
-}
-
-/*
     PANELS
 */
 .p-header {
     position:fixed;
-    top:148px;
+    top:140px;
     width:50%;
-    padding:15px 0;
+    margin:0;
+    padding:15px 15px;
     z-index:91;
 }
 .p-body {
     position:fixed;
-    top:225px;
-    bottom:15px;
+    top:220px;
+    bottom:10px;
+    padding:0 15px;
     width:50%;
     overflow-y:auto;
     z-index:90;
+    background-color:#F6F6F6;
 }
 .p-left .p-header {
     left:0;
@@ -448,14 +442,14 @@ div.registrationForm {
     list-style:none;
     margin:0;
     padding:5px 4px 2px 20px;
-    overflow-y: scroll;
 }
 .elementBox {
     position:relative;
-    width:100%;
     background-color:white;
     padding:10px 15px 15px 30px;
+    margin:0;
     margin-bottom:6px;
+    border:1px solid white;
     box-shadow: none;
     transition: box-shadow 0.1s ease-in;
 }
@@ -464,7 +458,8 @@ div.registrationForm {
 }
 .elementBox.selected {
     background-color: #f5fafa;
-    box-shadow: 1px 1px 3px 0 rgba(0, 0, 0, 0.2), -1px -1px 3px 0 rgba(0, 0, 0, 0.2);
+    box-shadow: 1px 1px 3px 0 rgba(34, 17, 68, 0.2), -1px -1px 3px 0 rgba(34, 17, 68, 0.2);
+    border:1px solid rgba(34, 17, 68, 0.4);
 }
 .elementBox .arrow-right {
     position:absolute;
@@ -674,5 +669,35 @@ div.registrationForm {
     position: relative;
     color: green;
     z-index: 91
+
+}
+
+@media(max-width:767px) {
+    .p-header {
+    }
+    .p-body {
+    }
+}
+
+@media(min-width:768px) {
+
+}
+@media(max-width:992px) {
+    header {
+        position:static;
+    }
+    .p-header {
+        position:static;
+        width:100%;
+        padding:0;
+    }
+    .p-body {
+        position:static;
+        width:100%;
+        padding:0;
+    }
+
+}
+@media(min-width:1200px) {
 
 }

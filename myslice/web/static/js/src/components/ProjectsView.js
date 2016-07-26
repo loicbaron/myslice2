@@ -124,7 +124,6 @@ class ProjectsView extends React.Component {
                     <PanelBody>
                         <ProjectsInfo element={this.state.current} />
                     </PanelBody>
-
                 </Panel>;
         }
 
