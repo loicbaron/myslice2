@@ -111,6 +111,48 @@ def getTestbeds():
     """
     pass
 
+def syncResources(resources):
+    """
+    With the resources parameter specified syncs the db
+    resources parameter is of type mysliceslib.model.Entity
+
+    :param resources:
+    :return:
+    """
+
+    dbconnection = connect()
+
+    localResources = r.table('resources').run(dbconnection)
+
+    # sync
+    for t in localResources:
+        u = resources.get(t['id'])
+        if u is not None:
+            # update
+            logger.info('updating resource {} ({})'.format(u.name, 'PLE'))
+            r.table('resources').update(u.dict()).run(dbconnection)
+            # remove the element from the working set
+            resources.remove(u)
+        else:
+            # delete
+            logger.info('deleting resource {} ({})'.format(t['name'], 'PLE'))
+            r.table('resources').get(t['id']).delete().run(dbconnection)
+
+    # check new testbeds with the remaining elements
+    for n in resources:
+        # new
+        logger.info('new resource {} ({})'.format(n.name, 'PLE'))
+        r.table('resources').insert(n.dict(), conflict='update').run(dbconnection)
+
+    dbconnection.close()
+
+def getResources():
+    """
+    Returns the list of resources
+    :return:
+    """
+    pass
+
 
 def get(dbconnection=None, table=None, id=None, filter=None):
     if not table:

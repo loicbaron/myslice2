@@ -1,5 +1,9 @@
+import time
+import logging
 from myslicelib.model.resource import Resource
 from myslicelib.query import q
+
+from myslice import db as db
 
 def run():
     """
@@ -8,12 +12,22 @@ def run():
     :return:
     """
 
-    #resources = q(Resource).get()
+    logger = logging.getLogger('myslice.monitor.resources')
 
-    #for r in resources:
-    #    print(r.name)
+    while True:
+        logger.info("syncing")
+        try:
+            # retreive version and status info from the testbeds
+            r = q(Resource).get()
 
-    pass
+            # syncs testbeds configured with the db
+            db.syncResources(r)
+
+        except Exception as e:
+            logger.exception("Service does not seem to be available")
+
+        logger.info("sleeping")
+        time.sleep(86400)
 
 #
 # def agent(num, input):
