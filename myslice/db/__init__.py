@@ -69,24 +69,47 @@ def setup():
     dbconnection.close()
 
 
-def testbeds(testbeds=None):
+def syncTestbeds(testbeds):
+    """
+    With the testbeds parameter specified syncs the db
+    testbeds parameter is of type mysliceslib.model.Entity
 
-    c = connect()
+    :param testbeds:
+    :return:
+    """
 
-    if not testbeds:
-        # query testbeds
-        pass
-    else:
-        # update testbeds
+    dbconnection = connect()
 
-        r.table('endpoints').insert(
-        {
-            "id": "ple",
-            "name": "PlanetLab Europe",
-            "short": "PLE",
-        }, conflict='update').run(c)
+    localTestbeds = r.table('testbeds').run(dbconnection)
 
-    c.close()
+    # sync
+    for t in localTestbeds:
+        u = testbeds.get(t['id'])
+        if u is not None:
+            # update
+            logger.info('updating testbed {} ({})'.format(u.name, u.type))
+            r.table('testbeds').update(u.dict()).run(dbconnection)
+            # remove the element from the working set
+            testbeds.remove(u)
+        else:
+            # delete
+            logger.info('deleting testbed {} ({})'.format(t['name'], t['type']))
+            r.table('testbeds').get(t['id']).delete().run(dbconnection)
+
+    # with the remaining elements check if there are any new
+    for n in testbeds:
+        # new
+        logger.info('new testbed {} ({})'.format(n.name, n.type))
+        r.table('testbeds').insert(n.dict(), conflict='update').run(dbconnection)
+
+    dbconnection.close()
+
+def getTestbeds():
+    """
+    Returns the list of testbeds
+    :return:
+    """
+    pass
 
 
 def get(dbconnection=None, table=None, id=None, filter=None):
