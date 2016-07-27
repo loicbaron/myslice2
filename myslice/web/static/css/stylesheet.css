@@ -506,10 +506,25 @@ div.registrationForm {
 .elementBox.selected.slice {
 }
 .elementIcon.resource {
+    line-height:50px;
     color:#281E52;
     background-color:#D9EAD3;
 }
 .elementBox.selected.resource {
+}
+.elementIcon.testbed {
+    line-height:50px;
+    color:#281E52;
+    background-color:#D9EAD3;
+}
+.elementBox.selected.testbed {
+}
+.elementIcon.registry {
+    line-height:50px;
+    color:#281E52;
+    background-color:#D9EAD3;
+}
+.elementBox.selected.registry {
 }
 
 .elementTitle {
@@ -551,10 +566,10 @@ div.registrationForm {
     color:#8E7CC3;
 }
 
-.elementStatus .success, .elementStatus .enabled {
+.elementStatus .success, .elementStatus .enabled, .elementStatus .online {
     color:#93C47D;
 }
-.elementStatus .error, .elementStatus .denied {
+.elementStatus .error, .elementStatus .denied, .elementStatus .offline {
     color:#E06666;
 }
 .elementStatus .warning {
