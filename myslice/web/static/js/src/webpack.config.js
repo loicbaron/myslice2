@@ -14,7 +14,8 @@ module.exports = {
         password_forgot :"./password_forgot.js",
         login: "./login.js",
         navbar: "./navbar.js",
-        activity: "./activity.js"
+        activity: "./activity.js",
+        status: "./status.js"
     },
     output: {
         filename: "[name].js",
