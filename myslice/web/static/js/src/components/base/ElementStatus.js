@@ -9,6 +9,7 @@ const ElementStatus = ({status}) => {
             case 'approved':
             case 'enabled':
             case 'success':
+            case 'online':
                 iconClass += 'check';
                 break;
             case 'new':
@@ -28,6 +29,7 @@ const ElementStatus = ({status}) => {
                 break;
             case 'warning':
             case 'error':
+            case 'offline':
                 iconClass += 'exclamation';
                 break;
             default:

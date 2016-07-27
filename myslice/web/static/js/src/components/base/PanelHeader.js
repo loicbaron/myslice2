@@ -21,7 +21,9 @@ const PanelHeader = ({children}) => {
         return (
             <div className="p-header">
                 <div className="row">
+                    <div className="col-sm-12">
                     {children}
+                    </div>
                 </div>
             </div>
         );

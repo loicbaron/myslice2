@@ -19,6 +19,12 @@ const ElementIcon = ({icon}) => {
                 iconClass += 'server';
                 break;
             case 'authority':
+                iconClass += 'institution';
+                break;
+            case 'testbed':
+                iconClass += 'cube';
+                break;
+            case 'registry':
                 iconClass += 'building';
                 break;
             default:
