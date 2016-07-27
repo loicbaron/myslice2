@@ -1,22 +1,16 @@
 import React from 'react';
 
-import List from './base/List';
-import ResourcesRow from'./ResourcesRow';
+import List from '../base/List';
+import ResourcesElement from'./Element';
 
-class ResourcesList extends React.Component {
-
-    render() {
-        return (
-            <List>
-            {
-                this.props.resources.map(function(resource) {
-                    return <ResourcesRow key={resource.id} resource={resource} setCurrent={this.props.setCurrent} current={this.props.current} />;
-                }.bind(this))
-            }
-            </List>
-        );
+const ResourcesList = ({resources, setCurrent, current}) =>
+    <List>
+    {
+        resources.map(function(resource) {
+            return <ResourcesElement key={resource.id} resource={resource} setCurrent={setCurrent} current={current} />;
+        }.bind(this))
     }
-}
+    </List>;
 
 ResourcesList.propTypes = {
     resources: React.PropTypes.array.isRequired,
