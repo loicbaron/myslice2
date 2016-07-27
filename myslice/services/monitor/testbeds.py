@@ -27,38 +27,3 @@ def run():
 
         logger.info("sleeping")
         time.sleep(86400)
-
-#
-# while True:
-#
-#     try:
-#         nodes = Query('Nodes').peer(None).execute()
-#
-#         c = s.connect()
-#
-#         for node in nodes:
-#             #site = node.site
-#             s.resource(c,
-#                 {
-#                     "testbed": "ple",
-#                     "hostname": node.hostname
-#                     # "site": {
-#                     #     "id": site.site_id,
-#                     #     "name" : site.name,
-#                     #     "short": site.abbreviated_name,
-#                     #     "login_base": site.login_base
-#                     # }
-#                 }
-#             )
-#             input.put(node.hostname)
-#
-#         #s.resources()
-#
-#
-#
-#     except Exception as e:
-#         logger.exception("Service does not seem to be available")
-#
-#     time.sleep(86400)
-
-# t.join()
