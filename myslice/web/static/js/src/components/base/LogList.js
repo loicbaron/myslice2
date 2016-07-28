@@ -2,7 +2,7 @@ import React from 'react';
 
 import LogRow from './LogRow';
 
-class LogList extends React.Component {
+/*class LogList extends React.Component {
 
     render() {
         
@@ -20,6 +20,18 @@ class LogList extends React.Component {
             </ul>
         );
     }
-}
+}*/
+
+
+const LogList = ({log}) =>
+
+    <ul className="logList">
+    {
+         log.map(function(l) {
+             return <LogRow key={l.timestamp} log={l} />;
+         })
+     }
+    </ul>;
+
 
 export default LogList;

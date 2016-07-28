@@ -1,5 +1,5 @@
 import axios from 'axios';
-import actions from '../actions/SlicesActions';
+import actions from '../actions/SliceViewActions';
 import formactions from '../actions/SlicesFormActions';
 
 const SlicesSource = () => {

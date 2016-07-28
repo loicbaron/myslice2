@@ -1,23 +1,23 @@
 import React from 'react';
 
-import store from '../stores/SlicesStore';
-import actions from '../actions/SlicesActions';
+import store from '../stores/SliceViewStore';
+import actions from '../actions/SliceViewActions';
 
-import View from './base/View';
-import Dialog from './base/Dialog';
-import DialogHeader from './base/DialogHeader';
-import DialogBody from './base/DialogBody';
-import DialogPanel from './base/DialogPanel';
-import Panel from './base/Panel';
-import PanelHeader from './base/PanelHeader';
-import PanelBody from './base/PanelBody';
-import Title from './base/Title';
-import Button from './base/Button';
+import View from '../components/base/View';
+import Dialog from '../components/base/Dialog';
+import DialogHeader from '../components/base/DialogHeader';
+import DialogBody from '../components/base/DialogBody';
+import DialogPanel from '../components/base/DialogPanel';
+import Panel from '../components/base/Panel';
+import PanelHeader from '../components/base/PanelHeader';
+import PanelBody from '../components/base/PanelBody';
+import Title from '../components/base/Title';
+import Button from '../components/base/Button';
 
-import UsersList from './UsersList';
-import UsersDialog from './UsersDialog';
+import UsersList from '../components/UsersList';
+import UsersDialog from '../components/UsersDialog';
 
-class SlicesView extends React.Component {
+class SliceView extends React.Component {
 
     constructor(props) {
         super(props);
@@ -28,6 +28,7 @@ class SlicesView extends React.Component {
 
     componentDidMount() {
         store.listen(this.onChange);
+        console.log(this.props.slice);
     }
 
     componentWillUnmount() {
@@ -102,4 +103,4 @@ class SlicesView extends React.Component {
     }
 }
 
-export default SlicesView;
+export default SliceView;

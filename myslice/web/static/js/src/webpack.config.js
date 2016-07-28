@@ -8,13 +8,14 @@ module.exports = {
         settings :"./settings.js",
         password :"./password.js",
         projects: "./projects.js",
-        slices: "./slices.js",
+        slice: "./slice.js",
         users: "./users.js",
         registration: "./registration.js",
         password_forgot :"./password_forgot.js",
         login: "./login.js",
         navbar: "./navbar.js",
-        activity: "./activity.js"
+        activity: "./activity.js",
+        status: "./status.js"
     },
     output: {
         filename: "[name].js",

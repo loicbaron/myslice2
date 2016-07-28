@@ -1,34 +1,32 @@
 import React from 'react';
 
-class PanelHeader extends React.Component {
-    render() {
-        var num = React.Children.count(this.props.children);
-        if (num >= 2) {
-            return (
-                <div className="p-header">
-                    <div className="container-fluid">
-                        <div className="row">
-                            <div className="col-sm-8">
-                                {this.props.children[0]}
-                            </div>
-                            <div className="col-sm-4 p-header-right">
-                                {this.props.children.slice(1)}
-                            </div>
-                        </div>
+const PanelHeader = ({children}) => {
+
+    var num = React.Children.count(children);
+
+    if (num >= 2) {
+        return (
+            <div className="p-header">
+                <div className="row">
+                    <div className="col-sm-8">
+                        {children[0]}
+                    </div>
+                    <div className="col-sm-4 p-header-right">
+                        {children.slice(1)}
                     </div>
                 </div>
-            );
-        } else {
-            return (
-                <div className="p-header">
-                    <div className="container-fluid">
-                        <div className="row">
-                            {this.props.children}
-                        </div>
+            </div>
+        );
+    } else {
+        return (
+            <div className="p-header">
+                <div className="row">
+                    <div className="col-sm-12">
+                    {children}
                     </div>
                 </div>
-            );
-        }
+            </div>
+        );
     }
 }
 

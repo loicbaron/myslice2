@@ -1,13 +1,8 @@
 import React from 'react';
 
-class DialogBody extends React.Component {
-    render() {
-        return (
+const DialogBody = ({children}) =>
             <div className="d-body">
-                { this.props.children }
-            </div>
-        );
-    }
-}
+                { children }
+            </div>;
 
 export default DialogBody;

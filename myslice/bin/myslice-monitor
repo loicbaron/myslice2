@@ -1,0 +1,56 @@
+#!/usr/bin/env python3.5
+
+'''
+    MySlice Monitor service
+
+    This service will run multiple threads responsible for monitoring services
+    and keep the db in sync with the remote endpoints APIs
+
+    (c) 2016 Ciro Scognamiglio <ciro.scognamiglio@lip6.fr>
+'''
+
+import signal
+import logging
+import multiprocessing
+
+import myslice.db as db
+
+# workers
+from myslice.services.monitor.testbeds import run as serviceTestbeds
+from myslice.services.monitor.resources import run as serviceResources
+
+def receive_signal(signum, stack):
+    logger.info('Received signal %s', signum)
+    raise SystemExit('Exiting')
+
+if __name__ == '__main__':
+
+    logger = logging.getLogger("myslice-monitor")
+
+    signal.signal(signal.SIGINT, receive_signal)
+    signal.signal(signal.SIGTERM, receive_signal)
+    signal.signal(signal.SIGHUP, receive_signal)
+
+    """
+    Setup DB (Rethinkdb)
+    """
+    db.setup()
+
+    processes = []
+
+    ##
+    # Process: testbeds
+    #
+    p = multiprocessing.Process(target=serviceTestbeds)
+    processes.append(p)
+    p.start()
+
+    ##
+    # Process: resources
+    #
+    p = multiprocessing.Process(target=serviceResources)
+    processes.append(p)
+    p.start()
+
+    for proc in processes:
+        proc.join()

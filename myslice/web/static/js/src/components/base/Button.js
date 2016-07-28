@@ -1,25 +1,31 @@
 import React from 'react';
 
-class Button extends React.Component {
+const Button = (props) => {
+        var className;
+        var icon = "fa fa-" + props.icon + " fa-lg";
 
-    render() {
-
-        var icon = "fa fa-" + this.props.icon + " fa-lg";
-
-        if (this.props.active) {
-            var className = 'active';
-        } else {
-            var className = '';
-        }
+        props.active ? className = 'active' : className = '';
 
         return (
-            <button className={className} onClick={this.props.handleClick} >
+            <button className={className} onClick={props.handleClick} >
                 <i className={icon}></i>&nbsp;&nbsp;
-                {this.props.label}
+                {props.label}
             </button>
         );
 
-    }
-}
+};
+
+Button.propTypes = {
+    icon: React.PropTypes.string,
+    label: React.PropTypes.string,
+    active: React.PropTypes.bool,
+    handleClick: React.PropTypes.func
+};
+
+Button.defaultProps = {
+    icon: 'question',
+    label: null,
+    active: false
+};
 
 export default Button;
