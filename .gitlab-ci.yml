@@ -27,7 +27,7 @@ before_script:
   - npm install -g webpack
   - ln -s /usr/bin/nodejs /usr/bin/node
   - "cd ./myslice/web/static/js/src && webpack && cd -"
-  - "pip3 install -r requirements"
+  - "pip3 install -r requirements.txt"
   - "python3.5 setup.py develop"
 
   # INSTALL MYSLICELIB
