@@ -1,7 +1,7 @@
 import React from 'react';
 import DateTime from './DateTime';
 
-const LogRow = (log) =>
+const LogRow = ({log}) =>
     <li className="logRow">
         <i className="fa fa-warning logIcon"></i>
         <span className="logTimestamp"><DateTime timestamp={log.timestamp} /></span>
