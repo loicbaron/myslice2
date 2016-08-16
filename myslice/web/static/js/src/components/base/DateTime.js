@@ -1,17 +1,16 @@
 import React from 'react';
 import moment from 'moment';
 
-class DateTime extends React.Component {
+const DateTime = (props) => {
 
-    render() {
         var datetime = '';
         var label = '';
 
-        if (this.props.label) {
-            label = <div className="elementLabel">{this.props.label}</div>;
+        if (props.label) {
+            label = <div className="elementLabel">{props.label}</div>;
         }
-        if (this.props.timestamp) {
-            datetime = moment(this.props.timestamp).format("DD/MM/YYYY H:mm");
+        if (props.timestamp) {
+            datetime = moment(props.timestamp).format("DD/MM/YYYY H:mm");
         }
 
         if (datetime) {
@@ -24,9 +23,7 @@ class DateTime extends React.Component {
         } else {
             return null;
         }
-
-    }
-}
+};
 
 DateTime.propTypes = {
     timestamp: React.PropTypes.string,
@@ -37,6 +34,5 @@ DateTime.defaultProps = {
     timestamp : '',
     label: ''
 };
-
 
 export default DateTime;

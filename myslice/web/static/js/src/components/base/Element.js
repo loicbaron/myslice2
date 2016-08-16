@@ -1,48 +1,36 @@
 import React from 'react';
 
-class Element extends React.Component {
+const Element = (props) => {
 
-    constructor(props) {
-        super(props);
-        this.handleClick = this.handleClick.bind(this);
+    var className = 'elementBox';
+    var arrow = null;
+
+    if (props.type) {
+        className += ' ' + props.type;
     }
 
-    handleClick() {
-        this.props.setCurrent(this.props.element);
-    }
+    if (props.setCurrent) {
+        className += ' pointer';
 
-    render() {
-        var className = 'elementBox';
-        var arrow = null;
-
-        if (this.props.type) {
-            className += ' ' + this.props.type;
+        if (props.element == props.current) {
+            className += ' selected';
+            arrow = <i className="fa fa-arrow-right fa-lg arrow-right"></i>
         }
 
-        if (this.props.setCurrent) {
-            className += ' pointer';
-
-            if (this.props.element == this.props.current) {
-                className += ' selected';
-                arrow = <i className="fa fa-arrow-right fa-lg arrow-right"></i>
-            }
-
-            return (
-                <li className={className} onClick={this.handleClick}>
-                    {this.props.children}
-                    {arrow}
-                </li>
-            );
-        } else {
-            return (
-                <li className={className}>
-                    {this.props.children}
-                </li>
-            );
-        }
-
+        return (
+            <li className={className} onClick={() => props.setCurrent(props.element)}>
+                {props.children}
+                {arrow}
+            </li>
+        );
+    } else {
+        return (
+            <li className={className}>
+                {props.children}
+            </li>
+        );
     }
-}
+};
 
 Element.propTypes = {
     element: React.PropTypes.object.isRequired,
@@ -53,8 +41,7 @@ Element.propTypes = {
 
 Element.defaultProps = {
     type: null,
-    current: null,
-    setCurrent: null
+    current: null
 };
 
 export default Element;

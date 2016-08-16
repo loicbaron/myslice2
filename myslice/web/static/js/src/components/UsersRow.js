@@ -1,4 +1,5 @@
 import React from 'react';
+import Avatar from 'react-avatar';
 
 import Element from './base/Element';
 import ElementTitle from './base/ElementTitle';
@@ -17,17 +18,6 @@ class UsersRow extends React.Component {
     render() {
         var authority = this.props.user.authority.name || this.props.user.authority.shortname;
 
-        var label = '';
-        if (this.props.user.hasOwnProperty('first_name')) {
-            label += this.props.user.first_name + ' ';
-        }
-        if (this.props.user.hasOwnProperty('last_name')) {
-            label += this.props.user.last_name;
-        }
-        if (!label) {
-            label = this.props.user.shortname;
-        }
-
         var num_slices = 0;
         if (this.props.user.hasOwnProperty('slices')) {
             num_slices = this.props.user.slices.length
@@ -45,11 +35,16 @@ class UsersRow extends React.Component {
             button = <RemoveUserFromProject user={this.props.user} />
         }
 
+        var fullname = [this.props.user.first_name, this.props.user.last_name].join(' ');
+        if (!fullname) {
+            fullname = this.props.user.shortname;
+        }
+
         return (
              <Element element={this.props.user} type="user" select={this.props.select}>
                  <ElementStatus status={this.props.user.status} />
-                 <ElementIcon icon="user" />
-                 <ElementTitle label={label} detail={this.props.user.email} />
+                 <Avatar className="elementIcon" email={this.props.user.email} name={fullname} round={true} size={40} color="#CFE2F3" />
+                 <ElementTitle label={fullname} detail={this.props.user.email} />
                  <ElementId id={this.props.user.id} />
                  {button}
                  <div className="elementDetail">

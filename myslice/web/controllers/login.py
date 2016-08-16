@@ -63,24 +63,21 @@ class Index(BaseController):
         yield feed.fetch_next()
         user = yield feed.next()
 
-        self.set_secure_cookie("user", json.dumps({
-            'id': user['id'],
-            'email': user['email'],
-            'firstname': user.get('firstname', ''),
-            'lastname': user.get('lastname', ''),
-            'authority': user['authority'],
-            "pi_authorities": user['pi_authorities'],
-        }, cls=myJSONEncoder))
+        ##
+        # User password is not set
+        # TODO: we redirect to a reset password page
+        if not 'password' in user:
+            self.render(self.application.templates + "/login.html", message="password is not set")
+            return
 
+        ##
+        # check if password matches
         if not self.check_password(password, user['password']):
             self.render(self.application.templates + "/login.html", message="password does not match")
             return
 
-        # set the first available slice as active, or None
-        active_slice = None
-        if user['slices'][0]:
-            active_slice = user['slices'][0]
-
+        ##
+        # user finally logged in, set cookie
         self.set_secure_cookie("user", json.dumps({
             'id': user['id'],
             'email': user['email'],
@@ -88,7 +85,7 @@ class Index(BaseController):
             'lastname': user.get('lastname', ''),
             'authority': user['authority'],
             'slices': user['slices'],
-            'active_slice': active_slice
+            'pi_authorities': user['pi_authorities'],
         }, cls=myJSONEncoder))
 
         self.redirect("/")

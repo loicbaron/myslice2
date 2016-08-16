@@ -1,15 +1,8 @@
 import React from 'react';
 
-class Section extends React.Component {
-
-    render() {
-        return (
-            <div className="section">
-                {this.props.children}
-            </div>
-        );
-    }
-
-}
+const Section = ({children}) =>
+    <div className="section">
+        {children}
+    </div>;
 
 export default Section;

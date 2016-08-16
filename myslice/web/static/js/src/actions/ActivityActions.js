@@ -13,8 +13,7 @@ class ActivityActions {
 
     watchActivity() {
         var socket = new SockJS('/api/v1/live');
-        let token = sessionStorage.getItem('token')
-        console.log(token)
+        let token = sessionStorage.getItem('token');
 
         socket.onopen = function() {
             socket.send(JSON.stringify({'auth' : token}))

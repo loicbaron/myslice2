@@ -59,7 +59,7 @@ class ActivityList extends React.Component {
 
             return (
                 <div>
-                    <ActivityFilter handleChange={this.handleFilter} type={this.props.type}/>
+                    <ActivityFilter handleChange={this.handleFilter} />
                     <List>
                         {
                             this.state.activity.map(function (activity) {
@@ -73,14 +73,6 @@ class ActivityList extends React.Component {
 
 
     }
-}
-
-ActivityList.propTypes = {
-    type: React.PropTypes.string,
-}
-
-ActivityList.defaultProps = {
-    type: "activity"
 }
 
 export default ActivityList;

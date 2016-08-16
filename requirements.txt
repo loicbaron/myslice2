@@ -1,0 +1,13 @@
+tornado>=4.4.0
+tornado-cors>=0.6.0
+sockjs-tornado>=1.0.3
+rethinkdb>=2.3.0
+requests>=2.10.0
+pycryptodome>=3.4
+pytz>=2016.6.1
+python-dateutil>=2.5.3
+premailer>=3.0.1
+python-oauth2>=1.0.0
+pyzmq>=15.3.0
+jwt>=0.3.2
+passlib>=1.6.5

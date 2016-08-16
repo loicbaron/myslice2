@@ -69,24 +69,89 @@ def setup():
     dbconnection.close()
 
 
-def testbeds(testbeds=None):
+def syncTestbeds(testbeds):
+    """
+    With the testbeds parameter specified syncs the db
+    testbeds parameter is of type mysliceslib.model.Entity
 
-    c = connect()
+    :param testbeds:
+    :return:
+    """
 
-    if not testbeds:
-        # query testbeds
-        pass
-    else:
-        # update testbeds
+    dbconnection = connect()
 
-        r.table('endpoints').insert(
-        {
-            "id": "ple",
-            "name": "PlanetLab Europe",
-            "short": "PLE",
-        }, conflict='update').run(c)
+    localTestbeds = r.table('testbeds').run(dbconnection)
 
-    c.close()
+    # sync
+    for t in localTestbeds:
+        u = testbeds.get(t['id'])
+        if u is not None:
+            # update
+            logger.info('updating testbed {} ({})'.format(u.name, u.type))
+            r.table('testbeds').update(u.dict()).run(dbconnection)
+            # remove the element from the working set
+            testbeds.remove(u)
+        else:
+            # delete
+            logger.info('deleting testbed {} ({})'.format(t['name'], t['type']))
+            r.table('testbeds').get(t['id']).delete().run(dbconnection)
+
+    # check new testbeds with the remaining elements
+    for n in testbeds:
+        # new
+        logger.info('new testbed {} ({})'.format(n.name, n.type))
+        r.table('testbeds').insert(n.dict(), conflict='update').run(dbconnection)
+
+    dbconnection.close()
+
+def getTestbeds():
+    """
+    Returns the list of testbeds
+    :return:
+    """
+    pass
+
+def syncResources(resources):
+    """
+    With the resources parameter specified syncs the db
+    resources parameter is of type mysliceslib.model.Entity
+
+    :param resources:
+    :return:
+    """
+
+    dbconnection = connect()
+
+    localResources = r.table('resources').run(dbconnection)
+
+    # sync
+    for t in localResources:
+        u = resources.get(t['id'])
+        if u is not None:
+            # update
+            logger.info('updating resource {} ({})'.format(u.name, 'PLE'))
+            r.table('resources').update(u.dict()).run(dbconnection)
+            # remove the element from the working set
+            resources.remove(u)
+        else:
+            # delete
+            logger.info('deleting resource {} ({})'.format(t['name'], 'PLE'))
+            r.table('resources').get(t['id']).delete().run(dbconnection)
+
+    # check new resources with the remaining elements
+    for n in resources:
+        # new
+        logger.info('new resource {} ({})'.format(n.name, 'PLE'))
+        r.table('resources').insert(n.dict(), conflict='update').run(dbconnection)
+
+    dbconnection.close()
+
+def getResources():
+    """
+    Returns the list of resources
+    :return:
+    """
+    pass
 
 
 def get(dbconnection=None, table=None, id=None, filter=None):

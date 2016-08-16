@@ -2,19 +2,17 @@ import React from 'react';
 
 import LogRow from './LogRow';
 
-class LogList extends React.Component {
+const LogList = ({log}) => 
 
-    render() {
-        return (
-            <ul className="logList">
-            {
-                 this.props.log.map(function(log) {
-                     return <LogRow key={log.timestamp} log={log} />;
-                 })
-             }
-            </ul>
-        );
-    }
-}
+    <ul className="logList">
+    {
+        log.sort((x,y) => 
+                new Date(y.timestamp).getTime() - new Date(x.timestamp).getTime()
+            ).map((l, index) => 
+                <LogRow key={index} log={l} />
+            )
+     }
+    </ul>;
+
 
 export default LogList;

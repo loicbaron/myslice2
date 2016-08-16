@@ -1,13 +1,10 @@
 import React from 'react';
 
-class ElementIcon extends React.Component {
+const ElementIcon = ({icon}) => {
 
-    render() {
-        var icon = this.props.icon || '';
         var iconClass = 'fa fa-';
         var divClass = 'elementIcon';
-
-
+    
         switch(icon) {
             case 'project':
                 iconClass += 'flask';
@@ -22,6 +19,12 @@ class ElementIcon extends React.Component {
                 iconClass += 'server';
                 break;
             case 'authority':
+                iconClass += 'institution';
+                break;
+            case 'testbed':
+                iconClass += 'cube';
+                break;
+            case 'registry':
                 iconClass += 'building';
                 break;
             default:
@@ -37,7 +40,6 @@ class ElementIcon extends React.Component {
                 <i className={iconClass}></i>
             </div>
         );
-  }
-}
+};
 
 export default ElementIcon;

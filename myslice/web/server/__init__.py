@@ -20,6 +20,7 @@ from myslice.web.controllers.authorization import CodeGrant
 # REST handlers
 from myslice.web.rest.requests import RequestsHandler
 
+from myslice.web.rest.testbeds import TestbedsHandler
 from myslice.web.rest.authorities import AuthoritiesHandler
 from myslice.web.rest.projects import ProjectsHandler
 from myslice.web.rest.slices import SlicesHandler
@@ -35,7 +36,7 @@ from myslice.web.websocket import WebsocketsHandler
 
 ##
 # Web controllers
-from myslice.web.controllers import login, password, registration, home, activity, projects, slices, users
+from myslice.web.controllers import login, password, registration, home, activity, projects, slices, users, status
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -131,6 +132,7 @@ class Application(web.Application):
             web.url(r'/slices/([a-z0-9\._\-]+)', slices.Slices),
             web.url(r'/users', users.Users),
             web.url(r'/activity', activity.Index),
+            web.url(r'/status', status.Index),
             web.url(r'/static/(.*)', web.StaticFileHandler, {'path': self.static}),
 
         ]
@@ -159,6 +161,9 @@ class Application(web.Application):
             
             web.url(r'/api/v1/users$', UsersHandler),
 
+            # testbeds
+            web.url(r'/api/v1/testbeds/?(' + self.urn_regex + ')?/?(resources)?$', TestbedsHandler),
+            # users
             web.url(r'/api/v1/users/?(' + self.urn_regex + ')?/?(authorities|projects|slices)?$', UsersHandler),
             # authorities
             web.url(r'/api/v1/authorities/?(' + self.urn_regex + ')?/?(users|projects)?$', AuthoritiesHandler),
