@@ -14,7 +14,7 @@ class Api(cors.CorsMixin, web.RequestHandler):
         self.dbconnection = self.application.dbconnection
 
         self.fields_short = {
-            'authorities': [ 'id', 'hrn', 'name', 'status' ],
+            'authorities': [ 'id', 'hrn', 'name', 'shortname', 'status' ],
             'users': [ 'id', 'hrn', 'email', 'firstname', 'lastname', 'shortname', 'authority', 'status' ],
             'projects': [ 'id', 'hrn', 'name', 'shortname', 'authority', 'status' ],
             'slices': [ 'id', 'hrn',  'name', 'shortname', 'project', 'status']
