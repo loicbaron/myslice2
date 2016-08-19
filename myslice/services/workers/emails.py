@@ -10,8 +10,12 @@ import logging
 
 from pprint import pprint
 
+import html
+from premailer import transform
+
 from myslice import db
 from myslice import settings as s
+from myslice.email import settings
 from myslice.db import connect, dispatch
 from myslice.db.activity import Event, ObjectType
 from myslice.db.authority import Authority
@@ -53,7 +57,7 @@ def emails_run(qEmails):
             if event.object.type == ObjectType.PASSWORD:
                 recipients.add(User(db.get(dbconnection, table='users', id=event.object.id)))
                 url = url+'/password/'+event.data['hashing']
-                subject, template = build_subject_and_template('password', event.object.type)
+                subject, template = build_subject_and_template('password', event)
             else:
                 if event.isPending():
 
@@ -93,38 +97,40 @@ def emails_run(qEmails):
                         recipients.add(User(db.get(dbconnection, table='users', id=event.user)))
 
                 if event.isPending():
-                    subject, template = build_subject_and_template('request', event.object.type)
+                    subject, template = build_subject_and_template('request', event)
 
                 elif event.isSuccess():
-                    subject, template = build_subject_and_template('approve', event.object.type)
+                    subject, template = build_subject_and_template('approve', event)
 
                 elif event.isDenied():
-                    subject, template = build_subject_and_template('deny', event.object.type)
+                    subject, template = build_subject_and_template('deny', event)
 
             mail_to = []
             for r in recipients:
-                print(r)
                 try:
                     username = "{} {}".format(r.first_name, r.last_name)
                 except:
-                    r.first_name = 'Onelab'
-                    r.last_name = 'User'
-                    username = "{} {}".format(r.first_name, r.last_name)
+                    import traceback
+                    traceback.print_exc()
+                    username = ""
 
                 mail_to.append("{} <{}>".format(username, r.email))
 
             mail_body = template.generate(
                             title = subject,
                             entity = str(event.object.type),
+                            event = event,
                             theme = s.email.theme,
                             recipients = recipients,
                             url = url,
                             )
+            # use premailer module to get CSS inline
+            mail_body_inline = transform(mail_body.decode())
 
-            m = Message(mail_from=['OneLab Support', 'zhouquantest16@gmail.com'],
+            m = Message(mail_from=['OneLab Support', settings.email.sender],
                         mail_to = mail_to,
                         subject = subject,
-                        html_content = mail_body
+                        html_content = mail_body_inline
                         )
             try:
                 Mailer().send(m)
