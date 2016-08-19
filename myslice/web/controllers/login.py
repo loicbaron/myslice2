@@ -92,10 +92,14 @@ class Index(BaseController):
 
 
     def check_password(self, plain_password, encrypted_password):
+        try:
+            if md5_crypt.verify(plain_password, encrypted_password):
+                return True
 
-        if md5_crypt.verify(plain_password, encrypted_password):
-            return True
-
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            return False
         # ##
         # # legacy method used to store passwords
         # if encrypted_password or encrypted_password[:12] != "" or \
