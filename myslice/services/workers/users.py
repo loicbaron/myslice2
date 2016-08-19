@@ -5,7 +5,7 @@
 #
 #   (c) 2016 Ciro Scognamiglio <ciro.scognamiglio@lip6.fr>
 ##
-
+from pprint import pprint
 import logging
 import time
 import myslice.db as db
@@ -52,8 +52,8 @@ def events_run(lock, qUserEvents):
                         logger.info("Creating user {}".format(event.object.id))
                         user = User()
                         # email
-                        # authority
                         user.email = event.data['email']
+                        # authority
                         user.authority = event.data['authority']
                         isSuccess = user.save(dbconnection)
                     ##
