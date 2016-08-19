@@ -38,6 +38,8 @@ class AuthoritiesHandler(Api):
                             .run(self.dbconnection)
             while (yield cursor.fetch_next()):
                 authority = yield cursor.next()
+                if authority['name'] is None:
+                    authority['name'] = authority['shortname'].title()
                 response.append(authority)
 
 
@@ -57,6 +59,8 @@ class AuthoritiesHandler(Api):
                             .run(self.dbconnection)
             while (yield cursor.fetch_next()):
                 authority = yield cursor.next()
+                if authority['name'] is None:
+                    authority['name'] = authority['shortname'].title()
                 response.append(authority)
 
         # GET /authorities/(users|projects)
@@ -71,6 +75,8 @@ class AuthoritiesHandler(Api):
                             .run(self.dbconnection)
             while (yield cursor.fetch_next()):
                 item = yield cursor.next()
+                if item['name'] is None:
+                    item['name'] = item['shortname'].title()
                 response.append(item)
 
         # GET /authorities/<id>/(users|projects)
@@ -81,6 +87,8 @@ class AuthoritiesHandler(Api):
                             .run(self.dbconnection)
             while (yield cursor.fetch_next()):
                 item = yield cursor.next()
+                if item['name'] is None:
+                    item['name'] = item['shortname'].title()
                 response.append(item)
 
         else:
