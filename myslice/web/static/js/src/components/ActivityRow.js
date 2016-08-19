@@ -4,6 +4,7 @@ import Element from './base/Element';
 import ElementTitle from './base/ElementTitle';
 import ElementStatus from './base/ElementStatus';
 import ElementIcon from './base/ElementIcon';
+import ElementDetails from './base/ElementDetails';
 import LogList from './base/LogList';
 import DateTime from './base/DateTime';
 
@@ -38,7 +39,6 @@ class ActivityRow extends React.Component {
                 break;
         }
     }
-
     render() {
         var object = this.props.activity.object.type.toLowerCase();
         var status = this.props.activity.status.toLowerCase();
@@ -60,6 +60,7 @@ class ActivityRow extends React.Component {
                         <DateTime timestamp={this.props.activity.updated} />
                     </div>
                 </div>
+                <ElementDetails data={this.props.activity.data} />
                 <LogList log={this.props.activity.log} />
             </Element>
         );
