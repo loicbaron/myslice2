@@ -88,12 +88,12 @@ class RegistrationForm extends React.Component {
                     </div>
                     <div className="row">
                         <div className="col-sm-4 col-sm-offset-4 inputForm">
-                            <input onChange={this.updateFirstname} placeholder="First name" type="text" name="firstname"/>
+                            <input onChange={this.updateFirstname} placeholder="First name" type="text" name="first_name"/>
                         </div>
                     </div>
                     <div className="row">
                         <div className="col-sm-4 col-sm-offset-4 inputForm">
-                            <input onChange={this.updateLastname} placeholder="Last name" type="text" name="lastname"/>
+                            <input onChange={this.updateLastname} placeholder="Last name" type="text" name="last_name"/>
                         </div>
                     </div>
                     <div className="row">

@@ -15,7 +15,7 @@ class Api(cors.CorsMixin, web.RequestHandler):
 
         self.fields_short = {
             'authorities': [ 'id', 'hrn', 'name', 'shortname', 'status' ],
-            'users': [ 'id', 'hrn', 'email', 'firstname', 'lastname', 'shortname', 'authority', 'status' ],
+            'users': [ 'id', 'hrn', 'email', 'first_name', 'last_name', 'shortname', 'authority', 'status' ],
             'projects': [ 'id', 'hrn', 'name', 'shortname', 'authority', 'status' ],
             'slices': [ 'id', 'hrn',  'name', 'shortname', 'project', 'status']
         }

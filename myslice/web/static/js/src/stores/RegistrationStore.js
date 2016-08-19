@@ -7,8 +7,8 @@ class RegistrationStore {
     constructor() {
         this.authority = '';
         this.email = '';
-        this.firstname = '';
-        this.lastname = '';
+        this.first_name = '';
+        this.last_name = '';
         this.loading = false;
         this.success = false;
         this.errorMessage = null;
@@ -36,12 +36,12 @@ class RegistrationStore {
         this.email = email;
     }
 
-    updateFirstname(firstname) {
-        this.firstname = firstname;
+    updateFirstname(first_name) {
+        this.first_name = first_name;
     }
 
-    updateLastname(lastname) {
-        this.lastname = lastname;
+    updateLastname(last_name) {
+        this.last_name = last_name;
     }
 
     updateLoading(loading) {

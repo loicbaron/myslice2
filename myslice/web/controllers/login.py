@@ -81,8 +81,8 @@ class Index(BaseController):
         self.set_secure_cookie("user", json.dumps({
             'id': user['id'],
             'email': user['email'],
-            'firstname': user.get('firstname', ''),
-            'lastname': user.get('lastname', ''),
+            'first_name': user.get('first_name', ''),
+            'last_name': user.get('last_name', ''),
             'authority': user['authority'],
             'slices': user['slices'],
             'pi_authorities': user['pi_authorities'],

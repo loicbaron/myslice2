@@ -10,12 +10,12 @@ class RegistrationActions {
         return email;
     }
 
-    updateFirstname(firstname) {
-        return firstname;
+    updateFirstname(first_name) {
+        return first_name;
     }
 
-    updateLastname(lastname) {
-        return lastname;
+    updateLastname(last_name) {
+        return last_name;
     }
 
     loading(loading) {
