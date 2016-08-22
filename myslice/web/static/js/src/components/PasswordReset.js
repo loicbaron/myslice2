@@ -42,9 +42,19 @@ class PasswordReset extends React.Component {
     }
 
     render () {
-
-        return (
+        let content;
+        if(this.state.updated){
+            document.getElementById("message").style.display="none";
+            content = (
+                <div className="col-sm-6 col-sm-offset-1">Your password has been updated. <br/><br/> Please <a href="/">Login</a></div>
+            )
+        }else{
+            content = (
             <div>
+                <div className="col-sm-8 error">
+                { this.state.matching==false ? 'Passwords do not match':''}
+                </div>
+                <div className="col-sm-8">
                 <form onSubmit={this.submitForm}>
                     <div>
                         <input  defaultvalue=''
@@ -54,6 +64,7 @@ class PasswordReset extends React.Component {
                                 onChange={this.onChangePassword}
                                 />
                         <input  defaultvalue=''
+                                className={ this.state.matching==false ? 'error':'' }
                                 placeholder="Repeat Password" 
                                 type="text" 
                                 name="repeat_password"
@@ -62,6 +73,13 @@ class PasswordReset extends React.Component {
                     </div>
                     <button type="submit" className="btn btn-default">Save</button>  
                 </form>
+                </div>
+            </div>
+            )
+        }
+        return (
+            <div className="row">
+            {content}
             </div>
         );
     }

@@ -1,6 +1,7 @@
 import React from 'react';
 
 import Element from './base/Element';
+import ElementDetails from './base/ElementDetails';
 import ElementTitle from './base/ElementTitle';
 import ElementStatus from './base/ElementStatus';
 import ElementIcon from './base/ElementIcon';
@@ -70,7 +71,10 @@ class RequestsRow extends React.Component {
             var executePanel = (
                         <div>
                             <div className="row">
-                                <div className="col-sm-6 col-sm-offset-6">
+                                <div className="col-sm-2">
+                                    <span className="elementLabel">comment: </span>
+                                </div>
+                                <div className="col-sm-10">
                                     <input  type="text"
                                             name="message"
                                             ref="message"
@@ -79,16 +83,18 @@ class RequestsRow extends React.Component {
                             </div>
 
                             <div className="row">
-                                <div className="col-sm-3 col-sm-offset-6">
+                                <div className="col-sm-2 col-sm-offset-2">
                                     <button type="button" 
                                             className="btn btn-default"
+                                            style={{"width" : "80px"}}
                                             name="approve"
                                             value="approve"
                                             onClick={this.approve.bind(this)}>Approve</button>
                                 </div>
-                                <div className="col-sm-3">
+                                <div className="col-sm-2">
                                     <button type="button"
                                             className="btn btn-default"
+                                            style={{"width" : "80px"}}
                                             name="deny"
                                             value="deny"
                                             onClick={this.deny.bind(this)}>Deny</button>
@@ -111,6 +117,7 @@ class RequestsRow extends React.Component {
                         <DateTime label="Updated" timestamp={this.props.request.updated}/>
                     </div>
                 </div>
+                <ElementDetails data={this.props.request.data} />
                 {executePanel}
                 <LogList log={this.props.request.log} />
             </Element>

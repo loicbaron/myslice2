@@ -6,14 +6,15 @@
     {% end %}
 </p>
 
-<p>You are receiving this request because we have you listed as a manager at an organization that uses {{theme}}.</p>
-<br/>
 <p>A user has requested to join your organization.</p>
 
 <p>Name: <b>{{event.data['first_name']}} {{event.data['last_name']}}</b></p>
 <p>email: <b>{{event.data['email']}}</b></p>
 
 {% include ../button.html %}
+
+<p>You are receiving this request because we have you listed as a manager at an organization that uses {{theme}}.</p>
+<br/>
 
 <p><i>If you believe that you have received this message in error, or if you have any questions, kindly contact support@{{theme}}.eu.</i></p>
 <br/>

@@ -26,26 +26,36 @@ class PasswordForgot extends React.Component {
     }
 
     onChangeEmail(value) {
-        console.log(value);
         actions.updateEmail(value);
     }
 
     submitForm(e){
-        console.log('click');
         e.preventDefault();
         actions.submitEmail();
     }
 
     render () {
-
-        return (
-            <div>
+        let content;
+        if(this.state.sent){
+            document.getElementById("message").style.display="none";
+            content = (
+                <div>An email has been sent, follow the link to reset your password.</div>
+            )
+        }else{
+            content = (
+                <div className="col-sm-8">
                 <form onSubmit={this.submitForm}>
                     <div>
                         <EmailInput handleChange={this.onChangeEmail}/>
                     </div>
                     <button type="submit" className="btn btn-default">Reset my password</button>  
                 </form>
+                </div>
+            )
+        }
+        return (
+            <div className="row">
+            {content}
             </div>
         );
     }

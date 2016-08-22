@@ -53,11 +53,13 @@ def emails_run(qEmails):
             url = s.web.url
             if s.web.port and s.web.port != 80:
                 url = url +':'+ s.web.port
-
+            
+            buttonLabel = "View details"
             if event.object.type == ObjectType.PASSWORD:
                 recipients.add(User(db.get(dbconnection, table='users', id=event.object.id)))
                 url = url+'/password/'+event.data['hashing']
                 subject, template = build_subject_and_template('password', event)
+                buttonLabel = "Change password"
             else:
                 if event.isPending():
 
@@ -98,6 +100,8 @@ def emails_run(qEmails):
 
                 if event.isPending():
                     subject, template = build_subject_and_template('request', event)
+                    buttonLabel = "Approve / Deny"
+                    url = url+'/activity'
 
                 elif event.isSuccess():
                     subject, template = build_subject_and_template('approve', event)
@@ -123,6 +127,7 @@ def emails_run(qEmails):
                             theme = s.email.theme,
                             recipients = recipients,
                             url = url,
+                            buttonLabel = buttonLabel,
                             )
             # use premailer module to get CSS inline
             mail_body_inline = transform(mail_body.decode())

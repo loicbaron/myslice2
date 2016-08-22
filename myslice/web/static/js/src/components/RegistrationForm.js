@@ -49,8 +49,9 @@ class RegistrationForm extends React.Component {
     render() {
         if (this.state.success) {
             return (
-                <div>
-                    Success!
+                <div className="col-sm-6 col-sm-offset-3">
+                    Your request has been sent to a manager.<br/>
+                    You will receive an email as soon as your account will be validated.
                 </div>
             );
         } else {

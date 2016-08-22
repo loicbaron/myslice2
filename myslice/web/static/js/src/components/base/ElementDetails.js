@@ -9,7 +9,9 @@ const ElementDetails = ({data}) => {
     }
     return(
         <div className="row">
+            <div className="col-sm-12">
             {pairs}
+            </div>
         </div>
     );
 };
