@@ -133,6 +133,11 @@ button.large {
 button.large:hover, button.large.active {
     background-color: rgb(193, 154, 236);
 }
+div.message{
+	height: 38px;
+    padding-top: 9px;
+	margin-bottom: 0px;
+}
 div.form {
     position:relative;
     padding-top:50px;

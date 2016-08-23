@@ -10,7 +10,9 @@ const RegistrationSource = () => {
                     'authority': state.authority,
                     'first_name': state.first_name,
                     'last_name': state.last_name,
-                    'email': state.email
+                    'password': state.password,
+                    'email': state.email,
+                    'terms': state.terms,
                 });
             },
 

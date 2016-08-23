@@ -10,12 +10,21 @@ class RegistrationActions {
         return email;
     }
 
+    updatePassword(password) {
+        console.log("action pass");
+        return password;
+    }
+
     updateFirstname(first_name) {
         return first_name;
     }
 
     updateLastname(last_name) {
         return last_name;
+    }
+
+    updateTerms(terms) {
+        return terms;
     }
 
     loading(loading) {
