@@ -16,9 +16,9 @@ class RequestsRow extends React.Component {
 
     label() {
         var object = this.props.request.object.type.charAt(0) + this.props.request.object.type.slice(1).toLowerCase();
-        var data = '';
+        var dataType = '';
         if (this.props.request.data.hasOwnProperty('type')) {
-            data = this.props.request.data.type.charAt(0) + this.props.request.data.type.slice(1).toLowerCase();
+            dataType = this.props.request.data.type.charAt(0) + this.props.request.data.type.slice(1).toLowerCase();
         }
 
         switch(this.props.request.action) {
@@ -32,10 +32,10 @@ class RequestsRow extends React.Component {
                 return 'Delete ' + object;
                 break;
             case 'ADD':
-                return 'Add ' + data + ' to ' + object;
+                return 'Add ' + dataType + ' to ' + object;
                 break;
             case 'REMOVE':
-                return 'Remove ' + data + ' from ' + object;
+                return 'Remove ' + dataType + ' from ' + object;
                 break;
         }
     }
@@ -64,6 +64,12 @@ class RequestsRow extends React.Component {
     render() {
         var object = this.props.request.object.type.toLowerCase();
         var status = this.props.request.status.toLowerCase();
+
+        if(Object.keys(this.props.request.data).length === 0){
+            var data = this.props.request.object;
+        }else{
+            var data = this.props.request.data;
+        }
 
         var executePanel = <div></div>; 
 
@@ -117,7 +123,7 @@ class RequestsRow extends React.Component {
                         <DateTime label="Updated" timestamp={this.props.request.updated}/>
                     </div>
                 </div>
-                <ElementDetails data={this.props.request.data} />
+                <ElementDetails data={data} key={this.props.request.id} />
                 {executePanel}
                 <LogList log={this.props.request.log} />
             </Element>
