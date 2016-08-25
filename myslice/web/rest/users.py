@@ -428,9 +428,16 @@ class UserTokenHandler(Api):
 
     @gen.coroutine
     def get(self):
+
         admin = self.isAdmin()
-        pi_auth = []
-        current_user_id = self.get_current_user()['id']
+
+        try:
+            current_user_id = self.get_current_user()['id']
+        except Exception as e:
+            self.serverError("unidentified user")
+            return
+       
+        pi_auth = [] 
         
         # if not admin
         if not admin:
@@ -447,6 +454,7 @@ class UserTokenHandler(Api):
                                 secret, algorithm='HS256')
         except Exception as e:
             self.serverError("token encryption failed", e)
+            return
         
         self.finish(token)
 
