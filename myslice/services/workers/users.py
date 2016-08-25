@@ -93,6 +93,8 @@ def update_credentials(users):
                     u_db_object = User(u_db)
                     user_setup = UserSetup(u_db_object, myslicelibsetup.endpoints)
                     c = u.getCredentials(setup=user_setup, delegate_to="onelab.myslice")
+                    u.private_key = u_db['private_key']
+                    u.public_key = u.keys[0]
     return users
 
 def sync(lock):

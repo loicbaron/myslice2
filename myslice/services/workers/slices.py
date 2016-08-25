@@ -142,10 +142,10 @@ def events_run(lock, qSliceEvents):
                     logger.error("Problem with event: {}".format(e))
                     event.logError(str(e))
                     event.setError()
-
                 if isSuccess:
                     event.setSuccess()
-
+                else:
+                    event.setError()
                 db.dispatch(dbconnection, event)
 
 def sync(lock):
