@@ -5,7 +5,6 @@
 #
 #   (c) 2016 Ciro Scognamiglio <ciro.scognamiglio@lip6.fr>
 ##
-import pprint
 import logging
 import signal
 import threading

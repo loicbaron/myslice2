@@ -8,9 +8,11 @@ const RegistrationSource = () => {
             remote(state) {
                 return axios.post('/api/v1/users', {
                     'authority': state.authority,
-                    'firstname': state.firstname,
-                    'lastname': state.lastname,
-                    'email': state.email
+                    'first_name': state.first_name,
+                    'last_name': state.last_name,
+                    'password': state.password,
+                    'email': state.email,
+                    'terms': state.terms,
                 });
             },
 

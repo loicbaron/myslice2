@@ -33,7 +33,8 @@ class User(myslicelibUser):
     
     def __init__(self, data = {}):
         data = data if data is not None else {}
-        data['generate_keys'] = data.get('generate_keys', False)
+        # Generate keys by default
+        data['generate_keys'] = data.get('generate_keys', True)
         data['private_key'] = data.get('private_key', None)
         data['public_key'] = data.get('public_key', None)
         data['keys'] = data.get('keys', [])

@@ -81,8 +81,8 @@ class Index(BaseController):
         self.set_secure_cookie("user", json.dumps({
             'id': user['id'],
             'email': user['email'],
-            'firstname': user.get('firstname', ''),
-            'lastname': user.get('lastname', ''),
+            'first_name': user.get('first_name', ''),
+            'last_name': user.get('last_name', ''),
             'authority': user['authority'],
             'slices': user['slices'],
             'pi_authorities': user['pi_authorities'],
@@ -92,10 +92,14 @@ class Index(BaseController):
 
 
     def check_password(self, plain_password, encrypted_password):
+        try:
+            if md5_crypt.verify(plain_password, encrypted_password):
+                return True
 
-        if md5_crypt.verify(plain_password, encrypted_password):
-            return True
-
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            return False
         # ##
         # # legacy method used to store passwords
         # if encrypted_password or encrypted_password[:12] != "" or \

@@ -95,6 +95,7 @@ def events_run(lock, qProjectEvents):
                     traceback.print_exc()
                     logger.error("Problem with event: {}".format(e))
                     event.logError(str(e))
+                    event.setError()
                 else:
                     event.setSuccess()
                 
