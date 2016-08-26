@@ -1,5 +1,7 @@
 import json
 
+from pprint import pprint
+
 import rethinkdb as r
 
 from myslice.lib.util import myJSONEncoder
@@ -75,7 +77,7 @@ class AuthoritiesHandler(Api):
                             .run(self.dbconnection)
             while (yield cursor.fetch_next()):
                 item = yield cursor.next()
-                if item['name'] is None:
+                if 'name' in item and item['name'] is None:
                     item['name'] = item['shortname'].title()
                 response.append(item)
 
@@ -87,7 +89,7 @@ class AuthoritiesHandler(Api):
                             .run(self.dbconnection)
             while (yield cursor.fetch_next()):
                 item = yield cursor.next()
-                if item['name'] is None:
+                if 'name' in item and item['name'] is None:
                     item['name'] = item['shortname'].title()
                 response.append(item)
 
@@ -134,7 +136,7 @@ class AuthoritiesHandler(Api):
         try:
             event = Event(data)
         except Exception as e:
-            pprint(self.request.body)
+            #pprint(self.request.body)
             import traceback
             traceback.print_exc()
             self.set_status(500)

@@ -38,6 +38,10 @@ class UserSetup(Setup):
                 print("Credential NOT Delegated")
                 # XXX We use the user's certificate and private_key until we are able to delegate credentials to MySlice
                 # If the user has no certificate and private_key, it will not work...
+                #print("hrn=%s" % user.hrn)
+                #print("email=%s" % user.email)
+                #print("cert=%s" % user.certificate)
+                #print("pkey=%s" % user.private_key)
                 self._authentication = Authentication(hrn=user.hrn, email=user.email, certificate=user.certificate,
                                                        private_key=user.private_key, credentials=user.credentials)
 

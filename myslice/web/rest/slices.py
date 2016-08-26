@@ -157,8 +157,10 @@ class SlicesHandler(Api):
         try:
             # Check if the user has the right to delete a slice
             s = yield r.table('slices').get(id).run(self.dbconnection)
-            if not self.current_user['id'] in s['users']:
+            u = yield r.table('users').get(self.current_user['id']).run(self.dbconnection)
+            if not self.current_user['id'] in s['users'] and s['authority'] not in u['pi_authorities']:
                 self.userError("your user has no rights on slice: %s" % id)
+                return
         except Exception:
             self.userError("not authenticated or project not specified")
             return
