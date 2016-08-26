@@ -97,8 +97,11 @@ def events_run(lock, qAuthorityEvents):
                     logger.error("Problem with event: {}".format(e))
                     event.logError(str(e)) 
                     event.setError()
-                else:
+
+                if isSuccess:
                     event.setSuccess()
+                else:
+                    event.setError()
                 
                 db.dispatch(dbconnection, event)
 

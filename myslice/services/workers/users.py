@@ -77,8 +77,11 @@ def events_run(lock, qUserEvents):
                     logger.error("Problem updating user: {} - {}".format(event.object.id, e))
                     event.logError(str(e))
                     event.setError()
-                else:
+
+                if isSuccess:
                     event.setSuccess()
+                else:
+                    event.setError()
             ##
             # we then dispatch the event
             db.dispatch(dbconnection, event)

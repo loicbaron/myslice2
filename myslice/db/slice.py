@@ -29,7 +29,9 @@ class Slice(myslicelibSlice):
         # to update the users after Save
         current = db.get(dbconnection, table='slices', id=self.id)
         for user in current['users']:
-            db.users(dbconnection, q(User).id(user).get().dict())
+            user = q(User).id(u).get().first()
+            user = user.merge(dbconnection)
+            db.users(dbconnection, user.dict())
 
         if errors:
             raise SliceException(errors)
@@ -46,7 +48,9 @@ class Slice(myslicelibSlice):
         # to update the users after Save
         current = db.get(dbconnection, table='slices', id=self.id)
         for user in current['users']:
-            db.users(dbconnection, q(User).id(user).get().dict())
+            user = q(User).id(u).get().first()
+            user = user.merge(dbconnection)
+            db.users(dbconnection, user.dict())
 
         if errors:
             raise SliceException(errors)

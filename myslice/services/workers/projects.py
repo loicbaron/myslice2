@@ -16,6 +16,9 @@ import myslice.db as db
 from myslice.lib import Status
 from myslice.lib.util import format_date
 
+from myslice.lib.authentication import UserSetup
+from myslice import myslicelibsetup
+
 from myslice.db.activity import Event, ObjectType, DataType
 from myslice.db import changes, connect
 from myslice.db.user import User
@@ -48,6 +51,9 @@ def events_run(lock, qProjectEvents):
                     event.setRunning()
                     isSuccess = False
 
+                    u = User(db.get(dbconnection, table='users', id=event.user))
+                    user_setup = UserSetup(u, myslicelibsetup.endpoints)
+
                     if event.creatingObject() or event.updatingObject():
                         logger.info("creating or updating the object project {}".format(event.object.id)) 
                         
@@ -76,7 +82,7 @@ def events_run(lock, qProjectEvents):
                             for val in event.data.values:
                                 pi = User(db.get(dbconnection, table='users', id=val))
                                 proj.addPi(pi)
-                            isSuccess = proj.save(dbconnection)
+                            isSuccess = proj.save(dbconnection, user_setup)
 
                     if event.removingObject():
                         logger.info("removing data from the object project {}".format(event.object.id)) 
@@ -88,7 +94,9 @@ def events_run(lock, qProjectEvents):
                             for val in event.data.values:
                                 pi = User(db.get(dbconnection, table='users', id=val))
                                 proj.removePi(pi)
-                            isSuccess = proj.save(dbconnection)
+                            print("SAVING PROJECT")
+                            isSuccess = proj.save(dbconnection, user_setup)
+                            print("PROJECT SAVED")
 
                 except Exception as e:
                     import traceback
@@ -96,8 +104,11 @@ def events_run(lock, qProjectEvents):
                     logger.error("Problem with event: {}".format(e))
                     event.logError(str(e))
                     event.setError()
-                else:
+
+                if isSuccess:
                     event.setSuccess()
+                else:
+                    event.setError()
                 
                 db.dispatch(dbconnection, event)
 

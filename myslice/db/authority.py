@@ -31,9 +31,14 @@ class Authority(myslicelibAuthority):
 
             
         for user in current['pi_users']:
-            db.users(dbconnection, q(User).id(user).get().dict())
+            user = q(User).id(u).get().first()
+            user = user.merge(dbconnection)
+            db.users(dbconnection, user.dict())
         for user in current['users']:
-            db.users(dbconnection, q(User).id(user).get().dict())
+            user = q(User).id(u).get().first()
+            user = user.merge(dbconnection)
+            db.users(dbconnection, user.dict())
+
         if errors:
             raise AuthorityException(errors)
         else:
@@ -49,9 +54,13 @@ class Authority(myslicelibAuthority):
         # to update the pi_users after Save
         current = db.get(dbconnection, table='authorities', id=self.id)
         for user in current['pi_users']:
-            db.users(dbconnection, q(User).id(user).get().dict())
+            user = q(User).id(u).get().first()
+            user = user.merge(dbconnection)
+            db.users(dbconnection, user.dict())
         for user in current['users']:
-            db.users(dbconnection, q(User).id(user).get().dict())
+            user = q(User).id(u).get().first()
+            user = user.merge(dbconnection)
+            db.users(dbconnection, user.dict())
 
         if errors:
             raise AuthorityException(errors)
