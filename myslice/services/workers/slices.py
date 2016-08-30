@@ -60,7 +60,11 @@ def events_run(lock, qSliceEvents):
                     if event.creatingObject() or event.updatingObject():
                         sli = Slice(event.data)
                         sli.id = event.object.id
-                        sli.addUser(u)
+                        # Add all Project PIs to the Slice
+                        project = db.get(dbconnection, table='projects', id=sli.project)
+                        for us in project['pi_users']:
+                            us = User(db.get(dbconnection, table='users', id=us))
+                            sli.addUser(us)
                         if 'users' in event.data and 'geni_users' not in event.data:
                             for u_id in event.data['users']:
                                 u = User(db.get(dbconnection, table='users', id=u_id))

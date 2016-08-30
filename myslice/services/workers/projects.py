@@ -94,9 +94,7 @@ def events_run(lock, qProjectEvents):
                             for val in event.data.values:
                                 pi = User(db.get(dbconnection, table='users', id=val))
                                 proj.removePi(pi)
-                            print("SAVING PROJECT")
                             isSuccess = proj.save(dbconnection, user_setup)
-                            print("PROJECT SAVED")
 
                 except Exception as e:
                     import traceback
