@@ -22,7 +22,7 @@ class Api(cors.CorsMixin, web.RequestHandler):
 
         self.fields = {
             'authorities': self.fields_short['authorities'] + [ 'authority', 'pi_users', 'users', 'projects', 'slices', 'created', 'updated', 'enabled'],
-            'users': self.fields_short['users'] + [ 'projects', 'status', 'created', 'updated', 'enabled'],
+            'users': self.fields_short['users'] + [ 'projects', 'slices', 'status', 'created', 'updated', 'enabled'],
             'projects': self.fields_short['projects'] + [ 'pi_users', 'users', 'slices', 'created', 'updated', 'enabled'],
             'slices': self.fields_short['slices'] + [ 'authority', 'users', 'created', 'updated', 'enabled'],
             'profile': ['id', 'email','first_name', 'last_name', 'bio', 'url', 'public_key', 'private_key', 'authority', 'url']
