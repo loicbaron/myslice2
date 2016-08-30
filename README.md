@@ -12,8 +12,8 @@ Install
 
 ~~~
     git clone git@gitlab.noc.onelab.eu:onelab/myslice.git
-    pip3 install -r requirements.txt
-    python3.5 setup.py develop
+    sudo pip3 install -r requirements.txt
+    sudo python3.5 setup.py develop
 ~~~
 
 
