@@ -1,7 +1,14 @@
+MySlice Web Frontend
+=======================
 
-Requirements
+MySlice Web Frontend python module, for more information: `<https://myslice.info>`
 
-tornado
-tornado_cors
-SockJS-tornado
-rethinkdb
+
+INSTALL
+=======================
+
+::
+
+    git clone git@gitlab.noc.onelab.eu:onelab/myslice.git
+    pip3 install -r requirements.txt
+    python3.5 setup.py develop
