@@ -64,7 +64,7 @@ Configure
 - Setup the Web server URL and Port
 ~~~
     class web(object):
-        url = 'http://dev.myslice.info'
+        url = 'http://<hostname>'
         port = '8111'
 ~~~
 
@@ -75,4 +75,16 @@ Run MySlice
     ~/myslice/myslice/bin/myslice-web
     ~/myslice/myslice/bin/myslice-server
     ~/myslice/myslice/bin/myslice-monitor
+~~~
+
+RethinkDB Admin
+=======================
+~~~
+    http://<hostname>:8080/
+~~~
+
+MySlice Web
+=======================
+~~~
+    http://<hostname>:8111/
 ~~~
