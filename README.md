@@ -67,3 +67,12 @@ Configure
         url = 'http://dev.myslice.info'
         port = '8111'
 ~~~
+
+Run MySlice
+=======================
+
+~~~
+    ~/myslice/myslice/bin/myslice-web
+    ~/myslice/myslice/bin/myslice-server
+    ~/myslice/myslice/bin/myslice-monitor
+~~~
