@@ -2,9 +2,14 @@ import alt from '../alt';
 import actions from '../actions/ProjectsActions';
 import source from '../sources/ProjectsSource';
 
-var removeFromArray = function(myArray, searchTerm, property) {
+var removeFromArray = function(myArray, searchTerm, property=null) {
         for(var i = 0, len = myArray.length; i < len; i++) {
-            if (myArray[i][property] === searchTerm){
+            if(property==null){
+                var a = myArray[i];
+            }else{
+                var a = myArray[i][property];
+            }
+            if (a === searchTerm){
                 myArray.splice(i, 1);
                 return myArray;
             }
@@ -137,12 +142,14 @@ class ProjectsStore {
     }
 
     removeUser(user) {
+        console.log(user);
         this.removeUserFromProject = user;
         this.getInstance().removeUser();
     }
     updateRemoveUser(message) {
+        console.log(message);
         this.removedUsers[this.current.project.id].push(this.removeUserFromProject);
-        this.current.project.pi_users = removeFromArray(this.current.project.pi_users, this.removeUserFromProject.id, 'id');
+        this.current.project.pi_users = removeFromArray(this.current.project.pi_users, this.removeUserFromProject.id);
         this.removeUserFromProject=null;
         //this.current.users = removeFromArray(this.current.users, this.removeUserFromProject.id, 'id');
     }
@@ -156,7 +163,7 @@ class ProjectsStore {
     }
     updateDeleteSlice(message) {
         this.deletedSlices[this.current.project.id].push(this.deleteSliceFromProject);
-        this.current.project.pi_users = removeFromArray(this.current.project.pi_users, this.deleteSliceFromProject.id, 'id');
+        this.current.project.pi_users = removeFromArray(this.current.project.pi_users, this.deleteSliceFromProject.id);
         this.deleteSliceFromProject=null;
     }
     errorDeleteSlice(errorMessage) {
