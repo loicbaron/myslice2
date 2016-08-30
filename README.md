@@ -1,8 +1,11 @@
 MySlice Web Frontend
 =======================
 
-MySlice Web Frontend python module, for more information: `<https://myslice.info>`
+MySlice Web Frontend python module, for more information: `https://myslice.info`
 
+Requirement
+=======================
+Install MySliceLib Module: `http://gitlab.noc.onelab.eu/onelab/myslicelib`
 
 Install
 =======================
