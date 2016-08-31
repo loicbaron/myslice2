@@ -7,18 +7,24 @@ import ElementStatus from './base/ElementStatus';
 import ElementIcon from './base/ElementIcon';
 import DateTime from './base/DateTime';
 
+import DeleteProject from './DeleteProject';
+
 class ProjectsRow extends React.Component {
 
     render() {
         var label = this.props.project.name || this.props.project.shortname;
         var authority = this.props.project.authority.name || this.props.project.authority.shortname;
-
+        var button = '';
+        if(this.props.removeProject){
+            button = <DeleteProject project={this.props.project} />
+        }
         return (
             <Element element={this.props.project} type="project" setCurrent={this.props.setCurrent} current={this.props.current}>
                 <ElementStatus status={this.props.project.status}/>
                 <ElementIcon icon="project"/>
                 <ElementTitle label={label} detail={this.props.project.shortname}/>
                 <ElementId id={this.props.project.id}/>
+                {button}
                 <div className="elementDetail">
                     <span className="elementLabel">Users</span> {this.props.project.pi_users.length}
                     &nbsp;&nbsp;&nbsp;&nbsp;
@@ -45,11 +51,13 @@ class ProjectsRow extends React.Component {
 ProjectsRow.propTypes = {
     project: React.PropTypes.object.isRequired,
     current: React.PropTypes.object,
-    setCurrent: React.PropTypes.func
+    setCurrent: React.PropTypes.func,
+    removeProject: React.PropTypes.bool,
 };
 
 ProjectsRow.defaultProps = {
     current: false,
+    removeProject: true,
     setCurrent: null
 };
 

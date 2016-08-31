@@ -125,6 +125,20 @@ const ProjectsSource = () => {
             }
         },
 
+        deleteProject: {
+
+            remote(state) {
+                return axios.delete('/api/v1/projects/' + state.deleteProj.id);
+            },
+
+            success: actions.updateDeleteProject, // (required)
+            error: actions.errorDeleteProject, // (required)
+
+            shouldFetch(state) {
+                return true
+            }
+        },
+
         submit: {
             // remotely fetch something (required)
             remote(state) {

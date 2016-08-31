@@ -39,6 +39,9 @@ class ProjectsStore {
         this.deleteSliceFromProject = null;
         this.deletedSlices = {};
 
+        this.deleteProj = null;
+        this.deletedProjects = [];
+
         this.dialog = null;
 
         this.errorMessage = null;
@@ -59,6 +62,11 @@ class ProjectsStore {
             deleteSlice: actions.DELETE_SLICE,
             updateDeleteSlice: actions.UPDATE_DELETE_SLICE,
             errorDeleteSlice: actions.ERROR_DELETE_SLICE,
+
+            deleteProject: actions.DELETE_PROJECT,
+            updateDeleteProject: actions.UPDATE_DELETE_PROJECT,
+            errorDeleteProject: actions.ERROR_DELETE_PROJECT,
+
 
             updateSlices: actions.UPDATE_SLICES,
             fetchProjects: actions.FETCH_PROJECTS,
@@ -163,10 +171,23 @@ class ProjectsStore {
     }
     updateDeleteSlice(message) {
         this.deletedSlices[this.current.project.id].push(this.deleteSliceFromProject);
-        this.current.project.pi_users = removeFromArray(this.current.project.pi_users, this.deleteSliceFromProject.id);
+        this.current.project.slices = removeFromArray(this.current.project.slices, this.deleteSliceFromProject.id);
         this.deleteSliceFromProject=null;
     }
     errorDeleteSlice(errorMessage) {
+        console.log(errorMessage);
+    }
+
+    deleteProject(project) {
+        console.log("delete project");
+        this.deleteProj = project;
+        this.getInstance().deleteProject();
+    }
+    updateDeleteProject(message) {
+        this.deletedProjects.push(this.deleteProj);
+        this.deleteProj=null;
+    }
+    errorDeleteProject(errorMessage) {
         console.log(errorMessage);
     }
 
