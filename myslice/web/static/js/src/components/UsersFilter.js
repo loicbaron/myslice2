@@ -3,6 +3,8 @@ import Select from 'react-select';
 
 import actions from '../actions/UsersActions';
 
+var ReactDOM = require('react-dom');
+
 export default class UsersFilter extends React.Component {
 
     constructor(props) {
@@ -16,7 +18,7 @@ export default class UsersFilter extends React.Component {
     componentDidMount() {
         // store
         // store.listen(this.onChange);
-
+        ReactDOM.findDOMNode(this.refs.nameInput).focus();
     }
 
     componentWillUnmount() {
@@ -34,6 +36,7 @@ export default class UsersFilter extends React.Component {
             type="text" 
             onChange={this.setValue}
             placeholder="Search user"
+            ref="nameInput"
         />
 
     }
