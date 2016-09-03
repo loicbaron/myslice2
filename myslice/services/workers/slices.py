@@ -60,7 +60,11 @@ def events_run(lock, qSliceEvents):
                     if event.creatingObject() or event.updatingObject():
                         sli = Slice(event.data)
                         sli.id = event.object.id
-                        sli.addUser(u)
+                        # Add all Project PIs to the Slice
+                        project = db.get(dbconnection, table='projects', id=sli.project)
+                        for us in project['pi_users']:
+                            us = User(db.get(dbconnection, table='users', id=us))
+                            sli.addUser(us)
                         if 'users' in event.data and 'geni_users' not in event.data:
                             for u_id in event.data['users']:
                                 u = User(db.get(dbconnection, table='users', id=u_id))
@@ -88,7 +92,6 @@ def events_run(lock, qSliceEvents):
                             # "values": [{id:"YYYYYY",lease:{start_time:xxxx, end_time:xxxx}}, {id:“ZZZZZZ”}]
                             for val in event.data.values:
                                 r = Resource(db.get(dbconnection, table='resources', id=val['id']))
-                                pprint(r)
                                 sli.addResource(r)
                                 if 'lease' in val:
                                     l = Lease(val['lease'])
@@ -110,7 +113,6 @@ def events_run(lock, qSliceEvents):
                             # "values": [{id:"YYYYYY",lease:{start_time:xxxx, end_time:xxxx}}, {id:“ZZZZZZ”}]
                             for val in event.data.values:
                                 r = Resource(db.get(dbconnection, table='resources', id=val['id']))
-                                pprint(r)
                                 sli.removeResource(r)
                                 if 'lease' in val:
                                     l = Lease(val['lease'])
@@ -143,10 +145,11 @@ def events_run(lock, qSliceEvents):
                     traceback.print_exc()
                     logger.error("Problem with event: {}".format(e))
                     event.logError(str(e))
-                     
+                    event.setError()
                 if isSuccess:
                     event.setSuccess()
-
+                else:
+                    event.setError()
                 db.dispatch(dbconnection, event)
 
 def sync(lock):
@@ -190,7 +193,6 @@ def sync(lock):
                         if u.private_key or (hasattr(u,'credentials') and len(u.credentials)>0):
                             user_setup = UserSetup(u,myslicelibsetup.endpoints)
                             s = q(Slice, user_setup).id(slice.id).get()
-                            pprint(s)
                     except Exception as e:
                         import traceback
                         traceback.print_exc()

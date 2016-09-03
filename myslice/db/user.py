@@ -33,7 +33,8 @@ class User(myslicelibUser):
     
     def __init__(self, data = {}):
         data = data if data is not None else {}
-        data['generate_keys'] = data.get('generate_keys', False)
+        # Generate keys by default
+        data['generate_keys'] = data.get('generate_keys', True)
         data['private_key'] = data.get('private_key', None)
         data['public_key'] = data.get('public_key', None)
         data['keys'] = data.get('keys', [])
@@ -70,6 +71,13 @@ class User(myslicelibUser):
                 return True
 
         return False
+
+    # This functions keeps the locally stored private/public keys of the user
+    def merge(self, dbconnection):
+        db_user = db.get(dbconnection, table='users', id=self.id)
+        self.setAttribute('private_key', db_user['private_key'])
+        self.setAttribute('public_key', db_user['public_key'])
+        return self
 
     def save(self, dbconnection, setup=None):
         if self.getAttribute('generate_keys'):

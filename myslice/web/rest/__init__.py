@@ -14,15 +14,15 @@ class Api(cors.CorsMixin, web.RequestHandler):
         self.dbconnection = self.application.dbconnection
 
         self.fields_short = {
-            'authorities': [ 'id', 'hrn', 'name', 'status' ],
-            'users': [ 'id', 'hrn', 'email', 'firstname', 'lastname', 'shortname', 'authority', 'status' ],
+            'authorities': [ 'id', 'hrn', 'name', 'shortname', 'status' ],
+            'users': [ 'id', 'hrn', 'email', 'first_name', 'last_name', 'shortname', 'authority', 'status' ],
             'projects': [ 'id', 'hrn', 'name', 'shortname', 'authority', 'status' ],
             'slices': [ 'id', 'hrn',  'name', 'shortname', 'project', 'status']
         }
 
         self.fields = {
             'authorities': self.fields_short['authorities'] + [ 'authority', 'pi_users', 'users', 'projects', 'slices', 'created', 'updated', 'enabled'],
-            'users': self.fields_short['users'] + [ 'projects', 'status', 'created', 'updated', 'enabled'],
+            'users': self.fields_short['users'] + [ 'projects', 'slices', 'status', 'created', 'updated', 'enabled'],
             'projects': self.fields_short['projects'] + [ 'pi_users', 'users', 'slices', 'created', 'updated', 'enabled'],
             'slices': self.fields_short['slices'] + [ 'authority', 'users', 'created', 'updated', 'enabled'],
             'profile': ['id', 'email','first_name', 'last_name', 'bio', 'url', 'public_key', 'private_key', 'authority', 'url']
@@ -45,16 +45,18 @@ class Api(cors.CorsMixin, web.RequestHandler):
 
     def isAdmin(self):
         auth_pattern = re.compile(r"(urn:publicid:IDN\+)(?P<hrn>[\:]*[a-zA-Z]*)(\+authority\+sa)")
-        
-        # XXX not sure if it is a clean way to decide a admin
-        pi_auth = self.get_current_user()['pi_authorities']
-        for auth in pi_auth:
-            m = auth_pattern.match(auth)
-            hrn_length = len(m.group('hrn').split(':'))
-            if hrn_length == 1:
-                return True
-
-        return False
+        try:
+            # XXX not sure if it is a clean way to decide a admin
+            pi_auth = self.get_current_user()['pi_authorities']
+            for auth in pi_auth:
+                m = auth_pattern.match(auth)
+                hrn_length = len(m.group('hrn').split(':'))
+                if hrn_length == 1:
+                    return True
+        except Exception as e:
+            self.serverError("enable to identify user permission")
+        finally:
+            return False
 
     def isUrn(self, urn):
         return re.match(self.application.urn_regex, urn)

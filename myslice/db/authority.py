@@ -14,6 +14,10 @@ class AuthorityException(Exception):
 class Authority(myslicelibAuthority):
 
     def save(self, dbconnection, setup=None):
+        # Get Authority from local DB 
+        # to update the pi_users after Save
+        current = db.get(dbconnection, table='authorities', id=self.id)
+
         result = super(Authority, self).save(setup)
         errors = result['errors']
         
@@ -25,33 +29,45 @@ class Authority(myslicelibAuthority):
 
         db.authorities(dbconnection, result, self.id)
 
-        # Get Authority from local DB 
-        # to update the pi_users after Save
-        current = db.get(dbconnection, table='authorities', id=self.id)
+        # New Authority created
+        if current is None:
+            current = db.get(dbconnection, table='authorities', id=self.id)
 
-            
-        for user in current['pi_users']:
-            db.users(dbconnection, q(User).id(user).get().dict())
-        for user in current['users']:
-            db.users(dbconnection, q(User).id(user).get().dict())
+        pi_users = current['pi_users'] + self.getAttribute('pi_users')
+        for u in pi_users:
+            user = q(User).id(u).get().first()
+            user = user.merge(dbconnection)
+            db.users(dbconnection, user.dict())
+
+        users = current['users'] + self.getAttribute('users')
+        for u in users:
+            user = q(User).id(u).get().first()
+            user = user.merge(dbconnection)
+            db.users(dbconnection, user.dict())
+
         if errors:
             raise AuthorityException(errors)
         else:
             return True
 
     def delete(self, dbconnection, setup=None):
+        # Get Authority from local DB 
+        # to update the pi_users after Save
+        current = db.get(dbconnection, table='authorities', id=self.id)
+
         result = super(Authority, self).delete(setup)
         errors = result['errors']
         
         db.delete(dbconnection, 'authorities', self.id)
 
-        # Get Authority from local DB 
-        # to update the pi_users after Save
-        current = db.get(dbconnection, table='authorities', id=self.id)
-        for user in current['pi_users']:
-            db.users(dbconnection, q(User).id(user).get().dict())
-        for user in current['users']:
-            db.users(dbconnection, q(User).id(user).get().dict())
+        for u in current['pi_users']:
+            user = q(User).id(u).get().first()
+            user = user.merge(dbconnection)
+            db.users(dbconnection, user.dict())
+        for u in current['users']:
+            user = q(User).id(u).get().first()
+            user = user.merge(dbconnection)
+            db.users(dbconnection, user.dict())
 
         if errors:
             raise AuthorityException(errors)

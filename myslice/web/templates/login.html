@@ -6,14 +6,18 @@
 <div class="container">
     <div class="row">
         <div class="col-sm-4 col-sm-offset-3 logo-image">
-            <img class="img-responsive" src="/static/images/onelab-big.png" alt="OneLab - Future Internet Testbeds" />
+			<a href="/"><img class="img-responsive" src="/static/images/onelab-big.png" alt="OneLab - Future Internet Testbeds" /></a>
         </div>
         <div class="col-sm-3 logo-title">
             <h1>Login</h1>
         </div>
     </div>
-    <div class="row">
-        <div class="col-sm-4 col-sm-offset-3">
+	<div class="row col-sm-5 col-sm-offset-3" style="
+    border-width: 1px;
+    background-color: white;
+    margin-top: 25px;
+    padding-top: 25px;">
+        <div class="col-sm-8 col-sm-offset-2 inputForm" style="padding:25px 0;">
             <div id="login-form" class="login-form">
                 <form method="post">
                     <div className="login-email">
@@ -22,18 +26,26 @@
                     <div className="login-password">
                          <input class="form-control" placeholder="Password" type="password" name="password" />
                     </div>
-                    <div className="login-submit">
-                        <button type="submit" className="btn btn-default">Submit</button>
-                    </div>
+					<div className="login-submit row" class="row" style="padding-top:10px;">
+						<div class="col-sm-4 col-sm-offset-4 inputSubmit">
+						<input type="submit" class="btn btn-default" value="Log In">
+						</div>
+					</div>
+					<div class="row" style="text-align:center;">
+					    <div style="padding-top: 10px;">
+					        <a href='/forgot_password'>Forgot password?</a>
+					    </div>
+					</div>
                 </form>
             </div>
+
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-4 col-sm-offset-3">
-            <a href='/forgot_password'>Forgot password?</a>
-        </div>
-    </div>
+        <div class="col-sm-5 col-sm-offset-3 inputForm" style="padding:25px 0; text-align:center;">
+			Don't have an account? <a href="/registration">Sign Up</a>
+		</div>
+	</div>
     <div class="">
         <div class="col-sm-4 col-sm-offset-3">
             {{ message }}

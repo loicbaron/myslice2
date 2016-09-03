@@ -3,6 +3,7 @@ import actions from '../actions/RegistrationActions';
 import store from '../stores/RegistrationStore';
 import AuthoritiesSelect from './AuthoritiesSelect';
 import EmailInput from './EmailInput';
+import InputText from './InputText';
 import LoadingPanel from './LoadingPanel';
 
 class RegistrationForm extends React.Component {
@@ -22,9 +23,9 @@ class RegistrationForm extends React.Component {
     }
 
     onChange(state) {
+        console.log("changed");
         this.setState(state);
     }
-
     updateAuthority(value) {
         actions.updateAuthority(value);
     }
@@ -32,13 +33,17 @@ class RegistrationForm extends React.Component {
     updateEmail(value) {
         actions.updateEmail(value);
     }
-
-    updateFirstname(event) {
-        actions.updateFirstname(event.target.value);
+    updatePassword(value) {
+        actions.updatePassword(value);
     }
-
-    updateLastname(event) {
-        actions.updateLastname(event.target.value);
+    updateFirstname(value) {
+        actions.updateFirstname(value);
+    }
+    updateLastname(value) {
+        actions.updateLastname(value);
+    }
+    updateTerms(event) {
+        actions.updateTerms(event.target.value);
     }
 
     submitForm(event) {
@@ -49,14 +54,34 @@ class RegistrationForm extends React.Component {
     render() {
         if (this.state.success) {
             return (
-                <div>
-                    Success!
+                <div className="col-sm-6 col-sm-offset-3">
+                    Your request has been sent to a manager.<br/>
+                    You will receive an email as soon as your account will be validated.
                 </div>
             );
         } else {
+            /*
+            Regular Expression for Names (firstname, lastname)
+            ^[a-zA-ZÀ-ÿ]{1}(?!.*([\s\’\'-])\1)[a-zA-ZÀ-ÿ\s\’\'-]{0,50}[a-zA-ZÀ-ÿ]{1}$
 
+
+            Regular Expression for emails
+            ^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$
+
+            */
+
+    	    var emailRegExp = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            var errorMessage = '';
+            if(this.state.errorMessage){
+                errorMessage = <div className="row">
+                    <div className="col-sm-4 col-sm-offset-4 alert alert-danger">
+                    {this.state.errorMessage}
+                    </div>
+                </div>
+            }
             return (
                 <form onSubmit={this.submitForm}>
+                    {errorMessage}
                     <div className="row">
                         <div className="col-sm-4 col-sm-offset-4 inputForm">
                             <AuthoritiesSelect handleChange={this.updateAuthority}/>
@@ -74,31 +99,32 @@ class RegistrationForm extends React.Component {
                         </div>
                     </div>
                     <div className="row">
-                        <div className="col-sm-4 col-sm-offset-4 inputForm">
-                            <EmailInput handleChange={this.updateEmail}/>
-                        </div>
+                        <InputText name="first_name" handleChange={this.updateFirstname} placeholder="Firstname" required={true} message="is required" />
+                    </div>
+                    <div className="row">
+                        <InputText name="last_name" handleChange={this.updateLastname} placeholder="Lastname" required={true} message="is required" />
+                    </div>
+                    <div className="row">
+                    <p>&nbsp;</p>
                     </div>
                     <div className="row">
                         <div className="col-sm-7 col-sm-offset-3">
                             <p className="inputDescription">
                                 Please provide your Email address, it will be your identifier for logging in. <br />
-                                We will also contact you to verify your account and occasionally for important communications.
+                                We will also contact you to verify your account and occasionally for important communications.e
                             </p>
                         </div>
                     </div>
                     <div className="row">
-                        <div className="col-sm-4 col-sm-offset-4 inputForm">
-                            <input onChange={this.updateFirstname} placeholder="First name" type="text" name="firstname"/>
-                        </div>
+                        <InputText name="email" handleChange={this.updateEmail} placeholder="Email address" regex={emailRegExp} message="Invalid email" />
                     </div>
                     <div className="row">
-                        <div className="col-sm-4 col-sm-offset-4 inputForm">
-                            <input onChange={this.updateLastname} placeholder="Last name" type="text" name="lastname"/>
-                        </div>
+                        <InputText name="password" handleChange={this.updatePassword} placeholder="Password" regex=".{8,}$" message="must be at least 8 characters" type="password" />
                     </div>
+
                     <div className="row">
                         <div className="col-sm-4 col-sm-offset-4 inputForm">
-                            <input type="checkbox" name="terms" />&nbsp;&nbsp; I agree to the&nbsp;
+                            <input type="checkbox" name="terms" onChange={this.updateTerms} />&nbsp;&nbsp; I agree to the&nbsp;
                             <a href="#" data-toggle="modal" data-target="#myModal">terms and conditions.</a>
                         </div>
                     </div>

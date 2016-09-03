@@ -4,6 +4,8 @@ import actions from '../actions/SlicesFormActions';
 
 import LoadingPanel from './LoadingPanel';
 
+var ReactDOM = require('react-dom');
+
 class SlicesForm extends React.Component {
 
     constructor(props) {
@@ -16,6 +18,7 @@ class SlicesForm extends React.Component {
     componentDidMount() {
         // store
         store.listen(this.onChange);
+        ReactDOM.findDOMNode(this.refs.nameInput).focus();
     }
 
     componentWillUnmount() {
@@ -62,7 +65,7 @@ class SlicesForm extends React.Component {
                         <div className="col-md-12">
                             <div id="project-form">
                                 <form className="experimentForm" onSubmit={this.handleSubmit}>
-                                <input type="text" placeholder="Name" value={this.state.label} onChange={this.handleLabelChange} />
+                                <input type="text" placeholder="Name" value={this.state.label} onChange={this.handleLabelChange} ref="nameInput" />
                                 <br/>
                                 <div><i><b>Important: </b>quote in your papers</i></div>
                                 <div>Experiments leading to the publication of this paper have been performed using the OneLab Federation of testbeds.</div>

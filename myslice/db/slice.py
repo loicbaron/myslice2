@@ -1,3 +1,5 @@
+from pprint import pprint
+
 from myslicelib.model.slice import Slice as myslicelibSlice
 from myslicelib.query import q
 from myslice.db.activity import Object, ObjectType
@@ -14,6 +16,10 @@ class SliceException(Exception):
 class Slice(myslicelibSlice):
 
     def save(self, dbconnection, setup=None):
+        # Get Slice from local DB 
+        # to update the users after Save
+        current = db.get(dbconnection, table='slices', id=self.id)
+
         result = super(Slice, self).save(setup)
         errors = result['errors']
 
@@ -25,11 +31,15 @@ class Slice(myslicelibSlice):
 
         db.slices(dbconnection, result, self.id)
 
-        # Get Slice from local DB 
-        # to update the users after Save
-        current = db.get(dbconnection, table='slices', id=self.id)
-        for user in current['users']:
-            db.users(dbconnection, q(User).id(user).get().dict())
+        # New Slice created
+        if current is None:
+            current = db.get(dbconnection, table='slices', id=self.id)
+        # XXX We only update the current users in slice, we must also update the Removed users
+        users = current['users'] + self.getAttribute('users')
+        for u in users:
+            user = q(User).id(u).get().first()
+            user = user.merge(dbconnection)
+            db.users(dbconnection, user.dict())
 
         if errors:
             raise SliceException(errors)
@@ -37,16 +47,19 @@ class Slice(myslicelibSlice):
             return True
 
     def delete(self, dbconnection, setup=None):
+        # Get Slice from local DB 
+        # to update the users after Save
+        current = db.get(dbconnection, table='slices', id=self.id)
+
         result = super(Slice, self).delete(setup)
         errors = result['errors']
 
         db.delete(dbconnection, 'slices', self.id)
 
-        # Get Slice from local DB 
-        # to update the users after Save
-        current = db.get(dbconnection, table='slices', id=self.id)
-        for user in current['users']:
-            db.users(dbconnection, q(User).id(user).get().dict())
+        for u in current['users']:
+            user = q(User).id(u).get().first()
+            user = user.merge(dbconnection)
+            db.users(dbconnection, user.dict())
 
         if errors:
             raise SliceException(errors)

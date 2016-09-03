@@ -85,6 +85,7 @@ class settings(object):
     class email(object):
         dirpath = '/myslice/myslice/web/templates/email'
         theme = 'onelab'
+        domain = 'onelan.eu'
         host = 'smtp.gmail.com'
         port = 587
         ssl = True

@@ -4,6 +4,8 @@ import actions from '../actions/ProjectsFormActions';
 
 import LoadingPanel from './LoadingPanel';
 
+var ReactDOM = require('react-dom');
+
 class ProjectsForm extends React.Component {
 
     constructor(props) {
@@ -17,6 +19,7 @@ class ProjectsForm extends React.Component {
     componentDidMount() {
         // store
         store.listen(this.onChange);
+        ReactDOM.findDOMNode(this.refs.nameInput).focus();
     }
 
     componentWillUnmount() {
@@ -104,7 +107,7 @@ class ProjectsForm extends React.Component {
                         <div className="col-md-12">
                             <div id="project-form">
                                 <form className="experimentForm" onSubmit={this.handleSubmit}>
-                                <input type="text" placeholder="Name" value={this.state.label} onChange={this.handleLabelChange} />
+                                <input type="text" placeholder="Name" value={this.state.label} onChange={this.handleLabelChange} ref="nameInput" />
                                 <input type="radio" value={this.state.v_public} checked={this.state.v_public === true } onChange={this.onPublicChanged} /> Public
                                 <input type="radio" value={this.state.v_protected} checked={this.state.v_protected === true } onChange={this.onProtectedChanged} /> Protected
                                 <input type="radio" value={this.state.v_private} checked={this.state.v_private === true } onChange={this.onPrivateChanged} /> Private <br/>

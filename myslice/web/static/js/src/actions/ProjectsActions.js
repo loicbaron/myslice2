@@ -71,6 +71,16 @@ class ProjectsActions {
     showDialog(dialog) {
         return dialog;
     }
+
+    deleteProject(project) {
+        return project
+    }
+    updateDeleteProject(project) {
+        return project
+    }
+    errorDeleteProject(project) {
+        return project
+    }
 }
 
 export default alt.createActions(ProjectsActions);

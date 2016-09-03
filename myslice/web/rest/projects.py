@@ -221,10 +221,43 @@ class ProjectsHandler(Api):
                 }, cls=myJSONEncoder))
 
     @gen.coroutine
-    def delete(self):
+    def delete(self, id, o=None):
         """
         DELETE /projects/<id>
         :return:
         """
         # Check if the user is PI of the Project
-        pass
+        try:
+            p = yield r.table('projects').get(id).run(self.dbconnection)
+            u = yield r.table('users').get(self.current_user['id']).run(self.dbconnection)
+            if not self.current_user['id'] in p['pi_users'] and p['authority'] not in u['pi_authorities']:
+                self.userError("your user has no rights on project: %s" % id)
+                return
+        except Exception:
+            self.userError("not authenticated or project not specified")
+            return
+
+        try:
+            event = Event({
+                'action': EventAction.DELETE,
+                'user': self.current_user['id'],
+                'object': {
+                    'type': ObjectType.PROJECT,
+                    'id': id,
+                }
+            })
+        except AttributeError as e:
+            self.userError("Can't create request", e)
+            return
+        except Exception as e:
+            self.userError("Can't create request", e)
+            return
+        else:
+            result = yield dispatch(self.dbconnection, event)
+
+            self.write(json.dumps(
+                {
+                    "result": "success",
+                    "error": None,
+                    "debug": None
+                }, cls=myJSONEncoder))

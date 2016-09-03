@@ -4,6 +4,7 @@ import Element from './base/Element';
 import ElementTitle from './base/ElementTitle';
 import ElementStatus from './base/ElementStatus';
 import ElementIcon from './base/ElementIcon';
+import ElementDetails from './base/ElementDetails';
 import LogList from './base/LogList';
 import DateTime from './base/DateTime';
 
@@ -15,9 +16,9 @@ class ActivityRow extends React.Component {
 
     label() {
         var object = this.props.activity.object.type.charAt(0) + this.props.activity.object.type.slice(1).toLowerCase();
-        var data = '';
+        var dataType = '';
         if (this.props.activity.data.hasOwnProperty('type')) {
-            data = this.props.activity.data.type.charAt(0) + this.props.activity.data.type.slice(1).toLowerCase();
+            dataType = this.props.activity.data.type.charAt(0) + this.props.activity.data.type.slice(1).toLowerCase();
         }
 
         switch(this.props.activity.action) {
@@ -31,18 +32,22 @@ class ActivityRow extends React.Component {
                 return 'Delete ' + object;
                 break;
             case 'ADD':
-                return 'Add ' + data + ' to ' + object;
+                return 'Add ' + dataType + ' to ' + object;
                 break;
             case 'REMOVE':
-                return 'Remove ' + data + ' from ' + object;
+                return 'Remove ' + dataType + ' from ' + object;
                 break;
         }
     }
-
     render() {
         var object = this.props.activity.object.type.toLowerCase();
         var status = this.props.activity.status.toLowerCase();
 
+        if(Object.keys(this.props.activity.data).length === 0){
+            var data = this.props.activity.object;
+        }else{
+            var data = this.props.activity.data;
+        }
         return (
             <Element element={this.props.activity} type={object}>
                 <ElementStatus status={status} />
@@ -60,6 +65,7 @@ class ActivityRow extends React.Component {
                         <DateTime timestamp={this.props.activity.updated} />
                     </div>
                 </div>
+                <ElementDetails data={data} key={this.props.activity.id} />
                 <LogList log={this.props.activity.log} />
             </Element>
         );

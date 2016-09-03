@@ -24,6 +24,8 @@ def run():
             db.syncResources(r)
 
         except Exception as e:
+            import traceback
+            traceback.print_exc()
             logger.exception("Service does not seem to be available")
 
         logger.info("sleeping")

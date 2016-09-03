@@ -9,8 +9,20 @@ class Dialog extends React.Component {
         };
         this.open = this.open.bind(this);
         this.close = this.close.bind(this);
+        this._handleEscKey = this._handleEscKey.bind(this);
+        this._handleClick = this._handleClick.bind(this);
     }
-
+    _handleClick(event){
+        console.log(event.target);
+        if(event.target.className=="dialog"){
+            this.close();
+        }
+    }
+    _handleEscKey(event){
+        if(event.keyCode == 27){
+            this.close();
+        }
+    }
     open() {
         this.setState({
             closed: false
@@ -27,7 +39,7 @@ class Dialog extends React.Component {
     render() {
         if (!this.props.show) {
             return (
-                <div className="dialog">
+                <div className="dialog" onKeyDown={this._handleEscKey} onClick={this._handleClick} >
                     <div className="dialogClose" onClick={this.close}>
                         <i className="fa fa-close fa-2x fa-fw"></i>
                     </div>

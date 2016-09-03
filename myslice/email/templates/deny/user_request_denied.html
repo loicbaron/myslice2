@@ -9,6 +9,11 @@
 
 <p>You have recently registered as a user to {{ theme }} portal. We are sorry to inform you that a manager of your institution has rejected your request. Please contact the manager of your institution for further information. For any other queries, contact us by replying to this email.</p>
 <p></p>
+<p>Message: 
+	{% for m in event.messages %}
+		{{m['message']}} <br/>
+	{% end %}
+</p>
 <p>We  wish you all the best.</p>
 <p></p>
 <p>Yours sincerely,</p>

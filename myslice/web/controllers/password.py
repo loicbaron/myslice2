@@ -41,6 +41,7 @@ class Index(BaseController):
                 #import traceback
                 #traceback.print_exc()
                 msg = "This link is not valid, please generate a new one."
+                self.render(self.application.templates + "/password_forgot.html", message=msg)
 
         self.render(self.application.templates + "/password.html", message=msg, new_hashing=new_hashing)
 

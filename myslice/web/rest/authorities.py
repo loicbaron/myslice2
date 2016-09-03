@@ -1,5 +1,7 @@
 import json
 
+from pprint import pprint
+
 import rethinkdb as r
 
 from myslice.lib.util import myJSONEncoder
@@ -38,6 +40,8 @@ class AuthoritiesHandler(Api):
                             .run(self.dbconnection)
             while (yield cursor.fetch_next()):
                 authority = yield cursor.next()
+                if authority['name'] is None:
+                    authority['name'] = authority['shortname'].title()
                 response.append(authority)
 
 
@@ -57,6 +61,8 @@ class AuthoritiesHandler(Api):
                             .run(self.dbconnection)
             while (yield cursor.fetch_next()):
                 authority = yield cursor.next()
+                if authority['name'] is None:
+                    authority['name'] = authority['shortname'].title()
                 response.append(authority)
 
         # GET /authorities/(users|projects)
@@ -71,6 +77,8 @@ class AuthoritiesHandler(Api):
                             .run(self.dbconnection)
             while (yield cursor.fetch_next()):
                 item = yield cursor.next()
+                if 'name' in item and item['name'] is None:
+                    item['name'] = item['shortname'].title()
                 response.append(item)
 
         # GET /authorities/<id>/(users|projects)
@@ -81,6 +89,8 @@ class AuthoritiesHandler(Api):
                             .run(self.dbconnection)
             while (yield cursor.fetch_next()):
                 item = yield cursor.next()
+                if 'name' in item and item['name'] is None:
+                    item['name'] = item['shortname'].title()
                 response.append(item)
 
         else:
@@ -126,7 +136,7 @@ class AuthoritiesHandler(Api):
         try:
             event = Event(data)
         except Exception as e:
-            pprint(self.request.body)
+            #pprint(self.request.body)
             import traceback
             traceback.print_exc()
             self.set_status(500)

@@ -1,6 +1,7 @@
+import crypt
 import json
 import jwt
-import crypt
+import re
 
 from hmac import compare_digest as compare_hash
 from email.utils import parseaddr
@@ -267,13 +268,36 @@ class UsersHandler(Api):
             return
 
         if not data['authority']:
-            self.userError("Authority not specified")
+            self.userError("Authority must be specified")
+            return
+
+        if not data['first_name']:
+            self.userError("Firstname must be specified")
+            return
+        if not data['last_name']:
+            self.userError("Lastname must be specified")
             return
 
         if not data['email']:
-            self.userError("Email not specified")
+            self.userError("Email must be specified")
             return
 
+        pattern = "^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$"
+        if not re.match(pattern, data['email']):
+            self.userError("Wrong Email address")
+            return
+
+        if not data['password']:
+            self.userError("Password must be specified")
+            return
+
+        if len(data['password'])<8:
+            self.userError("Password must be at least 8 characters")
+            return
+
+        if not data['terms']:
+            self.userError("Please read and accept the terms and conditions.")
+            return
 
         if not self.get_current_user():
             # usr registration
@@ -428,9 +452,16 @@ class UserTokenHandler(Api):
 
     @gen.coroutine
     def get(self):
+
         admin = self.isAdmin()
-        pi_auth = []
-        current_user_id = self.get_current_user()['id']
+
+        try:
+            current_user_id = self.get_current_user()['id']
+        except Exception as e:
+            self.serverError("unidentified user")
+            return
+       
+        pi_auth = [] 
         
         # if not admin
         if not admin:
@@ -447,6 +478,7 @@ class UserTokenHandler(Api):
                                 secret, algorithm='HS256')
         except Exception as e:
             self.serverError("token encryption failed", e)
+            return
         
         self.finish(token)
 
