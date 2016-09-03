@@ -84,6 +84,11 @@ class SlicesHandler(Api):
             while (yield cursor.fetch_next()):
                 slice = yield cursor.next()
                 response.append(slice)
+        else:
+            self.userError("invalid request")
+            return
+
+        self.finish(json.dumps({'result': response}, cls=myJSONEncoder))
 
     @gen.coroutine
     def post(self, id=None, o=None):
