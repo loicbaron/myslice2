@@ -1,5 +1,5 @@
 import alt from '../alt';
-import actions from '../actions/SlicesActions';
+import actions from '../actions/SliceViewActions';
 import source from '../sources/SlicesSource';
 
 class SlicesStore {
@@ -21,8 +21,7 @@ class SlicesStore {
         });
 
         this.registerAsync(source);
-
-
+        
     }
 
 
