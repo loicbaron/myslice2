@@ -12,8 +12,12 @@ Install
 
 ~~~
     git clone git@gitlab.noc.onelab.eu:onelab/myslice.git
+    sudo pip3.5 install --upgrade pip
     sudo pip3 install -r requirements.txt
     sudo python3.5 setup.py develop
+    cd ~/myslice/myslice/web/static/src
+    sudo npm install
+    webpack
 ~~~
 
 
