@@ -51,18 +51,22 @@ class Index(BaseController):
         else:
             password = post_password
 
-        feed = yield r.table('users') \
-                        .filter({"email": email}) \
-                        .merge(lambda user: {
-                                'slices': r.table('slices') \
-                                            .get_all(r.args(user['slices'])) \
-                                            .pluck(['id', 'hrn',  'name', 'shortname']) \
-                                            .coerce_to('array')
-                        }) \
-                        .run(self.application.dbconnection)
-        yield feed.fetch_next()
-        user = yield feed.next()
-
+        try:
+            print("Controller Login email = %s" % email)
+            feed = yield r.table('users') \
+                            .filter({"email": email}) \
+                            .merge(lambda user: {
+                                    'slices': r.table('slices') \
+                                                .get_all(r.args(user['slices'])) \
+                                                .pluck(['id', 'hrn',  'name', 'shortname']) \
+                                                .coerce_to('array')
+                            }) \
+                            .run(self.application.dbconnection)
+            yield feed.fetch_next()
+            user = yield feed.next()
+        except Exception as e:
+            self.render(self.application.templates + "/login.html", message="user not found")
+            return
         ##
         # User password is not set
         # TODO: we redirect to a reset password page
