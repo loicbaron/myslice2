@@ -14,11 +14,15 @@ class ProjectsRow extends React.Component {
     render() {
         var label = this.props.project.name || this.props.project.shortname;
         var authority = this.props.project.authority.name || this.props.project.authority.shortname;
-        var button = '';
+        var button;
+        var minHeight;
+        var topPosition;
         if(this.props.removeProject){
-            button = <DeleteProject project={this.props.project} />
+            minHeight = {'minHeight':'100px'};
+            topPosition = {'top':'60px'};
+            button = <DeleteProject project={this.props.project} topPosition={topPosition} />
         }
-        var users = '';
+        var users;
         if(this.props.project.pi_users){
             users = <span className="elementLabel">Users {this.props.project.pi_users.length} </span>
         }
@@ -42,18 +46,18 @@ class ProjectsRow extends React.Component {
         if(authority){
             authorityElement = <span className="elementLabel">Managed by {authority}</span>
         }
+        var projectDetails;
+        if(users || slices || authorityElement){
+            projectDetails = <div className="elementDetail">{users}&nbsp;&nbsp;{slices}<br/>{authorityElement}</div>
+        }
         return (
-            <Element element={this.props.project} type="project" setCurrent={this.props.setCurrent} current={this.props.current}>
+            <Element element={this.props.project} type="project" setCurrent={this.props.setCurrent} current={this.props.current} minHeight={minHeight}>
                 <ElementStatus status={this.props.project.status}/>
                 <ElementIcon icon="project"/>
                 <ElementTitle label={label} detail={this.props.project.shortname}/>
                 <ElementId id={this.props.project.id}/>
                 {button}
-                <div className="elementDetail">
-                    {users}&nbsp;&nbsp;&nbsp;&nbsp;{slices}
-                    <br />
-                    {authorityElement}
-                </div>
+                {projectDetails}
                 <div className="row elementDate">
                     {created}
                     {enabled}

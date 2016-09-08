@@ -2,6 +2,7 @@ import React from 'react';
 
 import List from './base/List';
 import Title from './base/Title';
+import AuthoritiesList from'./AuthoritiesList';
 import ProjectsList from'./ProjectsList';
 
 import AuthorityName from './AuthorityName';
@@ -30,12 +31,17 @@ class SettingsRights extends React.Component {
         if(this.props.profile.projects){
             projectsElement = <div><Title title="Projects" /><ProjectsList projects={this.props.profile.projects} /></div>
         }
+        var authoritiesElement;
+        if(this.props.profile.pi_authorities){
+            authoritiesElement = <div><Title title="Authorities" /><AuthoritiesList authorities={this.props.profile.pi_authorities} /></div>
+        }
         return (
             <div className="container-fluid">
                 <div className = "row">
                     <div className="col-md-8 col-md-offset-2">
                         <div className="settings-group profileAvatar">
                             <Avatar className="avatar" email={this.props.profile.email} name={name} round={true} />
+                            {authoritiesElement}
                             {projectsElement}
                         </div>
                     </div>

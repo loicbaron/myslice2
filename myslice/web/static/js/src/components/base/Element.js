@@ -4,6 +4,10 @@ const Element = (props) => {
 
     var className = 'elementBox';
     var arrow = null;
+    var style;
+    if(props.minHeight){
+        style=props.minHeight;
+    }
 
     if (props.type) {
         className += ' ' + props.type;
@@ -18,14 +22,14 @@ const Element = (props) => {
         }
 
         return (
-            <li className={className} onClick={() => props.setCurrent(props.element)}>
+            <li className={className} onClick={() => props.setCurrent(props.element)} style={style}>
                 {props.children}
                 {arrow}
             </li>
         );
     } else {
         return (
-            <li className={className}>
+            <li className={className} style={style}>
                 {props.children}
             </li>
         );
