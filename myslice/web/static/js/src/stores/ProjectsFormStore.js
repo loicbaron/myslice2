@@ -17,7 +17,7 @@ class ProjectsFormStore {
         this.description = '';
         this.start_date = df;
         this.end_date = '';
-
+        this.message = {}
 
         this.bindListeners({
             updateLabel: actions.UPDATE_LABEL,
@@ -87,13 +87,14 @@ class ProjectsFormStore {
     }
 
     submitSuccess(response) {
-
-        this.message = response.data.error;
+        console.log(response);
+        this.message['type'] = "success";
+        this.message['msg'] = "Project "+this.name+" has been created.";
     }
 
     submitError(response) {
-
-        this.message = response.data.error;
+        this.message['type'] = "error";
+        this.message['msg'] = response.data.error;
     }
 }
 
