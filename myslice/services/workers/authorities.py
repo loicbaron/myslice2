@@ -116,14 +116,17 @@ def sync(lock):
     while True:
         # acquires lock
         with lock:
-            logger.info("Worker users starting period synchronization")
+            logger.info("Worker authorities starting period synchronization")
 
             authorities = q(Authority).get()
 
             """
             update local slice table
             """
-            lauthorities = db.authorities(dbconnection, authorities.dict())
+            if len(authorities)>0:
+                lauthorities = db.authorities(dbconnection, authorities.dict())
+            else:
+                logger.warning("Query authorities is empty, check myslicelib and the connection with SFA Registry")
 
             for ls in lauthorities :
                 # add status if not present and update on db

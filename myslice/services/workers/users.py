@@ -118,7 +118,10 @@ def sync(lock):
             """
             update local user table
             """
-            lusers = db.users(dbconnection, users.dict())
+            if len(users)>0:
+                lusers = db.users(dbconnection, users.dict())
+            else:
+                logger.warning("Query users is empty, check myslicelib and the connection with SFA Registry")
 
             for ls in lusers :
                 # add status if not present and update on db

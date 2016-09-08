@@ -127,7 +127,10 @@ def sync(lock):
             p = q(Project).get()
 
             # update local projects table
-            lprojects = db.projects(dbconnection, p.dict())
+            if len(projects)>0:
+                lprojects = db.projects(dbconnection, p.dict())
+            else:
+                logger.warning("Query projects is empty, check myslicelib and the connection with SFA Registry")
 
             for ls in lprojects :
                 # add status if not present and update on db

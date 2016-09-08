@@ -168,7 +168,12 @@ def sync(lock):
             slices = q(Slice).get()
 
             # update local slice table
-            lslices = db.slices(dbconnection, slices.dict())
+            if len(slices)>0:
+                lslices = db.slices(dbconnection, slices.dict())
+            else:
+                logger.warning("Query slices is empty, check myslicelib and the connection with SFA Registry")
+
+
 
             for ls in lslices :
                 # add status if not present and update on db
