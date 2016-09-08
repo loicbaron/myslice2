@@ -18,6 +18,30 @@ class ProjectsRow extends React.Component {
         if(this.props.removeProject){
             button = <DeleteProject project={this.props.project} />
         }
+        var users = '';
+        if(this.props.project.pi_users){
+            users = <span className="elementLabel">Users {this.props.project.pi_users.length} </span>
+        }
+        var slices;
+        if(this.props.project.slices){
+            slices = <span className="elementLabel">Slices {this.props.project.slices.length}</span>
+        }
+        var created;
+        if(this.props.project.created){
+            created = <div className="col-sm-3"><DateTime label="Created" timestamp={this.props.project.created}/></div>
+        }
+        var enabled;
+        if(this.props.project.enabled){
+            created = <div className="col-sm-3"><DateTime label="Enabled" timestamp={this.props.project.enabled}/></div>
+        }
+        var updated;
+        if(this.props.project.updated){
+            created = <div className="col-sm-3"><DateTime label="Updated" timestamp={this.props.project.updated}/></div>
+        }
+        var authorityElement;
+        if(authority){
+            authorityElement = <span className="elementLabel">Managed by {authority}</span>
+        }
         return (
             <Element element={this.props.project} type="project" setCurrent={this.props.setCurrent} current={this.props.current}>
                 <ElementStatus status={this.props.project.status}/>
@@ -26,22 +50,14 @@ class ProjectsRow extends React.Component {
                 <ElementId id={this.props.project.id}/>
                 {button}
                 <div className="elementDetail">
-                    <span className="elementLabel">Users</span> {this.props.project.pi_users.length}
-                    &nbsp;&nbsp;&nbsp;&nbsp;
-                    <span className="elementLabel">Slices</span> {this.props.project.slices.length}
+                    {users}&nbsp;&nbsp;&nbsp;&nbsp;{slices}
                     <br />
-                    <span className="elementLabel">Managed by</span> {authority}
+                    {authorityElement}
                 </div>
                 <div className="row elementDate">
-                    <div className="col-sm-3">
-                        <DateTime label="Created" timestamp={this.props.project.created}/>
-                    </div>
-                    <div className="col-sm-3">
-                        <DateTime label="Enabled" timestamp={this.props.project.enabled}/>
-                    </div>
-                    <div className="col-sm-3">
-                        <DateTime label="Updated" timestamp={this.props.project.updated}/>
-                    </div>
+                    {created}
+                    {enabled}
+                    {updated}
                 </div>
             </Element>
         );
