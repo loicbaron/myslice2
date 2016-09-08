@@ -170,22 +170,20 @@ def sync(lock):
             # update local slice table
             if len(slices)>0:
                 lslices = db.slices(dbconnection, slices.dict())
+
+                for ls in lslices :
+                    # add status if not present and update on db
+                    if not 'status' in ls:
+                        ls['status'] = Status.ENABLED
+                        ls['enabled'] = format_date()
+                        db.slices(dbconnection, ls)
+
+                    if not slices.has(ls['id']) and ls['status'] is not Status.PENDING:
+                        # delete slices that have been deleted elsewhere
+                        db.delete(dbconnection, 'slices', ls['id'])
+                        logger.info("Slice {} deleted".format(ls['id']))
             else:
                 logger.warning("Query slices is empty, check myslicelib and the connection with SFA Registry")
-
-
-
-            for ls in lslices :
-                # add status if not present and update on db
-                if not 'status' in ls:
-                    ls['status'] = Status.ENABLED
-                    ls['enabled'] = format_date()
-                    db.slices(dbconnection, ls)
-
-                if not slices.has(ls['id']) and ls['status'] is not Status.PENDING:
-                    # delete slices that have been deleted elsewhere
-                    db.delete(dbconnection, 'slices', ls['id'])
-                    logger.info("Slice {} deleted".format(ls['id']))
 
             for slice in slices:
                 if len(slice.users) > 0:

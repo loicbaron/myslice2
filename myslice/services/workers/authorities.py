@@ -125,22 +125,19 @@ def sync(lock):
             """
             if len(authorities)>0:
                 lauthorities = db.authorities(dbconnection, authorities.dict())
+                for ls in lauthorities :
+                    # add status if not present and update on db
+                    if not 'status' in ls:
+                        ls['status'] = Status.ENABLED
+                        ls['enabled'] = format_date()
+                        db.authorities(dbconnection, ls)
+
+                    if not authorities.has(ls['id']) and ls['status'] is not Status.PENDING:
+                        # delete resourc that have been deleted elsewhere
+                        db.delete(dbconnection, 'authorities', ls['id'])
+                        logger.info("Authority {} deleted".format(ls['id']))
             else:
                 logger.warning("Query authorities is empty, check myslicelib and the connection with SFA Registry")
-
-            for ls in lauthorities :
-                # add status if not present and update on db
-                if not 'status' in ls:
-                    ls['status'] = Status.ENABLED
-                    ls['enabled'] = format_date()
-                    db.authorities(dbconnection, ls)
-
-                if not authorities.has(ls['id']) and ls['status'] is not Status.PENDING:
-                    # delete resourc that have been deleted elsewhere
-                    db.delete(dbconnection, 'authorities', ls['id'])
-                    logger.info("Authority {} deleted".format(ls['id']))
-
- 
 
             logger.info("Worker authorities finished period synchronization") 
         
