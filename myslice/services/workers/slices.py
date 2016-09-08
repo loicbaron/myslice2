@@ -126,6 +126,8 @@ def events_run(lock, qSliceEvents):
                     # If an AM sends an Error it is not blocking
                     if event.creatingObject() or event.updatingObject() or event.deletingObject():
                         for err in e.stack:
+                            print("DEBUG services worker slices")
+                            pprint(err)
                             if err['type'] == 'Reg':
                                 event.setError()
                                 break
@@ -138,7 +140,10 @@ def events_run(lock, qSliceEvents):
                     # if One AM succeeded -> Warning
                     else:
                         # XXX TO BE REFINED
-                        event.setError()
+                        print("DEBUG services worker slices")
+                        pprint(e.stack)
+                        event.setWarning()
+                        #event.setError()
 
                 except Exception as e:
                     import traceback
@@ -146,10 +151,11 @@ def events_run(lock, qSliceEvents):
                     logger.error("Problem with event: {}".format(e))
                     event.logError(str(e))
                     event.setError()
-                if isSuccess:
-                    event.setSuccess()
                 else:
-                    event.setError()
+                    if isSuccess:
+                        event.setSuccess()
+                    else:
+                        event.setError()
                 db.dispatch(dbconnection, event)
 
 def sync(lock):

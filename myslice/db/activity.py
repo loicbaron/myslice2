@@ -547,8 +547,8 @@ class Event(Dict):
         if not self.id:
             raise Exception('Missing required Id')
 
-        if not self.isRunning():
-            raise Exception('Event must be in RUNNING state before SUCCESS')
+        #if not self.isRunning():
+        #    raise Exception('Event must be in RUNNING state before SUCCESS')
 
         self.status = EventStatus.SUCCESS
 
