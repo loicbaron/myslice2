@@ -1,0 +1,101 @@
+#!/bin/sh
+#
+# (c) 2016 Radomir Klacza <radomir.klacza@lip6.fr>
+
+### BEGIN INIT INFO
+# Provides:          myslice
+# Required-Start: rethinkdb
+# Required-Stop: rethinkdb
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: This starts the myslice services.
+# Description:       needs rethinkdb
+### END INIT INFO
+
+. /lib/lsb/init-functions
+
+DIR=/home/radomir/myslice/myslice/bin
+DAEMON=$DIR/myslice-web
+DAEMON_NAME=myslice-web
+
+# Add any command line options for your daemon here
+DAEMON_OPTS=""
+
+# This next line determines what user the script runs as.
+DAEMON_USER=root
+
+# The process ID of the script when it runs is stored here:
+PIDFILE=/var/run/$DAEMON_NAME.pid
+
+do_start()
+{
+    log_daemon_msg "Starting $DAEMON_NAME service"
+    start-stop-daemon --start --background --pidfile $PIDFILE --make-pidfile \
+        --user $DAEMON_USER --chuid $DAEMON_USER \
+        --startas /bin/bash -- -c "exec $DAEMON $DAEMON_OPTS >> /var/log/myslice-web-daemon.log 2>&1"
+    log_end_msg $?
+}
+
+do_stop()
+{
+    log_daemon_msg "Stopping $DAEMON_NAME service"
+    start-stop-daemon --stop --pidfile $PIDFILE --retry 10
+    log_end_msg $?
+
+}
+
+do_status()
+{
+    status_of_proc "$DAEMON_NAME" "$DAEMON" && exit 0 || exit $?
+}
+
+case "$1" in
+
+    start)
+	if [ -e $PIDFILE ]; then
+		status_of_proc -p $PIDFILE $DAEMON "$DAEMON_NAME process" && status="0" || status="$?"
+		# If the status is SUCCESS then don't need to start again.
+   		if [ $status != "0" ]; then
+			log_daemon_msg "PID for $DAEMON_NAME present but daemon not runing, removing PID file: $PIDFILE "
+			rm -f $PIDFILE
+    		exit # Exit
+		fi
+  	else 
+        	do_start
+	fi
+        ;;
+
+    stop)
+	if [ -e $PIDFILE ]; then
+                status_of_proc -p $PIDFILE $DAEMON "$DAEMON_NAME process" && status="0" || status="$?"
+                # If the status is SUCCESS then don't need to start again.
+                if [ $status = "0" ]; then
+			do_stop
+                        exit # Exit
+                else
+			log_daemon_msg "PID file found: $PIDFILE, but process not runing, removing PIDFILE"
+			rm -f $PIDFILE
+			exit
+		fi
+        else
+               log_daemon_msg "PID file: $PIDFILE not found, exiting" 
+        fi
+	;;
+
+    restart|reload|force-reload)
+        do_stop
+        do_start
+        ;;
+
+    status)
+	do_status
+        ;;
+
+    *)
+        echo "Usage: /etc/init.d/myslice-web {start|stop|restart|status}"
+        exit 1
+        ;;
+
+esac
+
+exit 0

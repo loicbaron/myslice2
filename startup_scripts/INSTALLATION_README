@@ -1,0 +1,20 @@
+INSTALLATION:
+
+1. edit each file and update DIR so it will point to the point of your installation
+2. check variable $USER
+3. copy files to /etc/init.d/ (cp myslice-* /etc/init.d/
+4. sudo chown root:root /etc/init.d/myslice-*
+5. sudo chmod +x /etc/init.d/myslice-*
+6. touch /etc/default/myslice-web /etc/default/myslice-live /etc/default/myslice-monitor /etc/default/myslice-server
+
+
+USAGE:
+
+service myslice-web {stop|start|status}
+
+add to system startup:
+
+update-rc.d myslice-web defaults  99 19
+update-rc.d myslice-server defaults  99 19
+update-rc.d myslice-monitor defaults  99 19
+update-rc.d myslice-live defaults  99 19
