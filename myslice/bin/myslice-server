@@ -25,7 +25,7 @@ from myslice.services.emails import run as serviceEmails
 logger = logging.getLogger("myslice-sync")
 
 def receive_signal(signum, stack):
-    logger.info('Received signal %s', signum)
+    logger.info('Received signa l %s', signum)
     raise SystemExit('Exiting')
 
 
