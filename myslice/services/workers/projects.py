@@ -127,19 +127,21 @@ def sync(lock):
             p = q(Project).get()
 
             # update local projects table
-            lprojects = db.projects(dbconnection, p.dict())
+            if len(p)>0:
+                lprojects = db.projects(dbconnection, p.dict())
+                for ls in lprojects :
+                    # add status if not present and update on db
+                    if not 'status' in ls:
+                        ls['status'] = Status.ENABLED
+                        ls['enabled'] = format_date()
+                        db.projects(dbconnection, ls)
 
-            for ls in lprojects :
-                # add status if not present and update on db
-                if not 'status' in ls:
-                    ls['status'] = Status.ENABLED
-                    ls['enabled'] = format_date()
-                    db.projects(dbconnection, ls)
-
-                if not p.has(ls['id']) and ls['status'] is not Status.PENDING:
-                    # delete projects that have been deleted elsewhere
-                    db.delete(dbconnection, 'projects', ls['id'])
-                    logger.info("Project {} deleted".format(ls['id']))
+                    if not p.has(ls['id']) and ls['status'] is not Status.PENDING:
+                        # delete projects that have been deleted elsewhere
+                        db.delete(dbconnection, 'projects', ls['id'])
+                        logger.info("Project {} deleted".format(ls['id']))
+            else:
+                logger.warning("Query projects is empty, check myslicelib and the connection with SFA Registry")
 
         # sleep
         time.sleep(86400)

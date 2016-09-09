@@ -118,21 +118,22 @@ def sync(lock):
             """
             update local user table
             """
-            lusers = db.users(dbconnection, users.dict())
+            if len(users)>0:
+                lusers = db.users(dbconnection, users.dict())
 
-            for ls in lusers :
-                # add status if not present and update on db
-                if not 'status' in ls:
-                    ls['status'] = Status.ENABLED
-                    ls['enabled'] = format_date()
-                    db.users(dbconnection, ls)
+                for ls in lusers :
+                    # add status if not present and update on db
+                    if not 'status' in ls:
+                        ls['status'] = Status.ENABLED
+                        ls['enabled'] = format_date()
+                        db.users(dbconnection, ls)
 
-                if not users.has(ls['id']) and ls['status'] is not Status.PENDING:
-                    # delete resourc that have been deleted elsewhere
-                    db.delete(dbconnection, 'users', ls['id'])
-                    logger.info("User {} deleted".format(ls['id']))
-
- 
+                    if not users.has(ls['id']) and ls['status'] is not Status.PENDING:
+                        # delete resourc that have been deleted elsewhere
+                        db.delete(dbconnection, 'users', ls['id'])
+                        logger.info("User {} deleted".format(ls['id']))
+            else:
+                logger.warning("Query users is empty, check myslicelib and the connection with SFA Registry")
 
             logger.info("Worker users finished period synchronization") 
         

@@ -34,22 +34,25 @@ def sync(lock):
             logger.info("Worker resources starting synchronization")
 
             # MySliceLib Query Slices
-            p = q(Resource).get()
+            r = q(Resource).get()
 
             # update local resources table
-            lresources = db.resources(dbconnection, p.dict())
+            if len(slices)>0:
+                lresources = db.resources(dbconnection, r.dict())
 
-            for ls in lresources :
-                # add status if not present and update on db
-                if not 'status' in ls:
-                    ls['status'] = Status.ENABLED
-                    ls['enabled'] = format_date()
-                    db.resources(dbconnection, ls)
+                for ls in lresources :
+                    # add status if not present and update on db
+                    if not 'status' in ls:
+                        ls['status'] = Status.ENABLED
+                        ls['enabled'] = format_date()
+                        db.resources(dbconnection, ls)
 
-                if not p.has(ls['id']) and ls['status'] is not Status.PENDING:
-                    # delete resources that have been deleted elsewhere
-                    db.delete(dbconnection, 'resources', ls['id'])
-                    logger.info("Project {} deleted".format(ls['id']))
+                    if not r.has(ls['id']) and ls['status'] is not Status.PENDING:
+                        # delete resources that have been deleted elsewhere
+                        db.delete(dbconnection, 'resources', ls['id'])
+                        logger.info("Project {} deleted".format(ls['id']))
+            else:
+                logger.warning("Query resources is empty, check myslicelib and the connection with SFA AMs")
 
         # sleep
         time.sleep(86400)

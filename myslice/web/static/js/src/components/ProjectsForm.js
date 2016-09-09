@@ -2,6 +2,8 @@ import React from 'react';
 import store from '../stores/ProjectsFormStore';
 import actions from '../actions/ProjectsFormActions';
 
+import ElementMessage from './base/ElementMessage';
+
 import LoadingPanel from './LoadingPanel';
 
 var ReactDOM = require('react-dom');
@@ -100,41 +102,49 @@ class ProjectsForm extends React.Component {
     }
 
     render() {
-        return (
-            <div className="p-view-body">
-                <div className="container-fluid">
-                    <div className="row">
-                        <div className="col-md-12">
-                            <div id="project-form">
-                                <form className="experimentForm" onSubmit={this.handleSubmit}>
-                                <input type="text" placeholder="Name" value={this.state.label} onChange={this.handleLabelChange} ref="nameInput" />
-                                <input type="radio" value={this.state.v_public} checked={this.state.v_public === true } onChange={this.onPublicChanged} /> Public
-                                <input type="radio" value={this.state.v_protected} checked={this.state.v_protected === true } onChange={this.onProtectedChanged} /> Protected
-                                <input type="radio" value={this.state.v_private} checked={this.state.v_private === true } onChange={this.onPrivateChanged} /> Private <br/>
+        console.log(this.message);
+        console.log(this.state.message);
+        if(this.state.message && Object.keys(this.state.message).length>0){
+            return(
+                <div>
+                    <br/>
+                    <ElementMessage message={this.state.message} />
+                </div>
+            );
+        }else{
+            return (
+                <div className="p-view-body">
+                    <div className="container-fluid">
+                        <div className="row">
+                            <div className="col-md-12">
+                                <div id="project-form">
+                                    <form className="experimentForm" onSubmit={this.handleSubmit}>
+                                    <input type="text" placeholder="Name" value={this.state.label} onChange={this.handleLabelChange} ref="nameInput" />
+                                    <input type="radio" value={this.state.v_public} checked={this.state.v_public === true } onChange={this.onPublicChanged} /> Public
+                                    <input type="radio" value={this.state.v_protected} checked={this.state.v_protected === true } onChange={this.onProtectedChanged} /> Protected
+                                    <input type="radio" value={this.state.v_private} checked={this.state.v_private === true } onChange={this.onPrivateChanged} /> Private <br/>
 
-                                <input type="text" placeholder="URL" value={this.state.url} onChange={this.handleUrlChange} /><br/>
-                                <textarea name="description" placeholder="Describe your project in a few words..." value={this.state.description} onChange={this.handleDescriptionChange} /><br/>
-                                Start: <input type="text" placeholder="yyyy-mm-dd hh:mm" value={this.state.start_date} onChange={this.handleStartDateChange} />
-                                End: <input type="text" placeholder="yyyy-mm-dd hh:mm" value={this.state.end_date} onChange={this.handleEndDateChange} /><br/>
-                                <br/>
-                                <div><i><b>Important: </b>quote in your papers</i></div>
-                                <div>Experiments leading to the publication of this paper have been performed using the OneLab Federation of testbeds.</div>
-                                <br/>
-                                <button className="large" type="submit" value="Save">
-                                <i className="fa fa-floppy-o" aria-hidden="true"></i> Save
-                                </button>
-                                </form>
-                                <div className="">
-                                    {this.state.message}
+                                    <input type="text" placeholder="URL" value={this.state.url} onChange={this.handleUrlChange} /><br/>
+                                    <textarea name="description" placeholder="Describe your project in a few words..." value={this.state.description} onChange={this.handleDescriptionChange} /><br/>
+                                    Start: <input type="text" placeholder="yyyy-mm-dd hh:mm" value={this.state.start_date} onChange={this.handleStartDateChange} />
+                                    End: <input type="text" placeholder="yyyy-mm-dd hh:mm" value={this.state.end_date} onChange={this.handleEndDateChange} /><br/>
+                                    <br/>
+                                    <div><i><b>Important: </b>quote in your papers</i></div>
+                                    <div>Experiments leading to the publication of this paper have been performed using the OneLab Federation of testbeds.</div>
+                                    <br/>
+                                    <button className="large" type="submit" value="Save">
+                                    <i className="fa fa-floppy-o" aria-hidden="true"></i> Save
+                                    </button>
+                                    </form>
+                                    <LoadingPanel show={this.state.loading} />
                                 </div>
-                                <LoadingPanel show={this.state.loading} />
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-        );
+            );
+        }
     }
 }
 
