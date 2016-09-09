@@ -41,7 +41,7 @@ do_stop()
     log_daemon_msg "Stopping $DAEMON_NAME service"
     start-stop-daemon --stop --pidfile $PIDFILE --signal 2 --retry 10
     log_end_msg $?
-
+    rm -f $PIDFILE
 }
 
 do_status()

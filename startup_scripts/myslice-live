@@ -41,7 +41,7 @@ do_stop()
     log_daemon_msg "Stopping $DAEMON_NAME service"
     start-stop-daemon --stop --pidfile $PIDFILE --retry 10
     log_end_msg $?
-
+    rm -f $PIDFILE
 }
 
 do_status()
@@ -66,12 +66,13 @@ case "$1" in
         ;;
 
     stop)
-	if [ -e $PIDFILE ]; then
+	    if [ -e $PIDFILE ]; then
                 status_of_proc -p $PIDFILE $DAEMON "$DAEMON_NAME process" && status="0" || status="$?"
                 # If the status is SUCCESS then don't need to start again.
                 if [ $status = "0" ]; then
-			do_stop
-                        exit # Exit
+			    do_stop
+
+                exit # Exit
                 else
 			log_daemon_msg "PID file found: $PIDFILE, but process not runing, removing PIDFILE"
 			rm -f $PIDFILE
