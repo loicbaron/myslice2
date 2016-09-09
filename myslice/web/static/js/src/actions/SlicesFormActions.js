@@ -34,6 +34,10 @@ class SlicesFormActions {
         this.loading(false);
         return response;
     }
+
+    initComponent() {
+        return true;
+    }
 }
 
 export default alt.createActions(SlicesFormActions);
