@@ -26,6 +26,7 @@ from myslice.web.rest.projects import ProjectsHandler
 from myslice.web.rest.slices import SlicesHandler
 from myslice.web.rest.users import UsersHandler, ProfileHandler, LoginHandler, UserTokenHandler
 from myslice.web.rest.resources import ResourcesHandler
+from myslice.web.rest.leases import LeasesHandler
 from myslice.web.rest.password import PasswordHandler
 
 from myslice.web.rest.activity import ActivityHandler
@@ -156,6 +157,8 @@ class Application(web.Application):
 
             web.url(r'/api/v1/resources$', ResourcesHandler),
             web.url(r'/api/v1/resources/()$', ResourcesHandler),
+
+            web.url(r'/api/v1/leases$', LeasesHandler),
 
             web.url(r'/api/v1/profile$', ProfileHandler),
             
