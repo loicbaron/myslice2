@@ -34,10 +34,10 @@ def sync(lock):
             logger.info("Worker leases starting synchronization")
 
             # MySliceLib Query Slices
-            p = q(Lease).get()
+            l = q(Lease).get()
 
             # update local leases table
-            lleases = db.leases(dbconnection, p.dict())
+            lleases = db.leases(dbconnection, l.dict())
 
             for ls in lleases :
                 # add status if not present and update on db
@@ -46,7 +46,7 @@ def sync(lock):
                     ls['enabled'] = format_date()
                     db.leases(dbconnection, ls)
 
-                if not p.has(ls['id']) and ls['status'] is not Status.PENDING:
+                if not l.has(ls['id']) and ls['status'] is not Status.PENDING:
                     # delete leases that have been deleted elsewhere
                     db.delete(dbconnection, 'leases', ls['id'])
                     logger.info("Project {} deleted".format(ls['id']))

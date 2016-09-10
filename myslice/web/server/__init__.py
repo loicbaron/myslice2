@@ -157,7 +157,7 @@ class Application(web.Application):
 
             web.url(r'/api/v1/resources$', ResourcesHandler),
             web.url(r'/api/v1/resources/()$', ResourcesHandler),
-
+            # leases
             web.url(r'/api/v1/leases$', LeasesHandler),
 
             web.url(r'/api/v1/profile$', ProfileHandler),
