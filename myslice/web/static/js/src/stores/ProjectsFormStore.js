@@ -5,21 +5,8 @@ import actions from '../actions/ProjectsFormActions';
 class ProjectsFormStore {
 
     constructor() {
-        var d = new Date();
-        var df = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()+" "+d.getHours()+":"+ d.getMinutes()+":"+d.getSeconds()
-        this.label = '';
-        this.name = '';
-        this.authority = '';
-        this.v_public = true;
-        this.v_protected = false;
-        this.v_private = false;
-        this.url = '';
-        this.description = '';
-        this.start_date = df;
-        this.end_date = '';
-
-
         this.bindListeners({
+            initComponent: actions.INIT_COMPONENT,
             updateLabel: actions.UPDATE_LABEL,
             updateName: actions.UPDATE_NAME,
             updateAuthority: actions.UPDATE_AUTHORITY,
@@ -36,8 +23,23 @@ class ProjectsFormStore {
             submitSuccess: actions.SUBMIT_SUCCESS,
             submitError: actions.SUBMIT_ERROR,
         });
-
+        this.initComponent();
         this.registerAsync(source);
+    }
+    initComponent(){
+        var d = new Date();
+        var df = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()+" "+d.getHours()+":"+ d.getMinutes()+":"+d.getSeconds()
+        this.label = '';
+        this.name = '';
+        this.authority = '';
+        this.v_public = true;
+        this.v_protected = false;
+        this.v_private = false;
+        this.url = '';
+        this.description = '';
+        this.start_date = df;
+        this.end_date = '';
+        this.message = {};
     }
     normaliseLabel(label){
         this.name = label;
@@ -87,13 +89,13 @@ class ProjectsFormStore {
     }
 
     submitSuccess(response) {
-
-        this.message = response.data.error;
+        this.message['type'] = "success";
+        this.message['msg'] = "Project "+this.name+" has been created.";
     }
 
     submitError(response) {
-
-        this.message = response.data.error;
+        this.message['type'] = "error";
+        this.message['msg'] = response.data.error;
     }
 }
 

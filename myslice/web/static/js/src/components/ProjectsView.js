@@ -93,7 +93,7 @@ class ProjectsView extends React.Component {
                                     <Title title="New Slice" />
                                 </DialogHeader>
                                 <DialogBody>
-                                    <SlicesForm project={this.state.current.project} />
+                                    <SlicesForm project={this.state.current.project} close={this.closeDialog} />
                                 </DialogBody>
                             </DialogPanel>
                         </Dialog>;
@@ -105,7 +105,7 @@ class ProjectsView extends React.Component {
                                     <Title title="New Project" />
                                 </DialogHeader>
                                 <DialogBody>
-                                    <ProjectsForm />
+                                    <ProjectsForm close={this.closeDialog} />
                                 </DialogBody>
                             </DialogPanel>
                         </Dialog>;

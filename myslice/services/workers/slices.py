@@ -126,6 +126,8 @@ def events_run(lock, qSliceEvents):
                     # If an AM sends an Error it is not blocking
                     if event.creatingObject() or event.updatingObject() or event.deletingObject():
                         for err in e.stack:
+                            print("DEBUG services worker slices")
+                            pprint(err)
                             if err['type'] == 'Reg':
                                 event.setError()
                                 break
@@ -138,7 +140,10 @@ def events_run(lock, qSliceEvents):
                     # if One AM succeeded -> Warning
                     else:
                         # XXX TO BE REFINED
-                        event.setError()
+                        print("DEBUG services worker slices")
+                        pprint(e.stack)
+                        event.setWarning()
+                        #event.setError()
 
                 except Exception as e:
                     import traceback
@@ -146,10 +151,11 @@ def events_run(lock, qSliceEvents):
                     logger.error("Problem with event: {}".format(e))
                     event.logError(str(e))
                     event.setError()
-                if isSuccess:
-                    event.setSuccess()
                 else:
-                    event.setError()
+                    if isSuccess:
+                        event.setSuccess()
+                    else:
+                        event.setError()
                 db.dispatch(dbconnection, event)
 
 def sync(lock):
@@ -168,19 +174,22 @@ def sync(lock):
             slices = q(Slice).get()
 
             # update local slice table
-            lslices = db.slices(dbconnection, slices.dict())
+            if len(slices)>0:
+                lslices = db.slices(dbconnection, slices.dict())
 
-            for ls in lslices :
-                # add status if not present and update on db
-                if not 'status' in ls:
-                    ls['status'] = Status.ENABLED
-                    ls['enabled'] = format_date()
-                    db.slices(dbconnection, ls)
+                for ls in lslices :
+                    # add status if not present and update on db
+                    if not 'status' in ls:
+                        ls['status'] = Status.ENABLED
+                        ls['enabled'] = format_date()
+                        db.slices(dbconnection, ls)
 
-                if not slices.has(ls['id']) and ls['status'] is not Status.PENDING:
-                    # delete slices that have been deleted elsewhere
-                    db.delete(dbconnection, 'slices', ls['id'])
-                    logger.info("Slice {} deleted".format(ls['id']))
+                    if not slices.has(ls['id']) and ls['status'] is not Status.PENDING:
+                        # delete slices that have been deleted elsewhere
+                        db.delete(dbconnection, 'slices', ls['id'])
+                        logger.info("Slice {} deleted".format(ls['id']))
+            else:
+                logger.warning("Query slices is empty, check myslicelib and the connection with SFA Registry")
 
             for slice in slices:
                 if len(slice.users) > 0:

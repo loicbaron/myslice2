@@ -27,6 +27,8 @@ if __name__ == '__main__':
 
     logger = logging.getLogger("myslice-monitor")
 
+    logger.info("Starting myslice-monitor")
+
     signal.signal(signal.SIGINT, receive_signal)
     signal.signal(signal.SIGTERM, receive_signal)
     signal.signal(signal.SIGHUP, receive_signal)
@@ -43,6 +45,7 @@ if __name__ == '__main__':
     #
     p = multiprocessing.Process(target=serviceTestbeds)
     processes.append(p)
+    p.daemon = True
     p.start()
 
     ##
@@ -50,6 +53,7 @@ if __name__ == '__main__':
     #
     p = multiprocessing.Process(target=serviceResources)
     processes.append(p)
+    p.daemon = True
     p.start()
 
     for proc in processes:

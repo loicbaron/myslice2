@@ -25,7 +25,7 @@ from myslice.services.emails import run as serviceEmails
 logger = logging.getLogger("myslice-sync")
 
 def receive_signal(signum, stack):
-    logger.info('Received signal %s', signum)
+    logger.info('Received signa l %s', signum)
     raise SystemExit('Exiting')
 
 
@@ -35,6 +35,8 @@ if __name__ == '__main__':
     signal.signal(signal.SIGINT, receive_signal)
     signal.signal(signal.SIGTERM, receive_signal)
     signal.signal(signal.SIGHUP, receive_signal)
+
+    logger.info("Starting myslice-server")
 
     """
     Setup DB (Rethinkdb)
@@ -48,6 +50,7 @@ if __name__ == '__main__':
     #
     p = multiprocessing.Process(target=serviceActivity)
     processes.append(p)
+    p.daemon = True
     p.start()
 
     ##
@@ -55,6 +58,7 @@ if __name__ == '__main__':
     #
     p = multiprocessing.Process(target=serviceExperiments)
     processes.append(p)
+    p.daemon = True
     p.start()
 
     ##
@@ -62,6 +66,7 @@ if __name__ == '__main__':
     #
     p = multiprocessing.Process(target=serviceUsers)
     processes.append(p)
+    p.daemon = True
     p.start()
 
     ##
@@ -69,6 +74,7 @@ if __name__ == '__main__':
     #
     p = multiprocessing.Process(target=serviceAuthorities)
     processes.append(p)
+    p.daemon = True
     p.start()
 
     ##
@@ -76,6 +82,7 @@ if __name__ == '__main__':
     #
     p = multiprocessing.Process(target=serviceEmails)
     processes.append(p)
+    p.daemon = True
     p.start()
 
     for proc in processes:

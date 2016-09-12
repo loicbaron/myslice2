@@ -13,6 +13,7 @@ import store from '../stores/SettingsStore'
 
 import LoadingPanel from './LoadingPanel'
 import SettingsProfile from './SettingsProfile';
+import SettingsRights from './SettingsRights';
 import SettingsSsh from './SettingsSsh';
 import SettingsPassword from './SettingsPassword';
 
@@ -75,6 +76,9 @@ class SettingsView extends React.Component {
                 <PanelMenuEntry icon="user" name="profile" handleSelect={this.handleSelect}>
                     Profile
                 </PanelMenuEntry>
+                <PanelMenuEntry icon="user" name="rights" handleSelect={this.handleSelect}>
+                    Access rights
+                </PanelMenuEntry>
                 <PanelMenuEntry icon="key" name="ssh" handleSelect={this.handleSelect}>
                     SSH Keys
                 </PanelMenuEntry>
@@ -95,6 +99,20 @@ class SettingsView extends React.Component {
                     </PanelHeader>
                     <PanelBody>
                         <SettingsProfile profile={this.state.profile}
+                                             submitProfile={this.submitProfile.bind(this)}
+                                             updateProfile={this.updateProfile.bind(this)}
+                                            />
+                        <LoadingPanel show={this.state.loading}/>
+                    </PanelBody>
+                </Panel>);
+                break;
+            case 'rights':
+                panel = (<Panel>
+                    <PanelHeader>
+                        <Title title="Access rights" />
+                    </PanelHeader>
+                    <PanelBody>
+                        <SettingsRights profile={this.state.profile}
                                              submitProfile={this.submitProfile.bind(this)}
                                              updateProfile={this.updateProfile.bind(this)}
                                             />
