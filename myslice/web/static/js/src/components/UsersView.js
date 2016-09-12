@@ -13,6 +13,8 @@ import Button from './base/Button';
 import UsersInfo from './UsersInfo';
 import UsersList from './UsersList';
 
+import AuthoritiesSelect from './AuthoritiesSelect';
+
 class UsersView extends React.Component {
 
     constructor(props) {
@@ -20,6 +22,7 @@ class UsersView extends React.Component {
         this.state = store.getState();
         this.onChange = this.onChange.bind(this);
         this.showForm = this.showForm.bind(this);
+        actions.fetchFromUserAuthority();
         // this.selectUser = this.selectUser.bind(this);
     }
 
@@ -34,7 +37,10 @@ class UsersView extends React.Component {
     onChange(state) {
         this.setState(state);
     }
-
+    updateAuthority(value) {
+        actions.updateAuthority(value);
+        actions.fetchFromAuthority();
+    }
     showForm() {
         actions.selectElement(null);
     }
@@ -93,7 +99,12 @@ class UsersView extends React.Component {
                         <Title title="Users" />
                     </PanelHeader>
                     <PanelBody>
-                        <UsersList select={true} />
+                        <div className="row">
+                            <div className="col-sm-10 col-sm-offset-1 inputForm">
+                                <AuthoritiesSelect handleChange={this.updateAuthority}/>
+                            </div>
+                        </div>
+                        <UsersList select={true} users={this.state.users} />
                     </PanelBody>
                 </Panel>
                 {panelRight}

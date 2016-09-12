@@ -25,7 +25,7 @@ const UsersSource = () => {
                 return true
             }
         },
-        fetchFromAuthority: {
+        fetchFromUserAuthority: {
             remote(state) {
                 return axios.get('/api/v1/authorities/users');
             },
@@ -36,7 +36,17 @@ const UsersSource = () => {
                 return true
             }
         },
+        fetchFromAuthority: {
+            remote(state) {
+                return axios.get('/api/v1/authorities/'+state.authority+'/users');
+            },
+            success: actions.updateUsers, // (required)
+            error: actions.errorUsers, // (required)
 
+            shouldFetch(state) {
+                return true
+            }
+        },
         /*
         submit: {
             // remotely fetch something (required)

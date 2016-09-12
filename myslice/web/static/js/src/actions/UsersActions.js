@@ -6,10 +6,15 @@ class UsersActions {
         return filter;
     }
 
-    fetchFromAuthority(filter = {}) {
+    fetchFromUserAuthority(filter = {}) {
         return filter;
     }
-
+    fetchFromAuthority() {
+        return true;
+    }
+    updateAuthority(authority) {
+        return authority;
+    }
     updateUserElement(user) {
         return user;
     }

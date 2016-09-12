@@ -9,11 +9,12 @@ class UsersStore {
         this.users = [];
         this.filteredUsers = [];
         this.excludeUsers = [];
+        this.authorities = [];
 
         /* the currently active user */
         this.current = {
             user: null,
-            projects: []
+            authority: null,
         };
 
         this.filter = {};
@@ -27,8 +28,10 @@ class UsersStore {
             updateFilter: actions.UPDATE_FILTER,
             updateFilteredUsers: actions.UPDATE_FILTERED_USERS,
             fetchUsers: actions.FETCH_USERS,
+            fetchFromUserAuthority: actions.FETCH_FROM_USER_AUTHORITY,
             fetchFromAuthority: actions.FETCH_FROM_AUTHORITY,
-            errorUsers: actions.ERROR_USERS
+            updateAuthority: actions.UPDATE_AUTHORITY,
+            errorUsers: actions.ERROR_USERS,
             
         });
 
@@ -36,22 +39,27 @@ class UsersStore {
     }
 
     fetchUsers(filter) {
-
         this.filter = filter;
 
         if (!this.getInstance().isLoading()) {
             this.getInstance().fetch();
         }
-
     }
-    fetchFromAuthority(filter) {
-
+    fetchFromUserAuthority(filter) {
         this.filter = filter;
 
         if (!this.getInstance().isLoading()) {
+            this.getInstance().fetchFromUserAuthority();
+        }
+    }
+    fetchFromAuthority() {
+        if (!this.getInstance().isLoading()) {
             this.getInstance().fetchFromAuthority();
         }
-
+    }
+    updateAuthority(authority) {
+        console.log(authority);
+        this.authority = authority;
     }
     updateUserElement(user) {
         let index = this.users.findIndex(function(userElement) {
@@ -131,7 +139,6 @@ class UsersStore {
     errorUsers(errorMessage) {
         console.log(errorMessage);
     } 
-
 }
 
 

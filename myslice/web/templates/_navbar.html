@@ -24,6 +24,13 @@
                         </div>
                     </div>
                 </li>
+                <li class="{% if request.path == '/users' %}active{% end %}">
+                    <div>
+                        <div>
+                            <a href="/users"><i class="fa fa-users fa-lg"></i> Users</a>
+                        </div>
+                    </div>
+                </li>
                 <li class="{% if request.path == '/activity' %}active{% end %}">
                     <div>
                         <div>
