@@ -16,12 +16,12 @@ def run():
     while True:
         logger.info("syncing")
         try:
-            print("syn1")
+
             ll = q(Lease).get()
-            print("syn2")
+
             # syncs leases configured with the db
             db.syncLeases(ll)
-            print("syn3")
+
         except Exception as e:
             logger.exception("Service does not seem to be available")
 
