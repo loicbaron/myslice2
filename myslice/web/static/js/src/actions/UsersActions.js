@@ -5,7 +5,12 @@ class UsersActions {
     fetchUsers(filter = {}) {
         return filter;
     }
-
+    fetchProfile() {
+        return true;
+    }
+    updateProfile(profile) {
+        return profile;
+    }
     fetchFromUserAuthority(filter = {}) {
         return filter;
     }
@@ -22,6 +27,7 @@ class UsersActions {
     updateUsers(users) {
         return users;
     }
+
     updateExcludeUsers(users) {
         return users;
     }

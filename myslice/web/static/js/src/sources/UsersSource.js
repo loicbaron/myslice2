@@ -47,6 +47,17 @@ const UsersSource = () => {
                 return true
             }
         },
+        fetchProfile: {
+            remote(state) {
+                return axios.get('/api/v1/profile');
+            },
+            success: actions.updateProfile, // (required)
+            error: actions.errorProfile, // (required)
+
+            shouldFetch(state) {
+                return true
+            }
+        },
         /*
         submit: {
             // remotely fetch something (required)

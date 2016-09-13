@@ -22,7 +22,8 @@ class UsersView extends React.Component {
         this.state = store.getState();
         this.onChange = this.onChange.bind(this);
         this.showForm = this.showForm.bind(this);
-        actions.fetchFromUserAuthority();
+        actions.fetchProfile();
+        //actions.fetchFromUserAuthority();
         // this.selectUser = this.selectUser.bind(this);
     }
 
@@ -101,7 +102,7 @@ class UsersView extends React.Component {
                     <PanelBody>
                         <div className="row">
                             <div className="col-sm-10 col-sm-offset-1 inputForm">
-                                <AuthoritiesSelect handleChange={this.updateAuthority}/>
+                                <AuthoritiesSelect handleChange={this.updateAuthority} selected={this.state.authority} />
                             </div>
                         </div>
                         <UsersList select={true} users={this.state.users} />

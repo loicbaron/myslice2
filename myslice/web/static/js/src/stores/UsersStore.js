@@ -10,6 +10,7 @@ class UsersStore {
         this.filteredUsers = [];
         this.excludeUsers = [];
         this.authorities = [];
+        this.profile = {};
 
         /* the currently active user */
         this.current = {
@@ -24,10 +25,12 @@ class UsersStore {
         this.bindListeners({
             updateUserElement: actions.UPDATE_USER_ELEMENT,
             updateUsers: actions.UPDATE_USERS,
+            updateProfile: actions.UPDATE_PROFILE,
             updateExcludeUsers: actions.UPDATE_EXCLUDE_USERS,
             updateFilter: actions.UPDATE_FILTER,
             updateFilteredUsers: actions.UPDATE_FILTERED_USERS,
             fetchUsers: actions.FETCH_USERS,
+            fetchProfile: actions.FETCH_PROFILE,
             fetchFromUserAuthority: actions.FETCH_FROM_USER_AUTHORITY,
             fetchFromAuthority: actions.FETCH_FROM_AUTHORITY,
             updateAuthority: actions.UPDATE_AUTHORITY,
@@ -57,8 +60,21 @@ class UsersStore {
             this.getInstance().fetchFromAuthority();
         }
     }
+    fetchProfile() {
+        if (!this.getInstance().isLoading()) {
+            this.getInstance().fetchProfile();
+        }
+    }
+    updateProfile(profile) {
+        if (profile.hasOwnProperty('data')) {
+            this.profile = profile.data.result;
+        } else {
+            this.profile = profile;
+        }
+        this.updateAuthority(this.profile.authority.id);
+        this.fetchFromAuthority();
+    }
     updateAuthority(authority) {
-        console.log(authority);
         this.authority = authority;
     }
     updateUserElement(user) {
