@@ -169,10 +169,17 @@ def syncLeases(leases):
 
     localLeases = r.table('leases').run(dbconnection)
 
-    # sync
-    for t in localLeases:
+    ## sync
+    #for t in localLeases:
+    #    r.table('leases').update(leases.dict()).run(dbconnection)
 
-            r.table('leases').update(leases.dict()).run(dbconnection)
+    # clear the leases table
+    r.table("leases").delete()
+
+    # insert new leases
+    for l in leases:
+        # new
+        r.table('leases').insert(l.dict(), conflict='update').run(dbconnection)
 
     dbconnection.close()
 
