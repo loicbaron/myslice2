@@ -32,7 +32,11 @@ export default class AuthoritiesSelect extends React.Component {
 
     setValue(value) {
 		this.setState({ value });
-        this.props.handleChange(value.value);
+        if(value){
+            this.props.handleChange(value.value);
+        }else{
+            this.props.handleChange(null);
+        }
 	}
 
     getOptions() {

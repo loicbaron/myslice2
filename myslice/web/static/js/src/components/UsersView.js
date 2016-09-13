@@ -40,7 +40,11 @@ class UsersView extends React.Component {
     }
     updateAuthority(value) {
         actions.updateAuthority(value);
-        actions.fetchFromAuthority();
+        if(value){
+            actions.fetchFromAuthority();
+        }else{
+            actions.updateUsers([]);
+        }
     }
     showForm() {
         actions.selectElement(null);
