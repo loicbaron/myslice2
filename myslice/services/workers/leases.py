@@ -34,29 +34,12 @@ def sync(lock):
             logger.info("Worker leases starting synchronization")
 
             # MySliceLib Query Slices
-<<<<<<< HEAD
-            l = q(Lease).get()
 
-            # update local leases table
-            lleases = db.leases(dbconnection, l.dict())
-
-            for ls in lleases :
-                # add status if not present and update on db
-                if not 'status' in ls:
-                    ls['status'] = Status.ENABLED
-                    ls['enabled'] = format_date()
-                    db.leases(dbconnection, ls)
-
-                if not l.has(ls['id']) and ls['status'] is not Status.PENDING:
-                    # delete leases that have been deleted elsewhere
-                    db.delete(dbconnection, 'leases', ls['id'])
-                    logger.info("Project {} deleted".format(ls['id']))
-=======
             leases = q(Lease).get()
 
             # update local leases table
             if len(leases)>0:
-                lleases = db.leases(dbconnection, leases.dict())
+                leases = db.leases(dbconnection, leases.dict())
             else:
                 logger.warning("Query leases is empty, check myslicelib and the connection with SFA AMs")
 
@@ -67,7 +50,7 @@ def sync(lock):
             #        # delete leases that have been deleted elsewhere
             #        db.delete(dbconnection, 'leases', ls['id'])
             #        logger.info("Lease {} deleted".format(ls))
->>>>>>> origin/master
+
 
         # sleep
         time.sleep(86400)

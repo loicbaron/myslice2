@@ -146,9 +146,40 @@ def syncResources(resources):
 
     dbconnection.close()
 
+
+
 def getResources():
     """
     Returns the list of resources
+    :return:
+    """
+    pass
+
+
+def syncLeases(leases):
+    """
+    With the leases parameter specified syncs the db
+    leases parameter is of type mysliceslib.model.Entity
+
+    :param leases:
+    :return:
+    """
+
+    dbconnection = connect()
+
+    localLeases = r.table('leases').run(dbconnection)
+
+    # sync
+    for t in localLeases:
+
+            r.table('leases').update(leases.dict()).run(dbconnection)
+
+    dbconnection.close()
+
+
+def getLeases():
+    """
+    Returns the list of leases
     :return:
     """
     pass
