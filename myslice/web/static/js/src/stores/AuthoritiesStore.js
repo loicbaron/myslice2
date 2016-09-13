@@ -11,6 +11,7 @@ class AuthoritiesStore {
         this.bindListeners({
             updateAuthorities: actions.UPDATE_AUTHORITIES,
             fetchAuthorities: actions.FETCH_AUTHORITIES,
+            errorAuthorities: actions.ERROR_AUTHORITIES,
         });
 
         this.registerAsync(source);
@@ -34,6 +35,9 @@ class AuthoritiesStore {
             this.authorities = authorities;
         }
     }
+    errorAuthorities(errorMessage) {
+        console.log(errorMessage);
+    } 
 
 }
 
