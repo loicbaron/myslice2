@@ -159,6 +159,7 @@ class Application(web.Application):
             web.url(r'/api/v1/resources/()$', ResourcesHandler),
             # leases
             web.url(r'/api/v1/leases$', LeasesHandler),
+            web.url(r'/api/v1/leases?(^\d{2}-?\d{2}-?\d{4} ?\d{2}:\d{2}$)', LeasesHandler),
 
             web.url(r'/api/v1/profile$', ProfileHandler),
             
@@ -166,6 +167,7 @@ class Application(web.Application):
 
             # testbeds
             web.url(r'/api/v1/testbeds/?(' + self.urn_regex + ')?/?(resources)?$', TestbedsHandler),
+            web.url(r'/api/v1/testbeds/?(' + self.urn_regex + ')?/?(leases)?$', TestbedsHandler),
             # users
             web.url(r'/api/v1/users/?(' + self.urn_regex + ')?/?(authorities|projects|slices)?$', UsersHandler),
             # authorities

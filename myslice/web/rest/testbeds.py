@@ -24,6 +24,8 @@ class TestbedsHandler(Api):
             - GET /testbeds/<id>/(resources)
                 (auth) Resource list of the testbed with <id>
 
+            - GET /testbeds/<id>/leases
+                Leases list of the testbed with the <id>
             :return:
             """
 
@@ -60,6 +62,16 @@ class TestbedsHandler(Api):
                 item = yield cursor.next()
                 response.append(item)
 
+        # GET /testbeds/<id>/leases
+        elif id and self.isUrn(id) and o == 'leases':
+            cursor = yield r.table(o) \
+                .filter(lambda lease: lease["manager"] == id) \
+                .run(self.dbconnection)
+                #
+
+            while (yield cursor.fetch_next()):
+                item = yield cursor.next()
+                response.append(item)
         else:
             self.userError("invalid request")
             return
