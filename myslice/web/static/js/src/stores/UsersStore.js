@@ -26,6 +26,7 @@ class UsersStore {
             updateUserElement: actions.UPDATE_USER_ELEMENT,
             updateUsers: actions.UPDATE_USERS,
             updateProfile: actions.UPDATE_PROFILE,
+            setCurrentUser: actions.SET_CURRENT_USER,
             updateExcludeUsers: actions.UPDATE_EXCLUDE_USERS,
             updateFilter: actions.UPDATE_FILTER,
             updateFilteredUsers: actions.UPDATE_FILTERED_USERS,
@@ -88,6 +89,10 @@ class UsersStore {
         }
 
         this.errorMessage = null;
+    }
+
+    setCurrentUser(user) {
+        this.current.user = user;
     }
 
     updateUsers(users) {

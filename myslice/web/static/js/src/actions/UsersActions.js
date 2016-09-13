@@ -11,6 +11,9 @@ class UsersActions {
     updateProfile(profile) {
         return profile;
     }
+    setCurrentUser(user) {
+        return user;
+    }
     fetchFromUserAuthority(filter = {}) {
         return filter;
     }
