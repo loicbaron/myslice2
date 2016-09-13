@@ -157,6 +157,7 @@ class Application(web.Application):
 
             web.url(r'/api/v1/resources$', ResourcesHandler),
             web.url(r'/api/v1/resources/()$', ResourcesHandler),
+            web.url(r'/api/v1/resources/('+ self.urn_regex + ')?/?(leases)?$', ResourcesHandler),
             # leases
             web.url(r'/api/v1/leases$', LeasesHandler),
             web.url(r'/api/v1/leases?(^\d{2}-?\d{2}-?\d{4} ?\d{2}:\d{2}$)', LeasesHandler),
