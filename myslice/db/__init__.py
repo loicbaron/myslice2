@@ -174,7 +174,7 @@ def syncLeases(leases):
     #    r.table('leases').update(leases.dict()).run(dbconnection)
 
     # clear the leases table
-    r.table("leases").delete()
+    r.table("leases").delete().run(dbconnection)
 
     # insert new leases
     for l in leases:
