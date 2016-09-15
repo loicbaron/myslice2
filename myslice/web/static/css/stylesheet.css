@@ -665,6 +665,11 @@ div.registrationForm {
     border:1px solid #251A50;
     box-shadow: none;
 }
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+}
 
 /*
     Password
