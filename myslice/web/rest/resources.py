@@ -24,21 +24,15 @@ class ResourcesHandler(Api):
         resources = []
 
         # TODO: id must be a valid URN
-        if not id and not o:
+        if id and not o:
             cursor = yield r.table('resources').run(self.dbconnection)
             while (yield cursor.fetch_next()):
                 result = yield cursor.next()
                 resources.append(result)
-        elif id:
-            result = yield r.table('resources').get(id).run(self.dbconnection)
-            resources.append(result)
-
-
-
 
         #  GET /resources/<id>/leases
-        elif self.isUrn(id) and o == 'leases':
-            cursor = yield r.table(o).filter(lambda lease: lease["manager"] == id).run(self.dbconnection)
+        elif o == 'leases':
+            cursor = yield r.table(o).filter(lambda lease: lease["resources"] == id).run(self.dbconnection)
 
 
             while (yield cursor.fetch_next()):
