@@ -9,6 +9,28 @@ import ProjectsList from'./ProjectsList';
 
 class UsersInfo extends React.Component {
 
+/*
+
+TODO
+
+Buttons:
+
+Authority = Grant/Revoke manager rights
+Manager = Revoke rights
+Project = Remove from Project
+
+Has a private/pub keys: True/False
+- Download pub key
+- Generate new keys
+
+Later:
+- Statistics
+
+*/
+
+
+
+
     render() {
         var p = this.props.selected;
         console.log(p);
@@ -26,7 +48,7 @@ class UsersInfo extends React.Component {
 
         var authoritiesElement;
         if(p.pi_authorities){
-            authoritiesElement = <div><Title title="Authorities" subtitle="Manager" /><AuthoritiesList authorities={p.pi_authorities} /></div>
+            authoritiesElement = <div><Title title="Manager" subtitle="" /><AuthoritiesList authorities={p.pi_authorities} /></div>
         }
         return (
         <div>
