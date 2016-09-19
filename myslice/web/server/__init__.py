@@ -158,6 +158,7 @@ class Application(web.Application):
             web.url(r'/api/v1/resources$', ResourcesHandler),
             web.url(r'/api/v1/resources/(' + self.urn_regex + ')?$', ResourcesHandler),
             web.url(r'/api/v1/resources/(' + self.urn_regex + ')?/?(leases)?$', ResourcesHandler),
+            web.url(r'/api/v1/resources/(' + self.urn_regex + ')?/?(slices)?$', ResourcesHandler),
             # leases
             web.url(r'/api/v1/leases$', LeasesHandler),
             #TODO formatting the timestamp as web.url(r'/api/v1/leases/(^\d{2}-?\d{2}-?\d{4}\s\d{2}:\d{2}?$)', LeasesHandler),
@@ -171,6 +172,7 @@ class Application(web.Application):
             web.url(r'/api/v1/testbeds/?(' + self.urn_regex + ')?/?(leases)?$', TestbedsHandler),
             # users
             web.url(r'/api/v1/users/?(' + self.urn_regex + ')?/?(authorities|projects|slices)?$', UsersHandler),
+            web.url(r'/api/v1/users/?(authorities|projects|slices)?$', UsersHandler),
             # authorities
             web.url(r'/api/v1/authorities/?(' + self.urn_regex + ')?/?(users|projects)?$', AuthoritiesHandler),
             # projects
@@ -178,6 +180,7 @@ class Application(web.Application):
             # slices
             web.url(r'/api/v1/slices/?(' + self.hrn_regex + ')?/?(resources)?$', SlicesHandler),
             web.url(r'/api/v1/slices/?(' + self.urn_regex + ')?/?(resources)?$', SlicesHandler),
+            web.url(r'/api/v1/slices/?(' + self.urn_regex + ')?/?(users)?$', SlicesHandler),
         ]
 
         ##
