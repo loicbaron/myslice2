@@ -57,6 +57,16 @@ class ResourcesHandler(Api):
             while (yield cursor.fetch_next()):
                 item = yield cursor.next()
                 response.append(item)
+        # GET /resources/<id>/slices
+        elif id and self.isUrn(id) and o == 'slices':
+            cursor = yield r.table(o) \
+                .filter(lambda slice: slice["resources"].contains(id)) \
+                .run(self.dbconnection)
+                #
+
+            while (yield cursor.fetch_next()):
+                item = yield cursor.next()
+                response.append(item)
         else:
             self.userError("invalid request")
 
