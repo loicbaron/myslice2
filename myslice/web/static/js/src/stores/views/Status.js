@@ -1,6 +1,6 @@
-import alt from '../alt';
-import actions from '../actions/StatusViewActions';
-import source from '../sources/StatusViewSource';
+import alt from '../../alt';
+import actions from '../../actions/views/Status';
+import source from '../../sources/StatusViewSource';
 
 class StatusViewStore {
 

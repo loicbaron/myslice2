@@ -1,6 +1,6 @@
-import alt from '../alt';
-import actions from '../actions/views/Slice';
-import source from '../sources/SliceView';
+import alt from '../../alt';
+import actions from '../../actions/views/Slice';
+import source from '../../sources/views/Slice';
 
 /*
     This store is used in the SliceView
@@ -11,9 +11,15 @@ class SliceView {
         // the hrn of the current slice
         this.hrn = null;
         // the current slice
-        this.slice = [];
+        this.slice = {
+            shortname: null,
+            name: null,
+            hrn: null
+        };
         // the list of testbeds
         this.testbeds = [];
+        // the selected testbed
+        this.testbed = null;
 
         this.dialog = null;
 
@@ -27,6 +33,9 @@ class SliceView {
             updateTestbeds: actions.UPDATE_TESTBEDS,
             fetchTestbeds: actions.FETCH_TESTBEDS,
             errorTestbeds: actions.ERROR_TESTBEDS,
+
+            selectResourceDialog: actions.SELECT_RESOURCE_DIALOG,
+            closeDialog: actions.CLOSE_DIALOG
         });
 
         this.registerAsync(source);
@@ -74,12 +83,17 @@ class SliceView {
         console.log(errorMessage);
     }
 
-    showDialog(dialog) {
-        this.dialog = dialog;
+    selectResourceDialog(testbed) {
+        this.dialog = 'selectResource';
+        this.testbed = testbed;
+    }
+
+    closeDialog() {
+        this.dialog = null;
+        this.testbed = null;
     }
 
 }
 
 
 export default alt.createStore(SliceView, 'SliceView');
-
