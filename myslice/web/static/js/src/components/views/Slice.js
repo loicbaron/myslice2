@@ -1,25 +1,20 @@
 import React from 'react';
 
-import store from '../../stores/SliceView';
-import actions from '../../actions/SliceView';
+import store from '../../stores/views/Slice';
+import actions from '../../actions/views/Slice';
 
 import View from '../base/View';
-import Dialog from '../base/Dialog';
-import DialogHeader from '../base/DialogHeader';
-import DialogBody from '../base/DialogBody';
-import DialogPanel from '../base/DialogPanel';
 import Panel from '../base/Panel';
 import PanelHeader from '../base/PanelHeader';
 import PanelBody from '../base/PanelBody';
 import Title from '../base/Title';
 import Text from '../base/Text';
-import Button from '../base/Button';
 
-// import UsersList from '../UsersList';
-// import UsersDialog from '../UsersDialog';
-
+import SelectResourceDialog from '../dialogs/SelectResource';
+//
+//
 const SliceTitle = ({slice}) => {
-    var title = slice.name || slice.shortname;
+    var title = slice.name || slice.shortname || '';
     var subtitle = slice.hrn || '';
 
     return <Title title={title} subtitle={subtitle} />;
@@ -54,16 +49,16 @@ class SliceView extends React.Component {
     }
 
     closeDialog() {
-        actions.showDialog(null);
+        actions.closeDialog();
     }
 
     addResources(testbed) {
-        console.log(testbed);
-        actions.showDialog('resources');
+        actions.selectResourceDialog(testbed);
     }
 
     
     render() {
+
         var panelRight = null;
         var dialog = null;
 
@@ -74,21 +69,13 @@ class SliceView extends React.Component {
         }
 
         switch(this.state.dialog) {
+            case 'selectResource':
+                dialog = <SelectResourceDialog testbed={this.state.testbed} close={this.closeDialog} />;
+                break;
             case 'users':
                 dialog = <UsersDialog close={this.closeDialog} />;
                 break;
-            case 'project':
-                dialog = <Dialog close={this.closeDialog}>
-                            <DialogPanel>
-                                <DialogHeader>
-                                    <Title title="New Project" />
-                                </DialogHeader>
-                                <DialogBody>
-                                    <ProjectsForm />
-                                </DialogBody>
-                            </DialogPanel>
-                        </Dialog>;
-                break;
+
         }
 
         if (this.state.current) {
@@ -132,12 +119,14 @@ class SliceView extends React.Component {
                                 this.state.testbeds.filter(function(testbed) {
                                     return testbed.type == 'AM';
                                 }).map(function(testbed) {
-                                        return <li onClick={() => this.addResources(testbed.id)}>{testbed.name}</li>;
+                                        return <li key={testbed.id} onClick={() => this.addResources(testbed)}>{testbed.name}</li>;
                                 }.bind(this))
                             }
                             </ul>
                         </PanelBody>
+                        {dialog}
                     </Panel>
+
                 </View>
             );
         }
