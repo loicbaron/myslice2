@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import SliceView from './views/slices';
+import SliceView from './components/views/Slice';
 
 const getCurrentSlice = () => {
     var u = window.location.href.toString().split(window.location.host)[1].split('/');
