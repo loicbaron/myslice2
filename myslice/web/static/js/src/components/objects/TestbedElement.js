@@ -7,7 +7,7 @@ import ElementStatus from '../base/ElementStatus';
 import ElementIcon from '../base/ElementIcon';
 import DateTime from '../base/DateTime';
 
-const TestbedsElement = ({testbed, setCurrent, current}) =>
+const TestbedElement = ({testbed, setCurrent, current}) =>
      <Element element={testbed} type="testbed" setCurrent={setCurrent} current={current}>
          <ElementStatus status={testbed.status.online ? 'online' : 'offline'} />
          <ElementIcon icon={testbed.type == 'AM' ? 'testbed' : 'registry'} />
@@ -33,12 +33,12 @@ const TestbedsElement = ({testbed, setCurrent, current}) =>
      </Element>;
 
 
-TestbedsElement.propTypes = {
+TestbedElement.propTypes = {
     testbed: React.PropTypes.object.isRequired,
 };
 
-TestbedsElement.defaultProps = {
+TestbedElement.defaultProps = {
     current: false
 };
 
-export default TestbedsElement;
+export default TestbedElement;

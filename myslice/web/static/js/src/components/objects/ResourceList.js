@@ -1,24 +1,24 @@
 import React from 'react';
 
 import List from '../base/List';
-import ResourcesElement from'./Element';
+import ResourceElement from './ResourceElement';
 
-const ResourcesList = ({resources, setCurrent, current}) =>
+const ResourceList = ({resources, setCurrent, current}) =>
     <List>
     {
         resources.map(function(resource) {
-            return <ResourcesElement key={resource.id} resource={resource} setCurrent={setCurrent} current={current} />;
+            return <ResourceElement key={resource.id} resource={resource} setCurrent={setCurrent} current={current} />;
         }.bind(this))
     }
     </List>;
 
-ResourcesList.propTypes = {
+ResourceList.propTypes = {
     resources: React.PropTypes.array.isRequired,
     current: React.PropTypes.object,
 };
 
-ResourcesList.defaultProps = {
+ResourceList.defaultProps = {
     current: null,
 };
 
-export default ResourcesList;
+export default ResourceList;

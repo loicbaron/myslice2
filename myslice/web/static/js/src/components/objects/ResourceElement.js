@@ -7,7 +7,7 @@ import ElementStatus from '../base/ElementStatus';
 import ElementIcon from '../base/ElementIcon';
 import DateTime from '../base/DateTime';
 
-const ResourcesRow = ({resource, setCurrent, current}) => {
+const ResourceElement = ({resource, setCurrent, current}) => {
 
     var label = resource.hostname || resource.shortname;
 
@@ -36,12 +36,12 @@ const ResourcesRow = ({resource, setCurrent, current}) => {
      );
 };
 
-ResourcesRow.propTypes = {
+ResourceElement.propTypes = {
     resource: React.PropTypes.object.isRequired,
 };
 
-ResourcesRow.defaultProps = {
+ResourceElement.defaultProps = {
     current: false,
 };
 
-export default ResourcesRow;
+export default ResourceElement;
