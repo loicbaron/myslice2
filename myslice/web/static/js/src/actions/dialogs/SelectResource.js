@@ -1,9 +1,10 @@
-import alt from '../alt';
+import alt from '../../alt';
 
-class ResourceDialogSelect {
+class SelectResourceDialog {
 
     constructor() {
         this.generateActions(
+            'updateTestbed',
             'fetchResources',
             'updateResources',
             'errorResources',
@@ -14,6 +15,6 @@ class ResourceDialogSelect {
 
 }
 
-export default alt.createActions(ResourceDialogSelect);
+export default alt.createActions(SelectResourceDialog);
 
 

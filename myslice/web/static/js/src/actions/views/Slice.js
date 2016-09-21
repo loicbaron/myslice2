@@ -1,4 +1,4 @@
-import alt from '../alt';
+import alt from '../../alt';
 
 class SliceView {
 
@@ -12,7 +12,8 @@ class SliceView {
             'updateTestbeds',
             'errorTestbeds',
 
-            'showDialog'
+            'selectResourceDialog',
+            'closeDialog'
         );
     }
 
