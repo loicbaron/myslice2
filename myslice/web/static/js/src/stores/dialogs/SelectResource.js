@@ -1,11 +1,11 @@
-import alt from '../alt';
+import alt from '../../alt';
 import actions from '../../actions/dialogs/SelectResource';
-import source from '../../sources/resource/DialogSelect';
+import source from '../../sources/dialogs/SelectResource';
 
-class ResourceDialogSelect {
+class SelectResourceDialog {
 
     constructor() {
-        // the id of the testbed
+        // the testbed
         this.testbed = null;
         // the list of resources
         this.resources = [];
@@ -15,11 +15,12 @@ class ResourceDialogSelect {
         this.errorMessage = null;
 
         this.bindListeners({
+            updateTestbed: actions.UPDATE_TESTBED,
             fetchResources: actions.FETCH_RESOURCES,
-            updateResources: actions.UPDATE_SLICE,
+            updateResources: actions.UPDATE_RESOURCES,
             errorResources: actions.ERROR_RESOURCES,
 
-            selectResource: actions.ERROR_RESOURCE,
+            selectResource: actions.SELECT_RESOURCE,
 
         });
 
@@ -27,13 +28,14 @@ class ResourceDialogSelect {
 
     }
 
-
-    fetchResources(testbed) {
-
+    updateTestbed(testbed) {
         this.testbed = testbed;
+    }
+
+    fetchResources() {
 
         if (!this.getInstance().isLoading()) {
-            this.getInstance().fetchResources();
+            this.getInstance().resources();
         }
 
     }
@@ -58,5 +60,5 @@ class ResourceDialogSelect {
 }
 
 
-export default alt.createStore(ResourceDialogSelect, 'ResourceDialogSelect');
+export default alt.createStore(SelectResourceDialog, 'SelectResourceDialog');
 
