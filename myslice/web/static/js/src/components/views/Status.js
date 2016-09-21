@@ -10,7 +10,7 @@ import PanelBody from '../components/base/PanelBody';
 import Title from '../components/base/Title';
 
 import TestbedsList from '../components/testbed/List';
-import ResourcesList from '../components/resource/List';
+import ResourcesList from '../components/objects/ResourceList';
 
 class StatusView extends React.Component {
 
@@ -63,7 +63,8 @@ class StatusView extends React.Component {
 
         }
 
-        return (<View>
+        return (
+            <View>
                 <Panel>
                     <PanelHeader>
                         <Title title="Service Status" subtitle="" />

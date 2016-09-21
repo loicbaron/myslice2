@@ -2,7 +2,7 @@ import alt from '../alt';
 import actions from '../actions/SliceViewActions';
 import source from '../sources/SlicesSource';
 
-class SlicesStore {
+class ResourcesDialogStore {
 
     constructor() {
         this.slices = [];
@@ -21,7 +21,7 @@ class SlicesStore {
         });
 
         this.registerAsync(source);
-        
+
     }
 
 
