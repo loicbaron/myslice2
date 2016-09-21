@@ -202,12 +202,13 @@ class UsersHandler(Api):
         # GET /users/[<id>/]projects
         # GET /users/projects
         elif o == 'projects':
-
-            if not current_user:
-                self.userError('permission denied')
-                return
             if not id or not self.isUrn(id):
-                id = current_user['id']
+                try:
+                    id = current_user['id']
+                except Exception as e:
+                    self.serverError(" user is not logged in")
+                    return
+
 
             cursor = yield r.table(o) \
                 .pluck(self.fields[o]) \
@@ -224,11 +225,13 @@ class UsersHandler(Api):
 
         # GET /users/[<id>/]slices
         elif o == 'slices':
-            if not current_user:
-                self.userError('permission denied')
-                return
             if not id or not self.isUrn(id):
-                id = current_user['id']
+                try:
+                    id = current_user['id']
+                except Exception as e:
+                    self.serverError(" user is not logged in")
+                    return
+
 
             cursor = yield r.table(o) \
                 .pluck(self.fields[o]) \
@@ -250,12 +253,13 @@ class UsersHandler(Api):
 
         # GET /users/authorities
         elif not id and o == 'authorities':
-            if not current_user:
-                self.userError('permission denied')
-                return
-            if not current_user:
-                self.userError('permission denied')
-                return
+            if not id or not self.isUrn(id):
+                try:
+                    id = current_user['id']
+                except Exception as e:
+                    self.serverError(" user is not logged in")
+                    return
+
 
             cursor = yield r.table('authorities') \
                 .pluck(self.fields['authorities']) \
