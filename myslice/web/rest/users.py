@@ -141,6 +141,17 @@ class UsersHandler(Api):
                                                         .default({'id' : user['authority']})
                 }) \
                 .merge(lambda user: {
+                'pi_authorities': r.table('authorities').get_all(r.args(user['pi_authorities'])) \
+                                                       .pluck(self.fields_short['authorities']) \
+                                                       .coerce_to('array')
+                 }) \
+                .merge(lambda user: {
+                    'projects': r.table('projects') \
+                           .get_all(r.args(user['projects'])) \
+                           .pluck(self.fields_short['projects']) \
+                           .coerce_to('array')
+                }) \
+                .merge(lambda user: {
                     'slices': r.table('slices') \
                            .get_all(r.args(user['slices'])) \
                            .pluck(self.fields_short['slices']) \
@@ -167,6 +178,17 @@ class UsersHandler(Api):
                                                        .default({'id': user['authority']})
                 }) \
                 .merge(lambda user: {
+                'pi_authorities': r.table('authorities').get_all(r.args(user['pi_authorities'])) \
+                                                       .pluck(self.fields_short['authorities']) \
+                                                       .coerce_to('array')
+                 }) \
+                .merge(lambda user: {
+                    'projects': r.table('projects') \
+                           .get_all(r.args(user['projects'])) \
+                           .pluck(self.fields_short['projects']) \
+                           .coerce_to('array')
+                }) \
+                .merge(lambda user: {
                     'slices': r.table('slices') \
                            .get_all(r.args(user['slices'])) \
                            .pluck(self.fields_short['slices']) \
@@ -178,10 +200,15 @@ class UsersHandler(Api):
                 response.append(user)
 
         # GET /users/[<id>/]projects
+        # GET /users/projects
         elif o == 'projects':
-
             if not id or not self.isUrn(id):
-                id = current_user['id']
+                try:
+                    id = current_user['id']
+                except Exception as e:
+                    self.serverError(" user is not logged in")
+                    return
+
 
             cursor = yield r.table(o) \
                 .pluck(self.fields[o]) \
@@ -198,9 +225,13 @@ class UsersHandler(Api):
 
         # GET /users/[<id>/]slices
         elif o == 'slices':
-
             if not id or not self.isUrn(id):
-                id = current_user['id']
+                try:
+                    id = current_user['id']
+                except Exception as e:
+                    self.serverError(" user is not logged in")
+                    return
+
 
             cursor = yield r.table(o) \
                 .pluck(self.fields[o]) \
@@ -222,10 +253,13 @@ class UsersHandler(Api):
 
         # GET /users/authorities
         elif not id and o == 'authorities':
+            if not id or not self.isUrn(id):
+                try:
+                    id = current_user['id']
+                except Exception as e:
+                    self.serverError(" user is not logged in")
+                    return
 
-            if not current_user:
-                self.userError('permission denied')
-                return
 
             cursor = yield r.table('authorities') \
                 .pluck(self.fields['authorities']) \

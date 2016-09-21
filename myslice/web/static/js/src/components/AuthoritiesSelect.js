@@ -19,6 +19,7 @@ export default class AuthoritiesSelect extends React.Component {
         // action fetch authorities
         actions.fetchAuthorities();
 
+
     }
 
     componentWillUnmount() {
@@ -31,7 +32,11 @@ export default class AuthoritiesSelect extends React.Component {
 
     setValue(value) {
 		this.setState({ value });
-        this.props.handleChange(value.value);
+        if(value){
+            this.props.handleChange(value.value);
+        }else{
+            this.props.handleChange(null);
+        }
 	}
 
     getOptions() {
@@ -70,6 +75,9 @@ export default class AuthoritiesSelect extends React.Component {
 	}
 
     render() {
+        if(this.props.selected){
+            this.state.value = this.props.selected;
+        }
         let options = this.getOptions();
 
         return <Select

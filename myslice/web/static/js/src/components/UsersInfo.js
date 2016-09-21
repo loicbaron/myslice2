@@ -1,42 +1,66 @@
 import React from 'react';
 
+import Avatar from 'react-avatar';
+
+import List from './base/List';
+import Title from './base/Title';
+import AuthoritiesList from'./AuthoritiesList';
+import ProjectsList from'./ProjectsList';
+
 class UsersInfo extends React.Component {
+
+/*
+
+TODO
+
+Buttons:
+
+Authority = Grant/Revoke manager rights
+Manager = Revoke rights
+Project = Remove from Project
+
+Has a private/pub keys: True/False
+- Download pub key
+- Generate new keys
+
+Later:
+- Statistics
+
+*/
+
+
+
 
     render() {
         var p = this.props.selected;
+        console.log(p);
+        let name = [p.first_name, p.last_name].join(' ');
+        var projectsElement;
+        if(p.projects){
+            projectsElement = <div><Title title="Projects" /><ProjectsList projects={p.projects} /></div>
+        }
+        var authorityElement;
+        if(p.authority){
+            var a = [];
+            a.push(p.authority);
+            authorityElement = <div><Title title="Authority" subtitle="" /><AuthoritiesList authorities={a} /></div>
+        }
 
+        var authoritiesElement;
+        if(p.pi_authorities){
+            authoritiesElement = <div><Title title="Manager" subtitle="" /><AuthoritiesList authorities={p.pi_authorities} /></div>
+        }
         return (
         <div>
-            <dl>
-                <dt>Name:</dt>
-                <dd>{p.first_name}&nbsp;{p.last_name}</dd>
-                <dt>Email:</dt>
-                <dd>{p.email}&nbsp;</dd>
-            </dl>
-            <div className="panel panel-default">
-              <div className="panel-heading">
-                <h3 className="panel-title">Projects</h3>
-              </div>
-              <div className="panel-body">
-                <ul>
-                {p.projects.map(function(listValue, i){
-                  return <li key={i}>{listValue}</li>;
-                })}
-                </ul>
-              </div>
+            <div className = "row">
+                <div className="col-sm-2 vcenter settings-group profileAvatar">
+                <Avatar className="avatar" email={p.email} name={name} round={true} />
+                </div>
+                <div className="col-sm-8 vcenter">{p.email}</div>
             </div>
-            <div className="panel panel-default">
-              <div className="panel-heading">
-                <h3 className="panel-title">Experiments</h3>
-              </div>
-              <div className="panel-body">
-                <ul>
-                {p.slices.map(function(listValue, i){
-                  return <li key={i}>{listValue}</li>;
-                })}
-                </ul>
-              </div>
-            </div>
+            {authorityElement}
+            {authoritiesElement}
+            {projectsElement}
         </div>
         );
     }

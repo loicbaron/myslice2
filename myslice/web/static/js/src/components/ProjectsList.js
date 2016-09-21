@@ -7,8 +7,8 @@ class ProjectsList extends React.Component {
 
     render() {
 
-        if (!this.props.projects) {
-            return <List>No project found</List>
+        if (!this.props.projects || this.props.projects.length==0) {
+            return <List>No project</List>
         } else {
             return (
                 <List>

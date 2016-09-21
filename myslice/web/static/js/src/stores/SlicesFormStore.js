@@ -5,11 +5,8 @@ import actions from '../actions/SlicesFormActions';
 class SlicesFormStore {
 
     constructor() {
-        this.label = '';
-        this.name = '';
-        this.project = '';
-
         this.bindListeners({
+            initComponent: actions.INIT_COMPONENT,
             updateLabel: actions.UPDATE_LABEL,
             updateName: actions.UPDATE_NAME,
             updateProject: actions.UPDATE_PROJECT,
@@ -19,8 +16,14 @@ class SlicesFormStore {
             submitSuccess: actions.SUBMIT_SUCCESS,
             submitError: actions.SUBMIT_ERROR,
         });
-
+        this.initComponent();
         this.registerAsync(source);
+    }
+    initComponent(){
+        this.label = '';
+        this.name = '';
+        this.project = '';
+        this.message = {};
     }
     normaliseLabel(label){
         this.name = label;
@@ -47,13 +50,13 @@ class SlicesFormStore {
     }
 
     submitSuccess(response) {
-
-        this.message = response.data.error;
+        this.message['type'] = "success";
+        this.message['msg'] = "Slice "+this.name+" has been created.";
     }
 
     submitError(response) {
-
-        this.message = response.data.error;
+        this.message['type'] = "error";
+        this.message['msg'] = response.data.error;
     }
 }
 

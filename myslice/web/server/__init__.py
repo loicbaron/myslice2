@@ -26,6 +26,7 @@ from myslice.web.rest.projects import ProjectsHandler
 from myslice.web.rest.slices import SlicesHandler
 from myslice.web.rest.users import UsersHandler, ProfileHandler, LoginHandler, UserTokenHandler
 from myslice.web.rest.resources import ResourcesHandler
+from myslice.web.rest.leases import LeasesHandler
 from myslice.web.rest.password import PasswordHandler
 
 from myslice.web.rest.activity import ActivityHandler
@@ -155,16 +156,23 @@ class Application(web.Application):
             web.url(r'/api/v1/password/(.*)', PasswordHandler),
 
             web.url(r'/api/v1/resources$', ResourcesHandler),
-            web.url(r'/api/v1/resources/()$', ResourcesHandler),
-
+            web.url(r'/api/v1/resources/(' + self.urn_regex + ')?$', ResourcesHandler),
+            web.url(r'/api/v1/resources/(' + self.urn_regex + ')?/?(leases)?$', ResourcesHandler),
+            web.url(r'/api/v1/resources/(' + self.urn_regex + ')?/?(slices)?$', ResourcesHandler),
+            # leases
+            web.url(r'/api/v1/leases$', LeasesHandler),
+            #TODO formatting the timestamp as web.url(r'/api/v1/leases/(^\d{2}-?\d{2}-?\d{4}\s\d{2}:\d{2}?$)', LeasesHandler),
+            web.url(r'/api/v1/leases/([0-9-]{10})?$', LeasesHandler),
             web.url(r'/api/v1/profile$', ProfileHandler),
             
             web.url(r'/api/v1/users$', UsersHandler),
 
             # testbeds
             web.url(r'/api/v1/testbeds/?(' + self.urn_regex + ')?/?(resources)?$', TestbedsHandler),
+            web.url(r'/api/v1/testbeds/?(' + self.urn_regex + ')?/?(leases)?$', TestbedsHandler),
             # users
             web.url(r'/api/v1/users/?(' + self.urn_regex + ')?/?(authorities|projects|slices)?$', UsersHandler),
+            web.url(r'/api/v1/users/?(authorities|projects|slices)?$', UsersHandler),
             # authorities
             web.url(r'/api/v1/authorities/?(' + self.urn_regex + ')?/?(users|projects)?$', AuthoritiesHandler),
             # projects
@@ -172,6 +180,7 @@ class Application(web.Application):
             # slices
             web.url(r'/api/v1/slices/?(' + self.hrn_regex + ')?/?(resources)?$', SlicesHandler),
             web.url(r'/api/v1/slices/?(' + self.urn_regex + ')?/?(resources)?$', SlicesHandler),
+            web.url(r'/api/v1/slices/?(' + self.urn_regex + ')?/?(users)?$', SlicesHandler),
         ]
 
         ##

@@ -41,7 +41,7 @@ class UsersRow extends React.Component {
         }
 
         return (
-             <Element element={this.props.user} type="user" select={this.props.select}>
+             <Element element={this.props.user} type="user" setCurrent={this.props.setCurrent} current={this.props.current}>
                  <ElementStatus status={this.props.user.status} />
                  <Avatar className="elementIcon" email={this.props.user.email} name={fullname} round={true} size={40} color="#CFE2F3" />
                  <ElementTitle label={fullname} detail={this.props.user.email} />
@@ -63,11 +63,12 @@ UsersRow.propTypes = {
     user: React.PropTypes.object.isRequired,
     addUser: React.PropTypes.bool,
     removeUser: React.PropTypes.bool,
-    select: React.PropTypes.bool
+    current: React.PropTypes.object,
+    setCurrent: React.PropTypes.func,
 };
 
 UsersRow.defaultProps = {
-    select: false,
+    current: false,
     addUser: false,
     removeUser: false,
 };

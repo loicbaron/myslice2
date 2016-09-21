@@ -9,11 +9,13 @@ class UsersStore {
         this.users = [];
         this.filteredUsers = [];
         this.excludeUsers = [];
+        this.authorities = [];
+        this.profile = {};
 
         /* the currently active user */
         this.current = {
             user: null,
-            projects: []
+            authority: null,
         };
 
         this.filter = {};
@@ -23,12 +25,17 @@ class UsersStore {
         this.bindListeners({
             updateUserElement: actions.UPDATE_USER_ELEMENT,
             updateUsers: actions.UPDATE_USERS,
+            updateProfile: actions.UPDATE_PROFILE,
+            setCurrentUser: actions.SET_CURRENT_USER,
             updateExcludeUsers: actions.UPDATE_EXCLUDE_USERS,
             updateFilter: actions.UPDATE_FILTER,
             updateFilteredUsers: actions.UPDATE_FILTERED_USERS,
             fetchUsers: actions.FETCH_USERS,
+            fetchProfile: actions.FETCH_PROFILE,
+            fetchFromUserAuthority: actions.FETCH_FROM_USER_AUTHORITY,
             fetchFromAuthority: actions.FETCH_FROM_AUTHORITY,
-            errorUsers: actions.ERROR_USERS
+            updateAuthority: actions.UPDATE_AUTHORITY,
+            errorUsers: actions.ERROR_USERS,
             
         });
 
@@ -36,22 +43,40 @@ class UsersStore {
     }
 
     fetchUsers(filter) {
-
         this.filter = filter;
 
         if (!this.getInstance().isLoading()) {
             this.getInstance().fetch();
         }
-
     }
-    fetchFromAuthority(filter) {
-
+    fetchFromUserAuthority(filter) {
         this.filter = filter;
 
         if (!this.getInstance().isLoading()) {
+            this.getInstance().fetchFromUserAuthority();
+        }
+    }
+    fetchFromAuthority() {
+        if (!this.getInstance().isLoading()) {
             this.getInstance().fetchFromAuthority();
         }
-
+    }
+    fetchProfile() {
+        if (!this.getInstance().isLoading()) {
+            this.getInstance().fetchProfile();
+        }
+    }
+    updateProfile(profile) {
+        if (profile.hasOwnProperty('data')) {
+            this.profile = profile.data.result;
+        } else {
+            this.profile = profile;
+        }
+        this.updateAuthority(this.profile.authority.id);
+        this.fetchFromAuthority();
+    }
+    updateAuthority(authority) {
+        this.authority = authority;
     }
     updateUserElement(user) {
         let index = this.users.findIndex(function(userElement) {
@@ -64,6 +89,10 @@ class UsersStore {
         }
 
         this.errorMessage = null;
+    }
+
+    setCurrentUser(user) {
+        this.current.user = user;
     }
 
     updateUsers(users) {
@@ -131,7 +160,6 @@ class UsersStore {
     errorUsers(errorMessage) {
         console.log(errorMessage);
     } 
-
 }
 
 

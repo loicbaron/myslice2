@@ -16,14 +16,21 @@ class ProjectsForm extends React.Component {
         this.onChange = this.onChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.updateAuthority = this.updateAuthority.bind(this);
+        this.handleClose = this.handleClose.bind(this);
     }
 
     componentDidMount() {
         // store
         store.listen(this.onChange);
-        ReactDOM.findDOMNode(this.refs.nameInput).focus();
+        if(ReactDOM.findDOMNode(this.refs.nameInput)){
+            ReactDOM.findDOMNode(this.refs.nameInput).focus();
+        }
     }
-
+    componentDidUpdate() {
+        if(ReactDOM.findDOMNode(this.refs.closeButton)){
+            ReactDOM.findDOMNode(this.refs.closeButton).focus();
+        }
+    }
     componentWillUnmount() {
         store.unlisten(this.onChange);
     }
@@ -100,15 +107,23 @@ class ProjectsForm extends React.Component {
         actions.submitForm();
 
     }
+    handleClose(e){
+        console.log(e.target.value);
+        actions.initComponent();
+        this.props.close();
+    }
 
     render() {
-        console.log(this.message);
-        console.log(this.state.message);
         if(this.state.message && Object.keys(this.state.message).length>0){
             return(
                 <div>
                     <br/>
                     <ElementMessage message={this.state.message} />
+                    <div className="col-sm-4">
+                        <button className="large" value="Close" onClick={this.handleClose} ref="closeButton">
+                        <i className="fa fa-times" aria-hidden="true"></i> Close
+                        </button>
+                    </div>
                 </div>
             );
         }else{
@@ -132,9 +147,16 @@ class ProjectsForm extends React.Component {
                                     <div><i><b>Important: </b>quote in your papers</i></div>
                                     <div>Experiments leading to the publication of this paper have been performed using the OneLab Federation of testbeds.</div>
                                     <br/>
+                                    <div className="col-sm-8">
                                     <button className="large" type="submit" value="Save">
                                     <i className="fa fa-floppy-o" aria-hidden="true"></i> Save
                                     </button>
+                                    </div>
+                                    <div className="col-sm-4">
+                                    <button className="large" value="Cancel" onClick={this.props.close}>
+                                    <i className="fa fa-times" aria-hidden="true"></i> Cancel
+                                    </button>
+                                    </div>
                                     </form>
                                     <LoadingPanel show={this.state.loading} />
                                 </div>
@@ -147,5 +169,11 @@ class ProjectsForm extends React.Component {
         }
     }
 }
+ProjectsForm.propTypes = {
+    close: React.PropTypes.func,
+};
+
+ProjectsForm.defaultProps = {
+};
 
 export default ProjectsForm;

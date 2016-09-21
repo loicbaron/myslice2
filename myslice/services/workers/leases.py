@@ -34,11 +34,12 @@ def sync(lock):
             logger.info("Worker leases starting synchronization")
 
             # MySliceLib Query Slices
+
             leases = q(Lease).get()
 
             # update local leases table
             if len(leases)>0:
-                lleases = db.leases(dbconnection, leases.dict())
+                leases = db.leases(dbconnection, leases.dict())
             else:
                 logger.warning("Query leases is empty, check myslicelib and the connection with SFA AMs")
 
@@ -49,6 +50,7 @@ def sync(lock):
             #        # delete leases that have been deleted elsewhere
             #        db.delete(dbconnection, 'leases', ls['id'])
             #        logger.info("Lease {} deleted".format(ls))
+
 
         # sleep
         time.sleep(86400)

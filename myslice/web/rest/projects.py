@@ -32,6 +32,9 @@ class ProjectsHandler(Api):
 
         # GET /projects
         if not id and not o:
+            if not current_user:
+                self.userError('permission denied')
+                return
             cursor = yield r.table('projects') \
                 .pluck(self.fields['projects']) \
                 .filter(lambda project: project["pi_users"].contains(current_user['id'])) \

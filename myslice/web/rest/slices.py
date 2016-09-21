@@ -84,6 +84,14 @@ class SlicesHandler(Api):
             while (yield cursor.fetch_next()):
                 slice = yield cursor.next()
                 response.append(slice)
+        # Get /slice/id/users
+        elif id and o=="users":
+            cursor = yield r.table(o) \
+                .filter(lambda usr: usr["slices"].contains(id)) \
+                .run(self.dbconnection)
+            while (yield cursor.fetch_next()):
+                item = yield cursor.next()
+                response.append(item)
         else:
             self.userError("invalid request")
             return

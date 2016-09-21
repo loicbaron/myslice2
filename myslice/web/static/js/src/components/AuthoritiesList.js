@@ -7,8 +7,8 @@ class AuthoritiesList extends React.Component {
 
     render() {
 
-        if (!this.props.authorities) {
-            return <List>No authority found</List>
+        if (!this.props.authorities || this.props.authorities.length==0) {
+            return <List>No authority</List>
         } else {
             return (
                 <List>

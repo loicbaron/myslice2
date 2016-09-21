@@ -56,6 +56,10 @@ class ProjectsFormActions {
         this.loading(false);
         return response;
     }
+
+    initComponent() {
+        return true;
+    }
 }
 
 export default alt.createActions(ProjectsFormActions);
