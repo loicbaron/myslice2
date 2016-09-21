@@ -1,7 +1,7 @@
 import axios from 'axios';
-import actions from '../actions/StatusViewActions';
+import actions from '../../actions/views/Status';
 
-const ResourcesSource = () => {
+const StatusView = () => {
     return {
         testbeds: {
             remote(state) {
@@ -41,5 +41,5 @@ const ResourcesSource = () => {
     }
 };
 
-export default ResourcesSource;
+export default StatusView;
 

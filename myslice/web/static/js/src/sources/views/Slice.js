@@ -1,6 +1,6 @@
 import axios from 'axios';
-import actions from '../actions/views/Slice';
-import formactions from '../actions/SlicesFormActions';
+import actions from '../../actions/views/Slice';
+import formactions from '../../actions/SlicesFormActions';
 
 const SliceView = () => {
     return {
