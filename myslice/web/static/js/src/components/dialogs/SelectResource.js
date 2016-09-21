@@ -1,7 +1,7 @@
 import React from 'react';
 
-import actions from '../actions/resource/DialogSelect';
-import store from '../stores/resource/DialogSelect';
+import actions from '../../actions/dialogs/SelectResource';
+import store from '../../stores/dialogs/SelectResource';
 
 import Dialog from '../base/Dialog';
 import DialogPanel from '../base/DialogPanel';
@@ -9,21 +9,21 @@ import DialogHeader from '../base/DialogHeader';
 import DialogBody from '../base/DialogBody';
 import Title from '../base/Title';
 
-class ResourcesDialog extends React.Component {
+import ResourceList from '../objects/ResourceList';
+
+class SelectResourceDialog extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = store.getState();
         this.onChange = this.onChange.bind(this);
-        this.handleFilter = this.handleFilter.bind(this);
+        //this.handleFilter = this.handleFilter.bind(this);
     }
 
     componentDidMount() {
         store.listen(this.onChange);
-        this.fetchUsers();
-        if(this.props.exclude.length>0){
-            actions.updateExcludeUsers(this.props.exclude);
-        }
+        actions.updateTestbed(this.props.testbed);
+        actions.fetchResources();
     }
 
     componentWillUnmount() {
@@ -33,6 +33,7 @@ class ResourcesDialog extends React.Component {
     onChange(state) {
         this.setState(state);
     }
+
     handleFilter(value) {
         var f = {'email':value,'shortname':value}
         actions.updateFilter(f);
@@ -50,21 +51,20 @@ class ResourcesDialog extends React.Component {
     }
 
     render() {
-        if(Object.keys(this.state.filter).length>0){
-            var usersList = <UsersList users={this.state.filteredUsers} addUser={this.props.addUser} />
-        }else{
-            var usersList = <UsersList users={this.state.users} addUser={this.props.addUser} />
-        }
+        // if(Object.keys(this.state.filter).length>0){
+        //     var usersList = <UsersList users={this.state.filteredUsers} addUser={this.props.addUser} />
+        // }else{
+        //     var usersList = <UsersList users={this.state.users} addUser={this.props.addUser} />
+        // }
 
         return (
             <Dialog close={this.props.close}>
                 <DialogPanel>
                     <DialogHeader>
-                        <Title title="Add Users" />
+                        <Title title={this.props.testbed.name} />
                     </DialogHeader>
                     <DialogBody>
-                        <UsersFilter handleChange={this.handleFilter} users={this.state.users} />
-                        {usersList}
+                        <ResourceList resources={this.state.resources} />
                     </DialogBody>
                 </DialogPanel>
             </Dialog>
@@ -72,14 +72,13 @@ class ResourcesDialog extends React.Component {
     }
 }
 
-ResourcesDialog.propTypes = {
-    close: React.PropTypes.func,
-    addUser: React.PropTypes.bool,
+SelectResourceDialog.propTypes = {
+    testbed: React.PropTypes.object.isRequired,
+    close: React.PropTypes.func.isRequired,
 };
 
-ResourcesDialog.defaultProps = {
-    close: null,
-    addUser: false,
+SelectResourceDialog.defaultProps = {
+
 };
 
-export default ResourcesDialog;
+export default SelectResourceDialog;
