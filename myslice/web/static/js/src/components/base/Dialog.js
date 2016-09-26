@@ -12,17 +12,19 @@ class Dialog extends React.Component {
         this._handleEscKey = this._handleEscKey.bind(this);
         this._handleClick = this._handleClick.bind(this);
     }
+
     _handleClick(event){
-        console.log(event.target);
-        if(event.target.className=="dialog"){
+        if (event.target.className == "dialog") {
             this.close();
         }
     }
+
     _handleEscKey(event){
-        if(event.keyCode == 27){
+        if (event.keyCode == 27) {
             this.close();
         }
     }
+
     open() {
         this.setState({
             closed: false
@@ -52,7 +54,6 @@ class Dialog extends React.Component {
     }
 
 }
-
 
 Dialog.propTypes = {
     close: React.PropTypes.func,

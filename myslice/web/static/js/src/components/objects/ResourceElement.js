@@ -7,7 +7,7 @@ import ElementStatus from '../base/ElementStatus';
 import ElementIcon from '../base/ElementIcon';
 import DateTime from '../base/DateTime';
 
-const ResourcesRow = ({resource, setCurrent, current}) => {
+const ResourceElement = ({resource, setCurrent, current}) => {
 
     var label = resource.hostname || resource.shortname;
 
@@ -18,22 +18,30 @@ const ResourcesRow = ({resource, setCurrent, current}) => {
     } else {
         status = 'offline';
     }
+
+    var location = null;
+    if (resource.location) {
+        //console.log(lookup.countries({name: resource.location.country})[0]);
+        // let flag = 'flag-icon flag-icon-' + countries.getCode(resource.location.country);
+        // location = <div>Location: <span class={flag}></span> {resource.location.country}</div>;
+    }
     return (
          <Element element={resource} type="resource" setCurrent={setCurrent} current={current}>
              <ElementStatus status={status} />
              <ElementIcon icon="resource" />
              <ElementTitle label={resource.name} detail={resource.type} />
              <ElementId id={resource.id} />
+             {location}
          </Element>
      );
 };
 
-ResourcesRow.propTypes = {
+ResourceElement.propTypes = {
     resource: React.PropTypes.object.isRequired,
 };
 
-ResourcesRow.defaultProps = {
+ResourceElement.defaultProps = {
     current: false,
 };
 
-export default ResourcesRow;
+export default ResourceElement;

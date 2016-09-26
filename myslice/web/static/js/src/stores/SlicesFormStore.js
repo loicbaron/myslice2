@@ -1,5 +1,5 @@
 import alt from '../alt';
-import source from '../sources/SlicesSource';
+import source from '../sources/views/Slice';
 import actions from '../actions/SlicesFormActions';
 
 class SlicesFormStore {

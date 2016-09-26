@@ -1,6 +1,6 @@
 import alt from '../alt';
 
-class StatusViewActions {
+class ResourcesActions {
 
     constructor() {
         this.generateActions(
@@ -17,6 +17,6 @@ class StatusViewActions {
 
 }
 
-export default alt.createActions(StatusViewActions);
+export default alt.createActions(ResourcesActions);
 
 

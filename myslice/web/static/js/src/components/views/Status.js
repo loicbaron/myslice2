@@ -1,16 +1,16 @@
 import React from 'react';
 
-import store from '../stores/StatusViewStore';
-import actions from '../actions/StatusViewActions';
+import store from '../../stores/views/Status';
+import actions from '../../actions/views/Status';
 
-import View from '../components/base/View';
-import Panel from '../components/base/Panel';
-import PanelHeader from '../components/base/PanelHeader';
-import PanelBody from '../components/base/PanelBody';
-import Title from '../components/base/Title';
+import View from '../base/View';
+import Panel from '../base/Panel';
+import PanelHeader from '../base/PanelHeader';
+import PanelBody from '../base/PanelBody';
+import Title from '../base/Title';
 
-import TestbedsList from '../components/testbed/List';
-import ResourcesList from '../components/resource/List';
+import TestbedsList from '../objects/TestbedList';
+import ResourceList from '../objects/ResourceList';
 
 class StatusView extends React.Component {
 
@@ -57,13 +57,14 @@ class StatusView extends React.Component {
                     <Title title={this.state.currentTestbed.name} subtitle={this.state.currentTestbed.hostname} />
                 </PanelHeader>
                 <PanelBody>
-                    <ResourcesList resources={this.state.resources} />
+                    <ResourceList resources={this.state.resources} />
                 </PanelBody>
             </Panel>;
 
         }
 
-        return (<View>
+        return (
+            <View>
                 <Panel>
                     <PanelHeader>
                         <Title title="Service Status" subtitle="" />
