@@ -67,6 +67,19 @@ class ResourcesHandler(Api):
             while (yield cursor.fetch_next()):
                 item = yield cursor.next()
                 response.append(item)
+                # GET /resources/<id>/testbeds
+        elif id and self.isUrn(id) and o == 'testbeds':
+            cursor = yield r.table('resources') \
+                .pluck('id', 'manager') \
+                .merge(lambda res: {
+                'testbeds': r.table('testbeds').get_all(res['manager'], index='id') \
+                       .coerce_to('array')
+            }) \
+                .filter({'id': id}) \
+                .run(self.dbconnection)
+            while (yield cursor.fetch_next()):
+                item = yield cursor.next()
+                response.append(item)
         else:
             self.userError("invalid request")
 

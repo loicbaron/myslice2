@@ -13,7 +13,7 @@ from tornado import gen, escape
 class TestbedsHandler(Api):
 
     @gen.coroutine
-    def get(self, id=None, o=None):
+    def get(self, id=None, o=None, a=None, b=None):
         """
             - GET /testbeds
                 (public) Testbed list
@@ -65,15 +65,22 @@ class TestbedsHandler(Api):
         # GET /testbeds/<id>/leases
         elif id and self.isUrn(id) and o == 'leases':
             cursor = yield r.table(o) \
-                .filter(lambda lease: lease["manager"] == id) \
+                .filter(lambda ls: ls["manager"] == id) \
                 .run(self.dbconnection)
-                #
+            #
 
+            while (yield cursor.fetch_next()):
+                item = yield cursor.next()
+                response.append(item)
+        # GET /testbeds/<id>/leases/Start-time/End-time
+        elif id and a and b and self.isUrn(id) and o == 'leases':
+            cursor = yield r.table(o) \
+                .filter({"manager": id, "Start_time": a, "End_time" :b }) \
+                .run(self.dbconnection)
             while (yield cursor.fetch_next()):
                 item = yield cursor.next()
                 response.append(item)
         else:
             self.userError("invalid request")
             return
-
         self.finish(json.dumps({"result": response}, cls=myJSONEncoder))
