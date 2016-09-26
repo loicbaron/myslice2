@@ -181,7 +181,7 @@ class Application(web.Application):
             # projects
             web.url(r'/api/v1/projects/?(' + self.urn_regex + ')?/?(users|slices)?$', ProjectsHandler),
             # slices
-
+            web.url(r'/api/v1/slices/?(' + self.hrn_regex + ')?/?(users|resources)?$', SlicesHandler),
             web.url(r'/api/v1/slices/?(' + self.urn_regex + ')?/?(users|resources)?$', SlicesHandler),
         ]
 
