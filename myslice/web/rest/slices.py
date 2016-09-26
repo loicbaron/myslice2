@@ -101,6 +101,7 @@ class SlicesHandler(Api):
                         'resources': r.table('resources').get_all(sli['resources'], index='id') \
                            .coerce_to('array')
                     }) \
+                    .filter ({'id': id})\
                     .run(self.dbconnection)
                 while (yield cursor.fetch_next()):
                     item = yield cursor.next()
