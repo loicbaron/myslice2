@@ -1,5 +1,5 @@
 import axios from 'axios';
-import actions from '../actions/StatusViewActions';
+import actions from '../actions/views/Status';
 
 const StatusViewSource = () => {
     return {
