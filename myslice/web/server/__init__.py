@@ -159,9 +159,10 @@ class Application(web.Application):
             web.url(r'/api/v1/resources/(' + self.urn_regex + ')?$', ResourcesHandler),
             web.url(r'/api/v1/resources/(' + self.urn_regex + ')?/?(leases)?$', ResourcesHandler),
             web.url(r'/api/v1/resources/(' + self.urn_regex + ')?/?(slices)?$', ResourcesHandler),
+            web.url(r'/api/v1/resources/(' + self.urn_regex + ')?/?(testbeds)?$', ResourcesHandler),
             # leases
             web.url(r'/api/v1/leases$', LeasesHandler),
-            #TODO formatting the timestamp as web.url(r'/api/v1/leases/(^\d{2}-?\d{2}-?\d{4}\s\d{2}:\d{2}?$)', LeasesHandler),
+            #TODO formatting the path as web.url(r'/api/v1/leases/(^\d{2}-?\d{2}-?\d{4}\s\d{2}:\d{2}?$)', LeasesHandler),
             web.url(r'/api/v1/leases/([0-9-]{10})?$', LeasesHandler),
             web.url(r'/api/v1/profile$', ProfileHandler),
             
@@ -169,7 +170,9 @@ class Application(web.Application):
 
             # testbeds
             web.url(r'/api/v1/testbeds/?(' + self.urn_regex + ')?/?(resources)?$', TestbedsHandler),
+            #web.url(r'/api/v1/testbeds/?(' + self.urn_regex + ')?/?(slices)?$', TestbedsHandler),
             web.url(r'/api/v1/testbeds/?(' + self.urn_regex + ')?/?(leases)?$', TestbedsHandler),
+            web.url(r'/api/v1/testbeds/?(' + self.urn_regex + ')?/?(leases)?/([0-9-]{10})?/([0-9-]{10})?$', TestbedsHandler),
             # users
             web.url(r'/api/v1/users/?(' + self.urn_regex + ')?/?(authorities|projects|slices)?$', UsersHandler),
             web.url(r'/api/v1/users/?(authorities|projects|slices)?$', UsersHandler),
@@ -178,9 +181,8 @@ class Application(web.Application):
             # projects
             web.url(r'/api/v1/projects/?(' + self.urn_regex + ')?/?(users|slices)?$', ProjectsHandler),
             # slices
-            web.url(r'/api/v1/slices/?(' + self.hrn_regex + ')?/?(resources)?$', SlicesHandler),
-            web.url(r'/api/v1/slices/?(' + self.urn_regex + ')?/?(resources)?$', SlicesHandler),
-            web.url(r'/api/v1/slices/?(' + self.urn_regex + ')?/?(users)?$', SlicesHandler),
+
+            web.url(r'/api/v1/slices/?(' + self.urn_regex + ')?/?(users|resources)?$', SlicesHandler),
         ]
 
         ##
