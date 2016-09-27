@@ -12,7 +12,7 @@ class LeasesHandler(Api):
     def get(self, o=None):
         """
          GET /leases
-         GET /leases/start_time
+         GET /leases/start_time|end_time
        Leases list
 
         :return:
@@ -26,9 +26,9 @@ class LeasesHandler(Api):
                 result = yield cursor.next()
                 leases.append(result)
         else:
-            cursor = yield r.table('leases').filter({'start_time': o}).run(self.dbconnection)
-
+            cursor = yield r.table('leases').filter(r.row['start_time'].eq(o) | (r.row['end_time'].eq(int(o)))).run(self.dbconnection)
             while (yield cursor.fetch_next()):
                 item = yield cursor.next()
                 leases.append(item)
         self.write(json.dumps({"result": leases}, cls=myJSONEncoder))
+
