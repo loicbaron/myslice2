@@ -200,7 +200,6 @@ class AuthoritiesHandler(Api):
                 DELETE /authorities/<id>
                 :return:
         """
-
         try:
             # Check if the user has the right to delete an authority, PI of an upper authority
             a = yield r.table('authorities').get(id).run(self.dbconnection)
@@ -211,7 +210,6 @@ class AuthoritiesHandler(Api):
         except Exception:
             self.userError("not authenticated ")
             return
-
         try:
             event = Event({
                 'action': EventAction.DELETE,
