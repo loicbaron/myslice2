@@ -74,6 +74,8 @@ def events_run(lock, qUserEvents):
                         user.id = event.object.id
                         isSuccess = user.save(dbconnection)
                 except Exception as e:
+                    import traceback
+                    traceback.print_exc()
                     logger.error("Problem updating user: {} - {}".format(event.object.id, e))
                     event.logError(str(e))
                     event.setError()

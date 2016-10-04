@@ -1,11 +1,10 @@
 from email.utils import parseaddr
-import crypt
-from hmac import compare_digest as compare_hash
 from tornado.web import MissingArgumentError
 from tornado import gen
 from rethinkdb import r
 
 from myslice.web.controllers import BaseController
+from myslice.web.controllers.login import check_password
 
 class Index(BaseController):
 
@@ -54,7 +53,7 @@ class Index(BaseController):
             self.render(self.application.templates + "/login.html", message="user does not exist")
             return
 
-        if not compare_hash(crypt.crypt(password, user['password']), user['password']):
+        if not check_password(password, user['password']):
             self.render(self.application.templates + "/login.html", message="password does not match")
             return
 

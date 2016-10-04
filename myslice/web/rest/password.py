@@ -1,7 +1,5 @@
 import json
 from email.utils import parseaddr
-import crypt
-from hmac import compare_digest as compare_hash
 import uuid
 
 import rethinkdb as r
@@ -10,6 +8,7 @@ from myslice.lib.util import myJSONEncoder
 from myslice.db.activity import Event, EventAction, ObjectType
 from myslice.db.user import User
 from myslice.web.rest import Api
+from myslice.web.controllers.login import check_password, crypt_password
 
 from tornado import gen, escape
 
@@ -34,8 +33,6 @@ class PasswordHandler(Api):
             self.userError("Malformed request", e)
             return
 
-        print(data)
-
         if not data['old_password']:
             self.userError("Malformed request")
             return
@@ -54,10 +51,8 @@ class PasswordHandler(Api):
         p = bytes(data['old_password'], 'latin-1')
 
         #self.userError("{}".format(p))
-
-        cpassword = crypt.crypt(str(p), user['password'][:12])
-        if not compare_hash(cpassword, user['password']):
-            self.userError("password does not match {} - {}".format(cpassword, user['password']))
+        if not check_password(data['old_password'], user['password']):
+            self.userError("password does not match")
             return
 
         event = Event({
@@ -68,7 +63,8 @@ class PasswordHandler(Api):
                 'id': user_id
             },
             'data': {
-                "password": crypt.crypt(data['new_password'], crypt.mksalt())
+                "password": crypt_password(data['new_password']),
+                "generate_keys": False
             }
         })
 
@@ -155,7 +151,7 @@ class PasswordHandler(Api):
                 #user = User(user)
                 #print(user.password)
                 # Crypt password
-                new_password = crypt.crypt(data['password'], crypt.mksalt())
+                new_password = crypt_password(data['password'])
                 event.data['password'] = new_password
                 event.setApproved()
 

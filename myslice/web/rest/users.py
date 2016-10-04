@@ -12,6 +12,7 @@ from myslice.lib.util import myJSONEncoder
 from myslice.db.activity import Event, EventAction, ObjectType
 from myslice.db import dispatch
 from myslice.web.rest import Api
+from myslice.web.controllers.login import check_password, crypt_password
 
 from tornado import gen, escape
 
@@ -69,9 +70,8 @@ class LoginHandler(Api):
 
         #self.userError("{}".format(p))
 
-        cpassword = crypt.crypt(str(p), user['password'][:12])
-        if not compare_hash(cpassword, user['password']):
-            self.userError("password does not match {} - {}".format(cpassword, user['password']))
+        if not check_password(password, user['password']):
+            self.userError("password does not match")
             return
 
         # TODO: integrate OAuth2 and pass a token to the user

@@ -1,4 +1,4 @@
-from passlib.hash import md5_crypt
+from passlib.hash import md5_crypt, sha256_crypt
 import json
 from email.utils import parseaddr
 from hmac import compare_digest as compare_hash
@@ -25,7 +25,7 @@ class Index(BaseController):
     @gen.coroutine
     def post(self):
         """
-            Authentication
+            Authenticationuser['password']
         """
 
         try:
@@ -55,13 +55,14 @@ class Index(BaseController):
             print("Controller Login email = %s" % email)
             feed = yield r.table('users') \
                             .filter({"email": email}) \
-                            .merge(lambda user: {
-                                    'slices': r.table('slices') \
-                                                .get_all(r.args(user['slices'])) \
-                                                .pluck(['id', 'hrn',  'name', 'shortname']) \
-                                                .coerce_to('array')
-                            }) \
                             .run(self.application.dbconnection)
+                            #.merge(lambda user: {
+                            #        'slices': r.table('slices') \
+                            #                    .get_all(r.args(user['slices'])) \
+                            #                    .pluck(['id', 'hrn',  'name', 'shortname']) \
+                            #                    .coerce_to('array')
+                            #}) \
+                            #.run(self.application.dbconnection)
             yield feed.fetch_next()
             user = yield feed.next()
         except Exception as e:
@@ -76,44 +77,51 @@ class Index(BaseController):
 
         ##
         # check if password matches
-        if not self.check_password(password, user['password']):
+        if not check_password(password, user['password']):
             self.render(self.application.templates + "/login.html", message="password does not match")
             return
 
         ##
         # user finally logged in, set cookie
-        self.set_secure_cookie("user", json.dumps({
+        self.set_secure_cookie("user", str(json.dumps({
             'id': user['id'],
             'email': user['email'],
             'first_name': user.get('first_name', ''),
             'last_name': user.get('last_name', ''),
             'authority': user['authority'],
-            'slices': user['slices'],
-            'pi_authorities': user['pi_authorities'],
-        }, cls=myJSONEncoder))
+            'slices': user.get('slices',[]),
+            'pi_authorities': user.get('pi_authorities',[]),
+        }, cls=myJSONEncoder)))
 
         self.redirect("/")
 
+def crypt_password(password):
+    return sha256_crypt.encrypt(password)
 
-    def check_password(self, plain_password, encrypted_password):
-        try:
-            if md5_crypt.verify(plain_password, encrypted_password):
-                return True
-
-        except Exception as e:
-            import traceback
-            traceback.print_exc()
+def check_password(plain_password, encrypted_password):
+    try:
+        if md5_crypt.verify(plain_password, encrypted_password):
+            return True
+    except ValueError:
+        print("this is not an md5 legacy password")
+        if sha256_crypt.verify(plain_password, encrypted_password):
+            return True
+        else:
             return False
-        # ##
-        # # legacy method used to store passwords
-        # if encrypted_password or encrypted_password[:12] != "" or \
-        #                 crypt.crypt(plain_password, encrypted_password[:12]) == encrypted_password:
-        #     return True
-
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
         return False
+    # ##
+    # # legacy method used to store passwords
+    # if encrypted_password or encrypted_password[:12] != "" or \
+    #                 crypt.crypt(plain_password, encrypted_password[:12]) == encrypted_password:
+    #     return True
 
-    ##
-    # TODO: MD5 hash are not secure, should migrate bcrypt
-    #
-    # https://github.com/pyca/bcrypt
+    return False
+
+##
+# TODO: MD5 hash are not secure, should migrate bcrypt
+#
+# https://github.com/pyca/bcrypt
 
