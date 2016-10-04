@@ -85,9 +85,14 @@ class User(myslicelibUser):
             self.setAttribute('private_key', private_key.decode('utf-8'))
             self.setAttribute('public_key', public_key.decode('utf-8'))
             self.appendAttribute('keys', self.getAttribute('public_key'))
+            # Once it is generated, turn this option off
+            self.setAttribute('generate_keys', False)
 
         result = super(User, self).save(setup)
         errors = result['errors']
+        # Raise exception to send the errors as logs
+        if errors:
+            raise UserException(errors)
 
         result = { **(self.dict()), **result['data'][0]}
         # add status if not present and update on db
@@ -96,10 +101,7 @@ class User(myslicelibUser):
             result['enabled'] = format_date()
 
         db.users(dbconnection, result, self.getAttribute('id'))
-        if errors:
-            raise UserException(errors)
-        else:
-            return True
+        return True
 
     def delete(self, dbconnection, setup=None):
         result = super(User, self).delete(setup)
