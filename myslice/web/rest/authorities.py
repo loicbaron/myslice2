@@ -135,40 +135,53 @@ class AuthoritiesHandler(Api):
         :return:
         """
 
+        if not self.get_current_user():
+            self.userError('permission denied')
+            return
 
-        payload = {
-            "event": {
-                "action": "CREATE",
-                "user": "urn:publicid:IDN+onelab:upmc+user+loic_baron",
-                "object": {
-                    "type": "AUTHORITY",
-                    "id": "urn:publicid:IDN+onelab:test_authority+authority+sa"
-                },
-                "data": {
-                    "name": "Test Autority",
-                    "pi_users": ["urn:publicid:IDN+onelab:upmc+user+loic_baron"]
-                }
-            }
-        }
-
-        try:
-            data = escape.json_decode(self.request.body)['event']
-        except json.decoder.JSONDecodeError as e:
-            #pprint(self.request.body)
-            import traceback
-            traceback.print_exc()
-            self.set_status(400)
-            self.finish(json.dumps({"return": {"status": "error", "messages": "malformed request"}}))
+        if not self.request.body:
+            self.userError("empty request")
             return
 
         try:
-            event = Event(data)
+            data = escape.json_decode(self.request.body)
+        except json.decoder.JSONDecodeError as e:
+            self.userError("Malformed request", e)
+            return
         except Exception as e:
-            #pprint(self.request.body)
-            import traceback
-            traceback.print_exc()
-            self.set_status(500)
-            self.finish(json.dumps({"return": {"status": "error", "messages": e.message}}))
+            self.userError("Malformed request", e)
+            return
+
+        if not data['name']:
+            self.userError("Authority name must be specified")
+            return
+
+        if not data['shortname']:
+            self.userError("Authority shortname must be specified")
+            return
+
+        try:
+            event = Event({
+                'action': EventAction.CREATE,
+                'user': self.get_current_user()['id'],
+                'object': {
+                    'type': ObjectType.AUTHORITY,
+                    'id': None
+                },
+                'data': data
+            })
+        except Exception as e:
+            self.userError("Can't create request", e.message)
+            return
+        else:
+            result = yield dispatch(self.dbconnection, event)
+            self.write(json.dumps(
+                {
+                    "result": "success",
+                    "error": None,
+                    "debug": None
+                 }, cls=myJSONEncoder))
+
 
     @gen.coroutine
     def put(self):
