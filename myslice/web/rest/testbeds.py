@@ -26,6 +26,9 @@ class TestbedsHandler(Api):
 
             - GET /testbeds/<id>/leases
                 Leases list of the testbed with the <id>
+
+            - GET /testbeds/<id>/leases/Start-time/End-time
+                 Leases list of the testbed with the <id>, start time and end time
             :return:
             """
 
@@ -54,7 +57,7 @@ class TestbedsHandler(Api):
         # GET /testbeds/<id>/resources
         elif id and self.isUrn(id) and o == 'resources':
             cursor = yield r.table(o) \
-                .filter(lambda resource: resource["manager"] == id) \
+                .filter(lambda resource: resource["testbed"] == id) \
                 .run(self.dbconnection)
                 #
 
@@ -65,7 +68,7 @@ class TestbedsHandler(Api):
         # GET /testbeds/<id>/leases
         elif id and self.isUrn(id) and o == 'leases':
             cursor = yield r.table(o) \
-                .filter(lambda ls: ls["manager"] == id) \
+                .filter(lambda ls: ls["testbed"] == id) \
                 .run(self.dbconnection)
             #
 
@@ -75,7 +78,7 @@ class TestbedsHandler(Api):
         # GET /testbeds/<id>/leases/Start-time/End-time
         elif id and a and b and self.isUrn(id) and o == 'leases':
             cursor = yield r.table(o) \
-                .filter({"manager": id, "Start_time": a, "End_time" :b }) \
+                .filter({"testbed": id, "start_time": int(a), "end_time": int(b)}) \
                 .run(self.dbconnection)
             while (yield cursor.fetch_next()):
                 item = yield cursor.next()

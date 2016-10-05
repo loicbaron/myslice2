@@ -170,7 +170,6 @@ class Application(web.Application):
 
             # testbeds
             web.url(r'/api/v1/testbeds/?(' + self.urn_regex + ')?/?(resources)?$', TestbedsHandler),
-            #web.url(r'/api/v1/testbeds/?(' + self.urn_regex + ')?/?(slices)?$', TestbedsHandler),
             web.url(r'/api/v1/testbeds/?(' + self.urn_regex + ')?/?(leases)?$', TestbedsHandler),
             web.url(r'/api/v1/testbeds/?(' + self.urn_regex + ')?/?(leases)?/([0-9-]{10})?/([0-9-]{10})?$', TestbedsHandler),
             # users
@@ -183,6 +182,7 @@ class Application(web.Application):
             # slices
             web.url(r'/api/v1/slices/?(' + self.hrn_regex + ')?/?(users|resources)?$', SlicesHandler),
             web.url(r'/api/v1/slices/?(' + self.urn_regex + ')?/?(users|resources)?$', SlicesHandler),
+
         ]
 
         ##
