@@ -5,7 +5,7 @@ import rethinkdb as r
 from myslice.lib.util import myJSONEncoder
 from myslice.web.rest import Api
 
-from myslice.db.activity import Event, EventAction, ObjectType
+from myslice.db.activity import Event, EventAction, ObjectType, DataType
 from myslice.db import dispatch
 
 from tornado import gen, escape
@@ -167,9 +167,17 @@ class ProjectsHandler(Api):
     def put(self, id=None, o=None):
         """
         PUT /projects/<id>
-        { 'action':'add|remove', ‘users’ : [ <id user>, <id user>, … ] }
+        { project object }
         :return:
         """
+
+        response = []
+        current_user = self.get_current_user()
+
+        if not current_user:
+            self.userError('permission denied')
+            return
+
         if not self.request.body:
             self.userError("empty request")
             return
@@ -180,48 +188,93 @@ class ProjectsHandler(Api):
             self.userError("malformed request", e.message)
             return
 
-        if 'users' in data:
-            data['type'] = "USER"
-            data['values'] = data['users']
-            del data['users']
-        else:
-            self.userError("ObjectType not supported")
+        # project id from DB
 
-        try:
-            if data['action'].lower() == 'add':
-                action = EventAction.ADD
-            elif data['action'].lower() == 'remove':
-                action = EventAction.REMOVE
-            else:
-                raise ValueError("action %s not supported" % data['action'])
-        except Exception as e:
-            self.userError("malformed request", e)
+        cursor = yield r.table('projects') \
+            .pluck(self.fields['projects']) \
+            .filter({'id': id}) \
+            .filter(lambda project:
+                    project["pi_users"].contains(current_user['id']) or
+                    project["users"].contains(current_user['id'])) \
+            .merge(lambda project: {
+            'authority': r.table('authorities').get(project['authority']) \
+                   .pluck(self.fields_short['authorities']) \
+                   .default({'id': project['authority']})
+            }) \
+            .run(self.dbconnection)
+        while (yield cursor.fetch_next()):
+            project = yield cursor.next()
 
-        try:
-            event = Event({
-                'action': action,
-                'user': self.current_user['id'],
-                'object': {
-                    'type': ObjectType.PROJECT,
-                    'id': id,
-                },
-                'data': data
-            })
-        except AttributeError as e:
-            self.userError("Can't create request", e)
-            return
-        except Exception as e:
-            self.userError("Can't create request", e)
-            return
-        else:
-            result = yield dispatch(self.dbconnection, event)
 
-            self.write(json.dumps(
-                {
-                    "result": "success",
-                    "error": None,
-                    "debug": None
-                }, cls=myJSONEncoder))
+        # project properties
+        # modify some project properties?
+
+        ##
+        # project pis ADD
+        for data_pi in data['pi_users']:
+            # new pi
+            if data_pi not in project['pi_users']:
+                # dispatch event add pi to project
+                try:
+                    event = Event({
+                        'action': EventAction.ADD,
+                        'user': self.current_user['id'],
+                        'object': {
+                            'type': ObjectType.PROJECT,
+                            'id': id,
+                        },
+                        'data': {
+                            'type' : DataType.PI,
+                            'values' : data_pi
+                        }
+                    })
+                except AttributeError as e:
+                    self.userError("Can't create request", e)
+                    return
+                except Exception as e:
+                    self.userError("Can't create request", e)
+                    return
+                else:
+                    result = yield dispatch(self.dbconnection, event)
+
+        ##
+        # projects pi REMOVE
+        for project_pi in project['pi_users']:
+            if project_pi not in data['pi_users']:
+                # dispatch event remove pi from project
+                try:
+                    event = Event({
+                        'action': EventAction.REMOVE,
+                        'user': self.current_user['id'],
+                        'object': {
+                            'type': ObjectType.PROJECT,
+                            'id': id,
+                        },
+                        'data': {
+                            'type': DataType.PI,
+                            'values': data_pi
+                        }
+                    })
+                except AttributeError as e:
+                    self.userError("Can't create request", e)
+                    return
+                except Exception as e:
+                    self.userError("Can't create request", e)
+                    return
+                else:
+                    result = yield dispatch(self.dbconnection, event)
+
+
+        # project slices
+
+        # projects users
+
+        self.write(json.dumps(
+            {
+                "result": "success",
+                "error": None,
+                "debug": None
+            }, cls=myJSONEncoder))
 
     @gen.coroutine
     def delete(self, id, o=None):
