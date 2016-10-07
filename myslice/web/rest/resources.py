@@ -60,22 +60,21 @@ class ResourcesHandler(Api):
         # GET /resources/<id>/slices
         elif id and self.isUrn(id) and o == 'slices':
             cursor = yield r.table(o) \
-                .filter(lambda slice: slice["resources"].contains(id)) \
+                .filter(lambda slice: slice["resources"]==id) \
                 .run(self.dbconnection)
                 #
 
             while (yield cursor.fetch_next()):
                 item = yield cursor.next()
                 response.append(item)
-                # GET /resources/<id>/testbeds
+        # GET /resources/<id>/testbeds
         elif id and self.isUrn(id) and o == 'testbeds':
-            cursor = yield r.table('resources') \
-                .pluck('id', 'manager') \
+            cursor = yield r.table('resources') .filter({'id': id}) \
+                .pluck('id','testbed','manager') \
                 .merge(lambda res: {
-                'testbeds': r.table('testbeds').get_all(res['manager'], index='id') \
+                'testbeds': r.table('testbeds').get_all(res['testbed'], index='id') \
                        .coerce_to('array')
             }) \
-                .filter({'id': id}) \
                 .run(self.dbconnection)
             while (yield cursor.fetch_next()):
                 item = yield cursor.next()
