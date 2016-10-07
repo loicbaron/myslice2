@@ -9,7 +9,7 @@ from email.utils import parseaddr
 import rethinkdb as r
 from myslice.db import dispatch, changes
 from myslice.lib.util import myJSONEncoder
-from myslice.db.activity import Event, EventAction, ObjectType
+from myslice.db.activity import Event, EventAction, ObjectType, DataType
 from myslice.db import dispatch
 from myslice.web.rest import Api
 from myslice.web.controllers.login import check_password, crypt_password
@@ -329,6 +329,9 @@ class UsersHandler(Api):
             self.userError("Password must be at least 8 characters")
             return
 
+        # password must be encrypted before storing into DB
+        data['password'] = crypt_password(data['password'])
+
         if not data['terms']:
             self.userError("Please read and accept the terms and conditions.")
             return
@@ -358,17 +361,153 @@ class UsersHandler(Api):
             self.write(json.dumps(
                 {
                     "result": "success",
+                    "events": result["generated_keys"],
                     "error": None,
                     "debug": None
                  }, cls=myJSONEncoder))
 
     @gen.coroutine
-    def put(self):
+    def put(self, id=None, o=None):
         """
         PUT /users/<id>
         :return:
         """
-        pass
+
+        response = []
+        current_user = self.get_current_user()
+
+        if not current_user:
+            self.userError('permission denied')
+            return
+
+        if not self.request.body:
+            self.userError("empty request")
+            return
+
+        try:
+            data = escape.json_decode(self.request.body)
+        except json.decoder.JSONDecodeError as e:
+            self.userError("malformed request", e.message)
+            return
+
+        # user id from DB
+        cursor = yield r.table('users') \
+            .filter({'id': id}) \
+            .run(self.dbconnection)
+        while (yield cursor.fetch_next()):
+            user = yield cursor.next()
+
+        # If password changed, encrypt the new one
+        print(data)
+        if user["password"] != crypt_password(data["password"]):
+            data["password"] = crypt_password(data["password"])
+
+        # Update user's data
+        try:
+            event = Event({
+                'action': EventAction.UPDATE,
+                'user': self.current_user['id'],
+                'object': {
+                    'type': ObjectType.USER,
+                    'id': id
+                },
+                'data': data
+            })
+        except Exception as e:
+            self.userError("Can't create request", e.message)
+            return
+        else:
+            result = yield dispatch(self.dbconnection, event)
+            response = response + result["generated_keys"]
+
+        for p in data['projects']:
+            # the user is a new pi
+            if p not in user['projects']:
+                # dispatch event add pi to project
+                try:
+                    event = Event({
+                        'action': EventAction.ADD,
+                        'user': self.current_user['id'],
+                        'object': {
+                            'type': ObjectType.PROJECT,
+                            'id': p,
+                        },
+                        'data': {
+                            'type' : DataType.PI,
+                            'values' : [id]
+                        }
+                    })
+                except AttributeError as e:
+                    self.userError("Can't create request", e)
+                    return
+                except Exception as e:
+                    self.userError("Can't create request", e)
+                    return
+                else:
+                    result = yield dispatch(self.dbconnection, event)
+                    response = response + result["generated_keys"]
+
+        for s in data['slices']:
+            # the user is a new member of the slice
+            if s not in user['slices']:
+                # dispatch event add user to slice
+                try:
+                    event = Event({
+                        'action': EventAction.ADD,
+                        'user': self.current_user['id'],
+                        'object': {
+                            'type': ObjectType.SLICE,
+                            'id': s,
+                        },
+                        'data': {
+                            'type' : DataType.USER,
+                            'values' : [id]
+                        }
+                    })
+                except AttributeError as e:
+                    self.userError("Can't create request", e)
+                    return
+                except Exception as e:
+                    self.userError("Can't create request", e)
+                    return
+                else:
+                    result = yield dispatch(self.dbconnection, event)
+                    response = response + result["generated_keys"]
+
+        for a in data['pi_authorities']:
+            # the user is a new pi of the authority
+            if a not in user['pi_authorities']:
+                # dispatch event add pi to authority
+                try:
+                    event = Event({
+                        'action': EventAction.ADD,
+                        'user': self.current_user['id'],
+                        'object': {
+                            'type': ObjectType.AUTHORITY,
+                            'id': a,
+                        },
+                        'data': {
+                            'type' : DataType.PI,
+                            'values' : [id]
+                        }
+                    })
+                except AttributeError as e:
+                    self.userError("Can't create request", e)
+                    return
+                except Exception as e:
+                    self.userError("Can't create request", e)
+                    return
+                else:
+                    result = yield dispatch(self.dbconnection, event)
+                    response = response + result["generated_keys"]
+
+        self.write(json.dumps(
+            {
+                "result": "success",
+                "events": response,
+                "error": None,
+                "debug": None
+             }, cls=myJSONEncoder))
 
     @gen.coroutine
     def delete(self):
