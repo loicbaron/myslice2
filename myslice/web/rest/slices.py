@@ -5,7 +5,7 @@ import rethinkdb as r
 from myslice.lib.util import myJSONEncoder
 from myslice.web.rest import Api
 
-from myslice.db.activity import Event, EventAction, ObjectType
+from myslice.db.activity import Event, EventAction, ObjectType, DataType
 from myslice.db import dispatch
 
 from tornado import gen, escape
@@ -68,7 +68,6 @@ class SlicesHandler(Api):
                 return
 
             cursor = yield r.table('slices') \
-                .pluck(self.fields['slices']) \
                 .filter(filter) \
                 .merge(lambda slice: {
                     'authority': r.table('authorities').get(slice['authority']) \
@@ -101,7 +100,7 @@ class SlicesHandler(Api):
                         'resources': r.table('resources').get_all(sli['resources'], index='id') \
                            .coerce_to('array')
                     }) \
-                    .filter ({'id': id})\
+                    .filter({'id': id})\
                     .run(self.dbconnection)
                 while (yield cursor.fetch_next()):
                     item = yield cursor.next()
@@ -128,7 +127,7 @@ class SlicesHandler(Api):
         try:
             data = escape.json_decode(self.request.body)
         except json.decoder.JSONDecodeError as e:
-            self.userError("malformed request", e.message)
+            self.userError("malformed request", e.msg)
             return
 
         try:
@@ -165,17 +164,188 @@ class SlicesHandler(Api):
                 {
                     "result": "success",
                     "error": None,
-                    "debug": None
+                    "debug": None,
+                    " events": result['generated_keys']
                 }, cls=myJSONEncoder))
 
     @gen.coroutine
-    def put(self):
+    def put(self, id=None, o=None):
         """
         PUT /slices/<id>
         :return:
         """
-        pass
+        response = []
+        listeIdEvent = []
+        current_user = self.get_current_user()
 
+        if not current_user:
+            self.userError('not authenticated ')
+            return
+
+        if not self.request.body:
+            self.userError("empty request")
+            return
+        if not current_user:
+            self.userError('permission denied')
+            return
+
+        if self.isUrn(id):
+            filter = {'id': id}
+
+        elif self.isHrn(id):
+            filter = {'hrn': id}
+
+        else:
+            self.userError('id or hrn format error')
+            return
+        try:
+            data = escape.json_decode(self.request.body)
+        except json.decoder.JSONDecodeError as e:
+            self.userError("malformed request", e.msg)
+            return
+            # slice id from DB
+
+        cursor = yield r.table('slices') \
+            .filter(filter) \
+            .merge(lambda slice: {
+            'authority': r.table('authorities').get(slice['authority']) \
+                   .pluck(self.fields_short['authorities']) \
+                   .default({'id': slice['authority']})
+        }) \
+            .merge(lambda slice: {
+            'project': r.table('projects').get(slice['project']) \
+                   .pluck(self.fields_short['projects']) \
+                   .default({'id': slice['project']})
+
+        }) \
+            .run(self.dbconnection)
+
+        while (yield cursor.fetch_next()):
+            slice = yield cursor.next()
+
+
+        ##
+        # slice user ADD
+        for data_user in data['users']:
+            # new user
+            if data_user not in slice['users']:
+                # dispatch event add user to slices
+                try:
+                    event = Event({
+                        'action': EventAction.ADD,
+                        'user': self.current_user['id'],
+                        'object': {
+                            'type': ObjectType.SLICE,
+                            'id': id,
+                        },
+                        'data': {
+                            'type': DataType.USER,
+                            'values': data_user
+                        }
+                    })
+
+                except AttributeError as e:
+                    self.userError("Can't create request", e)
+                    return
+                except Exception as e:
+                    self.userError("Can't create request", e)
+                    return
+                else:
+                    result = yield dispatch(self.dbconnection, event)
+                    listeIdEvent.append(result['generated_keys'])
+        # slice remove users
+        for data_user in slice['users']:
+            if data_user not in data['users']:
+                # dispatch event remove user from slice
+                try:
+                    event = Event({
+                        'action': EventAction.REMOVE,
+                        'user': self.current_user['id'],
+                        'object': {
+                            'type': ObjectType.SLICE,
+                            'id': id,
+                        },
+                        'data': {
+                            'type': DataType.USER,
+                            'values': data_user
+                        }
+                    })
+
+                except AttributeError as e:
+                    self.userError("Can't create request", e)
+                    return
+                except Exception as e:
+                    self.userError("Can't create request", e)
+                    return
+                else:
+                    result = yield dispatch(self.dbconnection, event)
+                    listeIdEvent.append(result['generated_keys'])
+        # slices add/remove resources
+
+        for data_resources in data['resources']:
+            # new resource
+            if data_resources not in slice['resources']:
+                # dispatch event add resource to slices
+                try:
+                    event = Event({
+                        'action': EventAction.ADD,
+                        'user': self.current_user['id'],
+                        'object': {
+                            'type': ObjectType.RESOURCE,
+                            'id': id,
+                        },
+                        'data': {
+                            'type': DataType.RESOURCE,
+                            'values': data_resources
+                        }
+                    })
+
+                except AttributeError as e:
+                    self.userError("Can't create request", e)
+                    return
+                except Exception as e:
+                    self.userError("Can't create request", e)
+                    return
+                else:
+                    result = yield dispatch(self.dbconnection, event)
+                    listeIdEvent.append(result['generated_keys'])
+                    ##
+                    # slice remove resource
+        for data_resources in slice['resources']:
+            if data_resources not in data['resources']:
+                # dispatch event remove resource from slice
+                try:
+                    event = Event({
+                        'action': EventAction.REMOVE,
+                        'user': self.current_user['id'],
+                        'object': {
+                            'type': ObjectType.RESOURCE,
+                            'id': id,
+                        },
+                        'data': {
+                            'type': DataType.RESOURCE,
+                            'values': data_resources
+                        }
+                    })
+
+                except AttributeError as e:
+                    self.userError("Can't create request", e)
+                    return
+                except Exception as e:
+                    self.userError("Can't create request", e)
+                    return
+                else:
+                    result = yield dispatch(self.dbconnection, event)
+                    listeIdEvent.append(result['generated_keys'])
+
+        self.write(json.dumps(
+            {
+                "result": "success",
+                "error": None,
+                "debug": None,
+                "events": listeIdEvent
+            }, cls=myJSONEncoder))
+        # return the id of the events
     @gen.coroutine
     def delete(self, id, o=None):
         """
@@ -215,5 +385,6 @@ class SlicesHandler(Api):
                 {
                     "result": "success",
                     "error": None,
-                    "debug": None
+                    "debug": None,
+                    "events": result['generated_keys']
                 }, cls=myJSONEncoder))
