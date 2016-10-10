@@ -174,8 +174,8 @@ class SlicesHandler(Api):
         PUT /slices/<id>
         :return:
         """
+
         response = []
-        listeIdEvent = []
         current_user = self.get_current_user()
 
         if not current_user:
@@ -252,7 +252,7 @@ class SlicesHandler(Api):
                     return
                 else:
                     result = yield dispatch(self.dbconnection, event)
-                    listeIdEvent.append(result['generated_keys'])
+                    response.append(result['generated_keys'])
         # slice remove users
         for data_user in slice['users']:
             if data_user not in data['users']:
@@ -279,7 +279,7 @@ class SlicesHandler(Api):
                     return
                 else:
                     result = yield dispatch(self.dbconnection, event)
-                    listeIdEvent.append(result['generated_keys'])
+                    response.append(result['generated_keys'])
         # slices add/remove resources
 
         for data_resources in data['resources']:
@@ -308,7 +308,7 @@ class SlicesHandler(Api):
                     return
                 else:
                     result = yield dispatch(self.dbconnection, event)
-                    listeIdEvent.append(result['generated_keys'])
+                    response.append(result['generated_keys'])
                     ##
                     # slice remove resource
         for data_resources in slice['resources']:
@@ -336,14 +336,14 @@ class SlicesHandler(Api):
                     return
                 else:
                     result = yield dispatch(self.dbconnection, event)
-                    listeIdEvent.append(result['generated_keys'])
+                    response.append(result['generated_keys'])
 
         self.write(json.dumps(
             {
                 "result": "success",
                 "error": None,
                 "debug": None,
-                "events": listeIdEvent
+                "events": response
             }, cls=myJSONEncoder))
         # return the id of the events
     @gen.coroutine
