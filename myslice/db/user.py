@@ -81,6 +81,7 @@ class User(myslicelibUser):
 
     def save(self, dbconnection, setup=None):
         if self.getAttribute('generate_keys'):
+            #print("generating new key for user %s" % self.id)
             private_key, public_key = generate_RSA()
             self.setAttribute('private_key', private_key.decode('utf-8'))
             self.setAttribute('public_key', public_key.decode('utf-8'))
