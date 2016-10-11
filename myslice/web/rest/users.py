@@ -343,6 +343,9 @@ class UsersHandler(Api):
             # admin create user directly
             current_user_id = self.get_current_user()['id']
 
+        # XXX We only manage User's data not his Projects or PI authorities or Slices
+        # These have to be managed separately
+
         try:
             event = Event({
                 'action': EventAction.CREATE,
@@ -402,11 +405,20 @@ class UsersHandler(Api):
         if user["password"] != crypt_password(data["password"]):
             data["password"] = crypt_password(data["password"])
 
+        # handle authority as dict
+        if "authority" in data and type(data["authority"]) is dict:
+            data["authority"] = data["authority"]["id"]
+
+        # User's Slices are managed through the Projects Service
+        # handle slices as dict
+        if "slices" in data and type(data["slices"]) is dict:
+            data["slices"] = data["slices"]["id"]
+
         # Update user's data
         try:
             event = Event({
                 'action': EventAction.UPDATE,
-                'user': self.current_user['id'],
+                'user': current_user['id'],
                 'object': {
                     'type': ObjectType.USER,
                     'id': id
@@ -420,14 +432,18 @@ class UsersHandler(Api):
             result = yield dispatch(self.dbconnection, event)
             response = response + result["generated_keys"]
 
+        # Check the list of projects in data sent
         for p in data['projects']:
-            # the user is a new pi
+            # handle project as dict
+            if type(p) is dict:
+                p = p['id']
+            # if the project is not in the list of the user's projects in the DB, user is a new pi
             if p not in user['projects']:
                 # dispatch event add pi to project
                 try:
                     event = Event({
                         'action': EventAction.ADD,
-                        'user': self.current_user['id'],
+                        'user': current_user['id'],
                         'object': {
                             'type': ObjectType.PROJECT,
                             'id': p,
@@ -447,20 +463,24 @@ class UsersHandler(Api):
                     result = yield dispatch(self.dbconnection, event)
                     response = response + result["generated_keys"]
 
-        for s in data['slices']:
-            # the user is a new member of the slice
-            if s not in user['slices']:
-                # dispatch event add user to slice
+        # Check user's projects in DB
+        for p in user['projects']:
+            # handle project as dict
+            if type(p) is dict:
+                p = p['id']
+            # If the project is not in the data sent, remove the user from the project's pis
+            if p not in data['projects']:
+                # dispatch event add pi to project
                 try:
                     event = Event({
-                        'action': EventAction.ADD,
-                        'user': self.current_user['id'],
+                        'action': EventAction.REMOVE,
+                        'user': current_user['id'],
                         'object': {
-                            'type': ObjectType.SLICE,
-                            'id': s,
+                            'type': ObjectType.PROJECT,
+                            'id': p,
                         },
                         'data': {
-                            'type' : DataType.USER,
+                            'type' : DataType.PI,
                             'values' : [id]
                         }
                     })
@@ -474,14 +494,51 @@ class UsersHandler(Api):
                     result = yield dispatch(self.dbconnection, event)
                     response = response + result["generated_keys"]
 
+        # Check the list of pi_authorities in data sent
         for a in data['pi_authorities']:
-            # the user is a new pi of the authority
-            if a not in user['pi_authorities']:
+            # handle authority as dict
+            if type(a) is dict:
+                a = a['id']
+            # if the authority is not in the list of the user's pi_authorities in the DB, user is a new pi
+            # XXX pi_authorities contains also projects, to be changed in myslicelib
+            if a not in user['pi_authorities'] and len(a.split('+')[1].split(':'))<3:
                 # dispatch event add pi to authority
                 try:
                     event = Event({
                         'action': EventAction.ADD,
                         'user': self.current_user['id'],
+                        'object': {
+                            'type': ObjectType.AUTHORITY,
+                            'id': a,
+                        },
+                        'data': {
+                            'type' : DataType.PI,
+                            'values' : [id]
+                        }
+                    })
+                except AttributeError as e:
+                    self.userError("Can't create request", e)
+                    return
+                except Exception as e:
+                    self.userError("Can't create request", e)
+                    return
+                else:
+                    result = yield dispatch(self.dbconnection, event)
+                    response = response + result["generated_keys"]
+
+        # Check user's projects in DB
+        for a in data['pi_authorities']:
+            # handle authority as dict
+            if type(a) is dict:
+                a = a['id']
+            # If the project is not in the data sent, remove the user from the project's pis
+            # XXX pi_authorities contains also projects, to be changed in myslicelib
+            if a not in data['pi_authorities'] and len(a.split('+')[1].split(':'))<3:
+                # dispatch event add pi to project
+                try:
+                    event = Event({
+                        'action': EventAction.REMOVE,
+                        'user': current_user['id'],
                         'object': {
                             'type': ObjectType.AUTHORITY,
                             'id': a,

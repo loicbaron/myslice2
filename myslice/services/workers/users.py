@@ -46,6 +46,12 @@ def events_run(lock, qUserEvents):
                 try:
                     event.setRunning()
                     isSuccess = False
+
+                    if event.user:
+                        u = User(db.get(dbconnection, table='users', id=event.user))
+                        user_setup = UserSetup(u, myslicelibsetup.endpoints)
+                    else:
+                        user_setup = None
                     ##
                     # Creating a new user
                     if event.creatingObject():
@@ -55,7 +61,7 @@ def events_run(lock, qUserEvents):
                         user.email = event.data['email']
                         # authority
                         user.authority = event.data['authority']
-                        isSuccess = user.save(dbconnection)
+                        isSuccess = user.save(dbconnection, user_setup)
                     ##
                     # Deleting user
                     if event.deletingObject():
@@ -64,7 +70,7 @@ def events_run(lock, qUserEvents):
                         if not user:
                             raise Exception("User doesn't exist")
                         user.id = event.object.id
-                        isSuccess = user.delete(dbconnection)
+                        isSuccess = user.delete(dbconnection, user_setup)
                     ##
                     # Updating user
                     if event.updatingObject():
@@ -72,7 +78,7 @@ def events_run(lock, qUserEvents):
                         user = User(event.data)
                         user.email = db.users(dbconnection, id=event.object.id)['email']
                         user.id = event.object.id
-                        isSuccess = user.save(dbconnection)
+                        isSuccess = user.save(dbconnection, user_setup)
                 except Exception as e:
                     import traceback
                     traceback.print_exc()
