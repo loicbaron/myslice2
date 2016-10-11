@@ -162,8 +162,10 @@ class Application(web.Application):
             web.url(r'/api/v1/resources/(' + self.urn_regex + ')?/?(testbeds)?$', ResourcesHandler),
             # leases
             web.url(r'/api/v1/leases$', LeasesHandler),
+            web.url(r'/api/v1/leases?([A-Za-z0-9-]+)?', LeasesHandler),
             #TODO formatting the path as web.url(r'/api/v1/leases/(^\d{2}-?\d{2}-?\d{4}\s\d{2}:\d{2}?$)', LeasesHandler),
             web.url(r'/api/v1/leases/([0-9-]{10})?$', LeasesHandler),
+            web.url(r'/api/v1/leases/([0-9-]{10})?/([0-9-]{10})?$', LeasesHandler),
             web.url(r'/api/v1/profile$', ProfileHandler),
             
             web.url(r'/api/v1/users$', UsersHandler),
