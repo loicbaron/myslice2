@@ -15,7 +15,7 @@ Install
     sudo pip3.5 install --upgrade pip
     sudo pip3 install -r requirements.txt
     sudo python3.5 setup.py develop
-    cd ~/myslice/myslice/web/static/src
+    cd ~/myslice/myslice/web/static/js/src
     sudo npm install
     webpack
 ~~~
