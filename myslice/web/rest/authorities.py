@@ -180,6 +180,7 @@ class AuthoritiesHandler(Api):
             self.write(json.dumps(
                 {
                     "result": "success",
+                    "events": result["generated_keys"],
                     "error": None,
                     "debug": None
                  }, cls=myJSONEncoder))
@@ -191,8 +192,197 @@ class AuthoritiesHandler(Api):
         PUT /authorities/<id>
         :return:
         """
-        pass
 
+        response = []
+        current_user = self.get_current_user()
+
+        if not current_user:
+            self.userError('permission denied')
+            return
+
+        if not self.request.body:
+            self.userError("empty request")
+            return
+
+        try:
+            data = escape.json_decode(self.request.body)
+        except json.decoder.JSONDecodeError as e:
+            self.userError("malformed request", e.message)
+            return
+
+        # user id from DB
+        cursor = yield r.table('authorities') \
+            .filter({'id': id}) \
+            .run(self.dbconnection)
+        while (yield cursor.fetch_next()):
+            authority = yield cursor.next()
+
+        # handle authority as dict
+        if "authority" in data and type(data["authority"]) is dict:
+            data["authority"] = data["authority"]["id"]
+
+        # Slices should be under a project (Legacy slices under an authority) 
+        # handle slices as dict
+        if "slices" in data and type(data["slices"]) is dict:
+            data["slices"] = data["slices"]["id"]
+
+        # Users belong to an Authority, it can NOT be changed
+        # handled by POST /users & DELETE /users/<id>
+         if "users" in data and type(data["users"]) is dict:
+            data["users"] = data["users"]["id"]
+
+        # Update authority data
+        try:
+            event = Event({
+                'action': EventAction.UPDATE,
+                'user': current_user['id'],
+                'object': {
+                    'type': ObjectType.AUTHORITY,
+                    'id': id
+                },
+                'data': data
+            })
+        except Exception as e:
+            self.userError("Can't create request", e.message)
+            return
+        else:
+            result = yield dispatch(self.dbconnection, event)
+            response = response + result["generated_keys"]
+
+        ##
+        #pi_users
+        # authority ADD pis
+        for auth_pi in data['pi_users']:
+            # handle pi_user as dict
+            if type(auth_pi) is dict:
+                auth_pi = auth_pi['id']
+            # new pi
+            if auth_pi not in authority['pi_users']:
+                # dispatch event add pi to project
+                try:
+                    event = Event({
+                        'action': EventAction.ADD,
+                        'user': current_user['id'],
+                        'object': {
+                            'type': ObjectType.AUTHORITY,
+                            'id': id,
+                        },
+                        'data': {
+                            'type' : DataType.PI,
+                            'values' : auth_pi
+                        }
+                    })
+                except AttributeError as e:
+                    self.userError("Can't create request", e)
+                    return
+                except Exception as e:
+                    self.userError("Can't create request", e)
+                    return
+                else:
+                    result = yield dispatch(self.dbconnection, event)
+                    response = response + result["generated_keys"]
+
+        ##
+        # authority REMOVE pis
+        for auth_pi in authority['pi_users']:
+            # handle pi_user as dict
+            if type(auth_pi) is dict:
+                auth_pi = auth_pi['id']
+            if auth_pi not in data['pi_users']:
+                # dispatch event remove pi from authority
+                try:
+                    event = Event({
+                        'action': EventAction.REMOVE,
+                        'user': self.current_user['id'],
+                        'object': {
+                            'type': ObjectType.AUTHORITY,
+                            'id': id,
+                        },
+                        'data': {
+                            'type': DataType.PI,
+                            'values': auth_pi
+                        }
+                    })
+                except AttributeError as e:
+                    self.userError("Can't create request", e)
+                    return
+                except Exception as e:
+                    self.userError("Can't create request", e)
+                    return
+                else:
+                    result = yield dispatch(self.dbconnection, event)
+                    response = response + result["generated_keys"]
+        ##
+        #projects
+        # Check the list of projects in data sent
+        for p in data['projects']:
+            # handle project as dict
+            if type(p) is dict:
+                p = p['id']
+            # if the project is not in the list of the user's projects in the DB, user is a new pi
+            if p not in user['projects']:
+                # dispatch event add pi to project
+                try:
+                    event = Event({
+                        'action': EventAction.ADD,
+                        'user': current_user['id'],
+                        'object': {
+                            'type': ObjectType.PROJECT,
+                            'id': p,
+                        },
+                        'data': {
+                            'type' : DataType.PI,
+                            'values' : [id]
+                        }
+                    })
+                except AttributeError as e:
+                    self.userError("Can't create request", e)
+                    return
+                except Exception as e:
+                    self.userError("Can't create request", e)
+                    return
+                else:
+                    result = yield dispatch(self.dbconnection, event)
+                    response = response + result["generated_keys"]
+
+        # Check user's projects in DB
+        for p in user['projects']:
+            # handle project as dict
+            if type(p) is dict:
+                p = p['id']
+            # If the project is not in the data sent, remove the user from the project's pis
+            if p not in data['projects']:
+                # dispatch event add pi to project
+                try:
+                    event = Event({
+                        'action': EventAction.REMOVE,
+                        'user': current_user['id'],
+                        'object': {
+                            'type': ObjectType.PROJECT,
+                            'id': p,
+                        },
+                        'data': {
+                            'type' : DataType.PI,
+                            'values' : [id]
+                        }
+                    })
+                except AttributeError as e:
+                    self.userError("Can't create request", e)
+                    return
+                except Exception as e:
+                    self.userError("Can't create request", e)
+                    return
+                else:
+                    result = yield dispatch(self.dbconnection, event)
+                    response = response + result["generated_keys"]
+
+        self.write(json.dumps(
+            {
+                "result": "success",
+                "events": response,
+                "error": None,
+                "debug": None
+             }, cls=myJSONEncoder))
 
     @gen.coroutine
     def delete(self, id, o=None):
@@ -227,10 +417,10 @@ class AuthoritiesHandler(Api):
             return
         else:
             result = yield dispatch(self.dbconnection, event)
-
             self.write(json.dumps(
                 {
                     "result": "success",
+                    "events": result["generated_keys"],
                     "error": None,
                     "debug": None
-                }, cls=myJSONEncoder))
+                 }, cls=myJSONEncoder))
