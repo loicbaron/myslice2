@@ -5,7 +5,7 @@ from tornado import gen, escape
 
 from myslice.web.rest import Api
 from myslice.lib.util import myJSONEncoder
-
+import re
 from myslice.db.activity import Event, EventAction, ObjectType
 from myslice.db import dispatch
 class LeasesHandler(Api):
@@ -23,20 +23,34 @@ class LeasesHandler(Api):
         :return:
         """
         leases = []
-        #if id:
-        #    result = yield r.table('leases').get(id).run(self.dbconnection)
-        #    leases.append(result)
+
+
+        #GET / leases
         if not o and not t:
             cursor = yield r.table('leases').run(self.dbconnection)
 
             while (yield cursor.fetch_next()):
                 result = yield cursor.next()
                 leases.append(result)
-        elif not t:
-            cursor = yield r.table('leases').filter(r.row['start_time'].eq(int(o)) | (r.row['end_time'].eq(int(o)))).run(self.dbconnection)
-            while (yield cursor.fetch_next()):
-                item = yield cursor.next()
-                leases.append(item)
+
+        #  GET / leases / start_time¶end_time
+        elif o and not t:
+            regexp="[0-9-]{10}"
+            if re.match(regexp, o) is not None:
+                cursor = yield r.table('leases').filter(
+                    r.row['start_time'].eq(int(o)) | (r.row['end_time'].eq(int(o)))).run(self.dbconnection)
+                while (yield cursor.fetch_next()):
+                    item = yield cursor.next()
+                    leases.append(item)
+
+            else:
+                # GET / leases/id
+                cursor = yield r.table('leases') \
+                    .filter({'id': o}).run(self.dbconnection)
+                while (yield cursor.fetch_next()):
+                    result = yield cursor.next()
+                    leases.append(result)
+        #GET / leases / start_time / end_time
         else:
             cursor = yield r.table('leases').filter(r.row['start_time'].eq(int(o)) & (r.row['end_time'].eq(int(t)))).run(self.dbconnection)
             while (yield cursor.fetch_next()):
