@@ -343,9 +343,6 @@ class UsersHandler(Api):
             # admin create user directly
             current_user_id = self.get_current_user()['id']
 
-        # XXX We only manage User's data not his Projects or PI authorities or Slices
-        # These have to be managed separately
-
         try:
             event = Event({
                 'action': EventAction.CREATE,
@@ -506,7 +503,7 @@ class UsersHandler(Api):
                 try:
                     event = Event({
                         'action': EventAction.ADD,
-                        'user': self.current_user['id'],
+                        'user': current_user['id'],
                         'object': {
                             'type': ObjectType.AUTHORITY,
                             'id': a,
@@ -572,9 +569,54 @@ class UsersHandler(Api):
         DELETE /users/<id>
         :return:
         """
+        # A user has the right to delete his own account
         # Check if the current user is PI of the authority of the user 
         # Or an upper authority 
-        pass
+        current_user = self.get_current_user()
+        try:
+            if current_user['id']!=id:
+                # Check if the user has the right to delete
+                # PI of user's authority or PI of root authority
+
+                # user id from DB
+                cursor = yield r.table('users') \
+                    .filter({'id': id}) \
+                    .run(self.dbconnection)
+                while (yield cursor.fetch_next()):
+                    user = yield cursor.next()
+
+                a = yield r.table('authorities').get(user['authority']).run(self.dbconnection)
+                root_auth = yield r.table('authorities').get(a.authority).run(self.dbconnection)
+                if current_user['id'] not in a['pi_users'] and current_user['id'] not in root_auth['pi_users']:
+                    self.userError("your user has no rights on authority: %s" % id)
+                    return
+        except Exception:
+            self.userError("not authenticated ")
+            return
+        try:
+            event = Event({
+                'action': EventAction.DELETE,
+                'user': current_user['id'],
+                'object': {
+                    'type': ObjectType.USER,
+                    'id': id,
+                }
+            })
+        except AttributeError as e:
+            self.userError("Can't create request", e)
+            return
+        except Exception as e:
+            self.userError("Can't create request", e)
+            return
+        else:
+            result = yield dispatch(self.dbconnection, event)
+            self.write(json.dumps(
+                {
+                    "result": "success",
+                    "events": result["generated_keys"],
+                    "error": None,
+                    "debug": None
+                 }, cls=myJSONEncoder))
 
 class ProfileHandler(Api):
 
