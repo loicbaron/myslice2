@@ -194,16 +194,17 @@ class SlicesHandler(Api):
 
         elif self.isHrn(id):
             filter = {'hrn': id}
-
         else:
             self.userError('id or hrn format error')
             return
+
         try:
             data = escape.json_decode(self.request.body)
         except json.decoder.JSONDecodeError as e:
             self.userError("malformed request", e.msg)
             return
             # slice id from DB
+
 
         cursor = yield r.table('slices') \
             .filter(filter) \
@@ -223,10 +224,20 @@ class SlicesHandler(Api):
         while (yield cursor.fetch_next()):
             slice = yield cursor.next()
 
+        # handle authority as dict
+        if "authority" in data and type(data["authority"]) is dict:
+            data["authority"] = data["authority"]["id"]
+
+        # handle project as dict
+        if "project" in data and type(data["project"]) is dict:
+            data["project"] = data["project"]["id"]
 
         ##
         # slice user ADD
         for data_user in data['users']:
+            # handle user as dict
+            if type(data_user) is dict:
+                data_user = data_user['id']
             # new user
             if data_user not in slice['users']:
                 # dispatch event add user to slices
@@ -255,6 +266,9 @@ class SlicesHandler(Api):
                     response.append(result['generated_keys'])
         # slice remove users
         for data_user in slice['users']:
+            # handle user as dict
+            if type(data_user) is dict:
+                data_user = data_user['id']
             if data_user not in data['users']:
                 # dispatch event remove user from slice
                 try:
