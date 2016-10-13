@@ -523,12 +523,12 @@ class UsersHandler(Api):
                     result = yield dispatch(self.dbconnection, event)
                     response = response + result["generated_keys"]
 
-        # Check user's projects in DB
+        # Check user's pi_authorities in DB
         for a in data['pi_authorities']:
             # handle authority as dict
             if type(a) is dict:
                 a = a['id']
-            # If the project is not in the data sent, remove the user from the project's pis
+            # If the authority is not in the data sent, remove the user from the authority pis
             # XXX pi_authorities contains also projects, to be changed in myslicelib
             if a not in data['pi_authorities'] and len(a.split('+')[1].split(':'))<3:
                 # dispatch event add pi to project

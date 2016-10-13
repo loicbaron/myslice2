@@ -109,9 +109,9 @@ class LeasesHandler(Api):
             self.write(json.dumps(
                 {
                     "result": "success",
+                    "events": result['generated_keys'],
                     "error": None,
                     "debug": None,
-                    "events": result['generated_keys']
                 }, cls=myJSONEncoder))
 
 
@@ -152,8 +152,8 @@ class LeasesHandler(Api):
             self.write(json.dumps(
                 {
                     "result": "success",
+                    "events": result['generated_keys'],
                     "error": None,
                     "debug": None,
-                    "events": result['generated_keys']
                 }, cls=myJSONEncoder))
 

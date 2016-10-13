@@ -163,9 +163,9 @@ class SlicesHandler(Api):
             self.write(json.dumps(
                 {
                     "result": "success",
+                    "events": result['generated_keys'],
                     "error": None,
                     "debug": None,
-                    " events": result['generated_keys']
                 }, cls=myJSONEncoder))
 
     @gen.coroutine
@@ -323,8 +323,8 @@ class SlicesHandler(Api):
                 else:
                     result = yield dispatch(self.dbconnection, event)
                     response.append(result['generated_keys'])
-                    ##
-                    # slice remove resource
+        ##
+        # slice remove resource
         for data_resources in slice['resources']:
             if data_resources not in data['resources']:
                 # dispatch event remove resource from slice
@@ -355,11 +355,11 @@ class SlicesHandler(Api):
         self.write(json.dumps(
             {
                 "result": "success",
+                "events": response,
                 "error": None,
                 "debug": None,
-                "events": response
             }, cls=myJSONEncoder))
-        # return the id of the events
+
     @gen.coroutine
     def delete(self, id, o=None):
         """
@@ -398,7 +398,7 @@ class SlicesHandler(Api):
             self.write(json.dumps(
                 {
                     "result": "success",
+                    "events": result['generated_keys'],
                     "error": None,
                     "debug": None,
-                    "events": result['generated_keys']
                 }, cls=myJSONEncoder))
