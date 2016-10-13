@@ -237,7 +237,7 @@ class AuthoritiesHandler(Api):
 
         # Users belong to an Authority, it can NOT be changed
         # handled by POST /users & DELETE /users/<id>
-         if "users" in data and type(data["users"]) is dict:
+        if "users" in data and type(data["users"]) is dict:
             data["users"] = data["users"]["id"]
 
         # Update authority data
