@@ -3,44 +3,55 @@ import React from 'react';
 const Element = (props) => {
 
     var className = 'elementBox';
-    var arrow = null;
     var style;
-    if(props.minHeight){
-        style=props.minHeight;
+    var callback = null;
+
+    if (props.minHeight) {
+        style = props.minHeight;
     }
 
     if (props.type) {
         className += ' ' + props.type;
     }
 
-    if (props.setCurrent) {
+    if (props.handleClick) {
+        callback = () => props.handleClick(props.element);
         className += ' pointer';
+    }
 
-        if (props.element == props.current) {
-            className += ' selected';
-            arrow = <i className="fa fa-arrow-right fa-lg arrow-right"></i>
-        }
-
+    if ((typeof(props.element.isCurrent) === 'boolean' && (props.element.isCurrent))) {
+        className += ' selected';
         return (
-            <li className={className} onClick={() => props.setCurrent(props.element)} style={style}>
+            <li className={className} onClick={callback} style={style}>
                 {props.children}
-                {arrow}
-            </li>
-        );
-    } else {
-        return (
-            <li className={className} style={style}>
-                {props.children}
+                <i className="fa fa-arrow-right fa-lg arrow-right"></i>
             </li>
         );
     }
+
+    if ((typeof(props.element.isSelected) === 'boolean' && (props.element.isSelected))) {
+        className += ' selected';
+        return (
+            <li className={className} onClick={callback} style={style}>
+                {props.children}
+                <i className="fa fa-check-square-o fa-lg check-right"></i>
+            </li>
+        );
+    }
+
+    return (
+        <li className={className} onClick={callback} style={style}>
+            {props.children}
+        </li>
+    );
 };
 
 Element.propTypes = {
     element: React.PropTypes.object.isRequired,
     type: React.PropTypes.string,
-    current: React.PropTypes.object,
-    setCurrent: React.PropTypes.func
+    isSelected: React.PropTypes.bool,
+    isChecked: React.PropTypes.bool,
+    handleClick: React.PropTypes.func
 };
 
 Element.defaultProps = {
