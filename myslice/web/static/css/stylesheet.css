@@ -456,7 +456,7 @@ div.registrationForm {
     margin-bottom:6px;
     border:1px solid white;
     box-shadow: none;
-    transition: box-shadow 0.1s ease-in;
+    transition: box-shadow 0.05s ease-in;
 }
 .elementBox.pointer {
     cursor:pointer;
@@ -464,9 +464,9 @@ div.registrationForm {
 .elementBox.selected {
     background-color: #f5fafa;
     box-shadow: 1px 1px 3px 0 rgba(34, 17, 68, 0.2), -1px -1px 3px 0 rgba(34, 17, 68, 0.2);
-    border:1px solid rgba(34, 17, 68, 0.4);
+    border: 1px solid rgba(34, 17, 68, 0.4);
 }
-.elementBox .arrow-right {
+.elementBox .arrow-right, .elementBox .check-right {
     position:absolute;
     bottom:15px;
     right:15px;
