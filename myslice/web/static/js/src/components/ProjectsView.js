@@ -27,6 +27,7 @@ class ProjectsView extends React.Component {
     constructor(props) {
         super(props);
         this.state = store.getState();
+
         this.onChange = this.onChange.bind(this);
         this.showForm = this.showForm.bind(this);
         this.setCurrentProject = this.setCurrentProject.bind(this);
@@ -53,8 +54,6 @@ class ProjectsView extends React.Component {
 
     /* set the current project */
     setCurrentProject(project) {
-        console.log('current project = ');
-        console.log(project);
         actions.setCurrentProject(project);
     }
 
@@ -135,7 +134,7 @@ class ProjectsView extends React.Component {
                         <Button label="Request Project" icon="plus" handleClick={this.showForm} />
                     </PanelHeader>
                     <PanelBody>
-                        <ProjectsList projects={this.state.projects} setCurrent={this.setCurrentProject} current={this.state.current.project} />
+                        <ProjectsList projects={this.state.projects} handleClick={this.setCurrentProject} />
                     </PanelBody>
                     {dialog}
                 </Panel>

@@ -36,11 +36,11 @@ class ProjectsRow extends React.Component {
         }
         var enabled;
         if(this.props.project.enabled){
-            created = <div className="col-sm-3"><DateTime label="Enabled" timestamp={this.props.project.enabled}/></div>
+            enabled = <div className="col-sm-3"><DateTime label="Enabled" timestamp={this.props.project.enabled}/></div>
         }
         var updated;
         if(this.props.project.updated){
-            created = <div className="col-sm-3"><DateTime label="Updated" timestamp={this.props.project.updated}/></div>
+            updated = <div className="col-sm-3"><DateTime label="Updated" timestamp={this.props.project.updated}/></div>
         }
         var authorityElement;
         if(authority){
@@ -51,7 +51,7 @@ class ProjectsRow extends React.Component {
             projectDetails = <div className="elementDetail">{users}&nbsp;&nbsp;{slices}<br/>{authorityElement}</div>
         }
         return (
-            <Element element={this.props.project} type="project" setCurrent={this.props.setCurrent} current={this.props.current} minHeight={minHeight}>
+            <Element element={this.props.project} type="project" handleClick={this.props.handleClick} minHeight={minHeight}>
                 <ElementStatus status={this.props.project.status}/>
                 <ElementIcon icon="project"/>
                 <ElementTitle label={label} detail={this.props.project.shortname}/>
@@ -70,15 +70,12 @@ class ProjectsRow extends React.Component {
 
 ProjectsRow.propTypes = {
     project: React.PropTypes.object.isRequired,
-    current: React.PropTypes.object,
-    setCurrent: React.PropTypes.func,
+    handleClick: React.PropTypes.func,
     removeProject: React.PropTypes.bool,
 };
 
 ProjectsRow.defaultProps = {
-    current: false,
     removeProject: true,
-    setCurrent: null
 };
 
 export default ProjectsRow;

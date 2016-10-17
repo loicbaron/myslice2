@@ -14,7 +14,7 @@ class ProjectsList extends React.Component {
                 <List>
                 {
                     this.props.projects.map(function(project) {
-                        return <ProjectsRow key={project.id} project={project} setCurrent={this.props.setCurrent} current={this.props.current} />;
+                        return <ProjectsRow key={project.id} project={project} handleClick={this.props.handleClick} />;
                     }.bind(this))
                 }
                 </List>
@@ -26,13 +26,10 @@ class ProjectsList extends React.Component {
 
 ProjectsList.propTypes = {
     projects: React.PropTypes.array.isRequired,
-    current: React.PropTypes.object,
-    setCurrent: React.PropTypes.func
+    handleClick: React.PropTypes.func
 };
 
 ProjectsList.defaultProps = {
-    current: null,
-    setCurrent: null
 };
 
 export default ProjectsList;

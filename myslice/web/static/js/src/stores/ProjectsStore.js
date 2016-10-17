@@ -116,6 +116,15 @@ class ProjectsStore {
             this.getInstance().users();
             this.getInstance().slices();
         }
+
+        if ((typeof(project.isCurrent) === 'undefined') || (!project.isCurrent)) {
+            for (let i = 0; i < this.projects.length; i++) {
+                this.projects[i].isCurrent = false;
+            }
+            project.isCurrent = true;
+        } else {
+            project.isCurrent = false;
+        }
     }
 
     updateProjects(projects) {
