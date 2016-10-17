@@ -7,7 +7,7 @@ import ElementStatus from '../base/ElementStatus';
 import ElementIcon from '../base/ElementIcon';
 import DateTime from '../base/DateTime';
 
-const ResourceElement = ({resource, setCurrent, current}) => {
+const ResourceElement = ({resource, handleClick}) => {
 
     var label = resource.hostname || resource.shortname;
 
@@ -26,7 +26,7 @@ const ResourceElement = ({resource, setCurrent, current}) => {
         // location = <div>Location: <span class={flag}></span> {resource.location.country}</div>;
     }
     return (
-         <Element element={resource} type="resource" setCurrent={setCurrent} current={current}>
+         <Element type="resource" element={resource} handleClick={handleClick}>
              <ElementStatus status={status} />
              <ElementIcon icon="resource" />
              <ElementTitle label={resource.name} detail={resource.type} />
@@ -41,7 +41,6 @@ ResourceElement.propTypes = {
 };
 
 ResourceElement.defaultProps = {
-    current: false,
 };
 
 export default ResourceElement;
