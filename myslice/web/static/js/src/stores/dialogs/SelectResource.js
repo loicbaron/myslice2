@@ -32,7 +32,11 @@ class SelectResourceDialog {
         this.testbed = testbed;
     }
 
-    fetchResources() {
+    fetchResources(testbed = null) {
+
+        if (testbed) {
+            this.testbed = testbed;
+        }
 
         if (!this.getInstance().isLoading()) {
             this.getInstance().resources();
@@ -53,8 +57,17 @@ class SelectResourceDialog {
         console.log(errorMessage);
     }
 
+    isSelected(resource) {
+        this.selected.find((el) => {
+            return (el.id === resource.id);
+        });
+    }
     selectResource(resource) {
-        this.selected = resource;
+        if ((typeof(resource.isSelected) === 'undefined') || (!resource.isSelected)) {
+            resource.isSelected = true;
+        } else {
+            resource.isSelected = false;
+        }
     }
 
 }

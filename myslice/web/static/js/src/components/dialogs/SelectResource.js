@@ -8,8 +8,9 @@ import DialogPanel from '../base/DialogPanel';
 import DialogHeader from '../base/DialogHeader';
 import DialogBody from '../base/DialogBody';
 import Title from '../base/Title';
+import List from '../base/List';
 
-import ResourceList from '../objects/ResourceList';
+import ResourceElement from '../objects/ResourceElement';
 
 class SelectResourceDialog extends React.Component {
 
@@ -22,8 +23,7 @@ class SelectResourceDialog extends React.Component {
 
     componentDidMount() {
         store.listen(this.onChange);
-        actions.updateTestbed(this.props.testbed);
-        actions.fetchResources();
+        actions.fetchResources(this.props.testbed);
     }
 
     componentWillUnmount() {
@@ -50,6 +50,19 @@ class SelectResourceDialog extends React.Component {
         }
     }
 
+    selectResource(resource) {
+        actions.selectResource(resource);
+    }
+
+    isSelected(resource) {
+        //console.log(this.state.selected);
+        /* TOFIX
+        this.state.selected.find((el) => {
+            return el.id === resource.id;
+        })
+        */
+    }
+
     render() {
         // if(Object.keys(this.state.filter).length>0){
         //     var usersList = <UsersList users={this.state.filteredUsers} addUser={this.props.addUser} />
@@ -64,7 +77,16 @@ class SelectResourceDialog extends React.Component {
                         <Title title={this.props.testbed.name} />
                     </DialogHeader>
                     <DialogBody>
-                        <ResourceList resources={this.state.resources} />
+                        <List>
+                        {
+                            this.state.resources.map(function(resource) {
+
+                                return <ResourceElement key={resource.id}
+                                                        resource={resource}
+                                                        handleClick={() => this.selectResource(resource)} />;
+                            }.bind(this))
+                        }
+                        </List>
                     </DialogBody>
                 </DialogPanel>
             </Dialog>
