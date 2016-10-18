@@ -352,6 +352,8 @@ class SlicesHandler(Api):
                     result = yield dispatch(self.dbconnection, event)
                     response.append(result['generated_keys'])
 
+        # Leases: handled by POST /leases and DELETE /leases/<id>
+
         self.write(json.dumps(
             {
                 "result": "success",
