@@ -226,13 +226,14 @@ class ProjectsHandler(Api):
         else:
             result = yield dispatch(self.dbconnection, event)
             response = response + result["generated_keys"]
+
+        # handle pi_user as dict
+        if all(isinstance(n, dict) for n in data['pi_users']):
+            data['pi_users'] = [x['id'] for x in data['pi_users']]
         ##
         # pi_users
         # project pis ADD
         for data_pi in data['pi_users']:
-            # handle pi_user as dict
-            if type(data_pi) is dict:
-                data_pi = data_pi['id']
             # new pi
             if data_pi not in project['pi_users']:
                 # dispatch event add pi to project
@@ -262,9 +263,6 @@ class ProjectsHandler(Api):
         ##
         # projects pi REMOVE
         for project_pi in project['pi_users']:
-            # handle pi_user as dict
-            if type(project_pi) is dict:
-                project_pi = project_pi['id']
             if project_pi not in data['pi_users']:
                 # dispatch event remove pi from project
                 try:

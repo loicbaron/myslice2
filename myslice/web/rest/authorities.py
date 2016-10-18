@@ -259,13 +259,13 @@ class AuthoritiesHandler(Api):
             result = yield dispatch(self.dbconnection, event)
             response = response + result["generated_keys"]
 
+        # handle pi_user as dict
+        if all(isinstance(n, dict) for n in data['pi_users']):
+            data['pi_users'] = [x['id'] for x in data['pi_users']]
         ##
         # pi_users
         # authority ADD pis
         for auth_pi in data['pi_users']:
-            # handle pi_user as dict
-            if type(auth_pi) is dict:
-                auth_pi = auth_pi['id']
             # new pi
             if auth_pi not in authority['pi_users']:
                 # dispatch event add pi to project
@@ -295,9 +295,6 @@ class AuthoritiesHandler(Api):
         ##
         # authority REMOVE pis
         for auth_pi in authority['pi_users']:
-            # handle pi_user as dict
-            if type(auth_pi) is dict:
-                auth_pi = auth_pi['id']
             if auth_pi not in data['pi_users']:
                 # dispatch event remove pi from authority
                 try:
