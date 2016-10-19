@@ -5,8 +5,7 @@ import rethinkdb as r
 from myslice.lib.util import myJSONEncoder
 from myslice.web.rest import Api
 
-from myslice.db.activity import Event, EventAction, ObjectType
-from myslice.db import dispatch
+
 
 from tornado import gen, escape
 
@@ -23,6 +22,9 @@ class ResourcesHandler(Api):
 
             - GET /resources/<id>/leases
                 Leases list of the resource with the <id>
+
+            - GET /resources/<id>/testbeds
+                Testbed of the resource with the <id>
             :return:
             """
 
@@ -85,3 +87,22 @@ class ResourcesHandler(Api):
             return
 
         self.finish(json.dumps({"result": response}, cls=myJSONEncoder))
+
+    @gen.coroutine
+    def post(self, id=None, o=None):
+        """
+        POST /resources
+
+        :return:
+        """
+
+    pass
+    #TODO
+    def delete(self, id, o=None):
+        pass
+    #TODO
+
+
+    def put(self, id, o=None):
+        pass
+    #TODO

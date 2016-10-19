@@ -116,7 +116,7 @@ class SlicesHandler(Api):
     def post(self, id=None, o=None):
         """
         POST /slices
-        { shortname: string, project: string, label: string }
+        { shortname: string, project: string }
         :return:
         """
 

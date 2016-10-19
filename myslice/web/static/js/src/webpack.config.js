@@ -15,7 +15,8 @@ module.exports = {
         login: "./login.js",
         navbar: "./navbar.js",
         activity: "./activity.js",
-        status: "./status.js"
+        status: "./status.js",
+        dashboard: "./dashboard.js"
     },
     output: {
         filename: "[name].js",

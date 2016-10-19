@@ -6,7 +6,7 @@ import ElementId from './base/ElementId';
 import ElementStatus from './base/ElementStatus';
 import ElementIcon from './base/ElementIcon';
 import DateTime from './base/DateTime';
-
+import SlicesRow from'./SlicesRow';
 import DeleteProject from './DeleteProject';
 
 class ProjectsRow extends React.Component {
@@ -28,7 +28,11 @@ class ProjectsRow extends React.Component {
         }
         var slices;
         if(this.props.project.slices){
-            slices = <span className="elementLabel">Slices {this.props.project.slices.length}</span>
+            slices = <span className="elementLabel">Slices: {this.props.project.slices.length}</span>
+        }
+        var slicesInDashboard;
+        if(this.props.project.slices){
+            slicesInDashboard = <span className="elementLabel">Slices: {this.props.project.slices}</span>
         }
         var created;
         if(this.props.project.created){
@@ -46,25 +50,42 @@ class ProjectsRow extends React.Component {
         if(authority){
             authorityElement = <span className="elementLabel">Managed by {authority}</span>
         }
-        var projectDetails;
+        var projectElements;
         if(users || slices || authorityElement){
-            projectDetails = <div className="elementDetail">{users}&nbsp;&nbsp;{slices}<br/>{authorityElement}</div>
+            projectElements = <div className="elementDetail">{users}&nbsp;&nbsp;{slices}<br/>{authorityElement}</div>
         }
-        return (
-            <Element element={this.props.project} type="project" setCurrent={this.props.setCurrent} current={this.props.current} minHeight={minHeight}>
-                <ElementStatus status={this.props.project.status}/>
-                <ElementIcon icon="project"/>
-                <ElementTitle label={label} detail={this.props.project.shortname}/>
-                <ElementId id={this.props.project.id}/>
-                {button}
-                {projectDetails}
-                <div className="row elementDate">
-                    {created}
-                    {enabled}
-                    {updated}
-                </div>
-            </Element>
-        );
+        if (this.props.detailed) {
+            return (
+                <Element element={this.props.project} type="project" setCurrent={this.props.setCurrent}
+                         current={this.props.current} minHeight={minHeight}>
+                    <ElementStatus status={this.props.project.status}/>
+                    <ElementIcon icon="project"/>
+                    <ElementTitle label={label} detail={this.props.project.shortname}/>
+                    <ElementId id={this.props.project.id}/>
+                    {button}
+                    {projectElements}
+                    <div className="row elementDate">
+                        {created}
+                        {enabled}
+                        {updated}
+                    </div>
+                </Element>
+            );
+        }
+        else
+            {
+            return (
+                <Element element={this.props.project} type="project" setCurrent={this.props.setCurrent}
+                         current={this.props.current} minHeight={minHeight}>
+                    <ElementIcon icon="project"/>
+                    <ElementTitle label={label} detail={this.props.project.shortname}/>
+                    <ElementId id={this.props.project.id}/>
+                    {slicesInDashboard}
+
+                </Element>
+            );
+        }
+
     }
 }
 
@@ -73,12 +94,14 @@ ProjectsRow.propTypes = {
     current: React.PropTypes.object,
     setCurrent: React.PropTypes.func,
     removeProject: React.PropTypes.bool,
+    detailed: React.PropTypes.bool,
 };
 
 ProjectsRow.defaultProps = {
     current: false,
     removeProject: true,
-    setCurrent: null
+    setCurrent: null,
+    detailed: true,
 };
 
 export default ProjectsRow;
