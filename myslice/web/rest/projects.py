@@ -128,7 +128,7 @@ class ProjectsHandler(Api):
         try:
             data = escape.json_decode(self.request.body)
         except json.decoder.JSONDecodeError as e:
-            self.userError("malformed request", e.message)
+            self.userError("malformed request", e.msg)
             return
 
         try:
@@ -160,18 +160,19 @@ class ProjectsHandler(Api):
                 {
                     "result": "success",
                     "error": None,
-                    "debug": None
+                    "debug": None,
+                    "events": result['generated_keys']
                 }, cls=myJSONEncoder))
 
     @gen.coroutine
     def put(self, id=None, o=None):
         """
         PUT /projects/<id>
-        { project object }
+
         :return:
         """
-
-        response = []
+        project=[]
+        response= []
         current_user = self.get_current_user()
 
         if not current_user:
@@ -185,11 +186,9 @@ class ProjectsHandler(Api):
         try:
             data = escape.json_decode(self.request.body)
         except json.decoder.JSONDecodeError as e:
-            self.userError("malformed request", e.message)
+            self.userError("malformed request", e.msg)
             return
-
-        # project id from DB
-
+             # project id from DB
         cursor = yield r.table('projects') \
             .pluck(self.fields['projects']) \
             .filter({'id': id}) \
@@ -224,8 +223,8 @@ class ProjectsHandler(Api):
                             'id': id,
                         },
                         'data': {
-                            'type' : DataType.PI,
-                            'values' : data_pi
+                            'type': DataType.PI,
+                            'values': data_pi
                         }
                     })
                 except AttributeError as e:
@@ -273,7 +272,8 @@ class ProjectsHandler(Api):
             {
                 "result": "success",
                 "error": None,
-                "debug": None
+                "debug": None,
+                "events":result
             }, cls=myJSONEncoder))
 
     @gen.coroutine
