@@ -53,19 +53,19 @@ myslicelibsetup.endpoints = [
         ]
 
 
-if os.path.exists(os.path.expanduser("~/.sfi/")):
-    path = os.path.expanduser("~/.sfi/")
-    pkey = path + "onelab.upmc.loic_baron.pkey"
-    hrn = "onelab.upmc.loic_baron"
-    email = "loic.baron@lip6.fr"
-    cert = path + "onelab.upmc.loic_baron.user.gid"
-else:
+#if os.path.exists(os.path.expanduser("~/.sfi/")):
+#    path = os.path.expanduser("~/.sfi/")
+#    pkey = path + "onelab.upmc.loic_baron.pkey"
+#    hrn = "onelab.upmc.loic_baron"
+#    email = "loic.baron@lip6.fr"
+#    cert = path + "onelab.upmc.loic_baron.user.gid"
+#else:
 #    path = os.path.expanduser("~/")
-    path = "/var/myslice/"
-    pkey = path + "myslice.pkey"
-    hrn = "onelab.myslice"
-    email = "support@myslice.info"
-    cert = path + "myslice.cert"
+path = "/var/myslice/"
+pkey = path + "myslice.pkey"
+hrn = "onelab.myslice"
+email = "support@myslice.info"
+cert = path + "myslice.cert"
 
 
 myslicelibsetup.authentication = Authentication(hrn=hrn, email=email, certificate=cert, private_key=pkey)
