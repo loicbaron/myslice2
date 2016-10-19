@@ -14,6 +14,9 @@ class UsersActions {
     setCurrentUser(user) {
         return user;
     }
+    updateCurrentUser(user) {
+        return user;
+    }
     fetchFromUserAuthority(filter = {}) {
         return filter;
     }
@@ -42,6 +45,13 @@ class UsersActions {
     }
     errorUsers(errorMessage) {
         return errorMessage
+    }
+
+    grantPiRights(authority) {
+        return authority;
+    }
+    revokePiRights(authority) {
+        return authority;
     }
 
 }

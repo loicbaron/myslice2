@@ -7,7 +7,8 @@ import ElementStatus from './base/ElementStatus';
 import ElementIcon from './base/ElementIcon';
 import DateTime from './base/DateTime';
 
-import DeleteProject from './DeleteProject';
+import GrantPiAuthority from './GrantPiAuthority';
+import RevokePiAuthority from './RevokePiAuthority';
 
 class AuthoritiesRow extends React.Component {
 
@@ -46,11 +47,21 @@ class AuthoritiesRow extends React.Component {
         if(users || projects || pi_users || authorityElement){
             authorityDetails = <div className="elementDetail">{users}&nbsp;&nbsp;{projects}&nbsp;&nbsp;{pi_users}<br/>{authorityElement}</div>
         }
+        var button;
+        var minHeight = {'minHeight':'100px'};
+        var topPosition = {'top':'25px'};
+        if(this.props.revoke){
+            button = <RevokePiAuthority authority={this.props.authority} topPosition={topPosition} />
+        }
+        if(this.props.grant){
+            button = <GrantPiAuthority authority={this.props.authority} topPosition={topPosition} />
+        }
         return (
             <Element element={this.props.authority} type="authority" setCurrent={this.props.setCurrent} current={this.props.current}>
                 <ElementIcon icon="authority"/>
                 <ElementTitle label={label} detail={this.props.authority.shortname}/>
                 <ElementId id={this.props.authority.id}/>
+                {button}
                 {authorityDetails}
                 <div className="row elementDate">
                     {created}
@@ -66,12 +77,14 @@ AuthoritiesRow.propTypes = {
     authority: React.PropTypes.object.isRequired,
     current: React.PropTypes.object,
     setCurrent: React.PropTypes.func,
-    removeProject: React.PropTypes.bool,
+    revoke: React.PropTypes.bool,
+    grant: React.PropTypes.bool,
 };
 
 AuthoritiesRow.defaultProps = {
+    revoke: false,
+    grant: false,
     current: false,
-    removeProject: true,
     setCurrent: null
 };
 

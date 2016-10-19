@@ -50,8 +50,6 @@ class UsersView extends React.Component {
 
     /* set the current user */
     setCurrentUser(user) {
-        console.log('current user = ');
-        console.log(user);
         actions.setCurrentUser(user);
     }
 
