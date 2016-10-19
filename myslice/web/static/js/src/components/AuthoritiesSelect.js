@@ -17,9 +17,8 @@ export default class AuthoritiesSelect extends React.Component {
         store.listen(this.onChange);
 
         // action fetch authorities
-        actions.fetchAuthorities();
-
-
+        // defer() allows to be called during render of another component
+        actions.fetchAuthorities.defer();
     }
 
     componentWillUnmount() {
