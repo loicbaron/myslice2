@@ -47,7 +47,8 @@ def events_run(lock, qUserEvents):
                     event.setRunning()
                     isSuccess = False
 
-                    if event.user:
+                    # If we generate a new key pair the Query will not work, use the myslice account for that
+                    if event.user and hasattr(event.object, 'generate_keys') and event.object.generate_keys is False:
                         u = User(db.get(dbconnection, table='users', id=event.user))
                         user_setup = UserSetup(u, myslicelibsetup.endpoints)
                     else:

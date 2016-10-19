@@ -43,7 +43,8 @@ config_file = config_path
 myslicelibsetup.endpoints = [
             Endpoint(url="https://sfa3.planet-lab.eu:12346",type="AM", timeout=30, name="PlanetLab Europe"),
             Endpoint(url="https://194.199.16.164:12346",type="AM", timeout=30, name="FIT IoT-Lab"),
-            #Endpoint(url="https://www.wilab2.ilabt.iminds.be:12369/protogeni/xmlrpc/am/3.0",type="AM",name="iMinds WiLab.t"),
+            #Endpoint(url="https://www.wilab2.ilabt.iminds.be:12369/protogeni/xmlrpc/am/3.0",type="AM",name="WiLab.t"),
+            #Endpoint(url="http://www.wall2.ilabt.iminds.be:12369/protogeni/xmlrpc/am/3.0",type="AM",name="Virtual Wall 2"),
             #Endpoint(url="https://fuseco.fokus.fraunhofer.de/api/sfa/am/v3",type="AM"),
             Endpoint(url="https://griffin.ipv6.lip6.fr:8001/RPC2",type="AM",name="FIT WiFi UPMC"),
             #Endpoint(url="https://portal.onelab.eu:6080",type="Reg",name="OneLab Registry"),
@@ -52,19 +53,19 @@ myslicelibsetup.endpoints = [
         ]
 
 
-if os.path.exists(os.path.expanduser("~/.sfi/")):
-    path = os.path.expanduser("~/.sfi/")
-    pkey = path + "onelab.upmc.loic_baron.pkey"
-    hrn = "onelab.upmc.loic_baron"
-    email = "loic.baron@lip6.fr"
-    cert = path + "onelab.upmc.loic_baron.user.gid"
-else:
+#if os.path.exists(os.path.expanduser("~/.sfi/")):
+#    path = os.path.expanduser("~/.sfi/")
+#    pkey = path + "onelab.upmc.loic_baron.pkey"
+#    hrn = "onelab.upmc.loic_baron"
+#    email = "loic.baron@lip6.fr"
+#    cert = path + "onelab.upmc.loic_baron.user.gid"
+#else:
 #    path = os.path.expanduser("~/")
-    path = "/var/myslice/"
-    pkey = path + "myslice.pkey"
-    hrn = "onelab.myslice"
-    email = "support@myslice.info"
-    cert = path + "myslice.cert"
+path = "/var/myslice/"
+pkey = path + "myslice.pkey"
+hrn = "onelab.myslice"
+email = "support@myslice.info"
+cert = path + "myslice.cert"
 
 
 myslicelibsetup.authentication = Authentication(hrn=hrn, email=email, certificate=cert, private_key=pkey)

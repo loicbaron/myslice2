@@ -399,7 +399,7 @@ class UsersHandler(Api):
 
         # If password changed, encrypt the new one
         print(data)
-        if user["password"] != crypt_password(data["password"]):
+        if "password" in data and user["password"] != crypt_password(data["password"]):
             data["password"] = crypt_password(data["password"])
 
         # handle authority as dict
@@ -429,11 +429,12 @@ class UsersHandler(Api):
             result = yield dispatch(self.dbconnection, event)
             response = response + result["generated_keys"]
 
+        # handle project as dict
+        if all(isinstance(n, dict) for n in data['projects']):
+            data['projects'] = [x['id'] for x in data['projects']]
+
         # Check the list of projects in data sent
         for p in data['projects']:
-            # handle project as dict
-            if type(p) is dict:
-                p = p['id']
             # if the project is not in the list of the user's projects in the DB, user is a new pi
             if p not in user['projects']:
                 # dispatch event add pi to project
@@ -462,9 +463,6 @@ class UsersHandler(Api):
 
         # Check user's projects in DB
         for p in user['projects']:
-            # handle project as dict
-            if type(p) is dict:
-                p = p['id']
             # If the project is not in the data sent, remove the user from the project's pis
             if p not in data['projects']:
                 # dispatch event add pi to project
@@ -490,12 +488,11 @@ class UsersHandler(Api):
                 else:
                     result = yield dispatch(self.dbconnection, event)
                     response = response + result["generated_keys"]
-
+        # handle authority as dict
+        if all(isinstance(n, dict) for n in data['pi_authorities']):
+            data['pi_authorities'] = [x['id'] for x in data['pi_authorities']]
         # Check the list of pi_authorities in data sent
         for a in data['pi_authorities']:
-            # handle authority as dict
-            if type(a) is dict:
-                a = a['id']
             # if the authority is not in the list of the user's pi_authorities in the DB, user is a new pi
             # XXX pi_authorities contains also projects, to be changed in myslicelib
             if a not in user['pi_authorities'] and len(a.split('+')[1].split(':'))<3:
@@ -523,12 +520,9 @@ class UsersHandler(Api):
                     result = yield dispatch(self.dbconnection, event)
                     response = response + result["generated_keys"]
 
-        # Check user's projects in DB
-        for a in data['pi_authorities']:
-            # handle authority as dict
-            if type(a) is dict:
-                a = a['id']
-            # If the project is not in the data sent, remove the user from the project's pis
+        # Check user's pi_authorities in DB
+        for a in user['pi_authorities']:
+            # If the authority is not in the data sent, remove the user from the authority pis
             # XXX pi_authorities contains also projects, to be changed in myslicelib
             if a not in data['pi_authorities'] and len(a.split('+')[1].split(':'))<3:
                 # dispatch event add pi to project

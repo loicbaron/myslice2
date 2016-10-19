@@ -112,7 +112,12 @@ def emails_run(qEmails):
             mail_to = []
             for r in recipients:
                 try:
-                    username = "{} {}".format(r.first_name, r.last_name)
+                    if hasattr(r, 'first_name') and hasattr(r, 'last_name'):
+                        username = "{} {}".format(r.first_name, r.last_name)
+                    else:
+                        username = r.email
+                        r.setAttribute('first_name','')
+                        r.setAttribute('last_name','')
                 except:
                     import traceback
                     traceback.print_exc()

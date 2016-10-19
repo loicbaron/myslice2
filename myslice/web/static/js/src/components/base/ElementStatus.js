@@ -2,7 +2,11 @@ import React from 'react';
 
 const ElementStatus = ({status}) => {
 
+        if(status === undefined ){
+            status = '';
+        }
         var elementStatus = status.toLowerCase() || '';
+        
         var iconClass = 'fa fa-lg fa-';
 
         switch(elementStatus) {

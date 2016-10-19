@@ -58,6 +58,17 @@ const UsersSource = () => {
                 return true
             }
         },
+        putUser: {
+            remote(state) {
+                return axios.put('/api/v1/users/'+state.current.user.id, state.current.user);
+            },
+            success: actions.updateCurrentUser, // (required)
+            error: actions.errorCurrentUser, // (required)
+
+            shouldFetch(state) {
+                return true
+            }
+        },
         /*
         submit: {
             // remotely fetch something (required)

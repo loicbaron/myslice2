@@ -75,8 +75,13 @@ class User(myslicelibUser):
     # This functions keeps the locally stored private/public keys of the user
     def merge(self, dbconnection):
         db_user = db.get(dbconnection, table='users', id=self.id)
-        self.setAttribute('private_key', db_user['private_key'])
-        self.setAttribute('public_key', db_user['public_key'])
+        if db_user:
+            if 'private_key' in db_user:
+                self.setAttribute('private_key', db_user['private_key'])
+            if 'public_key' in db_user:
+                self.setAttribute('public_key', db_user['public_key'])
+            if 'password' in db_user:
+                self.setAttribute('password', db_user['password'])
         return self
 
     def save(self, dbconnection, setup=None):

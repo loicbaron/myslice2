@@ -53,6 +53,7 @@ def events_run(lock, qProjectEvents):
 
                     u = User(db.get(dbconnection, table='users', id=event.user))
                     user_setup = UserSetup(u, myslicelibsetup.endpoints)
+                    #pprint(user_setup)
 
                     if event.creatingObject() or event.updatingObject():
                         logger.info("creating or updating the object project {}".format(event.object.id)) 

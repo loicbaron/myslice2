@@ -183,9 +183,10 @@ class AuthoritiesHandler(Api):
 
 
     @gen.coroutine
-    def put(self):
+    def put(self, id=None, o=None):
         """
         PUT /authorities/<id>
+        { authority object }
         :return:
         """
         try:
@@ -219,7 +220,7 @@ class AuthoritiesHandler(Api):
             self.userError("malformed request", e.message)
             return
 
-        # user id from DB
+        # authority id from DB
         cursor = yield r.table('authorities') \
             .filter({'id': id}) \
             .run(self.dbconnection)
@@ -258,13 +259,13 @@ class AuthoritiesHandler(Api):
             result = yield dispatch(self.dbconnection, event)
             response = response + result["generated_keys"]
 
+        # handle pi_user as dict
+        if all(isinstance(n, dict) for n in data['pi_users']):
+            data['pi_users'] = [x['id'] for x in data['pi_users']]
         ##
-        #pi_users
+        # pi_users
         # authority ADD pis
         for auth_pi in data['pi_users']:
-            # handle pi_user as dict
-            if type(auth_pi) is dict:
-                auth_pi = auth_pi['id']
             # new pi
             if auth_pi not in authority['pi_users']:
                 # dispatch event add pi to project
@@ -294,9 +295,6 @@ class AuthoritiesHandler(Api):
         ##
         # authority REMOVE pis
         for auth_pi in authority['pi_users']:
-            # handle pi_user as dict
-            if type(auth_pi) is dict:
-                auth_pi = auth_pi['id']
             if auth_pi not in data['pi_users']:
                 # dispatch event remove pi from authority
                 try:
@@ -322,68 +320,12 @@ class AuthoritiesHandler(Api):
                     result = yield dispatch(self.dbconnection, event)
                     response = response + result["generated_keys"]
         ##
-        #projects
-        # Check the list of projects in data sent
-        for p in data['projects']:
-            # handle project as dict
-            if type(p) is dict:
-                p = p['id']
-            # if the project is not in the list of the user's projects in the DB, user is a new pi
-            if p not in user['projects']:
-                # dispatch event add pi to project
-                try:
-                    event = Event({
-                        'action': EventAction.ADD,
-                        'user': current_user['id'],
-                        'object': {
-                            'type': ObjectType.PROJECT,
-                            'id': p,
-                        },
-                        'data': {
-                            'type' : DataType.PI,
-                            'values' : [id]
-                        }
-                    })
-                except AttributeError as e:
-                    self.userError("Can't create request", e)
-                    return
-                except Exception as e:
-                    self.userError("Can't create request", e)
-                    return
-                else:
-                    result = yield dispatch(self.dbconnection, event)
-                    response = response + result["generated_keys"]
+        # projects
+        # This is handled by the POST /projects and DELETE /projects/<id> calls
 
-        # Check user's projects in DB
-        for p in user['projects']:
-            # handle project as dict
-            if type(p) is dict:
-                p = p['id']
-            # If the project is not in the data sent, remove the user from the project's pis
-            if p not in data['projects']:
-                # dispatch event add pi to project
-                try:
-                    event = Event({
-                        'action': EventAction.REMOVE,
-                        'user': current_user['id'],
-                        'object': {
-                            'type': ObjectType.PROJECT,
-                            'id': p,
-                        },
-                        'data': {
-                            'type' : DataType.PI,
-                            'values' : [id]
-                        }
-                    })
-                except AttributeError as e:
-                    self.userError("Can't create request", e)
-                    return
-                except Exception as e:
-                    self.userError("Can't create request", e)
-                    return
-                else:
-                    result = yield dispatch(self.dbconnection, event)
-                    response = response + result["generated_keys"]
+        ##
+        # users
+        # This is handled by the POST /users and DELETE /users/<id> calls
 
         self.write(json.dumps(
             {
