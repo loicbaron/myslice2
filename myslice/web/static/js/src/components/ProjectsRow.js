@@ -33,7 +33,15 @@ class ProjectsRow extends React.Component {
         }
         var slicesInDashboard;
         if(this.props.project.slices){
-            slicesInDashboard = <span className="elementLabel">Slices: {this.props.project.slices}</span>
+            var slicesInDashboard = <div>
+            {
+                this.props.project.slices.map(function (slice) {
+                    var slice_link="/slices/"+slice.hrn;
+                    return <span className="elementLabel"><a href={slice_link}>{slice.shortname}</a></span>;
+                }.bind(this))
+            }
+            </div>;
+            //slicesInDashboard = <span className="elementLabel">Slices: {SliceLabel}</span>
         }
         var created;
         if(this.props.project.created){
@@ -80,9 +88,10 @@ class ProjectsRow extends React.Component {
                          current={this.props.current} minHeight={minHeight}>
                     <ElementIcon icon="project"/>
                     <a href="/projects"><ElementTitle label={label} detail={this.props.project.shortname} /></a>
-                    <ElementId id={this.props.project.id}/>
-                    <i className="fa fa-tasks fa-lg"></i>
-                    {slicesInDashboard}
+
+                    <ElementId id={this.props.project.id} />
+
+                    <div><i className="fa fa-tasks fa-lg"></i> Slices: {slicesInDashboard}</div>
 
                 </Element>
             );
