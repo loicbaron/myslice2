@@ -81,6 +81,16 @@ class Index(BaseController):
             self.render(self.application.templates + "/login.html", message="password does not match")
             return
 
+        is_root = False
+        is_pi = False
+        for auth in user.get('pi_authorities',[]):
+            if len(auth.split('+')[1].split(':'))==1:
+                is_root = True
+                is_pi = True
+                break
+            elif len(auth.split('+')[1].split(':'))==2:
+                is_pi = True
+
         ##
         # user finally logged in, set cookie
         self.set_secure_cookie("user", str(json.dumps({
@@ -91,6 +101,8 @@ class Index(BaseController):
             'authority': user['authority'],
             'slices': user.get('slices',[]),
             'pi_authorities': user.get('pi_authorities',[]),
+            'is_root': is_root,
+            'is_pi': is_pi,
         }, cls=myJSONEncoder)))
 
         self.redirect("/")
