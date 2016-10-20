@@ -39,6 +39,7 @@ class DashboardView extends React.Component {
     fetchProjects() {
         actions.fetchProjects();
     }
+
     /*Fetch the slices of the each projects*/
     fetchSlicesByProject() {
         actions.fetchSlicesByProject();
@@ -114,8 +115,6 @@ and sensing capabilities; ad-hoc wireless and wireless broadband access networks
                 {dialog}
             </Panel>
         </View>
-
-
         );
 
 
