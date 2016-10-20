@@ -155,13 +155,13 @@ class ProjectsHandler(Api):
             return
         else:
             result = yield dispatch(self.dbconnection, event)
-
             self.write(json.dumps(
                 {
                     "result": "success",
+                    "events": result["generated_keys"],
                     "error": None,
                     "debug": None
-                }, cls=myJSONEncoder))
+                 }, cls=myJSONEncoder))
 
     @gen.coroutine
     def put(self, id=None, o=None):
@@ -205,11 +205,33 @@ class ProjectsHandler(Api):
         while (yield cursor.fetch_next()):
             project = yield cursor.next()
 
+        # handle authority as dict
+        if "authority" in data and type(data["authority"]) is dict:
+            data["authority"] = data["authority"]["id"]
 
-        # project properties
-        # modify some project properties?
+        # Update project properties
+        try:
+            event = Event({
+                'action': EventAction.UPDATE,
+                'user': current_user['id'],
+                'object': {
+                    'type': ObjectType.PROJECT,
+                    'id': id
+                },
+                'data': data
+            })
+        except Exception as e:
+            self.userError("Can't create request", e.message)
+            return
+        else:
+            result = yield dispatch(self.dbconnection, event)
+            response = response + result["generated_keys"]
 
+        # handle pi_user as dict
+        if all(isinstance(n, dict) for n in data['pi_users']):
+            data['pi_users'] = [x['id'] for x in data['pi_users']]
         ##
+        # pi_users
         # project pis ADD
         for data_pi in data['pi_users']:
             # new pi
@@ -236,6 +258,7 @@ class ProjectsHandler(Api):
                     return
                 else:
                     result = yield dispatch(self.dbconnection, event)
+                    response = response + result["generated_keys"]
 
         ##
         # projects pi REMOVE
@@ -263,18 +286,20 @@ class ProjectsHandler(Api):
                     return
                 else:
                     result = yield dispatch(self.dbconnection, event)
+                    response = response + result["generated_keys"]
 
-
-        # project slices
-
-        # projects users
+        ##
+        # slices
+        # This is handled by the POST /slices and DELETE /slices/<id> calls
 
         self.write(json.dumps(
             {
                 "result": "success",
+                "events": response,
                 "error": None,
                 "debug": None
             }, cls=myJSONEncoder))
+
 
     @gen.coroutine
     def delete(self, id, o=None):
@@ -314,6 +339,7 @@ class ProjectsHandler(Api):
             self.write(json.dumps(
                 {
                     "result": "success",
+                    "events": result["generated_keys"],
                     "error": None,
                     "debug": None
                 }, cls=myJSONEncoder))

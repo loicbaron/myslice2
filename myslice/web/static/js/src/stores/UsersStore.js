@@ -79,9 +79,15 @@ class UsersStore {
         } else {
             this.profile = profile;
         }
+        console.log("update profile");
+        console.log(this.profile);
         this.updateAuthority(this.profile.authority.id);
         this.fetchFromAuthority();
     }
+    errorProfile(errorMessage) {
+        console.log(errorMessage);
+    }
+
     updateAuthority(authority) {
         this.authority = authority;
     }
