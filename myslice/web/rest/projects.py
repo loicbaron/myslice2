@@ -42,7 +42,13 @@ class ProjectsHandler(Api):
                     'authority': r.table('authorities').get(project['authority']) \
                                                         .pluck(self.fields_short['authorities']) \
                                                         .default({'id': project['authority']})
-                    }) \
+                }) \
+                .merge(lambda project: {
+                    'slices': r.table('slices') \
+                       .get_all(r.args(project['slices'])) \
+                       .pluck(self.fields_short['slices']) \
+                       .coerce_to('array')
+                }) \
                 .run(self.dbconnection)
             while (yield cursor.fetch_next()):
                 project = yield cursor.next()
