@@ -7,6 +7,7 @@ import ElementStatus from './base/ElementStatus';
 import ElementIcon from './base/ElementIcon';
 import DateTime from './base/DateTime';
 import SlicesRow from'./SlicesRow';
+import SlicesList from './SlicesList'
 import DeleteProject from './DeleteProject';
 
 class ProjectsRow extends React.Component {
@@ -78,8 +79,9 @@ class ProjectsRow extends React.Component {
                 <Element element={this.props.project} type="project" setCurrent={this.props.setCurrent}
                          current={this.props.current} minHeight={minHeight}>
                     <ElementIcon icon="project"/>
-                    <ElementTitle label={label} detail={this.props.project.shortname}/>
+                    <a href="/projects"><ElementTitle label={label} detail={this.props.project.shortname} /></a>
                     <ElementId id={this.props.project.id}/>
+                    <i className="fa fa-tasks fa-lg"></i>
                     {slicesInDashboard}
 
                 </Element>
