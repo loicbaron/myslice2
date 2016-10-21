@@ -6,6 +6,7 @@ import store from '../../stores/dialogs/SelectResource';
 import Dialog from '../base/Dialog';
 import DialogPanel from '../base/DialogPanel';
 import DialogHeader from '../base/DialogHeader';
+import DialogFooter from '../base/DialogFooter';
 import DialogBody from '../base/DialogBody';
 import Title from '../base/Title';
 import List from '../base/List';
@@ -63,6 +64,10 @@ class SelectResourceDialog extends React.Component {
         */
     }
 
+    applyChanged() {
+
+    }
+
     render() {
         // if(Object.keys(this.state.filter).length>0){
         //     var usersList = <UsersList users={this.state.filteredUsers} addUser={this.props.addUser} />
@@ -88,6 +93,14 @@ class SelectResourceDialog extends React.Component {
                         }
                         </List>
                     </DialogBody>
+                    <DialogFooter>
+                        <button className="cancel" onClick={this.cancel} >
+                            Cancel
+                        </button>
+                        <button className="apply" onClick={this.applyChanges} >
+                            Apply
+                        </button>
+                    </DialogFooter>
                 </DialogPanel>
             </Dialog>
         );
