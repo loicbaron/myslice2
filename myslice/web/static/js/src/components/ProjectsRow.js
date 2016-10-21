@@ -65,8 +65,7 @@ class ProjectsRow extends React.Component {
         }
         if (this.props.detailed) {
             return (
-                <Element element={this.props.project} type="project" setCurrent={this.props.setCurrent}
-                         current={this.props.current} minHeight={minHeight}>
+                <Element element={this.props.project} type="project" handleClick={this.props.handleClick} minHeight={minHeight}>
                     <ElementStatus status={this.props.project.status}/>
                     <ElementIcon icon="project"/>
                     <ElementTitle label={label} detail={this.props.project.shortname}/>
@@ -84,8 +83,7 @@ class ProjectsRow extends React.Component {
         else
             {
             return (
-                <Element element={this.props.project} type="project" setCurrent={this.props.setCurrent}
-                         current={this.props.current} minHeight={minHeight}>
+                <Element element={this.props.project} type="project" handleClick={this.props.handleClick} minHeight={minHeight}>
                     <ElementIcon icon="project"/>
                     <a href="/projects"><ElementTitle label={label} detail={this.props.project.shortname} /></a>
 
@@ -102,16 +100,13 @@ class ProjectsRow extends React.Component {
 
 ProjectsRow.propTypes = {
     project: React.PropTypes.object.isRequired,
-    current: React.PropTypes.object,
-    setCurrent: React.PropTypes.func,
+    handleClick: React.PropTypes.func,
     removeProject: React.PropTypes.bool,
     detailed: React.PropTypes.bool,
 };
 
 ProjectsRow.defaultProps = {
-    current: false,
     removeProject: true,
-    setCurrent: null,
     detailed: true,
 };
 
