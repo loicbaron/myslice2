@@ -4,6 +4,7 @@ import Element from './base/Element';
 import ElementTitle from './base/ElementTitle';
 import ElementId from './base/ElementId';
 import ElementStatus from './base/ElementStatus';
+import ElementOption from './base/ElementOption';
 import ElementIcon from './base/ElementIcon';
 import DateTime from './base/DateTime';
 
@@ -52,7 +53,10 @@ class ProjectsRow extends React.Component {
         }
         return (
             <Element element={this.props.project} type="project" handleClick={this.props.handleClick} minHeight={minHeight}>
-                <ElementStatus status={this.props.project.status}/>
+                <div className="elementControl">
+                    <ElementStatus status={this.props.project.status} />
+                    <ElementOption label="delete" />
+                </div>
                 <ElementIcon icon="project"/>
                 <ElementTitle label={label} detail={this.props.project.shortname}/>
                 <ElementId id={this.props.project.id}/>
