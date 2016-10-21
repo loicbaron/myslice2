@@ -1,11 +1,20 @@
+/**
+ * Created by amirabradai on 17/10/2016.
+ */
 import axios from 'axios';
-import actions from '../actions/UsersActions';
+import actions from '../actions/DashboardActions';
+import formactions from '../actions/ProjectsFormActions';
 
-const UsersSource = () => {
+const DashboardSource = () => {
     return {
         fetch: {
+
             remote(state) {
-                return axios.get('/api/v1/users');
+
+
+                return axios.get('/api/v1/projects');
+
+
             },
 
             // this function checks in our local cache first
@@ -16,8 +25,8 @@ const UsersSource = () => {
 
             // here we setup some actions to handle our response
             //loading: actions.loadingResults, // (optional)
-            success: actions.updateUsers, // (required)
-            error: actions.errorUsers, // (required)
+            success: actions.updateProjects, // (required)
+            error: actions.errorProjects, // (required)
 
             // should fetch has precedence over the value returned by local in determining whether remote should be called
             // in this particular example if the value is present locally it would return but still fire off the remote request (optional)
@@ -25,51 +34,32 @@ const UsersSource = () => {
                 return true
             }
         },
-        fetchFromUserAuthority: {
-            remote(state) {
-                return axios.get('/api/v1/authorities/users');
-            },
-            success: actions.updateUsers, // (required)
-            error: actions.errorUsers, // (required)
 
+
+
+        slices: {
+
+            remote(state) {
+                    return axios.get('/api/v1/projects/' + state.current.project.id + '/slices');
+
+            },
+
+            // local(state) {
+            //     return state.authorities ? state.authorities : null;
+            // },
+
+            // here we setup some actions to handle our response
+            //loading: actions.loadingResults, // (optional)
+            success: actions.updateSlices,
+
+            // should fetch has precedence over the value returned by local in determining whether remote should be called
+            // in this particular example if the value is present locally it would return but still fire off the remote request (optional)
             shouldFetch(state) {
                 return true
             }
         },
-        fetchFromAuthority: {
-            remote(state) {
-                return axios.get('/api/v1/authorities/'+state.authority+'/users');
-            },
-            success: actions.updateUsers, // (required)
-            error: actions.errorUsers, // (required)
 
-            shouldFetch(state) {
-                return true
-            }
-        },
-        fetchProfile: {
-            remote(state) {
-                return axios.get('/api/v1/profile');
-            },
-            success: actions.updateProfile, // (required)
-            error: actions.errorProfile, // (required)
 
-            shouldFetch(state) {
-                return true
-            }
-        },
-        putUser: {
-            remote(state) {
-                return axios.put('/api/v1/users/'+state.current.user.id, state.current.user);
-            },
-            success: actions.updateCurrentUser, // (required)
-            error: actions.errorCurrentUser, // (required)
-
-            shouldFetch(state) {
-                return true
-            }
-        },
-        /*
         submit: {
             // remotely fetch something (required)
             remote(state) {
@@ -77,7 +67,7 @@ const UsersSource = () => {
                 if (state.v_public) v = 'public';
                 if (state.v_protected) v = 'protected';
                 if (state.v_private) v = 'private';
-                return axios.post('/api/v1/users', {
+                return axios.post('/api/v1/projects', {
                         'label': state.label,
                         'name':  state.name,
                         'authority': state.authority,
@@ -106,9 +96,8 @@ const UsersSource = () => {
                 return true
             }
         }
-        */
     }
 };
 
-export default UsersSource;
+export default DashboardSource;
 

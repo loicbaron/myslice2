@@ -1,4 +1,4 @@
-import React from 'react';
+ import React from 'react';
 
 import store from '../../stores/views/Slice';
 import actions from '../../actions/views/Slice';

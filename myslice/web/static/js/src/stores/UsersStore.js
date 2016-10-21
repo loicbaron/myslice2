@@ -11,6 +11,11 @@ class UsersStore {
         this.excludeUsers = [];
         this.authorities = [];
         this.profile = {};
+        
+        this.grantPiAuthority = null;
+        this.revokePiAuthority = null;
+        this.grantedAuthorities = [];
+        this.revokedAuthorities = [];
 
         /* the currently active user */
         this.current = {
@@ -27,6 +32,7 @@ class UsersStore {
             updateUsers: actions.UPDATE_USERS,
             updateProfile: actions.UPDATE_PROFILE,
             setCurrentUser: actions.SET_CURRENT_USER,
+            updateCurrentUser: actions.UPDATE_CURRENT_USER,
             updateExcludeUsers: actions.UPDATE_EXCLUDE_USERS,
             updateFilter: actions.UPDATE_FILTER,
             updateFilteredUsers: actions.UPDATE_FILTERED_USERS,
@@ -36,7 +42,8 @@ class UsersStore {
             fetchFromAuthority: actions.FETCH_FROM_AUTHORITY,
             updateAuthority: actions.UPDATE_AUTHORITY,
             errorUsers: actions.ERROR_USERS,
-            
+            grantPiRights: actions.GRANT_PI_RIGHTS,
+            revokePiRights: actions.REVOKE_PI_RIGHTS,
         });
 
         this.registerAsync(source);
@@ -72,9 +79,15 @@ class UsersStore {
         } else {
             this.profile = profile;
         }
+        console.log("update profile");
+        console.log(this.profile);
         this.updateAuthority(this.profile.authority.id);
         this.fetchFromAuthority();
     }
+    errorProfile(errorMessage) {
+        console.log(errorMessage);
+    }
+
     updateAuthority(authority) {
         this.authority = authority;
     }
@@ -93,6 +106,12 @@ class UsersStore {
 
     setCurrentUser(user) {
         this.current.user = user;
+        if(!(user.id in Object.keys(this.grantedAuthorities))){
+            this.grantedAuthorities[user.id] = [];
+        }
+        if(!(user.id in Object.keys(this.revokedAuthorities))){
+            this.revokedAuthorities[user.id] = [];
+        }
     }
 
     updateUsers(users) {
@@ -159,7 +178,32 @@ class UsersStore {
     }
     errorUsers(errorMessage) {
         console.log(errorMessage);
-    } 
+    }
+    grantPiRights(authority) {
+        this.grantPiAuthority = authority;
+        this.current.user.pi_authorities.push(authority);
+        this.getInstance().putUser();
+    }
+    updateCurrentUser(message) {
+        // TODO
+        if(this.grantPiAuthority!=null){
+            this.grantedAuthorities[this.current.user.id].push(this.grantPiAuthority);
+            this.grantPiAuthority = null;
+        }
+        if(this.revokePiAuthority!=null){
+            this.revokedAuthorities[this.current.user.id].push(this.grantPiAuthority);
+            this.revokePiAuthority = null;
+
+        }
+    }
+    errorCurrentUser(errorMessage) {
+        console.log(errorMessage);
+    }
+    revokePiRights(authority) {
+        this.revokePiAuthority = authority;
+        this.current.user.pi_authorities.pop(authority);
+        this.getInstance().putUser();
+    }
 }
 
 

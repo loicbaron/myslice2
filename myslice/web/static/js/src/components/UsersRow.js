@@ -39,7 +39,6 @@ class UsersRow extends React.Component {
         if (!fullname) {
             fullname = this.props.user.shortname;
         }
-
         return (
              <Element element={this.props.user} type="user" setCurrent={this.props.setCurrent} current={this.props.current}>
                  <ElementStatus status={this.props.user.status} />

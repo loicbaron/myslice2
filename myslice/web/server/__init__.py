@@ -37,7 +37,7 @@ from myslice.web.websocket import WebsocketsHandler
 
 ##
 # Web controllers
-from myslice.web.controllers import login, password, registration, home, activity, projects, slices, users, status
+from myslice.web.controllers import login, logout, password, registration, home, activity, projects, slices, users, status
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -124,6 +124,7 @@ class Application(web.Application):
         # Web
         web_handlers = [
             web.url(r"/login", login.Index),
+            web.url(r"/logout", logout.Index),
             web.url(r"/password/(.*)", password.Index),
             web.url(r"/forgot_password", password.Forgot),
             web.url(r"/registration", registration.Index),
@@ -162,8 +163,10 @@ class Application(web.Application):
             web.url(r'/api/v1/resources/(' + self.urn_regex + ')?/?(testbeds)?$', ResourcesHandler),
             # leases
             web.url(r'/api/v1/leases$', LeasesHandler),
+            web.url(r'/api/v1/leases/([A-Za-z0-9-]+)?', LeasesHandler),
             #TODO formatting the path as web.url(r'/api/v1/leases/(^\d{2}-?\d{2}-?\d{4}\s\d{2}:\d{2}?$)', LeasesHandler),
             web.url(r'/api/v1/leases/([0-9-]{10})?$', LeasesHandler),
+            web.url(r'/api/v1/leases/([0-9-]{10})?/([0-9-]{10})?$', LeasesHandler),
             web.url(r'/api/v1/profile$', ProfileHandler),
             
             web.url(r'/api/v1/users$', UsersHandler),

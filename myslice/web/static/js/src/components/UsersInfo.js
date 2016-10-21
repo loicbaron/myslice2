@@ -28,12 +28,8 @@ Later:
 
 */
 
-
-
-
     render() {
         var p = this.props.selected;
-        console.log(p);
         let name = [p.first_name, p.last_name].join(' ');
         var projectsElement;
         if(p.projects){
@@ -43,12 +39,17 @@ Later:
         if(p.authority){
             var a = [];
             a.push(p.authority);
-            authorityElement = <div><Title title="Authority" subtitle="" /><AuthoritiesList authorities={a} /></div>
+            console.log("UsersInfo p.authority");
+            console.log(p.authority);
+            console.log(p.pi_authorities);
+            authorityElement = <div><Title title="Authority" subtitle="" /><AuthoritiesList authorities={a} grant={true} revoke={false} rights={p.pi_authorities} /></div>
         }
 
         var authoritiesElement;
         if(p.pi_authorities){
-            authoritiesElement = <div><Title title="Manager" subtitle="" /><AuthoritiesList authorities={p.pi_authorities} /></div>
+            console.log("UsersInfo pi_authorities");
+            console.log(p.pi_authorities);
+            authoritiesElement = <div><Title title="Manager" subtitle="" /><AuthoritiesList authorities={p.pi_authorities} grant={false} revoke={true} rights={p.pi_authorities} /></div>
         }
         return (
         <div>

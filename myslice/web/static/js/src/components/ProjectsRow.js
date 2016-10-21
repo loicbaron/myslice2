@@ -7,7 +7,8 @@ import ElementStatus from './base/ElementStatus';
 import ElementOption from './base/ElementOption';
 import ElementIcon from './base/ElementIcon';
 import DateTime from './base/DateTime';
-
+import SlicesRow from'./SlicesRow';
+import SlicesList from './SlicesList'
 import DeleteProject from './DeleteProject';
 
 class ProjectsRow extends React.Component {
@@ -29,7 +30,19 @@ class ProjectsRow extends React.Component {
         }
         var slices;
         if(this.props.project.slices){
-            slices = <span className="elementLabel">Slices {this.props.project.slices.length}</span>
+            slices = <span className="elementLabel">Slices: {this.props.project.slices.length}</span>
+        }
+        var slicesInDashboard;
+        if(this.props.project.slices){
+            var slicesInDashboard = <div>
+            {
+                this.props.project.slices.map(function (slice) {
+                    var slice_link="/slices/"+slice.hrn;
+                    return <span className="elementLabel"><a href={slice_link}>{slice.shortname}</a></span>;
+                }.bind(this))
+            }
+            </div>;
+            //slicesInDashboard = <span className="elementLabel">Slices: {SliceLabel}</span>
         }
         var created;
         if(this.props.project.created){
@@ -47,28 +60,44 @@ class ProjectsRow extends React.Component {
         if(authority){
             authorityElement = <span className="elementLabel">Managed by {authority}</span>
         }
-        var projectDetails;
+        var projectElements;
         if(users || slices || authorityElement){
-            projectDetails = <div className="elementDetail">{users}&nbsp;&nbsp;{slices}<br/>{authorityElement}</div>
+            projectElements = <div className="elementDetail">{users}&nbsp;&nbsp;{slices}<br/>{authorityElement}</div>
         }
-        return (
-            <Element element={this.props.project} type="project" handleClick={this.props.handleClick} minHeight={minHeight}>
-                <div className="elementControl">
-                    <ElementStatus status={this.props.project.status} />
-                    <ElementOption label="delete" />
-                </div>
-                <ElementIcon icon="project"/>
-                <ElementTitle label={label} detail={this.props.project.shortname}/>
-                <ElementId id={this.props.project.id}/>
-                {button}
-                {projectDetails}
-                <div className="row elementDate">
-                    {created}
-                    {enabled}
-                    {updated}
-                </div>
-            </Element>
-        );
+        if (this.props.detailed) {
+            return (
+                <Element element={this.props.project} type="project" setCurrent={this.props.setCurrent}
+                         current={this.props.current} minHeight={minHeight}>
+                    <ElementStatus status={this.props.project.status}/>
+                    <ElementIcon icon="project"/>
+                    <ElementTitle label={label} detail={this.props.project.shortname}/>
+                    <ElementId id={this.props.project.id}/>
+                    {button}
+                    {projectElements}
+                    <div className="row elementDate">
+                        {created}
+                        {enabled}
+                        {updated}
+                    </div>
+                </Element>
+            );
+        }
+        else
+            {
+            return (
+                <Element element={this.props.project} type="project" setCurrent={this.props.setCurrent}
+                         current={this.props.current} minHeight={minHeight}>
+                    <ElementIcon icon="project"/>
+                    <a href="/projects"><ElementTitle label={label} detail={this.props.project.shortname} /></a>
+
+                    <ElementId id={this.props.project.id} />
+
+                    <div><i className="fa fa-tasks fa-lg"></i> Slices: {slicesInDashboard}</div>
+
+                </Element>
+            );
+        }
+
     }
 }
 
@@ -76,10 +105,13 @@ ProjectsRow.propTypes = {
     project: React.PropTypes.object.isRequired,
     handleClick: React.PropTypes.func,
     removeProject: React.PropTypes.bool,
+    detailed: React.PropTypes.bool,
 };
 
 ProjectsRow.defaultProps = {
     removeProject: true,
+    setCurrent: null,
+    detailed: true,
 };
 
 export default ProjectsRow;

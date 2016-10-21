@@ -16,6 +16,7 @@ class SlicesRow extends React.Component {
         var project = this.props.slice.project.name || this.props.slice.project.shortname;
         var authority = this.props.slice.authority.name || this.props.slice.authority.shortname;
         var button = '';
+        var link = "/slices/"+this.props.slice.hrn;
         if(this.props.removeSlice){
             button = <DeleteSliceFromProject slice={this.props.slice} />
         }
@@ -23,7 +24,7 @@ class SlicesRow extends React.Component {
              <Element element={this.props.slice} type="project" select={this.props.select}>
                  <ElementStatus status={this.props.slice.status} />
                  <ElementIcon icon="slice" />
-                 <ElementTitle label={label} detail={this.props.slice.shortname} />
+                 <a href={link}><ElementTitle label={label} detail={this.props.slice.shortname} /></a>
                  <ElementId id={this.props.slice.id} />
                  {button}
                  <div className="elementDetail">

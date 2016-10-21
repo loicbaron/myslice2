@@ -130,11 +130,11 @@ class ProjectsView extends React.Component {
             <View>
                 <Panel>
                     <PanelHeader>
-                        <Title title="Projects" />
+                        <Title title="Projects " />
                         <Button label="Request Project" icon="plus" handleClick={this.showForm} />
                     </PanelHeader>
                     <PanelBody>
-                        <ProjectsList projects={this.state.projects} handleClick={this.setCurrentProject} />
+                        <ProjectsList detailed ={true} projects={this.state.projects} setCurrent={this.setCurrentProject} current={this.state.current.project} />
                     </PanelBody>
                     {dialog}
                 </Panel>

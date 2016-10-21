@@ -2,20 +2,7 @@ import alt from '../alt';
 import actions from '../actions/ProjectsActions';
 import source from '../sources/ProjectsSource';
 
-var removeFromArray = function(myArray, searchTerm, property=null) {
-        for(var i = 0, len = myArray.length; i < len; i++) {
-            if(property==null){
-                var a = myArray[i];
-            }else{
-                var a = myArray[i][property];
-            }
-            if (a === searchTerm){
-                myArray.splice(i, 1);
-                return myArray;
-            }
-        }
-        return myArray;
-};
+import common from '../utils/Commons';
 
 class ProjectsStore {
 
@@ -166,9 +153,9 @@ class ProjectsStore {
     updateRemoveUser(message) {
         console.log(message);
         this.removedUsers[this.current.project.id].push(this.removeUserFromProject);
-        this.current.project.pi_users = removeFromArray(this.current.project.pi_users, this.removeUserFromProject.id);
+        this.current.project.pi_users = common.removeFromArray(this.current.project.pi_users, this.removeUserFromProject.id);
         this.removeUserFromProject=null;
-        //this.current.users = removeFromArray(this.current.users, this.removeUserFromProject.id, 'id');
+        //this.current.users = common.removeFromArray(this.current.users, this.removeUserFromProject.id, 'id');
     }
     errorRemoveUser(errorMessage) {
         console.log(errorMessage);
@@ -180,7 +167,7 @@ class ProjectsStore {
     }
     updateDeleteSlice(message) {
         this.deletedSlices[this.current.project.id].push(this.deleteSliceFromProject);
-        this.current.project.slices = removeFromArray(this.current.project.slices, this.deleteSliceFromProject.id);
+        this.current.project.slices = common.removeFromArray(this.current.project.slices, this.deleteSliceFromProject.id);
         this.deleteSliceFromProject=null;
     }
     errorDeleteSlice(errorMessage) {

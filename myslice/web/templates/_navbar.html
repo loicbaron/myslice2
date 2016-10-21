@@ -24,6 +24,7 @@
                         </div>
                     </div>
                 </li>
+				{% if current_user['is_root'] or current_user['is_pi'] %}
                 <li class="{% if request.path == '/users' %}active{% end %}">
                     <div>
                         <div>
@@ -31,6 +32,7 @@
                         </div>
                     </div>
                 </li>
+                {% end %}
                 <li class="{% if request.path == '/activity' %}active{% end %}">
                     <div>
                         <div>
@@ -58,6 +60,13 @@
                     <div>
                         <div>
                             <a href="/settings"><i class="fa fa-user fa-lg"></i> {{ current_user['email'] }}</a>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div>
+                        <div>
+                            <a href="/logout"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a>
                         </div>
                     </div>
                 </li>

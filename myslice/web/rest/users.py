@@ -399,14 +399,23 @@ class UsersHandler(Api):
 
         # If password changed, encrypt the new one
         print(data)
-        if user["password"] != crypt_password(data["password"]):
+        if "password" in data and user["password"] != crypt_password(data["password"]):
             data["password"] = crypt_password(data["password"])
+
+        # handle authority as dict
+        if "authority" in data and type(data["authority"]) is dict:
+            data["authority"] = data["authority"]["id"]
+
+        # User's Slices are managed through the Projects Service
+        # handle slices as dict
+        if "slices" in data and type(data["slices"]) is dict:
+            data["slices"] = data["slices"]["id"]
 
         # Update user's data
         try:
             event = Event({
                 'action': EventAction.UPDATE,
-                'user': self.current_user['id'],
+                'user': current_user['id'],
                 'object': {
                     'type': ObjectType.USER,
                     'id': id
@@ -420,14 +429,19 @@ class UsersHandler(Api):
             result = yield dispatch(self.dbconnection, event)
             response = response + result["generated_keys"]
 
+        # handle project as dict
+        if all(isinstance(n, dict) for n in data['projects']):
+            data['projects'] = [x['id'] for x in data['projects']]
+
+        # Check the list of projects in data sent
         for p in data['projects']:
-            # the user is a new pi
+            # if the project is not in the list of the user's projects in the DB, user is a new pi
             if p not in user['projects']:
                 # dispatch event add pi to project
                 try:
                     event = Event({
                         'action': EventAction.ADD,
-                        'user': self.current_user['id'],
+                        'user': current_user['id'],
                         'object': {
                             'type': ObjectType.PROJECT,
                             'id': p,
@@ -447,20 +461,52 @@ class UsersHandler(Api):
                     result = yield dispatch(self.dbconnection, event)
                     response = response + result["generated_keys"]
 
-        for s in data['slices']:
-            # the user is a new member of the slice
-            if s not in user['slices']:
-                # dispatch event add user to slice
+        # Check user's projects in DB
+        for p in user['projects']:
+            # If the project is not in the data sent, remove the user from the project's pis
+            if p not in data['projects']:
+                # dispatch event add pi to project
+                try:
+                    event = Event({
+                        'action': EventAction.REMOVE,
+                        'user': current_user['id'],
+                        'object': {
+                            'type': ObjectType.PROJECT,
+                            'id': p,
+                        },
+                        'data': {
+                            'type' : DataType.PI,
+                            'values' : [id]
+                        }
+                    })
+                except AttributeError as e:
+                    self.userError("Can't create request", e)
+                    return
+                except Exception as e:
+                    self.userError("Can't create request", e)
+                    return
+                else:
+                    result = yield dispatch(self.dbconnection, event)
+                    response = response + result["generated_keys"]
+        # handle authority as dict
+        if all(isinstance(n, dict) for n in data['pi_authorities']):
+            data['pi_authorities'] = [x['id'] for x in data['pi_authorities']]
+        # Check the list of pi_authorities in data sent
+        for a in data['pi_authorities']:
+            # if the authority is not in the list of the user's pi_authorities in the DB, user is a new pi
+            # XXX pi_authorities contains also projects, to be changed in myslicelib
+            if a not in user['pi_authorities'] and len(a.split('+')[1].split(':'))<3:
+                # dispatch event add pi to authority
                 try:
                     event = Event({
                         'action': EventAction.ADD,
-                        'user': self.current_user['id'],
+                        'user': current_user['id'],
                         'object': {
-                            'type': ObjectType.SLICE,
-                            'id': s,
+                            'type': ObjectType.AUTHORITY,
+                            'id': a,
                         },
                         'data': {
-                            'type' : DataType.USER,
+                            'type' : DataType.PI,
                             'values' : [id]
                         }
                     })
@@ -474,14 +520,16 @@ class UsersHandler(Api):
                     result = yield dispatch(self.dbconnection, event)
                     response = response + result["generated_keys"]
 
-        for a in data['pi_authorities']:
-            # the user is a new pi of the authority
-            if a not in user['pi_authorities']:
-                # dispatch event add pi to authority
+        # Check user's pi_authorities in DB
+        for a in user['pi_authorities']:
+            # If the authority is not in the data sent, remove the user from the authority pis
+            # XXX pi_authorities contains also projects, to be changed in myslicelib
+            if a not in data['pi_authorities'] and len(a.split('+')[1].split(':'))<3:
+                # dispatch event add pi to project
                 try:
                     event = Event({
-                        'action': EventAction.ADD,
-                        'user': self.current_user['id'],
+                        'action': EventAction.REMOVE,
+                        'user': current_user['id'],
                         'object': {
                             'type': ObjectType.AUTHORITY,
                             'id': a,
@@ -515,9 +563,54 @@ class UsersHandler(Api):
         DELETE /users/<id>
         :return:
         """
+        # A user has the right to delete his own account
         # Check if the current user is PI of the authority of the user 
         # Or an upper authority 
-        pass
+        current_user = self.get_current_user()
+        try:
+            if current_user['id']!=id:
+                # Check if the user has the right to delete
+                # PI of user's authority or PI of root authority
+
+                # user id from DB
+                cursor = yield r.table('users') \
+                    .filter({'id': id}) \
+                    .run(self.dbconnection)
+                while (yield cursor.fetch_next()):
+                    user = yield cursor.next()
+
+                a = yield r.table('authorities').get(user['authority']).run(self.dbconnection)
+                root_auth = yield r.table('authorities').get(a.authority).run(self.dbconnection)
+                if current_user['id'] not in a['pi_users'] and current_user['id'] not in root_auth['pi_users']:
+                    self.userError("your user has no rights on authority: %s" % id)
+                    return
+        except Exception:
+            self.userError("not authenticated ")
+            return
+        try:
+            event = Event({
+                'action': EventAction.DELETE,
+                'user': current_user['id'],
+                'object': {
+                    'type': ObjectType.USER,
+                    'id': id,
+                }
+            })
+        except AttributeError as e:
+            self.userError("Can't create request", e)
+            return
+        except Exception as e:
+            self.userError("Can't create request", e)
+            return
+        else:
+            result = yield dispatch(self.dbconnection, event)
+            self.write(json.dumps(
+                {
+                    "result": "success",
+                    "events": result["generated_keys"],
+                    "error": None,
+                    "debug": None
+                 }, cls=myJSONEncoder))
 
 class ProfileHandler(Api):
 
