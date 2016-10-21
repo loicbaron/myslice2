@@ -115,12 +115,20 @@ textarea {
 }
 
 button {
-    border:none;
+    border:1px solid #EFEFEF;
+    border-radius:2px;
     background-color:transparent;
-    padding-bottom:5px;
+    padding:5px 15px;
 }
 button:hover, button.active {
-    border-bottom:solid 4px #221144;
+    background-color: #EFEFEF;
+}
+button.apply {
+    border:1px solid #D9EAD3;
+    background-color: #D9EAD3;
+}
+button.apply:hover, button.apply.active {
+    background-color: #e0f1da;
 }
 button.large {
     border: none;
@@ -411,11 +419,18 @@ div.registrationForm {
 .dialog .d-panel .d-header {
 }
 .dialog .d-panel .d-body {
-    position:absolute;
+    //position:absolute;
     left:50px;
     right:50px;
     height:70vh;
     overflow-y: auto;
+}
+.dialog .d-panel .d-footer {
+    text-align:center;
+    padding:25px 0;
+}
+.dialog .d-panel .d-footer button {
+    margin:0 25px;
 }
 /*
     Sections
@@ -480,7 +495,6 @@ div.registrationForm {
     line-height:46px;
     width: 40px;
     height: 40px;
-
     -moz-border-radius: 20px;
     -webkit-border-radius: 20px;
     border-radius: 20px;
@@ -561,11 +575,21 @@ div.registrationForm {
     position:absolute;
     right:25px;
 }
-.elementStatus {
+.elementControl {
     position:absolute;
     top:15px;
     right:15px;
+}
+.elementOption {
     font-size:9pt;
+    margin-bottom:8px;
+}
+.elementOption.delete {
+    color:red;
+}
+.elementStatus {
+    font-size:9pt;
+    margin-bottom:8px;
 }
 .elementStatus .new {
     color:#8E7CC3;
