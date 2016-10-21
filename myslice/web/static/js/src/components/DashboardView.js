@@ -84,6 +84,10 @@ class DashboardView extends React.Component {
                             </DialogPanel>
                         </Dialog>;
         }
+        var projectsList = '';
+        if(this.state.projects){
+            projectsList = <ProjectsList detailed ={false} projects={this.state.projects}  />
+        }
 // The view of the dashboard page
         return (
 
@@ -105,12 +109,12 @@ and sensing capabilities; ad-hoc wireless and wireless broadband access networks
             <Panel>
                 <PanelHeader >
                     <Title title="Projects"/>
-                    <a href="/projects" > </a>
+
+
                     <Button label="Request Project" icon="plus" handleClick={this.showForm} />
                 </PanelHeader>
                 <PanelBody>
-                    <ProjectsList detailed ={false} projects={this.state.projects}  />
-
+                    {projectsList}
                 </PanelBody>
                 {dialog}
             </Panel>
