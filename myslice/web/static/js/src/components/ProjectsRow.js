@@ -37,7 +37,7 @@ class ProjectsRow extends React.Component {
             {
                 this.props.project.slices.map(function (slice) {
                     var slice_link="/slices/"+slice.hrn;
-                    return <span key={slice.id } className="elementLabel"><a href={slice_link}>{slice.shortname}</a></span>;
+                    return <span key={slice.id } className="elementLabel"><i className="fa fa-tasks fa-lg"></i><a href={slice_link}>{slice.shortname}</a></span>;
                 }.bind(this))
             }
             </div>;
@@ -89,7 +89,7 @@ class ProjectsRow extends React.Component {
 
                     <ElementId id={this.props.project.id} />
 
-                    <div><i className="fa fa-tasks fa-lg"></i> Slices: {slicesInDashboard}</div>
+                    <div> {slicesInDashboard}</div>
 
                 </Element>
             );
