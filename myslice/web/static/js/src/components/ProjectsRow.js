@@ -38,7 +38,7 @@ class ProjectsRow extends React.Component {
             {
                 this.props.project.slices.map(function (slice) {
                     var slice_link="/slices/"+slice.hrn;
-                    return <span className="elementLabel"><a href={slice_link}>{slice.shortname}</a></span>;
+                    return <span key={slice.id} className="elementLabel"><a href={slice_link}>{slice.shortname}</a></span>;
                 }.bind(this))
             }
             </div>;
@@ -66,8 +66,7 @@ class ProjectsRow extends React.Component {
         }
         if (this.props.detailed) {
             return (
-                <Element element={this.props.project} type="project" setCurrent={this.props.setCurrent}
-                         current={this.props.current} minHeight={minHeight}>
+                <Element element={this.props.project} type="project" handleClick={this.props.handleClick} minHeight={minHeight}>
                     <ElementStatus status={this.props.project.status}/>
                     <ElementIcon icon="project"/>
                     <ElementTitle label={label} detail={this.props.project.shortname}/>
@@ -85,8 +84,7 @@ class ProjectsRow extends React.Component {
         else
             {
             return (
-                <Element element={this.props.project} type="project" setCurrent={this.props.setCurrent}
-                         current={this.props.current} minHeight={minHeight}>
+                <Element element={this.props.project} type="project" handleClick={this.props.setCurrent} minHeight={minHeight}>
                     <ElementIcon icon="project"/>
                     <a href="/projects"><ElementTitle label={label} detail={this.props.project.shortname} /></a>
 

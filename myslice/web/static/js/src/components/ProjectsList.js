@@ -14,7 +14,7 @@ class ProjectsList extends React.Component {
                 <List detailed={ this.props.detailed}>
                 {
                     this.props.projects.map(function(project) {
-                        return <ProjectsRow key={project.id} project={project} detailed={ this.props.detailed} setCurrent={this.props.setCurrent} current={this.props.current} />;
+                        return <ProjectsRow key={project.id} project={project} detailed={ this.props.detailed} handleClick={this.props.handleClick} />;
                     }.bind(this))
                 }
                 </List>
@@ -26,8 +26,7 @@ class ProjectsList extends React.Component {
 
 ProjectsList.propTypes = {
     projects: React.PropTypes.array.isRequired,
-    current: React.PropTypes.object,
-    setCurrent: React.PropTypes.func,
+    handleClick: React.PropTypes.func,
     detailed: React.PropTypes.bool,
 };
 
