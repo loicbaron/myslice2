@@ -41,7 +41,7 @@ const ElementStatus = ({status}) => {
 
         return (
                 <div className="elementStatus">
-                    {elementStatus}&nbsp;<i className={iconClass}></i>
+                    <i className={iconClass}></i>&nbsp;{elementStatus}
                 </div>
         );
 
