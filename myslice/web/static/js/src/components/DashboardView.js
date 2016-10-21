@@ -62,6 +62,10 @@ class DashboardView extends React.Component {
     showForm() {
         actions.showDialog('project');
     }
+    closeDialog() {
+        actions.showDialog(null);
+    }
+
     render()
     {   var panelRight = null;
         var dialog = null;
@@ -94,7 +98,7 @@ class DashboardView extends React.Component {
         <View>
             <Panel>
                 <PanelHeader>
-                    <Title title="Welcome To OneLab" />
+                    <Title title="About OneLab" />
 
                 </PanelHeader>
                 <PanelBody>
