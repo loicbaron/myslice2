@@ -37,7 +37,7 @@ class ProjectsRow extends React.Component {
             {
                 this.props.project.slices.map(function (slice) {
                     var slice_link="/slices/"+slice.hrn;
-                    return <span key={slice.id } className="elementLabel"><i className="fa fa-tasks fa-lg"></i><a href={slice_link}>{slice.shortname}</a></span>;
+                    return <span key={slice.id } className="elementLabel"><i className="fa fa-tasks fa-lg"></i>&nbsp;<a href={slice_link}>{slice.shortname}</a>&nbsp;</span>;
                 }.bind(this))
             }
             </div>;
