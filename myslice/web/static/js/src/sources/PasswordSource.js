@@ -3,21 +3,6 @@ import actions from '../actions/PasswordActions'
 
 const PasswordSource = () => {
     return {
-            onSubmit: {
-                remote(state) {
-                    return axios.post('/api/v1/password/'+state.hashing,
-                        {
-                            "password": state.password,
-                        });
-                },
-
-                success: actions.submitSuccess, // (required)
-                error: actions.errorupdatePassword, // (required)
-
-                shouldFetch(state) {
-                    return true
-                }
-            },
             submitEmail: {
                 remote(state) {
                     return axios.post('/api/v1/password/',

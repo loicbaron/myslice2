@@ -17,6 +17,8 @@ class SettingsStore {
         this.menuSelected = 'profile';
         this.oldPassword = '';
         this.newPassword = '';
+        this.hashing = '';
+        this.passwordUpdated = false;
 
         this.loading = false;
 
@@ -29,12 +31,17 @@ class SettingsStore {
             submitProfile: actions.SUBMIT_PROFILE,
             generateKeys: actions.GENERATE_KEYS,
             submitPassword: actions.SUBMIT_PASSWORD,
+            submitResetPassword: actions.SUBMIT_RESET_PASSWORD,
             
             updateOldpassword: actions.UPDATE_OLDPASSWORD,
             updateNewpassword: actions.UPDATE_NEWPASSWORD,
+            updateHashing: actions.UPDATE_HASHING,
 
             updateSettings: actions.UPDATE_SETTINGS,
             errorupdateSettings: actions.ERRORUPDATE_SETTINGS,
+
+            successUpdatePassword: actions.SUCCESS_UPDATE_PASSWORD,
+            errorUpdatePassword: actions.ERROR_UPDATE_PASSWORD,
         });
 
         this.registerAsync(source);
@@ -51,6 +58,10 @@ class SettingsStore {
 
     submitPassword() {
         this.getInstance().submitPassword();
+    }
+
+    submitResetPassword() {
+        this.getInstance().submitResetPassword();
     }
 
     generateKeys() {
@@ -85,6 +96,17 @@ class SettingsStore {
         this.newPassword = newPassword;
     }
 
+    updateHashing (hashing) {
+        this.hashing = hashing;
+    }
+
+    successUpdatePassword (response) {
+        this.passwordUpdated = true;
+    }
+
+    errorUpdatePassword (error) {
+        console.log(error);
+    }
 }
 
 
