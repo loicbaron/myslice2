@@ -409,10 +409,10 @@ div.registrationForm {
 
 .dialog .d-panel {
     position:absolute;
-    top:10vh;
+    top:0;
     bottom:0;
     width:100%;
-    height:90vh;
+    height:100vh;
     padding:25px 50px 25px 50px;
     background-color:#F6F6F6;
 }
@@ -422,12 +422,12 @@ div.registrationForm {
     //position:absolute;
     left:50px;
     right:50px;
-    height:70vh;
+    height:80vh;
     overflow-y: auto;
 }
 .dialog .d-panel .d-footer {
     text-align:center;
-    padding:25px 0;
+    padding:25px  0;
 }
 .dialog .d-panel .d-footer button {
     margin:0 25px;
