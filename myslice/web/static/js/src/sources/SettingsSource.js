@@ -67,7 +67,6 @@ const SettingsSource = () => {
                 remote(state) {
                     return axios.put('/api/v1/password',
                     {   
-                            "old_password": state.oldPassword,
                             "new_password": state.newPassword
                     });
                 },
@@ -79,7 +78,22 @@ const SettingsSource = () => {
                     return true
                 }
 
-            }
+            },
+            submitResetPassword: {
+                remote(state) {
+                    return axios.post('/api/v1/password/'+state.hashing,
+                        {
+                            "password": state.newPassword,
+                        });
+                },
+
+                success: actions.successUpdatePassword, // (required)
+                error: actions.errorUpdatePassword, // (required)
+
+                shouldFetch(state) {
+                    return true
+                }
+            },
     }
 };
 

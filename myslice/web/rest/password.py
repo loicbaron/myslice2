@@ -3,6 +3,7 @@ from email.utils import parseaddr
 import uuid
 
 import rethinkdb as r
+import myslice.db as db
 from myslice.db import dispatch, changes
 from myslice.lib.util import myJSONEncoder
 from myslice.db.activity import Event, EventAction, ObjectType
@@ -17,7 +18,7 @@ class PasswordHandler(Api):
     @gen.coroutine
     def put(self):
         """
-        POST /password
+        PUT /password
         :return:
         """
         if not self.request.body:
@@ -33,9 +34,12 @@ class PasswordHandler(Api):
             self.userError("Malformed request", e)
             return
 
-        if not data['old_password']:
-            self.userError("Malformed request")
-            return
+        if 'old_password' in data:
+            p = bytes(data['old_password'], 'latin-1')
+
+            if not check_password(data['old_password'], user['password']):
+                self.userError("password does not match")
+                return
 
         if not data['new_password']:
             self.userError("Malformed request")
@@ -48,30 +52,24 @@ class PasswordHandler(Api):
             self.userError("User does not exists")
             return
 
-        p = bytes(data['old_password'], 'latin-1')
+        # Directly modify the database, no need to go through Events
+        user['password'] = crypt_password(data['new_password'])
+        yield r.table('users').update(user).run(self.dbconnection)
 
-        #self.userError("{}".format(p))
-        if not check_password(data['old_password'], user['password']):
-            self.userError("password does not match")
-            return
-
-        event = Event({
-            'action': EventAction.UPDATE,
-            'user': user_id,
-            'object': {
-                'type': ObjectType.USER,
-                'id': user_id
-            },
-            'data': {
-                "password": crypt_password(data['new_password']),
-                "generate_keys": False
-            }
-        })
-
-        print(event)
-        
-        yield dispatch(self.dbconnection, event)
-
+        #event = Event({
+        #    'action': EventAction.UPDATE,
+        #    'user': user_id,
+        #    'object': {
+        #        'type': ObjectType.USER,
+        #        'id': user_id
+        #    },
+        #    'data': {
+        #        "password": crypt_password(data['new_password']),
+        #        "generate_keys": False
+        #    }
+        #})
+        #print(event)
+        #yield dispatch(self.dbconnection, event)
 
         self.write(json.dumps(
                 {

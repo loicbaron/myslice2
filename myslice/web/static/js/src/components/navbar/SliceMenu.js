@@ -13,11 +13,22 @@ const SlicesMenuEntry = ({slice, active}) => {
         className += " active";
     }
 
-    return (<li className={className} onClick={() => window.location.href = "/slices/" + slice.hrn}>
+  //  if (slice.project.name) {
+        return (<div className={className}>
+            <li className={className} onClick={() => window.location.href = "/slices/" + slice.hrn}>
                 <h5><i className="fa fa-flask"></i> {projectLabel}</h5>
-                <h4>{sliceLabel}</h4>
-                <span>{slice.shortname}</span>
-            </li>);
+                <h4><i className="fa fa-tasks fa-lg"></i>{sliceLabel}</h4>
+
+            </li>
+        </div>);
+  /* } else {
+        return (<div className={className}>
+            <li className={className} onClick={() => window.location.href = "/slices/" + slice.hrn}>
+                <h4><i className="fa fa-tasks fa-lg"></i>{sliceLabel}</h4>
+
+            </li>
+        </div> );
+    }*/
 };
 
 SlicesMenuEntry.propTypes = {
@@ -92,7 +103,9 @@ class SlicesMenu extends React.Component {
                                 {
                                     this.state.slices.map(function(slice) {
                                         let active = this.state.currentSlice.id === slice.id;
+
                                         return <SlicesMenuEntry key={slice.id} slice={slice} active={active} />
+
                                     }.bind(this))
                                 }
                             </ul>

@@ -11,18 +11,12 @@ class SettingsPassword extends React.Component {
                     "isSame" : false,
                     "helpMessage" : ""
                     }   
-        this.inputOldPassword = this.inputOldPassword.bind(this);
         this.inputNewPassword = this.inputNewPassword.bind(this);
         this.isSamePassword = this.isSamePassword.bind(this);
     }   
 
     inputNewPassword(newPassword) {
         this.props.newPassword(newPassword);
-    }
-
-    inputOldPassword(event) {
-        var oldPassword = event.target.value;
-        this.props.oldPassword(oldPassword);
     }
 
     isSamePassword(status){
@@ -48,14 +42,6 @@ class SettingsPassword extends React.Component {
                 <div className = "row">
                     <div className="col-md-6 col-md-offset-3">
                         <form onSubmit={this.submitForm.bind(this)}>
-                            <div className="settings-group">
-                                <span className="settings-span">Old Password</span>
-                                <input  placeholder="Old Password"
-                                            name="oldPassword"
-                                            type="password"
-                                            onChange={this.inputOldPassword}
-                                            />
-                            </div>
                                 <PasswordValidator 
                                         showPattern={true}
                                         validatedPassword={this.inputNewPassword}
@@ -74,7 +60,6 @@ class SettingsPassword extends React.Component {
 
 
 PasswordValidator.propTypes = {
-    oldPassword: React.PropTypes.func,
     newPassword: React.PropTypes.func,
     submitPassword: React.PropTypes.func,
 }

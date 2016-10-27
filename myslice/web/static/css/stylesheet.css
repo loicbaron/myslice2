@@ -79,8 +79,8 @@ h3 {
     margin:4px 0;
 }
 h4 {
-    font-weight:100;
-    margin:4px 0;
+    font-weight:300;
+    margin:5px 0;
 }
 
 input[type=text],
@@ -258,15 +258,18 @@ div.registrationForm {
 .slices-menu > div {
     max-height:400px;
     overflow-y: auto;
+    width: 300%;
+    background-color:white;
 }
 .slices-menu ul {
     padding:0;
     margin:0;
+    width: 300%;
     list-style:none;
 }
 .slices-menu li {
     float:left;
-    width:100%;
+    width:300%;
     padding:15px;
     cursor:pointer;
 }
@@ -290,7 +293,7 @@ div.registrationForm {
 
 }
 .slices-menu li h5 {
-    font-size:9pt;
+    font-size:11pt;
     font-weight:100;
     margin:0;
     padding:0;
