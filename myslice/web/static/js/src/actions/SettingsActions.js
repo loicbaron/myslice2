@@ -26,6 +26,11 @@ class SettingsActions {
         return true;
     }
 
+    submitResetPassword() {
+        this.updateLoading(true);
+        return true;
+    }
+
     generateKeys(){
         this.updateLoading(true);
         return true;
@@ -47,10 +52,22 @@ class SettingsActions {
         return newPassword;
     }
 
+    updateHashing(hashing) {
+        return hashing;
+    }
+
     updateProfile(name, value) {
         return [name, value];
     }
-        
+
+    successUpdatePassword(response) {
+        this.updateLoading(false);
+        return response;
+    }
+    errorUpdatePassword(response) {
+        this.updateLoading(false);
+        return response;
+    }
 
 }
 

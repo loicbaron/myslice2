@@ -16,7 +16,8 @@ class PasswordInput extends React.Component {
     validatePassword(password) {
         //Minimum 8 characters at least 1 Uppercase Alphabet, 1 Lowercase Alphabet, 1 Number
         //Special Character is allowed but not required
-        var re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d$@$!%*?&]{8,25}/;
+        //var re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d$@$!%*?&]{8,25}/;
+        var re = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d$@$!%*?&]{8,}/;
         return re.test(password);
     }
 
@@ -46,7 +47,7 @@ class PasswordInput extends React.Component {
             this.setState({ 'helperText': 'Must be at least 8 characters long.'});
             return;
         }
-
+        /*
         if (password.length > 25) {
             this.setState({ 'helperText': 'Too long, at most 25 characters.'});
             return;
@@ -63,7 +64,7 @@ class PasswordInput extends React.Component {
             this.setState({ 'helperText': 'Must contain an Uppercase letter.'});
             return;
         }
-        
+        */
         let reNum = /^(?=.*[0-9]).+$/;
         if (!reNum.test(password)) {
             this.setState({ 'helperText': 'Must contain a number.'});

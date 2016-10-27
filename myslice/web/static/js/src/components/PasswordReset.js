@@ -1,7 +1,8 @@
 import React from 'react';
 
-import actions from '../actions/PasswordActions'
-import store from '../stores/PasswordStore'
+import actions from '../actions/SettingsActions'
+import store from '../stores/SettingsStore'
+import SettingsPassword from './SettingsPassword';
 
 class PasswordReset extends React.Component {
 
@@ -9,7 +10,6 @@ class PasswordReset extends React.Component {
         super(props);
         this.state = store.getState();
         this.onChange = this.onChange.bind(this);
-        this.onChangeRepeate = this.onChangeRepeate.bind(this);
     }
 
     componentDidMount() {
@@ -25,25 +25,17 @@ class PasswordReset extends React.Component {
         this.setState(state);
     }
 
-    onChangePassword(e) {
-        actions.updatePassword(e.target.value);
-    }
-    onChangeRepeate(e) {
-        if (e.target.value != this.state.password){
-            actions.errorupdatePassword();
-        }else{
-            actions.matchingPassword();
-        }
+    updateNewpassword(newPassword){
+        actions.updateNewpassword(newPassword);
     }
 
-    submitForm(e){
-        e.preventDefault();
-        actions.onSubmit();
+    submitResetPassword(){
+        actions.submitResetPassword();
     }
 
     render () {
         let content;
-        if(this.state.updated){
+        if(this.state.passwordUpdated){
             document.getElementById("message").style.display="none";
             content = (
                 <div className="col-sm-6 col-sm-offset-1">Your password has been updated. <br/><br/> Please <a href="/">Login</a></div>
@@ -51,29 +43,9 @@ class PasswordReset extends React.Component {
         }else{
             content = (
             <div>
-                <div className="col-sm-8 error">
-                { this.state.matching==false ? 'Passwords do not match':''}
-                </div>
-                <div className="col-sm-8">
-                <form onSubmit={this.submitForm}>
-                    <div>
-                        <input  defaultvalue=''
-                                placeholder="New Password" 
-                                type="text" 
-                                name="new_password"
-                                onChange={this.onChangePassword}
-                                />
-                        <input  defaultvalue=''
-                                className={ this.state.matching==false ? 'error':'' }
-                                placeholder="Repeat Password" 
-                                type="text" 
-                                name="repeat_password"
-                                onChange={this.onChangeRepeate}
-                                />
-                    </div>
-                    <button type="submit" className="btn btn-default">Save</button>  
-                </form>
-                </div>
+                 <SettingsPassword newPassword={this.updateNewpassword.bind(this)}
+                                   submitPassword={this.submitResetPassword.bind(this)}
+                 />   
             </div>
             )
         }
