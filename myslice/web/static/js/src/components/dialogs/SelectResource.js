@@ -9,6 +9,8 @@ import DialogHeader from '../base/DialogHeader';
 import DialogFooter from '../base/DialogFooter';
 import DialogBody from '../base/DialogBody';
 import Title from '../base/Title';
+import Text from '../base/Text';
+import DateTime from '../base/DateTime';
 import List from '../base/List';
 
 import ResourceElement from '../objects/ResourceElement';
@@ -55,6 +57,9 @@ class SelectResourceDialog extends React.Component {
         actions.selectResource(resource);
     }
 
+    handleStartDateChange(e) {
+       actions.updateStartDate(e.target.value);
+    }
     isSelected(resource) {
         //console.log(this.state.selected);
         /* TOFIX
@@ -74,14 +79,60 @@ class SelectResourceDialog extends React.Component {
         // }else{
         //     var usersList = <UsersList users={this.state.users} addUser={this.props.addUser} />
         // }
+         var reservation= null;
+         switch(this.props.testbed.name) {
+            case 'FIT IoT-Lab':
+                reservation =
+                        <div className="p-view-body">
+                            <div className="container-fluid">
+                                <div className="row">
+                                    <div className="col-md-12">
+                                        <div id="resourceReservation-form">
+                                            <form className="experimentForm" onSubmit={this.handleSubmit}>
+                                                Start: <input type="text" placeholder="yyyy-mm-dd hh:mm" value={this.state.start_date} onChange={this.handleStartDateChange} />
+                                                Duration:<select>
+                                                              <option value="10 min">10 min</option>
+                                                              <option value="15 min">15 min </option>
+                                                              <option value="30 min ">30 min</option>
+                                                              <option value="1 h">1 h</option>
+                                                              <option value="1 h">2 h</option>
+                                                              <option value="1 h">4 h</option>
+                                                              <option value="1 h">8 h</option>
+                                                              <option value="1 h">24 h</option>
+                                                          </select>
+                                                <br/>
+                                                Type : <ul class="nav nav-tabs">
+                                                            <li class="active"><a href="#">M3</a></li>
+                                                            <li><a href="#">A8</a></li>
+                                                            <li><a href="#">WSN430</a></li>
 
+                                                       </ul>
+                                                <br/>
+                                                Site : <select>
+                                                            <option value="Paris">Paris</option>
+                                                            <option value="Grenoble">Grenoble </option>
+                                                            <option value="Saclay">Grenoble </option>
+                                                            <option value="Lyon">Grenoble </option>
+                                                            <option value="Strasbourg">Grenoble </option>
+                                                        </select>
+
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                break;
+        }
         return (
             <Dialog close={this.props.close}>
                 <DialogPanel>
                     <DialogHeader>
                         <Title title={this.props.testbed.name} />
                     </DialogHeader>
+
                     <DialogBody>
+                        {reservation}
                         <List>
                         {
                             this.state.resources.map(function(resource) {
@@ -110,6 +161,7 @@ class SelectResourceDialog extends React.Component {
 SelectResourceDialog.propTypes = {
     testbed: React.PropTypes.object.isRequired,
     close: React.PropTypes.func.isRequired,
+
 };
 
 SelectResourceDialog.defaultProps = {

@@ -19,7 +19,7 @@ class SelectResourceDialog {
             fetchResources: actions.FETCH_RESOURCES,
             updateResources: actions.UPDATE_RESOURCES,
             errorResources: actions.ERROR_RESOURCES,
-
+            updateStartDate: actions.UPDATE_START_DATE,
             selectResource: actions.SELECT_RESOURCE,
 
         });
@@ -56,7 +56,9 @@ class SelectResourceDialog {
     errorResources(errorMessage) {
         console.log(errorMessage);
     }
-
+    updateStartDate(start_date) {
+        this.start_date = start_date;
+    }
     isSelected(resource) {
         this.selected.find((el) => {
             return (el.id === resource.id);
