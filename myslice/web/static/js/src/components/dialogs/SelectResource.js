@@ -79,7 +79,13 @@ class SelectResourceDialog extends React.Component {
         // }else{
         //     var usersList = <UsersList users={this.state.users} addUser={this.props.addUser} />
         // }
+        var optionLocation = this.state.resources.map(function(res) {
+        return (<option key={res.location.city} value={res.location.city}>{res.location.city}</option>);
+        });
          var reservation= null;
+
+
+
          switch(this.props.testbed.name) {
             case 'FIT IoT-Lab':
                 reservation =
@@ -88,7 +94,7 @@ class SelectResourceDialog extends React.Component {
                                 <div className="row">
                                     <div className="col-md-12">
                                         <div id="resourceReservation-form">
-                                            <form className="experimentForm" onSubmit={this.handleSubmit}>
+                                            <form className="experimentForm" >
                                                 Start: <input type="text" placeholder="yyyy-mm-dd hh:mm" value={this.state.start_date} onChange={this.handleStartDateChange} />
                                                 Duration:<select>
                                                               <option value="10 min">10 min</option>
@@ -108,13 +114,10 @@ class SelectResourceDialog extends React.Component {
 
                                                        </ul>
                                                 <br/>
-                                                Site : <select>
-                                                            <option value="Paris">Paris</option>
-                                                            <option value="Grenoble">Grenoble </option>
-                                                            <option value="Saclay">Grenoble </option>
-                                                            <option value="Lyon">Grenoble </option>
-                                                            <option value="Strasbourg">Grenoble </option>
-                                                        </select>
+
+                                                Site : <select >
+                                                            {optionLocation}
+                                                       </select>
 
                                             </form>
                                         </div>
