@@ -12,7 +12,7 @@ import Title from '../base/Title';
 import Text from '../base/Text';
 import DateTime from '../base/DateTime';
 import List from '../base/List';
-
+import InputText from '../InputText'
 import ResourceElement from '../objects/ResourceElement';
 
 class SelectResourceDialog extends React.Component {
@@ -38,9 +38,13 @@ class SelectResourceDialog extends React.Component {
     }
 
     handleFilter(value) {
-        var f = {'email':value,'shortname':value}
-        actions.updateFilter(f);
-        actions.updateFilteredUsers();
+        //var f = {'email':value,'shortname':value}
+        //actions.updateFilteredUsers();
+        //
+
+        console.log(value);
+        console.log(" handle Filter");
+        actions.updateFilter(value);
     }
     /* fetch the users list */
     fetchUsers(filter={}) {
@@ -79,8 +83,11 @@ class SelectResourceDialog extends React.Component {
         // }else{
         //     var usersList = <UsersList users={this.state.users} addUser={this.props.addUser} />
         // }
+        var dis=[];
         var optionLocation = this.state.resources.map(function(res) {
-        return (<option key={res.location.city} value={res.location.city}>{res.location.city}</option>);
+            if (!((res.location.city) in dis))
+                { dis.push(res.location.city);
+                  return (<option key={res.id} value={res.location.city}>{res.location.city}</option>)};
         });
          var reservation= null;
 
@@ -107,8 +114,8 @@ class SelectResourceDialog extends React.Component {
                                                               <option value="1 h">24 h</option>
                                                           </select>
                                                 <br/>
-                                                Type : <ul class="nav nav-tabs">
-                                                            <li class="active"><a href="#">M3</a></li>
+                                                Type : <ul className="nav nav-tabs">
+                                                            <li className="active"><a href="#">M3</a></li>
                                                             <li><a href="#">A8</a></li>
                                                             <li><a href="#">WSN430</a></li>
 
@@ -136,6 +143,7 @@ class SelectResourceDialog extends React.Component {
 
                     <DialogBody>
                         {reservation}
+                        <InputText name="filter" handleChange={this.handleFilter} placeholder="Filter" />
                         <List>
                         {
                             this.state.resources.map(function(resource) {

@@ -9,8 +9,12 @@ class SelectResourceDialog {
         this.testbed = null;
         // the list of resources
         this.resources = [];
+        this.all_resources = [];
         // the list of selected resources
         this.selected = [];
+
+        this.filter = null;
+        this.filterResource = this.filterResource.bind(this);
 
         this.errorMessage = null;
 
@@ -21,6 +25,7 @@ class SelectResourceDialog {
             errorResources: actions.ERROR_RESOURCES,
             updateStartDate: actions.UPDATE_START_DATE,
             selectResource: actions.SELECT_RESOURCE,
+            updateFilter : actions.UPDATE_FILTER,
 
         });
 
@@ -50,7 +55,8 @@ class SelectResourceDialog {
         } else {
             this.resources = resources;
         }
-
+        // we do a copy of the object to avoid references
+        this.all_resources = Object.assign([], this.resources);
     }
 
     errorResources(errorMessage) {
@@ -58,6 +64,13 @@ class SelectResourceDialog {
     }
     updateStartDate(start_date) {
         this.start_date = start_date;
+    }
+    updateFilter(filter) {
+        this.filter = filter;
+        this.resources = this.all_resources.filter(this.filterResource);
+    }
+    filterResource(resource){
+        return resource.name.search(this.filter) > -1;
     }
     isSelected(resource) {
         this.selected.find((el) => {

@@ -8,8 +8,9 @@ class SelectResourceDialog {
             'fetchResources',
             'updateResources',
             'errorResources',
-
-            'selectResource'
+            'updateStartDate',
+            'selectResource',
+            'updateFilter'
         );
     }
 

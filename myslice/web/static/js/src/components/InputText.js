@@ -44,18 +44,30 @@ export default class InputText extends React.Component {
         }else{
             messageWarning = '';
         }
-        if(!this.props.type){
-            var type = "text"; 
-        }else{
-            var type = this.props.type;
-        }
+
         return (
             <div>
                 <div className="col-sm-4 col-sm-offset-4 inputForm">
-                    <input onChange={this.updateText} className={this.state.class} placeholder={this.props.placeholder} type="text" name={this.props.name} type={type} />
+                    <input onChange={this.updateText} className={this.state.class} placeholder={this.props.placeholder} name={this.props.name} type={this.props.type} />
                 </div>
                 {messageWarning}
             </div>
         );
     }
 }
+
+InputText.propTypes = {
+    type: React.PropTypes.string,
+    message: React.PropTypes.string,
+    handleChange: React.PropTypes.func,
+    regex: React.PropTypes.string,
+    required: React.PropTypes.bool,
+};
+
+InputText.defaultProps = {
+    type: "text",
+    message: "",
+    handleChange: null,
+    regex: "(.*)",
+    required: false,
+};
