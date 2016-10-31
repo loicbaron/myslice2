@@ -30,6 +30,8 @@ class Api(cors.CorsMixin, web.RequestHandler):
 
         self.fields['profile'] = self.fields['users'] + ['bio', 'url', 'public_key', 'private_key']
 
+        self.threads = self.application.threads
+
     def get_current_user(self):
 
         cookie = self.get_secure_cookie("user")

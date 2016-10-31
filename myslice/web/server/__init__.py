@@ -29,6 +29,8 @@ from myslice.web.rest.resources import ResourcesHandler
 from myslice.web.rest.leases import LeasesHandler
 from myslice.web.rest.password import PasswordHandler
 
+from myslice.web.rest.finterop.sessions import SessionsHandler as FinteropSessionsHandler
+
 from myslice.web.rest.activity import ActivityHandler
 
 ##
@@ -38,6 +40,7 @@ from myslice.web.websocket import WebsocketsHandler
 ##
 # Web controllers
 from myslice.web.controllers import login, logout, password, registration, home, activity, projects, slices, users, status
+from myslice.web.controllers import test
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -68,6 +71,7 @@ class Application(web.Application):
     uuid_regex = "[a-fA-F\d]{8}-[a-fA-F\d]{4}-[a-fA-F\d]{4}-[a-fA-F\d]{4}-[a-fA-F\d]{12}"
     hrn_regex = "[a-zA-Z0-9\-\.\_]+"
 
+    threads = {}
 
     def __init__(self, dbconnection):
         self.templates = os.path.join(os.path.dirname(__file__), "../templates")
@@ -136,6 +140,7 @@ class Application(web.Application):
             web.url(r'/activity', activity.Index),
             web.url(r'/status', status.Index),
             web.url(r'/static/(.*)', web.StaticFileHandler, {'path': self.static}),
+            web.url(r'/test', test.Index),
 
         ]
 
@@ -185,6 +190,11 @@ class Application(web.Application):
             # slices
             web.url(r'/api/v1/slices/?(' + self.hrn_regex + ')?/?(users|resources)?$', SlicesHandler),
             web.url(r'/api/v1/slices/?(' + self.urn_regex + ')?/?(users|resources)?$', SlicesHandler),
+
+            # F-Interop
+            # sessions
+            #web.url(r'/api/v1/finterop/sessions/?(' + self.urn_regex + ')?/?(start|stop)?$', FinteropSessionsHandler),
+            web.url(r'/api/v1/finterop/sessions/?([a-zA-Z0-9]+)?/?(start|stop)?$', FinteropSessionsHandler),
 
         ]
 
