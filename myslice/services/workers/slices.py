@@ -89,14 +89,9 @@ def events_run(lock, qSliceEvents):
                             isSuccess = sli.save(dbconnection, user_setup)
 
                         if event.data['type'] == DataType.RESOURCE:
-                            # "values": [{id:"YYYYYY",lease:{start_time:xxxx, end_time:xxxx}}, {id:“ZZZZZZ”}]
                             for val in event.data.values:
-                                r = Resource(db.get(dbconnection, table='resources', id=val['id']))
+                                r = Resource(db.get(dbconnection, table='resources', id=val))
                                 sli.addResource(r)
-                                if 'lease' in val:
-                                    l = Lease(val['lease'])
-                                    l.addResource(r)
-                                    sli.addLease(l)
                             isSuccess = sli.save(dbconnection, user_setup)
 
                     if event.removingObject():
@@ -110,14 +105,9 @@ def events_run(lock, qSliceEvents):
                             isSuccess = sli.save(dbconnection, user_setup)
 
                         if event.data.type == DataType.RESOURCE:
-                            # "values": [{id:"YYYYYY",lease:{start_time:xxxx, end_time:xxxx}}, {id:“ZZZZZZ”}]
                             for val in event.data.values:
-                                r = Resource(db.get(dbconnection, table='resources', id=val['id']))
+                                r = Resource(db.get(dbconnection, table='resources', id=val))
                                 sli.removeResource(r)
-                                if 'lease' in val:
-                                    l = Lease(val['lease'])
-                                    l.removeResource(r)
-                                sli.addLease(l)
                             isSuccess = sli.save(dbconnection, user_setup)
 
                 except SliceException as e:
