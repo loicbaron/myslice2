@@ -191,9 +191,10 @@ class Application(web.Application):
             web.url(r'/api/v1/slices/?(' + self.hrn_regex + ')?/?(users|resources)?$', SlicesHandler),
             web.url(r'/api/v1/slices/?(' + self.urn_regex + ')?/?(users|resources)?$', SlicesHandler),
 
-            # F-Interop
-            # sessions
-            #web.url(r'/api/v1/finterop/sessions/?(' + self.urn_regex + ')?/?(start|stop)?$', FinteropSessionsHandler),
+            # F-Interop sessions
+            # security based on the slice id
+            web.url(r'/api/v1/finterop/sessions/?(' + self.urn_regex + ')?/?(start|stop)?$', FinteropSessionsHandler),
+            web.url(r'/api/v1/finterop/sessions/?(' + self.hrn_regex + ')?/?(start|stop)?$', FinteropSessionsHandler),
             web.url(r'/api/v1/finterop/sessions/?([a-zA-Z0-9]+)?/?(start|stop)?$', FinteropSessionsHandler),
 
         ]

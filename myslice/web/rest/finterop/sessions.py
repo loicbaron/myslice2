@@ -38,45 +38,69 @@ class SessionsHandler(Api):
             self.userError('not authenticated ')
             return
 
+        # Security: only allow to watch sessions for which the user has rights (one of his slices)
+        # --------------------------------------
+        # XXX DISABLED for development
+        # --------------------------------------
         #if id not in current_user['slices']:
         #    self.userError('permission denied')
         #    return
 
         if id and p == 'start':
-            # send a call to the F-Interop Orchestrator
-            # start the session
-            fi = FakeInterop(id)
-            msg = 'Periodic message from FakeInterop'
-
-            print(self.threads)
-            if not id in self.threads:
-                self.threads[id] = []
-
-            for y in range(1):
-                #ts = threading.Thread(target=fi.fake, args=(msg,))
-                ts = Process(target=fi.fake, args=(msg,))
-                #ts.daemon = True
-                self.threads[id].append(ts)
-                ts.start()
-
-            # listen to the session
-            print('Listen to the session %s' % id)
-            for y in range(1):
-                #t = threading.Thread(target=startSession, args=(id,))
-                t = Process(target=startSession, args=(id,))
-                #t.daemon = True
-                self.threads[id].append(t)
-                t.start()
-
-        elif id and p == 'stop':
-            # stop process
-            # send a call to the F-Interop Orchestrator
+            # TODO: Check the status of the session in DB
             print(self.threads)
             if id in self.threads:
+                print('this session has alredy started')
+                self.userError('this session has already started')
+                return
+            else:
+                self.threads[id] = []
+                # TODO: F-Interop Orchestrator Integration
+                # send a call to the F-Interop Orchestrator
+
+                # XXX Meanwhile start the FakeInterop session
+                fi = FakeInterop(id)
+                msg = 'Periodic message from FakeInterop'
+                for y in range(1):
+                    ts = Process(target=fi.fake, args=(msg,))
+                    self.threads[id].append(ts)
+                    ts.start()
+
+                # listen to the session
+                print('Listen to the session %s' % id)
+                for y in range(1):
+                    t = Process(target=startSession, args=(id,))
+                    self.threads[id].append(t)
+                    t.start()
+
+        elif id and p == 'stop':
+            # TODO: Check the status of the session in DB
+            print(self.threads)
+            if id in self.threads:
+                # TODO: send a call to the F-Interop Orchestrator
+
+                # XXX Meanwhile stop FakeInterop process
+
+                # Stop Listening process
                 for t in self.threads[id]:
                     t.terminate()
                 del self.threads[id]
                 print('Stop listening to the session')
                 stopSession(id)
+
             else:
                 print('this session is not running')
+                self.userError('this session is not running')
+                return
+        else:
+            self.userError('not supported by the REST API')
+            return
+
+        # TODO: send back the result success with data about the session
+        self.write(json.dumps(
+        {
+            "result": "success",
+            "data": [],
+            "error": None,
+            "debug": None
+        }, cls=myJSONEncoder))
