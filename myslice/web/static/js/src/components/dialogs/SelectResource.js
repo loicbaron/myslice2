@@ -83,11 +83,14 @@ class SelectResourceDialog extends React.Component {
         // }else{
         //     var usersList = <UsersList users={this.state.users} addUser={this.props.addUser} />
         // }
+        var unique = {};
         var dis=[];
-        var optionLocation = this.state.resources.map(function(res) {
-            if (!((res.location.city) in dis))
-                { dis.push(res.location.city);
-                  return (<option key={res.id} value={res.location.city}>{res.location.city}</option>)};
+        var optionLocation = this.state.resources.map(function(res,index) {
+            //if (!((res.location.city) in dis))
+            if(dis.indexOf(res.location.city) < 0)
+                {dis.push(res.location.city);
+                  return (<option key={res.id} value={res.location.city}>{res.location.city}</option>);
+                 }
         });
          var reservation= null;
 
