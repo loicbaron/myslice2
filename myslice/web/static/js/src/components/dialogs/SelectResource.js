@@ -9,9 +9,8 @@ import DialogHeader from '../base/DialogHeader';
 import DialogFooter from '../base/DialogFooter';
 import DialogBody from '../base/DialogBody';
 import Title from '../base/Title';
-import List from '../base/List';
 
-import ResourceElement from '../objects/ResourceElement';
+import ResourceList from '../objects/ResourceList';
 
 class SelectResourceDialog extends React.Component {
 
@@ -40,6 +39,7 @@ class SelectResourceDialog extends React.Component {
         actions.updateFilter(f);
         actions.updateFilteredUsers();
     }
+
     /* fetch the users list */
     fetchUsers(filter={}) {
         switch (this.props.from){
@@ -51,8 +51,8 @@ class SelectResourceDialog extends React.Component {
         }
     }
 
-    selectResource(resource) {
-        actions.selectResource(resource);
+    selectResource(element) {
+        actions.selectResource(element);
     }
 
     isSelected(resource) {
@@ -64,8 +64,16 @@ class SelectResourceDialog extends React.Component {
         */
     }
 
-    applyChanged() {
+    applyChanges() {
 
+    }
+
+    renderSelectedStatus() {
+        if (this.state.selected.length > 0) {
+            return <div>
+                You have selected <a>{this.state.selected.length} resource{this.state.selected.length > 1 ? "s":"" }</a>
+            </div>;
+        }
     }
 
     render() {
@@ -82,18 +90,12 @@ class SelectResourceDialog extends React.Component {
                         <Title title={this.props.testbed.name} />
                     </DialogHeader>
                     <DialogBody>
-                        <List>
-                        {
-                            this.state.resources.map(function(resource) {
-
-                                return <ResourceElement key={resource.id}
-                                                        resource={resource}
-                                                        handleClick={() => this.selectResource(resource)} />;
-                            }.bind(this))
-                        }
-                        </List>
+                        <ResourceList resources={this.state.resources}
+                                      selected={this.state.selected}
+                                      handleClick={(element) => this.selectResource(element)} />
                     </DialogBody>
                     <DialogFooter>
+                        {this.renderSelectedStatus()}
                         <button className="cancel" onClick={this.cancel} >
                             Cancel
                         </button>
