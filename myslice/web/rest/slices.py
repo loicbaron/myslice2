@@ -291,63 +291,71 @@ class SlicesHandler(Api):
                 else:
                     result = yield dispatch(self.dbconnection, event)
                     response.append(result['generated_keys'])
+
         # slices add/remove resources
-
-        for data_resources in data['resources']:
+        addResources = []
+        # XXX Resource as a dict should be handled
+        for data_resource in data['resources']:
             # new resource
-            if data_resources not in slice['resources']:
-                # dispatch event add resource to slices
-                try:
-                    event = Event({
-                        'action': EventAction.ADD,
-                        'user': self.current_user['id'],
-                        'object': {
-                            'type': ObjectType.RESOURCE,
-                            'id': id,
-                        },
-                        'data': {
-                            'type': DataType.RESOURCE,
-                            'values': data_resources
-                        }
-                    })
+            if data_resource not in slice['resources']:
+                addResources.append(data_resource)
 
-                except AttributeError as e:
-                    self.userError("Can't create request", e)
-                    return
-                except Exception as e:
-                    self.userError("Can't create request", e)
-                    return
-                else:
-                    result = yield dispatch(self.dbconnection, event)
-                    response.append(result['generated_keys'])
+        # dispatch event add resource to slices
+        try:
+            event = Event({
+                'action': EventAction.ADD,
+                'user': self.current_user['id'],
+                'object': {
+                    'type': ObjectType.RESOURCE,
+                    'id': id,
+                },
+                'data': {
+                    'type': DataType.RESOURCE,
+                    'values': addResources
+                }
+            })
+
+        except AttributeError as e:
+            self.userError("Can't create request", e)
+            return
+        except Exception as e:
+            self.userError("Can't create request", e)
+            return
+        else:
+            result = yield dispatch(self.dbconnection, event)
+            response.append(result['generated_keys'])
         ##
         # slice remove resource
-        for data_resources in slice['resources']:
-            if data_resources not in data['resources']:
-                # dispatch event remove resource from slice
-                try:
-                    event = Event({
-                        'action': EventAction.REMOVE,
-                        'user': self.current_user['id'],
-                        'object': {
-                            'type': ObjectType.RESOURCE,
-                            'id': id,
-                        },
-                        'data': {
-                            'type': DataType.RESOURCE,
-                            'values': data_resources
-                        }
-                    })
+        removeResources = []
+        # XXX Resource as a dict should be handled
+        for data_resource in slice['resources']:
+            if data_resource not in data['resources']:
+                removeResources.append(data_resource)
 
-                except AttributeError as e:
-                    self.userError("Can't create request", e)
-                    return
-                except Exception as e:
-                    self.userError("Can't create request", e)
-                    return
-                else:
-                    result = yield dispatch(self.dbconnection, event)
-                    response.append(result['generated_keys'])
+        # dispatch event remove resource from slice
+        try:
+            event = Event({
+                'action': EventAction.REMOVE,
+                'user': self.current_user['id'],
+                'object': {
+                    'type': ObjectType.RESOURCE,
+                    'id': id,
+                },
+                'data': {
+                    'type': DataType.RESOURCE,
+                    'values': removeResources
+                }
+            })
+
+        except AttributeError as e:
+            self.userError("Can't create request", e)
+            return
+        except Exception as e:
+            self.userError("Can't create request", e)
+            return
+        else:
+            result = yield dispatch(self.dbconnection, event)
+            response.append(result['generated_keys'])
 
         # Leases: handled by POST /leases and DELETE /leases/<id>
 
