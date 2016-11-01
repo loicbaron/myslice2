@@ -1,0 +1,32 @@
+#!/usr/bin/env python3.5
+import pika
+import signal
+import time
+
+from multiprocessing import Process
+from myslice.bin.fakeinterop import FakeInterop, FakeInteropConsumer
+
+def receive_signal(signum, stack):
+    print('Received signal %s', signum)
+    raise SystemExit('Exiting')
+
+if __name__ == '__main__':
+
+    signal.signal(signal.SIGINT, receive_signal)
+    signal.signal(signal.SIGTERM, receive_signal)
+    signal.signal(signal.SIGHUP, receive_signal)
+
+    try:
+        # start publisher
+        fi = FakeInterop('hello')
+        publisher_process = Process(target=fi.fake, args=('Hello World!',))
+        publisher_process.start()
+
+        # start consumer
+        fc = FakeInteropConsumer('hello')
+        consumer_process = Process(target=fc.subscribe)
+        consumer_process.start()
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()

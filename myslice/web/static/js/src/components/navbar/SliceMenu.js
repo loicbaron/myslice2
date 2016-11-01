@@ -13,7 +13,14 @@ const SlicesMenuEntry = ({slice, active}) => {
         className += " active";
     }
 
-  //  if (slice.project.name) {
+    if (!projectLabel) {
+        return (<div className={className}>
+            <li className={className} onClick={() => window.location.href = "/slices/" + slice.hrn}>
+                <h4><i className="fa fa-tasks fa-lg"></i>{sliceLabel}</h4>
+
+            </li>
+        </div> );
+    } else {
         return (<div className={className}>
             <li className={className} onClick={() => window.location.href = "/slices/" + slice.hrn}>
                 <h5><i className="fa fa-flask"></i> {projectLabel}</h5>
@@ -21,14 +28,7 @@ const SlicesMenuEntry = ({slice, active}) => {
 
             </li>
         </div>);
-  /* } else {
-        return (<div className={className}>
-            <li className={className} onClick={() => window.location.href = "/slices/" + slice.hrn}>
-                <h4><i className="fa fa-tasks fa-lg"></i>{sliceLabel}</h4>
-
-            </li>
-        </div> );
-    }*/
+    }
 };
 
 SlicesMenuEntry.propTypes = {
