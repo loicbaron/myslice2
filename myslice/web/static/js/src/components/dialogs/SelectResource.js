@@ -13,7 +13,7 @@ import Text from '../base/Text';
 import DateTime from '../base/DateTime';
 import List from '../base/List';
 import InputText from '../InputText'
-import ResourceElement from '../objects/ResourceElement';
+import ResourceList from '../objects/ResourceList';
 
 class SelectResourceDialog extends React.Component {
 
@@ -46,6 +46,7 @@ class SelectResourceDialog extends React.Component {
         console.log(" handle Filter");
         actions.updateFilter(value);
     }
+
     /* fetch the users list */
     fetchUsers(filter={}) {
         switch (this.props.from){
@@ -57,8 +58,8 @@ class SelectResourceDialog extends React.Component {
         }
     }
 
-    selectResource(resource) {
-        actions.selectResource(resource);
+    selectResource(element) {
+        actions.selectResource(element);
     }
 
     handleStartDateChange(e) {
@@ -73,8 +74,16 @@ class SelectResourceDialog extends React.Component {
         */
     }
 
-    applyChanged() {
+    applyChanges() {
 
+    }
+
+    renderSelectedStatus() {
+        if (this.state.selected.length > 0) {
+            return <div>
+                You have selected <a>{this.state.selected.length} resource{this.state.selected.length > 1 ? "s":"" }</a>
+            </div>;
+        }
     }
 
     render() {
@@ -83,11 +92,14 @@ class SelectResourceDialog extends React.Component {
         // }else{
         //     var usersList = <UsersList users={this.state.users} addUser={this.props.addUser} />
         // }
+        var unique = {};
         var dis=[];
-        var optionLocation = this.state.resources.map(function(res) {
-            if (!((res.location.city) in dis))
-                { dis.push(res.location.city);
-                  return (<option key={res.id} value={res.location.city}>{res.location.city}</option>)};
+        var optionLocation = this.state.resources.map(function(res,index) {
+            //if (!((res.location.city) in dis))
+            if(dis.indexOf(res.location.city) < 0)
+                {dis.push(res.location.city);
+                  return (<option key={res.id} value={res.location.city}>{res.location.city}</option>);
+                 }
         });
          var reservation= null;
 
@@ -154,8 +166,12 @@ class SelectResourceDialog extends React.Component {
                             }.bind(this))
                         }
                         </List>
+                        <ResourceList resources={this.state.resources}
+                                      selected={this.state.selected}
+                                      handleClick={(element) => this.selectResource(element)} />
                     </DialogBody>
                     <DialogFooter>
+                        {this.renderSelectedStatus()}
                         <button className="cancel" onClick={this.cancel} >
                             Cancel
                         </button>

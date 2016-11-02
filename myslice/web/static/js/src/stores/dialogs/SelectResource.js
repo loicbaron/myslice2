@@ -77,12 +77,25 @@ class SelectResourceDialog {
             return (el.id === resource.id);
         });
     }
+
     selectResource(resource) {
-        if ((typeof(resource.isSelected) === 'undefined') || (!resource.isSelected)) {
-            resource.isSelected = true;
+        let resourceId = this.selected.some(function(el) {
+            return el.id === resource.id;
+        });
+
+        if (!resourceId) {
+            this.selected.push(resource);
         } else {
-            resource.isSelected = false;
+            this.selected = this.selected.filter(function(el) {
+                return el.id !== resource.id;
+            });
         }
+
+        // if ((typeof(resource.isSelected) === 'undefined') || (!resource.isSelected)) {
+        //     resource.isSelected = true;
+        // } else {
+        //     resource.isSelected = false;
+        // }
     }
 
 }
