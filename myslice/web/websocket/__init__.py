@@ -104,11 +104,13 @@ class WebsocketsHandler(SockJSConnection):
             else:
                 self.authenticated = True
                 logger.info("user {} connected".format(self.auth_user['id']))
+                self.send(json.dumps({'user':'authenticated'}))
                 return
 
         if self.authenticated and 'watch' in data:
 
             logger.info("user {} subscribed to {}".format(self.auth_user['id'], message))
+            self.send(json.dumps({'user':'watching'}))
             
             # check if all the specified entities exist
             try:
@@ -140,6 +142,7 @@ class WebsocketsHandler(SockJSConnection):
                 return
 
             if watch == 'activity':
+                self.send(json.dumps({'user':'watching activity'}))
                 self.pubsub = ZMQPubSub(self.context, self._activity).connect().subscribe('activity')
 
             if watch == 'requests':
@@ -160,6 +163,7 @@ class WebsocketsHandler(SockJSConnection):
 
 
     def _activity(self, message):
+        self.send(json.dumps({'user':'entered function _activity'}))
         change = json.loads(message[1].decode('utf-8'))
 
         if  self.auth_user['admin'] or change['user'] == self.auth_user['id'] or \
