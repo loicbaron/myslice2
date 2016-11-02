@@ -14,7 +14,7 @@ import DateTime from '../base/DateTime';
 import List from '../base/List';
 import InputText from '../InputText'
 import ResourceList from '../objects/ResourceList';
-
+import ResourceElement from '../objects/ResourceElement';
 class SelectResourceDialog extends React.Component {
 
     constructor(props) {
@@ -92,13 +92,14 @@ class SelectResourceDialog extends React.Component {
         // }else{
         //     var usersList = <UsersList users={this.state.users} addUser={this.props.addUser} />
         // }
-        var unique = {};
+
         var dis=[];
+        //var selectedOption = this.props.selected;
         var optionLocation = this.state.resources.map(function(res,index) {
             //if (!((res.location.city) in dis))
             if(dis.indexOf(res.location.city) < 0)
                 {dis.push(res.location.city);
-                  return (<option key={res.id} value={res.location.city}>{res.location.city}</option>);
+                  return (<option key={res.id} value={res.location.city} >{res.location.city}</option>);
                  }
         });
          var reservation= null;
@@ -114,7 +115,9 @@ class SelectResourceDialog extends React.Component {
                                     <div className="col-md-12">
                                         <div id="resourceReservation-form">
                                             <form className="experimentForm" >
-                                                Start: <input type="text" placeholder="yyyy-mm-dd hh:mm" value={this.state.start_date} onChange={this.handleStartDateChange} />
+                                                Start date: <input type="date" placeholder="yyyy-mm-dd" value={this.state.start_date} onChange={this.handleStartDateChange} />
+                                                Time:  <input type="time" placeholder="hh:mm"/>
+                                                <br/>
                                                 Duration:<select>
                                                               <option value="10 min">10 min</option>
                                                               <option value="15 min">15 min </option>
@@ -126,7 +129,7 @@ class SelectResourceDialog extends React.Component {
                                                               <option value="1 h">24 h</option>
                                                           </select>
                                                 <br/>
-                                                Type : <ul className="nav nav-tabs">
+                                                Type : <ul className="nav nav-pills">
                                                             <li className="active"><a href="#">M3</a></li>
                                                             <li><a href="#">A8</a></li>
                                                             <li><a href="#">WSN430</a></li>
@@ -134,7 +137,7 @@ class SelectResourceDialog extends React.Component {
                                                        </ul>
                                                 <br/>
 
-                                                Site : <select >
+                                                Site : <select onChange={this.handleFilter}  >
                                                             {optionLocation}
                                                        </select>
 
