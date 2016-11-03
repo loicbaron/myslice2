@@ -9,53 +9,74 @@ import re
 from myslice.db.activity import Event, EventAction, ObjectType
 from myslice.db import dispatch
 class LeasesHandler(Api):
+
     @gen.coroutine
-    def get(self, o=None, t=None):
+    def get(self, o=None):
         """
         Leases list
 
          GET /leases
          GET /leases/id
-         GET /leases/start_time¶end_time
-         GET /leases/start_time/end_time
-
+         GET /leases?timestamp_start=<xxx>&timestamp_end=<xxx>
 
         :return:
         """
         leases = []
 
+        # [?timestamp_start=<XXX>&timestamp_end=<XXX>]
+        ts = self.get_argument('timestamp_start',None)
+        te = self.get_argument('timestamp_end',None)
 
         #GET / leases
-        if not o and not t:
+        if not o and not ts and not te:
             cursor = yield r.table('leases').run(self.dbconnection)
 
             while (yield cursor.fetch_next()):
                 result = yield cursor.next()
                 leases.append(result)
 
-        #  GET / leases / start_time¶end_time
-        elif o and not t:
-            regexp="[0-9-]{10}"
-            if re.match(regexp, o) is not None:
-                cursor = yield r.table('leases').filter(
-                    r.row['start_time'].eq(int(o)) | (r.row['end_time'].eq(int(o)))).run(self.dbconnection)
-                while (yield cursor.fetch_next()):
-                    item = yield cursor.next()
-                    leases.append(item)
+        # GET / leases/id
+        elif o and not ts and not te:
+            cursor = yield r.table('leases') \
+                .filter({'id': o}).run(self.dbconnection)
+            while (yield cursor.fetch_next()):
+                result = yield cursor.next()
+                leases.append(result)
 
-            else:
-                # GET / leases/id
-                cursor = yield r.table('leases') \
-                    .filter({'id': o}).run(self.dbconnection)
-                while (yield cursor.fetch_next()):
-                    result = yield cursor.next()
-                    leases.append(result)
-        #GET / leases / start_time / end_time
-        else:
-            cursor = yield r.table('leases').filter(r.row['start_time'].eq(int(o)) & (r.row['end_time'].eq(int(t)))).run(self.dbconnection)
+        # GET /leases?timestamp_start=<xxx>&timestamp_end=<xxx>
+        elif ts and te:
+            cursor = yield r.table('leases') \
+                .filter(lambda l:
+                    r.and_(l['start_time'].ge(int(ts)),l['end_time'].le(int(te)))
+                ).run(self.dbconnection)
             while (yield cursor.fetch_next()):
                 item = yield cursor.next()
                 leases.append(item)
+
+        # GET /leases?timestamp_start=<XXX>
+        elif ts and not te:
+            cursor = yield r.table('leases') \
+                .filter(lambda l:
+                    l['start_time'].ge(int(ts))
+                ).run(self.dbconnection)
+
+            while (yield cursor.fetch_next()):
+                item = yield cursor.next()
+                leases.append(item)
+
+        # GET /leases?timestamp_end=<XXX>
+        elif not ts and te:
+            cursor = yield r.table('leases') \
+                .filter(lambda l:
+                    l['end_time'].le(int(te))
+                ).run(self.dbconnection)
+
+            while (yield cursor.fetch_next()):
+                item = yield cursor.next()
+                leases.append(item)
+        else:
+            self.userError("invalid request")
+            return
         self.write(json.dumps({"result": leases}, cls=myJSONEncoder))
 
 

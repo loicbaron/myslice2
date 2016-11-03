@@ -169,9 +169,6 @@ class Application(web.Application):
             # leases
             web.url(r'/api/v1/leases$', LeasesHandler),
             web.url(r'/api/v1/leases/([A-Za-z0-9-]+)?', LeasesHandler),
-            #TODO formatting the path as web.url(r'/api/v1/leases/(^\d{2}-?\d{2}-?\d{4}\s\d{2}:\d{2}?$)', LeasesHandler),
-            web.url(r'/api/v1/leases/([0-9-]{10})?$', LeasesHandler),
-            web.url(r'/api/v1/leases/([0-9-]{10})?/([0-9-]{10})?$', LeasesHandler),
             web.url(r'/api/v1/profile$', ProfileHandler),
             
             web.url(r'/api/v1/users$', UsersHandler),
@@ -179,7 +176,6 @@ class Application(web.Application):
             # testbeds
             web.url(r'/api/v1/testbeds/?(' + self.urn_regex + ')?/?(resources)?$', TestbedsHandler),
             web.url(r'/api/v1/testbeds/?(' + self.urn_regex + ')?/?(leases)?$', TestbedsHandler),
-            web.url(r'/api/v1/testbeds/?(' + self.urn_regex + ')?/?(leases)?/([0-9-]{10})?/([0-9-]{10})?$', TestbedsHandler),
             # users
             web.url(r'/api/v1/users/?(' + self.urn_regex + ')?/?(authorities|projects|slices)?$', UsersHandler),
             web.url(r'/api/v1/users/?(authorities|projects|slices)?$', UsersHandler),
