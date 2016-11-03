@@ -66,8 +66,10 @@ class SelectResourceDialog {
         this.start_date = start_date;
     }
     updateFilter(filter) {
-        this.filter = filter;
+        this.filter = filter.toLowerCase();
+       // console.log( this.filter);
         this.resources = this.all_resources.filter(this.filterResource);
+
     }
     filterResource(resource){
         return resource.name.search(this.filter) > -1;
