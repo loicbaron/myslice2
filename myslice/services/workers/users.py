@@ -57,11 +57,7 @@ def events_run(lock, qUserEvents):
                     # Creating a new user
                     if event.creatingObject():
                         logger.info("Creating user {}".format(event.object.id))
-                        user = User()
-                        # email
-                        user.email = event.data['email']
-                        # authority
-                        user.authority = event.data['authority']
+                        user = User(event.data)
                         isSuccess = user.save(dbconnection, user_setup)
                     ##
                     # Deleting user
