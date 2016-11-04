@@ -12,6 +12,7 @@ import Title from '../base/Title';
 import Text from '../base/Text';
 import DateTime from '../base/DateTime';
 import List from '../base/List';
+import Button from '../base/Button';
 import InputText from '../InputText'
 import ResourceList from '../objects/ResourceList';
 import ResourceElement from '../objects/ResourceElement';
@@ -50,7 +51,8 @@ class SelectResourceDialog extends React.Component {
         //
 
         //For the text filter
-       // console.log( value);
+        //console.log( value);
+
         actions.updateFilter(value);
     }
 
@@ -83,7 +85,7 @@ class SelectResourceDialog extends React.Component {
 
     handleChange(event) {
         this.setState({value: event.target.value});
-        //the event updates the state
+
 
     }
     applyChanges() {
@@ -121,12 +123,15 @@ class SelectResourceDialog extends React.Component {
          switch(this.props.testbed.name) {
             case 'FIT IoT-Lab':
                 reservation =
-                        <div className="p-view-body">
+
+                    <div className="p-view-body">
+                        <p><img className="img" src="/static/images/iot.png" alt="FIT IoT Lab" /></p>
                             <div className="container-fluid">
+
                                 <div className="row">
                                     <div className="col-md-12">
                                         <div id="resourceReservation-form">
-                                            <form className="experimentForm"  >
+                                            <form className="experimentForm" onSubmit={this.handleSubmit} >
                                                 Configure your experiment :<br/>
                                                 Start date: <input type="date" placeholder="yyyy-mm-dd" value={this.state.start_date} onChange={this.handleStartDateChange} />
                                                 Time:  <input type="time" placeholder="hh:mm"/>
@@ -144,7 +149,7 @@ class SelectResourceDialog extends React.Component {
                                                 <br/>
                                                 Choose your nodes :
                                                 <br/>
-                                                Type : <ul className="nav nav-pills">
+                                                Type : <ul className="nav nav-pills" >
                                                             <li className="active"><a href="#">M3</a></li>
                                                             <li><a href="#">A8</a></li>
                                                             <li><a href="#">WSN430</a></li>
