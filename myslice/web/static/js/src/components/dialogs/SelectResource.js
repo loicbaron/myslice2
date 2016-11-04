@@ -22,7 +22,9 @@ class SelectResourceDialog extends React.Component {
         super(props);
         this.state = store.getState();
         this.onChange = this.onChange.bind(this);
-        //this.handleFilter = this.handleFilter.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+
     }
 
     componentDidMount() {
@@ -37,14 +39,18 @@ class SelectResourceDialog extends React.Component {
     onChange(state) {
         this.setState(state);
     }
+    handleSubmit(event) {
 
+
+        actions.updateFilter(this.state.value);
+    }
     handleFilter(value) {
         //var f = {'email':value,'shortname':value}
         //actions.updateFilteredUsers();
         //
 
-        console.log(value);
-        console.log(" handle Filter");
+        //For the text filter
+       // console.log( value);
         actions.updateFilter(value);
     }
 
@@ -75,6 +81,11 @@ class SelectResourceDialog extends React.Component {
         */
     }
 
+    handleChange(event) {
+        this.setState({value: event.target.value});
+        //the event updates the state
+
+    }
     applyChanges() {
 
     }
@@ -96,9 +107,9 @@ class SelectResourceDialog extends React.Component {
 
         var dis=[];
         //var selectedOption = this.props.selected;
-        var optionLocation = this.state.resources.map(function(res,index) {
-            //if (!((res.location.city) in dis))
-            if(dis.indexOf(res.location.city) < 0)
+        const optionLocation = this.state.all_resources.map(function(res) {
+
+            if(dis.indexOf(res.location.city) < 0 && res.location.city != null)
                 {dis.push(res.location.city);
                   return (<option key={res.id} value={res.location.city} >{res.location.city}</option>);
                  }
@@ -115,7 +126,8 @@ class SelectResourceDialog extends React.Component {
                                 <div className="row">
                                     <div className="col-md-12">
                                         <div id="resourceReservation-form">
-                                            <form className="experimentForm" >
+                                            <form className="experimentForm"  >
+                                                Configure your experiment :<br/>
                                                 Start date: <input type="date" placeholder="yyyy-mm-dd" value={this.state.start_date} onChange={this.handleStartDateChange} />
                                                 Time:  <input type="time" placeholder="hh:mm"/>
                                                 <br/>
@@ -124,11 +136,13 @@ class SelectResourceDialog extends React.Component {
                                                               <option value="15 min">15 min </option>
                                                               <option value="30 min ">30 min</option>
                                                               <option value="1 h">1 h</option>
-                                                              <option value="1 h">2 h</option>
-                                                              <option value="1 h">4 h</option>
-                                                              <option value="1 h">8 h</option>
-                                                              <option value="1 h">24 h</option>
+                                                              <option value="2 h">2 h</option>
+                                                              <option value="4 h">4 h</option>
+                                                              <option value="8 h">8 h</option>
+                                                              <option value="24 h">24 h</option>
                                                           </select>
+                                                <br/>
+                                                Choose your nodes :
                                                 <br/>
                                                 Type : <ul className="nav nav-pills">
                                                             <li className="active"><a href="#">M3</a></li>
@@ -138,11 +152,12 @@ class SelectResourceDialog extends React.Component {
                                                        </ul>
                                                 <br/>
 
-                                                Site : <select onChange={this.handleFilter}  >
+                                                Site : <select  value={this.state.value} onChange={this.handleChange} >
                                                             {optionLocation}
                                                        </select>
 
                                             </form>
+                                            <button onClick={this.handleSubmit}>Submit</button>
                                         </div>
                                     </div>
                                 </div>
@@ -158,7 +173,10 @@ class SelectResourceDialog extends React.Component {
                     </DialogHeader>
 
                     <DialogBody>
+
                         {reservation}
+
+
                         <InputText name="filter" handleChange={this.handleFilter} placeholder="Filter" />
                         <List>
                         {
