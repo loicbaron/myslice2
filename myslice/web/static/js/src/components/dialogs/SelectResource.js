@@ -107,9 +107,9 @@ class SelectResourceDialog extends React.Component {
 
         var dis=[];
         //var selectedOption = this.props.selected;
-        var optionLocation = this.state.resources.map(function(res,index) {
-            //if (!((res.location.city) in dis))
-            if(dis.indexOf(res.location.city) < 0)
+        const optionLocation = this.state.all_resources.map(function(res) {
+
+            if(dis.indexOf(res.location.city) < 0 && res.location.city != null)
                 {dis.push(res.location.city);
                   return (<option key={res.id} value={res.location.city} >{res.location.city}</option>);
                  }
@@ -157,7 +157,7 @@ class SelectResourceDialog extends React.Component {
                                                        </select>
 
                                             </form>
-                                            <button onClick={this.handleSubmit}>Search</button>
+                                            <button onClick={this.handleSubmit}>Submit</button>
                                         </div>
                                     </div>
                                 </div>
