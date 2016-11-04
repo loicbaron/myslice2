@@ -558,7 +558,7 @@ class UsersHandler(Api):
              }, cls=myJSONEncoder))
 
     @gen.coroutine
-    def delete(self):
+    def delete(self,id):
         """
         DELETE /users/<id>
         :return:
