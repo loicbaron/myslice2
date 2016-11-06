@@ -109,13 +109,13 @@ class SelectResourceDialog extends React.Component {
 
         var dis=[];
         //var selectedOption = this.props.selected;
-        const optionLocation = this.state.all_resources.map(function(res) {
-
-            if(dis.indexOf(res.location.city) < 0 && res.location.city != null)
-                {dis.push(res.location.city);
-                  return (<option key={res.id} value={res.location.city} >{res.location.city}</option>);
-                 }
-        });
+        // const optionLocation = this.state.all_resources.map(function(res) {
+        //     if (!res.location) return;
+        //     if (dis.indexOf(res.location.city) < 0 && res.location.city != null)
+        //         {dis.push(res.location.city);
+        //           return (<option key={res.id} value={res.location.city} >{res.location.city}</option>);
+        //          }
+        // });
          var reservation= null;
 
 
@@ -183,19 +183,10 @@ class SelectResourceDialog extends React.Component {
 
 
                         <InputText name="filter" handleChange={this.handleFilter} placeholder="Filter" />
-                        <List>
-                        {
-                            this.state.resources.map(function(resource) {
 
-                                return <ResourceElement key={resource.id}
-                                                        resource={resource}
-                                                        handleClick={() => this.selectResource(resource)} />;
-                            }.bind(this))
-                        }
-                        </List>
                         <ResourceList resources={this.state.resources}
                                       selected={this.state.selected}
-                                      handleClick={(element) => this.selectResource(element)} />
+                                      handleSelect={(element) => this.selectResource(element)} />
                     </DialogBody>
                     <DialogFooter>
                         {this.renderSelectedStatus()}
