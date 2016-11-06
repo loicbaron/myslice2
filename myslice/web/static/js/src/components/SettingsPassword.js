@@ -1,7 +1,6 @@
 import React from 'react';
 
 import PasswordValidator from './PasswordValidator';
-import ElementIcon from './base/ElementIcon';
 
 class SettingsPassword extends React.Component {
 
