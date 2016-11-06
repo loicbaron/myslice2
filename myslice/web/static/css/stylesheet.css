@@ -1,3 +1,5 @@
+@import url('/static/fonts/Roboto.css');
+
 html, body {
     height:100%;
 }
@@ -583,7 +585,11 @@ div.registrationForm {
     top:15px;
     right:15px;
 }
+.elementBox:hover .elementOption {
+    display:block;
+}
 .elementOption {
+    display:none;
     font-size:9pt;
     margin-bottom:8px;
 }
