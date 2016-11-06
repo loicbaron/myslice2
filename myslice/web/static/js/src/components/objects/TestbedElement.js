@@ -3,14 +3,16 @@ import React from 'react';
 import Element from '../base/Element';
 import ElementTitle from '../base/ElementTitle';
 import ElementId from '../base/ElementId';
-import ElementStatus from '../base/ElementStatus';
-import ElementIcon from '../base/ElementIcon';
 import DateTime from '../base/DateTime';
 
 const TestbedElement = ({testbed, setCurrent, current}) =>
-     <Element element={testbed} type="testbed" setCurrent={setCurrent} current={current}>
-         <ElementStatus status={testbed.status.online ? 'online' : 'offline'} />
-         <ElementIcon icon={testbed.type == 'AM' ? 'testbed' : 'registry'} />
+     <Element element={testbed}
+              type="testbed"
+              setCurrent={setCurrent}
+              current={current}
+              status={testbed.status.online ? 'online' : 'offline'}
+              icon={testbed.type == 'AM' ? 'testbed' : 'registry'}
+     >
          <ElementTitle label={testbed.name} detail={testbed.hostname} />
          <ElementId id={testbed.id} />
 

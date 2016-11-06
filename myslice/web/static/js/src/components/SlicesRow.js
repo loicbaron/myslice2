@@ -3,8 +3,7 @@ import React from 'react';
 import Element from './base/Element';
 import ElementTitle from './base/ElementTitle';
 import ElementId from './base/ElementId';
-import ElementStatus from './base/ElementStatus';
-import ElementIcon from './base/ElementIcon';
+import ElementOption from './base/ElementOption';
 import DateTime from './base/DateTime';
 
 import DeleteSliceFromProject from './DeleteSliceFromProject';
@@ -20,10 +19,20 @@ class SlicesRow extends React.Component {
         if(this.props.removeSlice){
             button = <DeleteSliceFromProject slice={this.props.slice} />
         }
+
+        var options = [
+            <ElementOption label="Delete" />,
+            <ElementOption label="Test" />
+        ];
         return (
-             <Element element={this.props.slice} type="project" select={this.props.select}>
-                 <ElementStatus status={this.props.slice.status} />
-                 <ElementIcon icon="slice" />
+             <Element element={this.props.slice}
+                      type="slice"
+                      select={this.props.select}
+                      status={this.props.slice.status}
+                      options={options}
+                      icon="slice"
+             >
+
                  <a href={link}><ElementTitle label={label} detail={this.props.slice.shortname} /></a>
                  <ElementId id={this.props.slice.id} />
                  {button}

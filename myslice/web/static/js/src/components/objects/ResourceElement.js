@@ -3,11 +3,9 @@ import React from 'react';
 import Element from '../base/Element';
 import ElementTitle from '../base/ElementTitle';
 import ElementId from '../base/ElementId';
-import ElementStatus from '../base/ElementStatus';
-import ElementIcon from '../base/ElementIcon';
 import DateTime from '../base/DateTime';
 
-const ResourceElement = ({resource, handleClick}) => {
+const ResourceElement = ({resource, isSelected, handleSelect}) => {
 
     var label = resource.hostname || resource.shortname;
 
@@ -26,9 +24,15 @@ const ResourceElement = ({resource, handleClick}) => {
         // location = <div>Location: <span class={flag}></span> {resource.location.country}</div>;
     }
     return (
-         <Element type="resource" element={resource} handleClick={handleClick}>
-             <ElementStatus status={status} />
-             <ElementIcon icon="resource" />
+         <Element type="resource"
+                  element={resource}
+                  isSelected={isSelected}
+                  handleSelect={handleSelect}
+                  status={status}
+                  icon="resource"
+                  iconSelected="check"
+         >
+
              <ElementTitle label={resource.name} detail={resource.type} />
              <ElementId id={resource.id} />
              {location}

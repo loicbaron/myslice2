@@ -14,7 +14,7 @@ class ProjectsList extends React.Component {
                 <List detailed={ this.props.detailed}>
                 {
                     this.props.projects.map(function(project) {
-                        return <ProjectsRow key={project.id} project={project} detailed={ this.props.detailed} handleClick={this.props.handleClick} />;
+                        return <ProjectsRow key={project.id} project={project} detailed={this.props.detailed} handleSelect={this.props.handleSelect} />;
                     }.bind(this))
                 }
                 </List>

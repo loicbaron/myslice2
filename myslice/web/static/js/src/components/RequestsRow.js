@@ -3,8 +3,6 @@ import React from 'react';
 import Element from './base/Element';
 import ElementDetails from './base/ElementDetails';
 import ElementTitle from './base/ElementTitle';
-import ElementStatus from './base/ElementStatus';
-import ElementIcon from './base/ElementIcon';
 import LogList from './base/LogList';
 import DateTime from './base/DateTime';
 
@@ -111,9 +109,11 @@ class RequestsRow extends React.Component {
         }
 
         return (
-            <Element element={this.props.request} type={object}>
-                <ElementStatus status={status} />
-                <ElementIcon icon={object} />
+            <Element element={this.props.request}
+                     type={object}
+                     status={status}
+                     icon={object}
+            >
                 <ElementTitle label={this.label()} />
                 <div className="row elementDate">
                     <div className="col-sm-3">

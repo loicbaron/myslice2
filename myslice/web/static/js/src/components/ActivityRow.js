@@ -2,8 +2,6 @@ import React from 'react';
 
 import Element from './base/Element';
 import ElementTitle from './base/ElementTitle';
-import ElementStatus from './base/ElementStatus';
-import ElementIcon from './base/ElementIcon';
 import ElementDetails from './base/ElementDetails';
 import LogList from './base/LogList';
 import DateTime from './base/DateTime';
@@ -49,9 +47,11 @@ class ActivityRow extends React.Component {
             var data = this.props.activity.data;
         }
         return (
-            <Element element={this.props.activity} type={object}>
-                <ElementStatus status={status} />
-                <ElementIcon icon={object} />
+            <Element element={this.props.activity}
+                     type={object}
+                     status={status}
+                     icon={object}
+            >
                 <ElementTitle label={this.label()} />
                 <div className="row elementDate">
                     <div className="col-sm-3">

@@ -3,8 +3,6 @@ import React from 'react';
 import Element from './base/Element';
 import ElementTitle from './base/ElementTitle';
 import ElementId from './base/ElementId';
-import ElementStatus from './base/ElementStatus';
-import ElementIcon from './base/ElementIcon';
 import DateTime from './base/DateTime';
 
 import GrantPiAuthority from './GrantPiAuthority';
@@ -57,8 +55,12 @@ class AuthoritiesRow extends React.Component {
             button = <GrantPiAuthority authority={this.props.authority} topPosition={topPosition} />
         }
         return (
-            <Element element={this.props.authority} type="authority" setCurrent={this.props.setCurrent} current={this.props.current}>
-                <ElementIcon icon="authority"/>
+            <Element element={this.props.authority}
+                     type="authority"
+                     setCurrent={this.props.setCurrent}
+                     current={this.props.current}
+                     icon="authority"
+            >
                 <ElementTitle label={label} detail={this.props.authority.shortname}/>
                 <ElementId id={this.props.authority.id}/>
                 {button}

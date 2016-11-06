@@ -4,8 +4,6 @@ import Avatar from 'react-avatar';
 import Element from './base/Element';
 import ElementTitle from './base/ElementTitle';
 import ElementId from './base/ElementId';
-import ElementStatus from './base/ElementStatus';
-import ElementIcon from './base/ElementIcon';
 import DateTime from './base/DateTime';
 
 import AddUserToProject from './AddUserToProject';
@@ -40,8 +38,12 @@ class UsersRow extends React.Component {
             fullname = this.props.user.shortname;
         }
         return (
-             <Element element={this.props.user} type="user" setCurrent={this.props.setCurrent} current={this.props.current}>
-                 <ElementStatus status={this.props.user.status} />
+             <Element element={this.props.user}
+                      type="user"
+                      setCurrent={this.props.setCurrent}
+                      current={this.props.current}
+                      status={this.props.user.status}
+             >
                  <Avatar className="elementIcon" email={this.props.user.email} name={fullname} round={true} size={40} color="#CFE2F3" />
                  <ElementTitle label={fullname} detail={this.props.user.email} />
                  <ElementId id={this.props.user.id} />

@@ -3,8 +3,6 @@ import React from 'react';
 import Element from './base/Element';
 import ElementTitle from './base/ElementTitle';
 import ElementId from './base/ElementId';
-import ElementStatus from './base/ElementStatus';
-import ElementIcon from './base/ElementIcon';
 import DateTime from './base/DateTime';
 import SlicesRow from'./SlicesRow';
 import SlicesList from './SlicesList'
@@ -63,11 +61,17 @@ class ProjectsRow extends React.Component {
         if(users || slices || authorityElement){
             projectElements = <div className="elementDetail">{users}&nbsp;&nbsp;{slices}<br/>{authorityElement}</div>
         }
+        var options = [];
         if (this.props.detailed) {
             return (
-                <Element element={this.props.project} type="project" handleClick={this.props.handleClick} minHeight={minHeight}>
-                    <ElementStatus status={this.props.project.status}/>
-                    <ElementIcon icon="project"/>
+                <Element element={this.props.project}
+                         type="project"
+                         handleSelect={this.props.handleSelect}
+                         minHeight={minHeight}
+                         status={this.props.project.status}
+                         options={options}
+                         icon="project"
+                >
                     <ElementTitle label={label} detail={this.props.project.shortname}/>
                     <ElementId id={this.props.project.id}/>
                     {button}
