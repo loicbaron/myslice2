@@ -24,6 +24,7 @@ class SelectResourceDialog {
             updateResources: actions.UPDATE_RESOURCES,
             errorResources: actions.ERROR_RESOURCES,
             updateStartDate: actions.UPDATE_START_DATE,
+            updateType: actions.UPDATE_TYPE,
             selectResource: actions.SELECT_RESOURCE,
             updateFilter : actions.UPDATE_FILTER,
 
@@ -64,6 +65,9 @@ class SelectResourceDialog {
     }
     updateStartDate(start_date) {
         this.start_date = start_date;
+    }
+    updateType(type) {
+        this.type = type;
     }
     updateFilter(filter) {
         this.filter = filter.toLowerCase();

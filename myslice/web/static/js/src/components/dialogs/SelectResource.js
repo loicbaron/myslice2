@@ -41,8 +41,13 @@ class SelectResourceDialog extends React.Component {
     }
     handleSubmit(event) {
 
-
-        actions.updateFilter(this.state.value);
+        // prevent the browser's default action of submitting the form
+        event.preventDefault();
+        //console.log(this.state.value);
+        //console.log(this.state.type);
+        var tofilter= this.state.type.concat("(.*)".concat(this.state.value));
+        console.log(tofilter);
+        actions.updateFilter(tofilter);
     }
     handleFilter(value) {
         //var f = {'email':value,'shortname':value}
@@ -87,6 +92,11 @@ class SelectResourceDialog extends React.Component {
 
 
     }
+     handleChangeType(event) {
+          actions.updateType(event.target.value);
+
+
+    }
     applyChanges() {
 
     }
@@ -108,13 +118,13 @@ class SelectResourceDialog extends React.Component {
 
         var dis=[];
         //var selectedOption = this.props.selected;
-        // const optionLocation = this.state.all_resources.map(function(res) {
-        //     if (!res.location) return;
-        //     if (dis.indexOf(res.location.city) < 0 && res.location.city != null)
-        //         {dis.push(res.location.city);
-        //           return (<option key={res.id} value={res.location.city} >{res.location.city}</option>);
-        //          }
-        // });
+         const optionLocation = this.state.all_resources.map(function(res) {
+             if (!res.location) return;
+             if (dis.indexOf(res.location.city) < 0 && res.location.city != null)
+                 {dis.push(res.location.city);
+                  return (<option key={res.id} value={res.location.city} >{res.location.city}</option>);
+                 }
+         });
          var reservation= null;
 
 
@@ -148,14 +158,30 @@ class SelectResourceDialog extends React.Component {
                                                 <br/>
                                                 Choose your nodes :
                                                 <br/>
-                                                Type : <ul className="nav nav-pills" >
-                                                            <li className="active"><a href="#">M3</a></li>
-                                                            <li><a href="#">A8</a></li>
-                                                            <li><a href="#">WSN430</a></li>
-
+                                                <div class="container">
+                                                Type : <ul className="nav nav-pills "  >
+                                                            <li class="active"><a data-toggle="pill" href="#home">A8 Node</a></li>
+                                                            <li><a data-toggle="pill" href="#menu1">M3 Node</a></li>
+                                                            <li><a data-toggle="pill" href="#menu2">WSN430 Node</a></li>
                                                        </ul>
-                                                <br/>
+                                                    <div class="tab-content">
+                                                        <div id="home" class="tab-pane fade in active">
+                                                            <h3>A8 Node</h3>
+                                                            <p>The A8 open node is the most powerful IoT-LAB node and allows to run high-level OS like Linux.</p>
+                                                        </div>
+                                                        <div id="menu1" class="tab-pane fade">
+                                                            <h3>M3 Node</h3>
+                                                            <p>The M3 open node is based on a STM32 (ARM Cortex M3) micro-controller.</p>
+                                                        </div>
+                                                        <div id="menu2" class="tab-pane fade">
+                                                            <h3>WSN430 Node</h3>
+                                                            <p>The WSN430 open node is a WSN430 node based on a low power MSP430-based platform, with a fully functional ISM radio interface and a set of standard sensors.</p>
+                                                        </div>
+                                                    </div>
 
+                                                </div>
+                                                <br/>
+                                                Type? <input value={this.state.type} onChange={this.handleChangeType} placeholder="type" /><br/>
                                                 Site : <select  value={this.state.value} onChange={this.handleChange} >
                                                             {optionLocation}
                                                        </select>
