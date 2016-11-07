@@ -1,5 +1,6 @@
 import React from 'react';
 
+import List from '../base/List';
 import Element from '../base/Element';
 import ElementTitle from '../base/ElementTitle';
 import ElementId from '../base/ElementId';
@@ -47,4 +48,27 @@ ResourceElement.propTypes = {
 ResourceElement.defaultProps = {
 };
 
-export default ResourceElement;
+const ResourceList = ({resources, selected, handleSelect}) =>
+    <List>
+    {
+        resources.map(function(resource) {
+            var isSelected = false;
+            if (selected) {
+                 isSelected = selected.some(function (el) {
+                    return el.id === resource.id;
+                });
+            }
+
+            return <ResourceElement key={resource.id} resource={resource} isSelected={isSelected} handleSelect={handleSelect} />;
+        }.bind(this))
+    }
+    </List>;
+
+ResourceList.propTypes = {
+    resources: React.PropTypes.array.isRequired,
+};
+
+ResourceList.defaultProps = {
+};
+
+export { ResourceElement, ResourceList };

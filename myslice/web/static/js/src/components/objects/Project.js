@@ -1,14 +1,13 @@
 import React from 'react';
 
-import Element from './base/Element';
-import ElementTitle from './base/ElementTitle';
-import ElementId from './base/ElementId';
-import DateTime from './base/DateTime';
-import SlicesRow from'./SlicesRow';
-import SlicesList from './SlicesList'
-import DeleteProject from './DeleteProject';
+import List from '../base/List';
+import Element from '../base/Element';
+import ElementTitle from '../base/ElementTitle';
+import ElementId from '../base/ElementId';
+import DateTime from '../base/DateTime';
+import DeleteProject from '../DeleteProject';
 
-class ProjectsRow extends React.Component {
+class ProjectElement extends React.Component {
 
     render() {
         var label = this.props.project.name || this.props.project.shortname;
@@ -102,16 +101,48 @@ class ProjectsRow extends React.Component {
     }
 }
 
-ProjectsRow.propTypes = {
+ProjectElement.propTypes = {
     project: React.PropTypes.object.isRequired,
     handleClick: React.PropTypes.func,
     removeProject: React.PropTypes.bool,
     detailed: React.PropTypes.bool,
 };
 
-ProjectsRow.defaultProps = {
+ProjectElement.defaultProps = {
     removeProject: true,
     detailed: true,
 };
 
-export default ProjectsRow;
+
+
+class ProjectList extends React.Component {
+
+    render() {
+
+        if (!this.props.projects || this.props.projects.length==0) {
+            return <List>No project</List>
+        } else {
+            return (
+                <List detailed={ this.props.detailed}>
+                {
+                    this.props.projects.map(function(project) {
+                        return <ProjectElement key={project.id} project={project} detailed={this.props.detailed} handleSelect={this.props.handleSelect} />;
+                    }.bind(this))
+                }
+                </List>
+            );
+        }
+
+    }
+}
+
+ProjectList.propTypes = {
+    projects: React.PropTypes.array.isRequired,
+    handleClick: React.PropTypes.func,
+    detailed: React.PropTypes.bool,
+};
+
+ProjectList.defaultProps = {
+};
+
+export { ProjectElement, ProjectList };

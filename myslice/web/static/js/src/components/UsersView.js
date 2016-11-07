@@ -11,7 +11,7 @@ import Title from './base/Title';
 import Button from './base/Button';
 
 import UsersInfo from './UsersInfo';
-import UsersList from './UsersList';
+import { UserList } from './objects/User';
 
 import AuthoritiesSelect from './AuthoritiesSelect';
 
@@ -133,7 +133,7 @@ class UsersView extends React.Component {
                                     {selectAuthority}
                                     </div>
                                 </div>
-                                <UsersList select={true} users={this.state.users} setCurrent={this.setCurrentUser} current={this.state.current.user} />
+                                <UserList select={true} users={this.state.users} setCurrent={this.setCurrentUser} current={this.state.current.user} />
                             </PanelBody>
                         </Panel>
                         {panelRight}

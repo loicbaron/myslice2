@@ -7,7 +7,7 @@ import PanelBody from './base/PanelBody';
 import Title from './base/Title';
 import Button from './base/Button';
 
-import ActivityList from './ActivityList';
+import { ActivityList } from './objects/Activity';
 import RequestsList from './RequestsList';
 
 class ActivityView extends React.Component {

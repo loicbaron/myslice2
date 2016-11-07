@@ -63,6 +63,7 @@ class Element extends React.Component {
             </div>
         );
     }
+
     renderIconSelected() {
         if (this.props.isSelected) {
             switch (this.props.iconSelected) {
