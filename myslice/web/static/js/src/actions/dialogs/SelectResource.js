@@ -9,6 +9,7 @@ class SelectResourceDialog {
             'updateResources',
             'errorResources',
             'updateStartDate',
+            'updateType',
             'selectResource',
             'updateFilter'
         );
