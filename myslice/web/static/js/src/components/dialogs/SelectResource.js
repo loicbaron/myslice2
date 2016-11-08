@@ -158,23 +158,20 @@ class SelectResourceDialog extends React.Component {
                                                 <br/>
                                                 Choose your nodes :
                                                 <br/>
-                                                <div class="container">
+                                                <div className="container">
                                                 Type : <ul className="nav nav-pills "  >
-                                                            <li class="active"><a data-toggle="pill" href="#home">A8 Node</a></li>
+                                                            <li className="active"><a data-toggle="pill" href="#home">A8 Node</a></li>
                                                             <li><a data-toggle="pill" href="#menu1">M3 Node</a></li>
                                                             <li><a data-toggle="pill" href="#menu2">WSN430 Node</a></li>
                                                        </ul>
-                                                    <div class="tab-content">
-                                                        <div id="home" class="tab-pane fade in active">
-                                                            <h3>A8 Node</h3>
+                                                    <div className="tab-content">
+                                                        <div id="home" className="tab-pane fade in active">
                                                             <p>The A8 open node is the most powerful IoT-LAB node and allows to run high-level OS like Linux.</p>
                                                         </div>
-                                                        <div id="menu1" class="tab-pane fade">
-                                                            <h3>M3 Node</h3>
+                                                        <div id="menu1" className="tab-pane fade">
                                                             <p>The M3 open node is based on a STM32 (ARM Cortex M3) micro-controller.</p>
                                                         </div>
-                                                        <div id="menu2" class="tab-pane fade">
-                                                            <h3>WSN430 Node</h3>
+                                                        <div id="menu2" className="tab-pane fade">
                                                             <p>The WSN430 open node is a WSN430 node based on a low power MSP430-based platform, with a fully functional ISM radio interface and a set of standard sensors.</p>
                                                         </div>
                                                     </div>
@@ -201,10 +198,10 @@ class SelectResourceDialog extends React.Component {
                     <DialogHeader>
                         <Title title={this.props.testbed.name} />
                     </DialogHeader>
-
+                    <div>{reservation}</div>
                     <DialogBody>
 
-                        {reservation}
+
 
 
                         <InputText name="filter" handleChange={this.handleFilter} placeholder="Filter" />
