@@ -49,6 +49,10 @@ const SlicesMenuButton = ({currentSlice}) => {
                     <i className="fa fa-tasks fa-lg"></i> {currentSlice.shortname}
                 </a>);
     }
+    else
+    {
+        return ( <div>No slices </div>)
+    }
 };
 
 class SlicesMenu extends React.Component {
