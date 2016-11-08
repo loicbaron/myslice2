@@ -1,14 +1,15 @@
 import React from 'react';
 
-import Element from './base/Element';
-import ElementTitle from './base/ElementTitle';
-import ElementId from './base/ElementId';
-import ElementOption from './base/ElementOption';
-import DateTime from './base/DateTime';
+import List from '../base/List';
 
-import DeleteSliceFromProject from './DeleteSliceFromProject';
+import Element from '../base/Element';
+import ElementTitle from '../base/ElementTitle';
+import ElementId from '../base/ElementId';
+import DateTime from '../base/DateTime';
 
-class SlicesRow extends React.Component {
+import DeleteSliceFromProject from '../DeleteSliceFromProject';
+
+class SliceElement extends React.Component {
 
     render() {
         var label = this.props.slice.name || this.props.slice.shortname;
@@ -21,8 +22,8 @@ class SlicesRow extends React.Component {
         }
 
         var options = [
-            <ElementOption label="Delete" />,
-            <ElementOption label="Test" />
+            'delete',
+            'test'
         ];
         return (
              <Element element={this.props.slice}
@@ -63,15 +64,44 @@ class SlicesRow extends React.Component {
     }
 }
 
-SlicesRow.propTypes = {
+SliceElement.propTypes = {
     slice: React.PropTypes.object.isRequired,
     removeSlice: React.PropTypes.bool,
     select: React.PropTypes.bool
 };
 
-SlicesRow.defaultProps = {
+SliceElement.defaultProps = {
     select: false,
     removeSlice: false,
 };
 
-export default SlicesRow;
+
+class SliceList extends React.Component {
+
+    render() {
+        return (
+            <List>
+            {
+                this.props.slices.map(function(slice) {
+                    return <SliceElement key={slice.id} slice={slice} setCurrent={this.props.setCurrent} current={this.props.current} removeSlice={this.props.removeSlice} />;
+                }.bind(this))
+            }
+            </List>
+        );
+    }
+}
+
+SliceList.propTypes = {
+    slices: React.PropTypes.array.isRequired,
+    current: React.PropTypes.object,
+    removeSlice: React.PropTypes.bool,
+    setCurrent: React.PropTypes.func
+};
+
+SliceList.defaultProps = {
+    current: null,
+    setCurrent: null,
+    removeSlice: false,
+};
+
+export { SliceElement, SliceList};

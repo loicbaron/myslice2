@@ -1,15 +1,16 @@
 import React from 'react';
 import Avatar from 'react-avatar';
 
-import Element from './base/Element';
-import ElementTitle from './base/ElementTitle';
-import ElementId from './base/ElementId';
-import DateTime from './base/DateTime';
+import List from '../base/List';
+import Element from '../base/Element';
+import ElementTitle from '../base/ElementTitle';
+import ElementId from '../base/ElementId';
+import DateTime from '../base/DateTime';
 
-import AddUserToProject from './AddUserToProject';
-import RemoveUserFromProject from './RemoveUserFromProject';
+import AddUserToProject from '../AddUserToProject';
+import RemoveUserFromProject from '../RemoveUserFromProject';
 
-class UsersRow extends React.Component {
+class UserElement extends React.Component {
     constructor(props) {
         super(props);
     }
@@ -60,7 +61,7 @@ class UsersRow extends React.Component {
     }
  }
 
-UsersRow.propTypes = {
+UserElement.propTypes = {
     user: React.PropTypes.object.isRequired,
     addUser: React.PropTypes.bool,
     removeUser: React.PropTypes.bool,
@@ -68,10 +69,44 @@ UsersRow.propTypes = {
     setCurrent: React.PropTypes.func,
 };
 
-UsersRow.defaultProps = {
+UserElement.defaultProps = {
     current: false,
     addUser: false,
     removeUser: false,
 };
 
-export default UsersRow;
+
+class UserList extends React.Component {
+
+    render() {
+        return (
+            <div>
+                <List>
+                {
+                    this.props.users.map(function(user) {
+                        return <UserElement key={user.id} user={user} setCurrent={this.props.setCurrent} current={this.props.current} addUser={this.props.addUser} removeUser={this.props.removeUser} />;
+                    }.bind(this))
+                }
+                </List>
+            </div>
+        );
+    }
+}
+
+UserList.propTypes = {
+    users: React.PropTypes.array.isRequired,
+    current: React.PropTypes.object,
+    addUser: React.PropTypes.bool,
+    removeUser: React.PropTypes.bool,
+    setCurrent: React.PropTypes.func
+};
+
+UserList.defaultProps = {
+    current: null,
+    setCurrent: null,
+    addUser: false,
+    removeUser: false,
+};
+
+
+export { UserElement, UserList };

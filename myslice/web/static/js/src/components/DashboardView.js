@@ -17,14 +17,10 @@ import PanelBody from './base/PanelBody';
 import Title from './base/Title';
 import Button from './base/Button';
 import Text from './base/Text';
-import ProjectsInfo from './ProjectsInfo';
 import ProjectsForm from './ProjectsForm';
-import ProjectsList from './ProjectsList';
-import SlicesList from './SlicesList';
-import SlicesRow from'./SlicesRow';
-import SlicesForm from './SlicesForm';
+import { ProjectList } from './objects/Project';
 
-import UsersDialog from './UsersDialog';
+
 class DashboardView extends React.Component {
     constructor(props) {
         super(props);
@@ -90,7 +86,7 @@ class DashboardView extends React.Component {
         }
         var projectsList = '';
         if(this.state.projects){
-            projectsList = <ProjectsList detailed ={false} projects={this.state.projects}  />
+            projectsList = <ProjectList detailed ={false} projects={this.state.projects}  />
         }
 // The view of the dashboard page
         return (

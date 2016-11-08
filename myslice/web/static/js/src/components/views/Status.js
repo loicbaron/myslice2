@@ -9,8 +9,8 @@ import PanelHeader from '../base/PanelHeader';
 import PanelBody from '../base/PanelBody';
 import Title from '../base/Title';
 
-import TestbedsList from '../objects/TestbedList';
-import ResourceList from '../objects/ResourceList';
+import { TestbedList, TestbedListSetCurrent } from '../objects/Testbed';
+import { ResourceList } from '../objects/Resource';
 
 class StatusView extends React.Component {
 
@@ -70,7 +70,9 @@ class StatusView extends React.Component {
                         <Title title="Service Status" subtitle="" />
                     </PanelHeader>
                     <PanelBody>
-                        <TestbedsList testbeds={this.state.testbeds} setCurrent={this.setCurrentTestbed} current={this.state.currentTestbed} />
+                        <TestbedListSetCurrent testbeds={this.state.testbeds}
+                                     handleSelect={this.setCurrentTestbed}
+                                     current={this.state.currentTestbed} />
                     </PanelBody>
                 </Panel>
                 {panelRight}

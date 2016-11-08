@@ -14,8 +14,7 @@ import DateTime from '../base/DateTime';
 import List from '../base/List';
 import Button from '../base/Button';
 import InputText from '../InputText'
-import ResourceList from '../objects/ResourceList';
-import ResourceElement from '../objects/ResourceElement';
+import { ResourceList } from '../objects/Resource';
 
 class SelectResourceDialog extends React.Component {
 

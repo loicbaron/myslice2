@@ -2,10 +2,9 @@ import React from 'react';
 
 import Avatar from 'react-avatar';
 
-import List from './base/List';
 import Title from './base/Title';
-import AuthoritiesList from'./AuthoritiesList';
-import ProjectsList from'./ProjectsList';
+import { AuthorityList } from'./objects/Authority';
+import { ProjectList } from'./objects/Project';
 
 class UsersInfo extends React.Component {
 
@@ -33,7 +32,7 @@ Later:
         let name = [p.first_name, p.last_name].join(' ');
         var projectsElement;
         if(p.projects){
-            projectsElement = <div><Title title="Projects" /><ProjectsList projects={p.projects} /></div>
+            projectsElement = <div><Title title="Projects" /><ProjectList projects={p.projects} /></div>
         }
         var authorityElement;
         if(p.authority){
@@ -42,14 +41,14 @@ Later:
             console.log("UsersInfo p.authority");
             console.log(p.authority);
             console.log(p.pi_authorities);
-            authorityElement = <div><Title title="Authority" subtitle="" /><AuthoritiesList authorities={a} grant={true} revoke={false} rights={p.pi_authorities} /></div>
+            authorityElement = <div><Title title="Authority" subtitle="" /><AuthorityList authorities={a} grant={true} revoke={false} rights={p.pi_authorities} /></div>
         }
 
         var authoritiesElement;
         if(p.pi_authorities){
             console.log("UsersInfo pi_authorities");
             console.log(p.pi_authorities);
-            authoritiesElement = <div><Title title="Manager" subtitle="" /><AuthoritiesList authorities={p.pi_authorities} grant={false} revoke={true} rights={p.pi_authorities} /></div>
+            authoritiesElement = <div><Title title="Manager" subtitle="" /><AuthorityList authorities={p.pi_authorities} grant={false} revoke={true} rights={p.pi_authorities} /></div>
         }
         return (
         <div>

@@ -2,8 +2,8 @@ import React from 'react';
 
 import List from './base/List';
 import Title from './base/Title';
-import AuthoritiesList from'./AuthoritiesList';
-import ProjectsList from'./ProjectsList';
+import { AuthorityList } from'./objects/Authority';
+import { ProjectList } from'./objects/Project';
 
 import AuthorityName from './AuthorityName';
 import Avatar from 'react-avatar';
@@ -29,11 +29,11 @@ class SettingsRights extends React.Component {
         let name = [this.props.profile.first_name, this.props.profile.last_name].join(' ');
         var projectsElement;
         if(this.props.profile.projects){
-            projectsElement = <div><Title title="Projects" /><ProjectsList projects={this.props.profile.projects} /></div>
+            projectsElement = <div><Title title="Projects" /><ProjectList projects={this.props.profile.projects} /></div>
         }
         var authoritiesElement;
         if(this.props.profile.pi_authorities){
-            authoritiesElement = <div><Title title="Authorities" /><AuthoritiesList authorities={this.props.profile.pi_authorities} /></div>
+            authoritiesElement = <div><Title title="Authorities" /><AuthorityList authorities={this.props.profile.pi_authorities} /></div>
         }
         return (
             <div className="container-fluid">

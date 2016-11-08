@@ -8,7 +8,7 @@ import DialogPanel from './base/DialogPanel';
 import DialogHeader from './base/DialogHeader';
 import DialogBody from './base/DialogBody';
 import Title from './base/Title';
-import UsersList from './UsersList';
+import { UserList } from './objects/User';
 import UsersFilter from './UsersFilter';
 
 class UsersDialog extends React.Component {
@@ -53,9 +53,9 @@ class UsersDialog extends React.Component {
 
     render() {
         if(Object.keys(this.state.filter).length>0){
-            var usersList = <UsersList users={this.state.filteredUsers} addUser={this.props.addUser} />
+            var usersList = <UserList users={this.state.filteredUsers} addUser={this.props.addUser} />
         }else{
-            var usersList = <UsersList users={this.state.users} addUser={this.props.addUser} />
+            var usersList = <UserList users={this.state.users} addUser={this.props.addUser} />
         }
 
         return (

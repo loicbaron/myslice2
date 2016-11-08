@@ -16,7 +16,7 @@ import Button from './base/Button';
 
 import ProjectsInfo from './ProjectsInfo';
 import ProjectsForm from './ProjectsForm';
-import ProjectsList from './ProjectsList';
+import { ProjectList } from './objects/Project';
 
 import SlicesForm from './SlicesForm';
 
@@ -134,7 +134,7 @@ class ProjectsView extends React.Component {
                         <Button label="Request Project" icon="plus" handleClick={this.showForm} />
                     </PanelHeader>
                     <PanelBody>
-                        <ProjectsList detailed={true} projects={this.state.projects} handleSelect={this.setCurrentProject} />
+                        <ProjectList detailed={true} projects={this.state.projects} handleSelect={this.setCurrentProject} />
                     </PanelBody>
                     {dialog}
                 </Panel>

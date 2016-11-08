@@ -1,14 +1,15 @@
 import React from 'react';
 
-import Element from './base/Element';
-import ElementTitle from './base/ElementTitle';
-import ElementId from './base/ElementId';
-import DateTime from './base/DateTime';
+import List from '../base/List';
+import Element from '../base/Element';
+import ElementTitle from '../base/ElementTitle';
+import ElementId from '../base/ElementId';
+import DateTime from '../base/DateTime';
 
-import GrantPiAuthority from './GrantPiAuthority';
-import RevokePiAuthority from './RevokePiAuthority';
+import GrantPiAuthority from '../GrantPiAuthority';
+import RevokePiAuthority from '../RevokePiAuthority';
 
-class AuthoritiesRow extends React.Component {
+class AuthorityElement extends React.Component {
 
     render() {
         var label = this.props.authority.name || this.props.authority.shortname;
@@ -75,7 +76,7 @@ class AuthoritiesRow extends React.Component {
     }
 }
 
-AuthoritiesRow.propTypes = {
+AuthorityElement.propTypes = {
     authority: React.PropTypes.object.isRequired,
     current: React.PropTypes.object,
     setCurrent: React.PropTypes.func,
@@ -83,11 +84,65 @@ AuthoritiesRow.propTypes = {
     grant: React.PropTypes.bool,
 };
 
-AuthoritiesRow.defaultProps = {
+AuthorityElement.defaultProps = {
     revoke: false,
     grant: false,
     current: false,
     setCurrent: null
 };
 
-export default AuthoritiesRow;
+
+class AuthorityList extends React.Component {
+
+    render() {
+        var containsObject = function(obj, list){
+            for(var i=0; i<list.length; i++){
+                if(list[i].id==obj.id){
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        if (!this.props.authorities || this.props.authorities.length==0) {
+            return <List>No authority</List>
+        } else {
+            return (
+                <List>
+                {
+                    this.props.authorities.map(function(authority) {
+                        if((this.props.grant || this.props.revoke) && this.props.rights){
+                            if(this.props.revoke && containsObject(authority, this.props.rights)){
+                                // Revoke button
+                                return <AuthorityElement key={authority.id} authority={authority} setCurrent={this.props.setCurrent} current={this.props.current} revoke={true} />;
+                            }else if(this.props.grant && !containsObject(authority, this.props.rights)){
+                                // Grant
+                                return <AuthorityElement key={authority.id} authority={authority} setCurrent={this.props.setCurrent} current={this.props.current} grant={true} />;
+                            }
+                        }
+                        return <AuthorityElement key={authority.id} authority={authority} setCurrent={this.props.setCurrent} current={this.props.current} />;
+                    }.bind(this))
+                }
+                </List>
+            );
+        }
+
+    }
+}
+
+AuthorityList.propTypes = {
+    authorities: React.PropTypes.array.isRequired,
+    current: React.PropTypes.object,
+    setCurrent: React.PropTypes.func,
+    grant: React.PropTypes.bool,
+    revoke: React.PropTypes.bool,
+};
+
+AuthorityList.defaultProps = {
+    current: null,
+    setCurrent: null,
+    grant: false,
+    revoke: false,
+};
+
+export { AuthorityElement, AuthorityList };

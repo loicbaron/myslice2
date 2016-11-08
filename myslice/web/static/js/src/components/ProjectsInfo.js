@@ -7,8 +7,8 @@ import SectionBody from './base/SectionBody';
 import SectionTitle from './base/SectionTitle';
 import DateTime from './base/DateTime';
 
-import UsersList from './UsersList';
-import SlicesList from './SlicesList';
+import { UserList } from './objects/User';
+import { SliceList } from './objects/Slice';
 
 class ProjectsInfo extends React.Component {
 
@@ -23,7 +23,7 @@ class ProjectsInfo extends React.Component {
                             <SectionTitle title="Users" />
                         </SectionHeader>
                         <SectionBody>
-                            <UsersList users={this.props.element.users} removeUser={true} />
+                            <UserList users={this.props.element.users} removeUser={true} />
                         </SectionBody>
                     </Section>
         }
@@ -34,7 +34,7 @@ class ProjectsInfo extends React.Component {
                             <SectionTitle title="Slices" />
                         </SectionHeader>
                         <SectionBody>
-                            <SlicesList slices={this.props.element.slices} removeSlice={true} />
+                            <SliceList slices={this.props.element.slices} removeSlice={true} />
                         </SectionBody>
                     </Section>
         }
