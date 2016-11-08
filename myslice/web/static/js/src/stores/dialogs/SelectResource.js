@@ -12,7 +12,8 @@ class SelectResourceDialog {
         this.all_resources = [];
         // the list of selected resources
         this.selected = [];
-
+        // The type of the nodes
+        this.type ='';
         this.filter = null;
         this.filterResource = this.filterResource.bind(this);
 
