@@ -18,8 +18,8 @@ class SlicesHandler(Api):
             - GET /slices
                 (public) Slices list
 
-            - GET /slices/<id|hrn>
-                (public) Slices with <id|hrn>
+            - GET /slices/<urn|hrn>
+                (public) Slice with <urn|hrn>
 
             - GET /slices/<id|hrn>/(users|resources)
                 (auth) Users/Resources list of the slice with <id|hrn>
@@ -27,10 +27,45 @@ class SlicesHandler(Api):
             :return:
             """
 
+        slice = None
         response = []
         current_user = self.get_current_user()
 
+        ##
+        # if id (hrn|urn) is set we get the slice with id <urn|hrn>
+        #
+        if id:
+            if self.isUrn(id):
+                filter = {'id': id}
+
+            elif self.isHrn(id):
+                filter = {'hrn': id}
+
+            else:
+                self.userError('id or hrn format error')
+                return
+
+            cursor = yield r.table('slices') \
+                .filter(filter) \
+                .merge(lambda slice: {
+                'authority': r.table('authorities').get(slice['authority']) \
+                       .pluck(self.fields_short['authorities']) \
+                       .default({'id': slice['authority']})
+            }) \
+                .merge(lambda slice: {
+                'project': r.table('projects').get(slice['project']) \
+                       .pluck(self.fields_short['projects']) \
+                       .default({'id': slice['project']})
+            }) \
+                .run(self.dbconnection)
+            while (yield cursor.fetch_next()):
+                slice = yield cursor.next()
+
+        ##
         # GET /slices
+        #
+        # returns list of slices
+        #
         if not id and not o:
             cursor = yield r.table('slices') \
                 .pluck(self.fields['slices']) \
@@ -46,65 +81,55 @@ class SlicesHandler(Api):
                 }) \
                 .run(self.dbconnection)
             while (yield cursor.fetch_next()):
-                project = yield cursor.next()
-                response.append(project)
-
-
-        # GET /slices/<id>
+                slice = yield cursor.next()
+                response.append(slice)
+        ##
+        # GET /slices/<urn|hrn>
+        #
+        # returns slice with <hrn|urn>
+        #
         elif not o and id:
 
             if not current_user:
                 self.userError('permission denied')
                 return
 
-            if self.isUrn(id):
-                filter = {'id' : id}
+            response.append(slice)
 
-            elif self.isHrn(id):
-                filter = {'hrn': id}
 
-            else:
-                self.userError('id or hrn format error')
-                return
+        ##
+        # GET /slice/<urn|hrn>/users
+        #
+        # returns a list of users of slice with id urn|hrn
+        #
+        elif id and slice and o == 'users':
 
-            cursor = yield r.table('slices') \
-                .filter(filter) \
-                .merge(lambda slice: {
-                    'authority': r.table('authorities').get(slice['authority']) \
-                       .pluck(self.fields_short['authorities']) \
-                       .default({'id': slice['authority']})
+            response = yield r.table('users') \
+                .get_all(r.args(slice['users']), index='id') \
+                .pluck(self.fields['users']) \
+                .merge(lambda user: {
+                    'authority': r.table('authorities').get(user['authority']) \
+                           .pluck(self.fields_short['authorities']) \
+                           .default({'id': user['authority']})
                 }) \
-                .merge(lambda slice: {
-                    'project': r.table('projects').get(slice['project']) \
-                           .pluck(self.fields_short['projects']) \
-                           .default({'id': slice['project']})
-                }) \
-                .run(self.dbconnection)
-            while (yield cursor.fetch_next()):
-                slice = yield cursor.next()
-                response.append(slice)
-        # Get /slice/id/[users/resources]
-        elif id and o in ['users', 'resources']:
-            if o == "users":
-                cursor = yield r.table('users') \
-                    .filter(lambda usr: usr['slices'].contains(id)) \
-                    .run(self.dbconnection)
-                while (yield cursor.fetch_next()):
-                    item = yield cursor.next()
-                    response.append(item)
-            else:
+                .coerce_to('array').run(self.dbconnection)
 
-                cursor = yield r.table('slices')\
-                    .pluck('id','resources') \
-                    .merge(lambda sli: {
-                        'resources': r.table('resources').get_all(sli['resources'], index='id') \
-                           .coerce_to('array')
-                    }) \
-                    .filter({'id': id})\
-                    .run(self.dbconnection)
-                while (yield cursor.fetch_next()):
-                    item = yield cursor.next()
-                    response.append(item)
+        ##
+        # GET /slice/<urn|hrn>/resources
+        #
+        # returns a list of resources in the slice with id urn|hrn
+        #
+        elif id and slice and o == 'resources':
+
+            response = yield r.table('resources') \
+                .get_all(r.args(slice['resources']), index='id') \
+                .pluck(self.fields['resources']) \
+                .merge(lambda resource: {
+                    'testbeds': r.table('testbeds').get(resource['testbed']) \
+                           .pluck(self.fields_short['testbeds']) \
+                           .default({'id': resource['testbed']})
+                }) \
+                .coerce_to('array').run(self.dbconnection)
 
         else:
             self.userError("invalid request")

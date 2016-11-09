@@ -17,7 +17,9 @@ class Api(cors.CorsMixin, web.RequestHandler):
             'authorities': [ 'id', 'hrn', 'name', 'shortname', 'status' ],
             'users': [ 'id', 'hrn', 'email', 'first_name', 'last_name', 'shortname', 'authority', 'status' ],
             'projects': [ 'id', 'hrn', 'name', 'shortname', 'authority', 'status' ],
-            'slices': [ 'id', 'hrn',  'name', 'shortname', 'project', 'status']
+            'slices': [ 'id', 'hrn',  'name', 'shortname', 'project', 'status'],
+            'testbeds': ['id', 'name', 'status', 'type'],
+            'resources': ['id', 'name']
         }
 
         self.fields = {
@@ -25,7 +27,9 @@ class Api(cors.CorsMixin, web.RequestHandler):
             'users': self.fields_short['users'] + [ 'projects', 'slices', 'pi_authorities', 'status', 'created', 'updated', 'enabled'],
             'projects': self.fields_short['projects'] + [ 'pi_users', 'users', 'slices', 'created', 'updated', 'enabled'],
             'slices': self.fields_short['slices'] + [ 'authority', 'users', 'created', 'updated', 'enabled'],
-            'profile': ['id', 'email','first_name', 'last_name', 'bio', 'url', 'public_key', 'private_key', 'authority', 'url', 'pi_authorities', 'projects', 'slices']
+            'profile': ['id', 'email','first_name', 'last_name', 'bio', 'url', 'public_key', 'private_key', 'authority', 'url', 'pi_authorities', 'projects', 'slices'],
+            'testbeds': ['id', 'name', 'hostname', 'status', 'type', 'api', 'url', 'version'],
+            'resources': ['id', 'name']
         }
 
         self.fields['profile'] = self.fields['users'] + ['bio', 'url', 'public_key', 'private_key']
