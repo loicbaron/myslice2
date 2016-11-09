@@ -12,7 +12,16 @@ class SelectResourceDialog {
         this.all_resources = [];
         // the list of selected resources
         this.selected = [];
-
+        // The type of the nodes
+        this.type ='';
+        this.time ='';
+        // initialise the start date
+        var d = new Date();
+        var df = d.getFullYear()+"/"+(d.getMonth()+1)+"/"+d.getDate();
+        this.start_date=df;
+        //initialise the duration
+        this.duration='';
+        //intialise the filter
         this.filter = null;
         this.filterResource = this.filterResource.bind(this);
 
@@ -24,6 +33,7 @@ class SelectResourceDialog {
             updateResources: actions.UPDATE_RESOURCES,
             errorResources: actions.ERROR_RESOURCES,
             updateStartDate: actions.UPDATE_START_DATE,
+            updateTime: actions.UPDATE_TIME,
             updateType: actions.UPDATE_TYPE,
             selectResource: actions.SELECT_RESOURCE,
             updateFilter : actions.UPDATE_FILTER,
@@ -65,6 +75,9 @@ class SelectResourceDialog {
     }
     updateStartDate(start_date) {
         this.start_date = start_date;
+    }
+    updateTime(time) {
+        this.time = time;
     }
     updateType(type) {
         this.type = type;

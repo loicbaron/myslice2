@@ -11,7 +11,8 @@ class SelectResourceDialog {
             'updateStartDate',
             'updateType',
             'selectResource',
-            'updateFilter'
+            'updateFilter',
+            'updateTime'
         );
     }
 
