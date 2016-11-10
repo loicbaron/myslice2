@@ -86,10 +86,8 @@ class ProjectElement extends React.Component {
         else
             {
             return (
-                <Element element={this.props.project}
-                         type="project"
-                         handleSelect={this.props.handleClick}
-                         minHeight={minHeight}>
+                <Element element={this.props.project} type="project" handleClick={this.props.handleClick} minHeight={minHeight} icon="project">
+
                     <a href="/projects"><ElementTitle label={label} detail={this.props.project.shortname} /></a>
 
                     <ElementId id={this.props.project.id} />
