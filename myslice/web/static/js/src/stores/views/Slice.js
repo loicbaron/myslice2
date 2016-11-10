@@ -14,7 +14,9 @@ class SliceView {
         this.slice = {
             shortname: null,
             name: null,
-            hrn: null
+            hrn: null,
+            users: [],
+            resources: []
         };
         // the list of testbeds
         this.testbeds = [];
