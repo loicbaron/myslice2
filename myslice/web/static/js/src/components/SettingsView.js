@@ -1,9 +1,7 @@
 import React from 'react';
 
 import View from './base/View';
-import Panel from './base/Panel';
-import PanelHeader from './base/PanelHeader';
-import PanelBody from './base/PanelBody';
+import { Panel, PanelHeader, PanelBody } from './base/Panel';
 import PanelMenu from './base/PanelMenu';
 import PanelMenuEntry from './base/PanelMenuEntry';
 import Title from './base/Title';
