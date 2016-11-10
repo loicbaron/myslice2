@@ -52,17 +52,9 @@ class Index(BaseController):
             password = post_password
 
         try:
-            print("Controller Login email = %s" % email)
             feed = yield r.table('users') \
                             .filter({"email": email}) \
                             .run(self.application.dbconnection)
-                            #.merge(lambda user: {
-                            #        'slices': r.table('slices') \
-                            #                    .get_all(r.args(user['slices'])) \
-                            #                    .pluck(['id', 'hrn',  'name', 'shortname']) \
-                            #                    .coerce_to('array')
-                            #}) \
-                            #.run(self.application.dbconnection)
             yield feed.fetch_next()
             user = yield feed.next()
         except Exception as e:
