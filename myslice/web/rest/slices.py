@@ -48,15 +48,19 @@ class SlicesHandler(Api):
             cursor = yield r.table('slices') \
                 .filter(filter) \
                 .merge(lambda slice: {
-                'authority': r.table('authorities').get(slice['authority']) \
+                    'authority': r.table('authorities').get(slice['authority']) \
                        .pluck(self.fields_short['authorities']) \
                        .default({'id': slice['authority']})
-            }) \
+                }) \
                 .merge(lambda slice: {
-                'project': r.table('projects').get(slice['project']) \
+                    'project': r.table('projects').get(slice['project']) \
                        .pluck(self.fields_short['projects']) \
                        .default({'id': slice['project']})
-            }) \
+                }) \
+                .merge(lambda slice: {
+                    'users': r.table('users').get_all(r.args(slice['users']), index="id") \
+                           .pluck(self.fields_short['users']).coerce_to('array')
+                }) \
                 .run(self.dbconnection)
             while (yield cursor.fetch_next()):
                 slice = yield cursor.next()
