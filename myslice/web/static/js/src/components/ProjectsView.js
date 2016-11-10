@@ -4,10 +4,7 @@ import store from '../stores/ProjectsStore';
 import actions from '../actions/ProjectsActions';
 
 import View from './base/View';
-import Dialog from './base/Dialog';
-import DialogHeader from './base/DialogHeader';
-import DialogBody from './base/DialogBody';
-import DialogPanel from './base/DialogPanel';
+import { DialogPanel, Dialog, DialogBody, DialogHeader, DialogFooter } from './base/Dialog';
 import { Panel, PanelHeader, PanelBody } from './base/Panel';
 import Title from './base/Title';
 import Button from './base/Button';

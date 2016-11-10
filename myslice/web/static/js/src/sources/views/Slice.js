@@ -32,6 +32,23 @@ const SliceView = () => {
         },
         fetchTestbeds: {
             remote(state) {
+                return axios.get('/api/v1/slices/' + state.hrn + '/resources');
+            },
+
+            local(state) {
+                return state.testbeds ? state.testbeds : null;
+            },
+
+            //loading: actions.loadingResults, // (optional)
+            success: actions.updateTestbeds,
+            error: actions.errorTestbeds,
+
+            shouldFetch(state) {
+                return true
+            }
+        },
+        fetchResources: {
+            remote(state) {
                 return axios.get('/api/v1/testbeds');
             },
 
@@ -47,7 +64,6 @@ const SliceView = () => {
                 return true
             }
         },
-
         submit: {
             // remotely fetch something (required)
             remote(state) {

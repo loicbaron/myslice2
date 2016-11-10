@@ -1,5 +1,16 @@
 import React from 'react';
 
+const DialogPanel = ({children}) =>
+     <div className="container">
+        <div className="row">
+            <div className="col-sm-8 col-sm-offset-2">
+                <div className="d-panel">
+                    {children}
+                </div>
+            </div>
+        </div>
+    </div>;
+
 class Dialog extends React.Component {
 
     constructor(props) {
@@ -62,4 +73,53 @@ Dialog.propTypes = {
 Dialog.defaultProps = {
 };
 
-export default Dialog;
+const DialogHeader = ({children}) => {
+
+    var num = React.Children.count(children);
+    if (num >= 2) {
+        return (
+            <div className="d-header">
+                <div className="row">
+                    <div className="col-sm-6">
+                        {children[0]}
+                    </div>
+                    <div className="col-sm-6 d-header-right">
+                        {children.slice(1)}
+                    </div>
+                </div>
+            </div>
+        );
+    } else {
+        return (
+            <div className="d-header">
+                <div className="row">
+                    <div className="col-sm-12">
+                        {children}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+};
+
+const DialogBody = ({children}) =>
+            <div className="d-body">
+                { children }
+            </div>;
+
+const DialogFooter = ({children}) => {
+
+    return (
+        <div className="d-footer">
+            <div className="row">
+                <div className="col-sm-12">
+                    {children}
+                </div>
+            </div>
+        </div>
+    );
+
+};
+
+export { DialogPanel, Dialog, DialogBody, DialogFooter, DialogHeader };

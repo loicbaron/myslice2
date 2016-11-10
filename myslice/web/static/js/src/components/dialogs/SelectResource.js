@@ -3,11 +3,7 @@ import React from 'react';
 import actions from '../../actions/dialogs/SelectResource';
 import store from '../../stores/dialogs/SelectResource';
 
-import Dialog from '../base/Dialog';
-import DialogPanel from '../base/DialogPanel';
-import DialogHeader from '../base/DialogHeader';
-import DialogFooter from '../base/DialogFooter';
-import DialogBody from '../base/DialogBody';
+import { DialogPanel, Dialog, DialogBody, DialogHeader, DialogFooter } from '../base/Dialog';
 import Title from '../base/Title';
 import Text from '../base/Text';
 import DateTime from '../base/DateTime';
