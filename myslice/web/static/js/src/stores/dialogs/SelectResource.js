@@ -50,6 +50,8 @@ class SelectResourceDialog {
     }
 
     fetchResources(testbed = null) {
+        this.resources = [];
+        this.all_resources = [];
 
         if (testbed) {
             this.testbed = testbed;

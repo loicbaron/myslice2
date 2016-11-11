@@ -15,7 +15,7 @@ import { ProjectList } from './objects/Project';
 
 import SlicesForm from './SlicesForm';
 
-import UsersDialog from './UsersDialog';
+import UsersDialog from './dialogs/SelectUser';
 
 class ProjectsView extends React.Component {
 

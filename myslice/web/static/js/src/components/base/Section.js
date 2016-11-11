@@ -42,6 +42,20 @@ const SectionHeader = ({children}) => {
     }
 };
 
+const SectionOptions = ({options}) => {
+    return <ul className="s-options">
+        {
+            options.map(function(option, i) {
+                let icon = null;
+                if (option.icon) {
+                    icon = <i className={"fa fa-" + option.icon + " fa-fw"}></i>
+                }
+                return <li key={i} onClick={option.callback}>{icon} {option.label}</li>
+            })
+        }
+        </ul>
+};
+
 class SectionTitle extends React.Component {
   render() {
 
@@ -58,4 +72,4 @@ SectionTitle.defaultProps = {
     subtitle: ''
 };
 
-export { Section, SectionBody, SectionHeader, SectionTitle };
+export { Section, SectionBody, SectionHeader, SectionTitle, SectionOptions };

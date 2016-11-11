@@ -37,6 +37,7 @@ class SliceView {
             errorTestbeds: actions.ERROR_TESTBEDS,
 
             selectResourceDialog: actions.SELECT_RESOURCE_DIALOG,
+            selectUserDialog: actions.SELECT_USER_DIALOG,
             closeDialog: actions.CLOSE_DIALOG
         });
 
@@ -88,6 +89,10 @@ class SliceView {
     selectResourceDialog(testbed) {
         this.dialog = 'selectResource';
         this.testbed = testbed;
+    }
+
+    selectUserDialog() {
+        this.dialog = 'selectUser';
     }
 
     closeDialog() {

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Section, SectionHeader, SectionBody, SectionTitle } from '../base/Section';
+import { Section, SectionHeader, SectionBody, SectionTitle, SectionOptions } from '../base/Section';
 import { UserList, UserListSimple } from '../objects/User';
 
 const UsersSection = ({users, title}) =>
@@ -22,10 +22,11 @@ UsersSection.defaultProps = {
     title: "Users"
 };
 
-const UsersSectionSimple = ({users, title}) =>
+const UsersSectionSimple = ({users, title, options}) =>
     <Section>
         <SectionHeader>
             <SectionTitle title={title} />
+            <SectionOptions options={options} />
         </SectionHeader>
         <SectionBody>
             <UserListSimple users={users} />
@@ -34,11 +35,13 @@ const UsersSectionSimple = ({users, title}) =>
 
 UsersSectionSimple.propTypes = {
     users: React.PropTypes.array.isRequired,
-    title: React.PropTypes.string
+    title: React.PropTypes.string,
+    options: React.PropTypes.array
 };
 
 UsersSectionSimple.defaultProps = {
-    title: "Users"
+    title: "Users",
+    options: []
 };
 
 export { UsersSection, UsersSectionSimple };

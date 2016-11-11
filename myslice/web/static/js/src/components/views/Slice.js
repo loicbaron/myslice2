@@ -11,7 +11,7 @@ import Text from '../base/Text';
 import DateTime from '../base/DateTime';
 
 import SelectResourceDialog from '../dialogs/SelectResource';
-
+import SelectUserDialog from '../dialogs/SelectUser';
 
 class SliceView extends React.Component {
 
@@ -44,6 +44,10 @@ class SliceView extends React.Component {
         actions.selectResourceDialog(testbed);
     }
 
+    addUser() {
+        actions.selectUserDialog();
+    }
+
     
     render() {
 
@@ -60,11 +64,23 @@ class SliceView extends React.Component {
             case 'selectResource':
                 dialog = <SelectResourceDialog testbed={this.state.testbed} close={this.closeDialog} />;
                 break;
-            case 'users':
-                dialog = <UsersDialog close={this.closeDialog} />;
+            case 'selectUser':
+                dialog = <SelectUserDialog close={this.closeDialog} />;
                 break;
 
         }
+
+
+        /*
+        *  Define options for user section
+        * */
+        var userSectionOptions = [
+            {
+                'label' : 'Add User',
+                'icon' : 'plus-circle',
+                'callback' : this.addUser
+            }
+        ];
 
 
         return (
@@ -84,7 +100,7 @@ class SliceView extends React.Component {
                             <DateTime label="Last updated" timestamp={this.state.slice.updated} />
 
                         </div>
-                        <UsersSectionSimple users={this.state.slice.users} />
+                        <UsersSectionSimple users={this.state.slice.users} options={userSectionOptions} />
                     </PanelBody>
                 </Panel>
                 <Panel>

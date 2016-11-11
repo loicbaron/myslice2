@@ -1,14 +1,14 @@
 import React from 'react';
 
-import actions from '../actions/UsersActions';
-import store from '../stores/UsersStore';
+import actions from '../../actions/UsersActions';
+import store from '../../stores/UsersStore';
 
-import { DialogPanel, Dialog, DialogBody, DialogHeader, DialogFooter } from './base/Dialog';
-import Title from './base/Title';
-import { UserList } from './objects/User';
-import UsersFilter from './UsersFilter';
+import { DialogPanel, Dialog, DialogBody, DialogHeader, DialogFooter } from '../base/Dialog';
+import Title from '../base/Title';
+import { UserList } from '../objects/User';
+import UsersFilter from '../UsersFilter';
 
-class UsersDialog extends React.Component {
+class SelectUserDialog extends React.Component {
 
     constructor(props) {
         super(props);
@@ -71,14 +71,14 @@ class UsersDialog extends React.Component {
     }
 }
 
-UsersDialog.propTypes = {
+SelectUserDialog.propTypes = {
     close: React.PropTypes.func,
     addUser: React.PropTypes.bool,
 };
 
-UsersDialog.defaultProps = {
+SelectUserDialog.defaultProps = {
     close: null,
     addUser: false,
 };
 
-export default UsersDialog;
+export default SelectUserDialog;
