@@ -60,6 +60,9 @@ class User(myslicelibUser):
         if event.object.type == ObjectType.SLICE and event.object.id in self.getAttribute('slices'):
             return True
 
+        if event.object.type == ObjectType.LEASE and event.data['slice_id'] in self.getAttribute('slices'):
+            return True
+
         for auth in self.getPiAuthorities(attribute=True):
             ev_auth = event.data.get('authority', [])
             if ev_auth:
