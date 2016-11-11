@@ -170,13 +170,11 @@ class Application(web.Application):
             web.url(r'/api/v1/leases$', LeasesHandler),
             web.url(r'/api/v1/leases/([A-Za-z0-9-]+)?', LeasesHandler),
             web.url(r'/api/v1/profile$', ProfileHandler),
-            
-            web.url(r'/api/v1/users$', UsersHandler),
-
             # testbeds
             web.url(r'/api/v1/testbeds/?(' + self.urn_regex + ')?/?(resources)?$', TestbedsHandler),
             web.url(r'/api/v1/testbeds/?(' + self.urn_regex + ')?/?(leases)?$', TestbedsHandler),
             # users
+            web.url(r'/api/v1/users$', UsersHandler),
             web.url(r'/api/v1/users/?(' + self.urn_regex + ')?/?(authorities|projects|slices)?$', UsersHandler),
             web.url(r'/api/v1/users/?(authorities|projects|slices)?$', UsersHandler),
             # authorities
