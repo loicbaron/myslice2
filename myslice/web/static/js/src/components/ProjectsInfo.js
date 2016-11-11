@@ -1,8 +1,8 @@
 import React from 'react';
 
 import ElementId from './base/ElementId';
-import { SectionUserList } from './sections/User';
-import { SectionSliceList } from './sections/Slice';
+import { UsersSection } from './sections/User';
+import { SlicesSection } from './sections/Slice';
 import DateTime from './base/DateTime';
 
 
@@ -14,12 +14,12 @@ class ProjectsInfo extends React.Component {
         var slices = null;
 
         if (this.props.element.users.length > 0) {
-            users = <SectionUserList users={this.props.element.users} removeUser={true} />;
+            users = <UsersSection users={this.props.element.users} removeUser={true} />;
 
         }
 
         if (this.props.element.slices.length > 0) {
-            slices = <SectionSliceList slices={this.props.element.slices} removeSlice={true} />;
+            slices = <SlicesSection slices={this.props.element.slices} removeSlice={true} />;
         }
 
         return (

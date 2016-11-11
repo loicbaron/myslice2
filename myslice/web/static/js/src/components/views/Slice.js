@@ -71,7 +71,7 @@ class SliceView extends React.Component {
             <View>
                 <Panel>
                     <PanelHeader>
-                        <Title title={this.state.slice.name || this.state.slice.shortname || ''} />;
+                        <Title title={this.state.slice.name || this.state.slice.shortname || ''} />
                     </PanelHeader>
                     <PanelBody>
                         <div>

@@ -3,7 +3,7 @@ import React from 'react';
 import { Section, SectionHeader, SectionBody, SectionTitle } from '../base/Section';
 import { SliceList } from '../objects/Slice';
 
-const SectionSliceList = ({slices}) =>
+const SlicesSection = ({slices}) =>
     <Section>
         <SectionHeader>
             <SectionTitle title="Slices" />
@@ -13,4 +13,4 @@ const SectionSliceList = ({slices}) =>
         </SectionBody>
     </Section>;
 
-export { SectionSliceList };
+export { SlicesSection };
