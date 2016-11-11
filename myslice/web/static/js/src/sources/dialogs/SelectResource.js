@@ -26,6 +26,27 @@ const SelectResourceDialog = () => {
             }
         },
 
+
+        submitReservation: {
+            remote(state) {
+                return axios.post('/api/v1/leases/',
+                    {
+                        "testbed":state.testbed.id,
+                        "slice_id": props.slice.id,
+                        "start_time" : state.start_date,
+                        " duration" : state.duration
+                    });
+            },
+
+            success: actions.successReservation, // (required)
+            error: actions.errorreservation, // (required)
+
+            shouldFetch(state) {
+                return true
+            }
+
+        },
+
         resources: {
             remote(state) {
                 return axios.get('/api/v1/testbeds/'+state.testbed.id+'/resources');
