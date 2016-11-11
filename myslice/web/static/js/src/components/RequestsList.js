@@ -2,7 +2,7 @@ import React from 'react';
 
 import store from '../stores/RequestsStore';
 import actions from '../actions/RequestsActions';
-import List from './base/List';
+import { List, ListSimple } from './base/List';
 import LoadingPanel from './LoadingPanel';
 
 import RequestsFilter from './RequestsFilter';

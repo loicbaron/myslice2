@@ -1,9 +1,9 @@
 import React from 'react';
 import Select from 'react-select';
 
-import List from '../base/List';
+import { List, ListSimple } from '../base/List';
+import { Element } from '../base/Element';
 import LoadingPanel from '../LoadingPanel';
-import Element from '../base/Element';
 import ElementTitle from '../base/ElementTitle';
 import ElementDetails from '../base/ElementDetails';
 import LogList from '../base/LogList';

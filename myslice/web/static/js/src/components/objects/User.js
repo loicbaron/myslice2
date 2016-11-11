@@ -1,8 +1,8 @@
 import React from 'react';
 import Avatar from 'react-avatar';
 
-import List from '../base/List';
-import Element from '../base/Element';
+import { List, ListSimple } from '../base/List';
+import { Element } from '../base/Element';
 import ElementTitle from '../base/ElementTitle';
 import ElementId from '../base/ElementId';
 import DateTime from '../base/DateTime';
@@ -65,16 +65,34 @@ UserElement.propTypes = {
     user: React.PropTypes.object.isRequired,
     addUser: React.PropTypes.bool,
     removeUser: React.PropTypes.bool,
-    current: React.PropTypes.object,
-    setCurrent: React.PropTypes.func,
 };
 
 UserElement.defaultProps = {
-    current: false,
     addUser: false,
     removeUser: false,
 };
 
+const UserElementSimple = ({user}) => {
+
+    var fullname = [ user.first_name, user.last_name ].join(' ');
+    if ((!fullname) && (user.shortname)) {
+        fullname = user.shortname;
+    } else {
+        fullname = user.email;
+    }
+
+    return <Element element={user} type="user">
+                <Avatar className="elementIcon" email={user.email} name={fullname} round={true} size={35} color="#CFE2F3" />
+                <ElementTitle label={fullname} detail={user.email} />
+            </Element>;
+};
+
+UserElementSimple.propTypes = {
+    user: React.PropTypes.object.isRequired
+};
+
+UserElementSimple.defaultProps = {
+};
 
 class UserList extends React.Component {
 
@@ -113,5 +131,24 @@ UserList.defaultProps = {
     removeUser: false,
 };
 
+const UserListSimple = ({users}) =>
+    <ListSimple>
+    {
+        users.map(function(user) {
+            return <UserElementSimple key={user.id}
+                                      user={user}
+                                      status={user.status}
+                    />;
+        })
+    }
+    </ListSimple>;
 
-export { UserElement, UserList };
+UserList.propTypes = {
+    users: React.PropTypes.array.isRequired
+};
+
+UserList.defaultProps = {
+};
+
+
+export { UserElement, UserElementSimple, UserList, UserListSimple };

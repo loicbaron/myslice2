@@ -5,4 +5,9 @@ const List = ({children}) =>
         {children}
     </ul>;
 
-export default List;
+const ListSimple = ({children}) =>
+    <ul className="elementListSimple">
+        {children}
+    </ul>;
+
+export { List, ListSimple };

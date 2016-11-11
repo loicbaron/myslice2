@@ -1,41 +1,6 @@
 import React from 'react';
 import Icon from './Icon';
 
-const ElementIcon = ({icon}) => {
-
-
-};
-
-ElementIcon.defaultProps = {
-    icon: null
-};
-
-const ElementStatus = ({status}) => {
-
-        return (
-                <div className="elementStatus">
-                    <Icon name={status} />&nbsp;{status}
-                </div>
-        );
-
-};
-
-const ElementControl = ({status, options}) => {
-    return <div className="elementControl">
-        <ElementStatus status={status} />
-        {
-            options.map((option) => {
-                return option;
-            })
-        }
-    </div>;
-};
-
-ElementControl.defaultProps = {
-    status: null,
-    options: []
-};
-
 class Element extends React.Component {
 
     constructor(props) {
@@ -53,15 +18,13 @@ class Element extends React.Component {
     renderIcon() {
         var icon = this.props.icon;
 
-        if (!icon) {
-            icon = this.props.type;
+        if (icon) {
+            return (
+                <div className={"elementIcon " + icon}>
+                    <Icon name={icon} size="2x"/>
+                </div>
+            );
         }
-
-        return (
-            <div className={"elementIcon " + icon}>
-                <Icon name={icon} size="2x" />
-            </div>
-        );
     }
 
     renderIconSelected() {
@@ -75,6 +38,30 @@ class Element extends React.Component {
                     break;
             }
         }
+    }
+
+    renderMenu() {
+        var status = this.props.element.status || this.props.status || null;
+        var rStatus = null;
+        var rMenu = null;
+
+        if (status) {
+            rStatus = <div className="elementStatus">
+                <Icon name={status} />&nbsp;{status}
+            </div>;
+        }
+
+        if (this.props.options) {
+            rMenu =  this.props.options.map((option) => {
+                        return option;
+                    });
+
+        }
+
+        return <div className="elementMenu">
+            {rStatus}
+            {rMenu}
+        </div>;
     }
 
     render() {
@@ -101,7 +88,7 @@ class Element extends React.Component {
         return (
             <li className={className} onClick={callback} style={this.props.minHeight}>
                 {this.renderIcon()}
-                <ElementControl status={status} options={options}/>
+                {this.renderMenu()}
                 {this.props.children}
                 {this.renderIconSelected()}
             </li>
@@ -127,4 +114,4 @@ Element.defaultProps = {
     options: [],
 };
 
-export default Element;
+export { Element };

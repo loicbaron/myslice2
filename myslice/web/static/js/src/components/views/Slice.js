@@ -5,23 +5,12 @@ import actions from '../../actions/views/Slice';
 
 import View from '../base/View';
 import { Panel, PanelHeader, PanelBody } from '../base/Panel';
-import { SectionUserList } from '../sections/User';
+import { UsersSectionSimple } from '../sections/User';
 import Title from '../base/Title';
 import Text from '../base/Text';
+import DateTime from '../base/DateTime';
 
 import SelectResourceDialog from '../dialogs/SelectResource';
-import { UserList } from '../objects/User';
-
-const SliceTitle = ({slice}) => {
-    var title = slice.name || slice.shortname || '';
-    var subtitle = slice.hrn || '';
-
-    return <Title title={title} subtitle={subtitle} />;
-};
-
-SliceTitle.propTypes = {
-    slice: React.PropTypes.object.isRequired
-};
 
 
 class SliceView extends React.Component {
@@ -82,10 +71,20 @@ class SliceView extends React.Component {
             <View>
                 <Panel>
                     <PanelHeader>
-                        <SliceTitle slice={this.state.slice} />
+                        <Title title={this.state.slice.name || this.state.slice.shortname || ''} />;
                     </PanelHeader>
                     <PanelBody>
-                        <SectionUserList users={this.state.slice.users} />
+                        <div>
+                            <p>
+                                {this.state.slice.id}
+                            </p>
+
+                            <DateTime label="Created" timestamp={this.state.slice.created} />
+                            <DateTime label="Enabled" timestamp={this.state.slice.enabled} />
+                            <DateTime label="Last updated" timestamp={this.state.slice.updated} />
+
+                        </div>
+                        <UsersSectionSimple users={this.state.slice.users} />
                     </PanelBody>
                 </Panel>
                 <Panel>

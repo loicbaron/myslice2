@@ -1,8 +1,7 @@
 import React from 'react';
 
-import List from '../base/List';
-
-import Element from '../base/Element';
+import { List, ListSimple } from '../base/List';
+import { Element } from '../base/Element';
 import ElementTitle from '../base/ElementTitle';
 import ElementId from '../base/ElementId';
 import DateTime from '../base/DateTime';
