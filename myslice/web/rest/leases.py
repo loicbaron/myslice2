@@ -1,4 +1,5 @@
 import json
+import time
 
 import rethinkdb as r
 from tornado import gen, escape
@@ -85,7 +86,7 @@ class LeasesHandler(Api):
     def post(self, id=None, o=None):
         """
         POST /leases
-        { testbed: string, slice_id: string, start_time: int, end_time: int }
+        { testbed: string, slice_id: string, start_time: int, end_time: int, duration: int }
         :return:
         """
 
@@ -99,11 +100,38 @@ class LeasesHandler(Api):
             self.userError("malformed request", e.msg)
             return
 
+        # start_time can not be in the past
+        # but can be 0 for ASAP mode
+        if 'start_time' in data and data['start_time'] != 0 and data['start_time'] < int(time.time()):
+            self.userError("start_time can not be in the past")
+            return
+
+
+        # XXX Just to debug
+        if not 'start_time' in data:
+            # Start 5 minutes later
+            data['start_time']=int(time.time())+5*60
+
+        # Scheduled reservation
+        if 'start_time' in data:
+            if 'end_time' not in data and 'duration' in data:
+                data['end_time'] = data['start_time'] + data['duration']
+            elif 'duration' not in data and 'end_time' in data:
+                data['duration'] = data['end_time'] - data['start_time']
+            else:
+                self.userError('you must specify either duration or end_time')
+                return
+        # ASAP reservation
+        else:
+            if 'duration' not in data:
+                self.userError("duration must be specified for ASAP reservation")
+                return
+
         try:
             u = yield r.table('users').get(self.current_user['id']).run(self.dbconnection)
             if data['slice_id'] not in u['slices']:
                 self.userError("your user is not a member of this slice: %s" % data['slice_id'])
-
+                return
         except Exception:
             self.userError("not authenticated")
             return

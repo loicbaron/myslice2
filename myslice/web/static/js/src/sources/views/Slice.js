@@ -32,7 +32,7 @@ const SliceView = () => {
         },
         fetchTestbeds: {
             remote(state) {
-                return axios.get('/api/v1/slices/' + state.hrn + '/resources');
+                return axios.get('/api/v1/testbeds');
             },
 
             local(state) {
@@ -49,7 +49,7 @@ const SliceView = () => {
         },
         fetchResources: {
             remote(state) {
-                return axios.get('/api/v1/testbeds');
+                return axios.get('/api/v1/slices/' + state.hrn + '/resources');
             },
 
             local(state) {

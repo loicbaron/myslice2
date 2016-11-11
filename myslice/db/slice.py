@@ -13,7 +13,17 @@ class SliceException(Exception):
     def __init__(self, errors):
         self.stack = errors
 
+class SliceWarningException(Exception):
+    def __init__(self, errors):
+        self.stack = errors
+
 class Slice(myslicelibSlice):
+
+    def __init__(self, data = {}):
+        data = data if data is not None else {}
+        data['hasLeases'] = False
+        data['removedLeases'] = []
+        super(Slice, self).__init__(data)
 
     def save(self, dbconnection, setup=None):
         # Get Slice from local DB 
@@ -22,7 +32,6 @@ class Slice(myslicelibSlice):
 
         result = super(Slice, self).save(setup)
         errors = result['errors']
-
         result = {**(self.dict()), **result['data'][0]}
         # add status if not present and update on db
         if not 'status' in result:
@@ -40,6 +49,33 @@ class Slice(myslicelibSlice):
             user = q(User).id(u).get().first()
             user = user.merge(dbconnection)
             db.users(dbconnection, user.dict())
+
+        # Insert / Delete Leases if necessary
+        if self.hasLeases:
+            flag = -1
+            for lease in self.leases:
+                print("db.slice save leases")
+                print(lease)
+                pprint(result['leases'])
+                # No resources reserved
+                if len(result['leases'])==0:
+                    flag = -1
+                # All resources of a Lease have been succesfully reserved
+                elif lease['resources'] == result['leases'][0]['resources']:
+                    flag = 0
+                # Some Resources of a Lease have been reserved
+                elif len(set(lease['resources']).intersection(set(result['leases'][0]['resources']))) > 0:
+                    db.leases(dbconnection, lease)
+                    flag = 1
+            for lease in self.removedLeases:
+                if lease not in result['leases']:
+                    db.delete(dbconnection, 'leases', lease.id)
+                    flag = False
+            if flag == -1:
+                errors.append("No reservation has been accepted by the testbeds")
+            elif flag == 1:
+                errors.append("Some resources have been reserved others were unavailable")
+                raise SliceWarningException(errors)
 
         if errors:
             raise SliceException(errors)
@@ -65,3 +101,12 @@ class Slice(myslicelibSlice):
             raise SliceException(errors)
         else:
             return True
+
+    def addLease(self, lease):
+        self = super(Slice, self).addLease(lease)
+        self.hasLeases = True
+
+    def removeLease(self, lease):
+        self = super(Slice, self).removeLease(lease)
+        self.hasLeases = True
+        self.removedLeases.append(lease.id)

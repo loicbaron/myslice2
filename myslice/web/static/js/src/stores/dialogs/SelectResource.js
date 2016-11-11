@@ -17,7 +17,7 @@ class SelectResourceDialog {
         this.time ='';
         // initialise the start date
         var d = new Date();
-        var df = d.getFullYear()+"/"+(d.getMonth()+1)+"/"+d.getDate();
+        var df = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
         this.start_date=df;
         //initialise the duration
         this.duration='';
@@ -37,6 +37,7 @@ class SelectResourceDialog {
             updateType: actions.UPDATE_TYPE,
             selectResource: actions.SELECT_RESOURCE,
             updateFilter : actions.UPDATE_FILTER,
+
 
         });
 

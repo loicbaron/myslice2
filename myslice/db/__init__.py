@@ -290,7 +290,7 @@ def resources(dbconnection=None, data=None, id=None):
 
     return r.db(s.db.name).table('resources').run(dbconnection)
 
-def leases(dbconnection=None, data=None):
+def leases(dbconnection=None, data=None, id=None):
     if not dbconnection:
         dbconnection = connect()
 

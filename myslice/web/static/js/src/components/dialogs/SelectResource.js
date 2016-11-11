@@ -118,9 +118,13 @@ class SelectResourceDialog extends React.Component {
         var datum = Date.parse(this.state.start_date);
         var timeStamp = datum/1000;
         //alert(this.state.start_date)​
-        console.log(timeStamp);
+
+        this.state.start_date= timeStamp;
+        console.log(this.state.start_date);
+        actions.submitReservation;
+
         //console.log(this.state.time);
-        //var end_date= new Date(this.state.start_date + (this.state.time+int(this.state.duration)));
+
 
 
     }

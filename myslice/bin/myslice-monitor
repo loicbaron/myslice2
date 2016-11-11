@@ -18,7 +18,7 @@ import myslice.db as db
 # workers
 from myslice.services.monitor.testbeds import run as serviceTestbeds
 from myslice.services.monitor.resources import run as serviceResources
-from myslice.services.monitor.leases import run as serviceLeases
+
 def receive_signal(signum, stack):
     logger.info('Received signal %s', signum)
     raise SystemExit('Exiting')
@@ -40,29 +40,23 @@ if __name__ == '__main__':
 
     processes = []
 
+    ###
+    ## Process: testbeds
     ##
-    # Process: testbeds
-    #
-    p = multiprocessing.Process(target=serviceTestbeds)
-    processes.append(p)
-    p.daemon = True
-    p.start()
-
-    ##
-    # Process: resources
-    #
-    p = multiprocessing.Process(target=serviceResources)
-    processes.append(p)
-    p.daemon = True
-    p.start()
+    #p = multiprocessing.Process(target=serviceTestbeds)
+    #processes.append(p)
+    #p.daemon = True
+    #p.start()
 
     ###
-    #  Process : leases
+    ## Process: resources
     ##
-    p = multiprocessing.Process(target=serviceLeases)
-    processes.append(p)
-    p.daemon = True
-    p.start()
+    #p = multiprocessing.Process(target=serviceResources)
+    #processes.append(p)
+    #p.daemon = True
+    #p.start()
+
+
 
     for proc in processes:
         proc.join()

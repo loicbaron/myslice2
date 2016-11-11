@@ -12,7 +12,10 @@ class SelectResourceDialog {
             'updateType',
             'selectResource',
             'updateFilter',
-            'updateTime'
+            'updateTime',
+            'submitReservation',
+            'successReservation',
+            'errorreservation'
         );
     }
 

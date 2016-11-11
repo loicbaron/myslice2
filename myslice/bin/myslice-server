@@ -21,6 +21,7 @@ from myslice.services.authorities import run as serviceAuthorities
 from myslice.services.experiments import run as serviceExperiments
 from myslice.services.users import run as serviceUsers
 from myslice.services.emails import run as serviceEmails
+from myslice.services.leases import run as serviceLeases
 
 logger = logging.getLogger("myslice-sync")
 
@@ -61,29 +62,37 @@ if __name__ == '__main__':
     p.daemon = True
     p.start()
 
+    ###
+    #  Process : leases
     ##
-    #Process: users
-    #
-    p = multiprocessing.Process(target=serviceUsers)
+    p = multiprocessing.Process(target=serviceLeases)
     processes.append(p)
     p.daemon = True
     p.start()
 
+    ###
+    ##Process: users
     ##
-    #Process: authorities
-    #
-    p = multiprocessing.Process(target=serviceAuthorities)
-    processes.append(p)
-    p.daemon = True
-    p.start()
+    #p = multiprocessing.Process(target=serviceUsers)
+    #processes.append(p)
+    #p.daemon = True
+    #p.start()
 
+    ###
+    ##Process: authorities
     ##
-    #Process: emails
-    #
-    p = multiprocessing.Process(target=serviceEmails)
-    processes.append(p)
-    p.daemon = True
-    p.start()
+    #p = multiprocessing.Process(target=serviceAuthorities)
+    #processes.append(p)
+    #p.daemon = True
+    #p.start()
+
+    ###
+    ##Process: emails
+    ##
+    #p = multiprocessing.Process(target=serviceEmails)
+    #processes.append(p)
+    #p.daemon = True
+    #p.start()
 
     for proc in processes:
         proc.join()
