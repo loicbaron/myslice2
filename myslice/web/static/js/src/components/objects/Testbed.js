@@ -42,56 +42,36 @@ TestbedElement.propTypes = {
 TestbedElement.defaultProps = {
 };
 
-const TestbedList = ({testbeds, selected, handleSelect}) =>
-    <List>
-    {
-        testbeds.map(function(testbed) {
+const TestbedList = ({testbeds, selected, handleSelect}) => {
 
-            let isSelected = selected.some(function(el) {
-                return el.id === testbed.id;
-            });
+    if (!Array.isArray(selected)) {
 
-            return <TestbedElement key={testbed.id}
-                                   testbed={testbed}
-                                   isSelected={isSelected}
-                                   handleSelect={handleSelect} />;
-        })
     }
-    </List>;
 
+    return <List>
+        {
+            testbeds.map(function (testbed) {
+                let isSelected = selected.some(function (el) {
+                    return el.id === testbed.id;
+                });
+
+                return <TestbedElement key={testbed.id}
+                                       testbed={testbed}
+                                       isSelected={isSelected}
+                                       handleSelect={handleSelect} />;
+            })
+        }
+    </List>;
+}
 TestbedList.propTypes = {
     testbeds: React.PropTypes.array.isRequired,
-    handleSelect: React.PropTypes.func
+    handleSelect: React.PropTypes.func,
+    selected: React.PropTypes.array || React.Proptypes.object
 };
 
 TestbedList.defaultProps = {
     selected: [],
 };
 
-class TestbedListSetCurrent extends React.Component {
 
-    constructor(props) {
-        super(props);
-    }
-
-    componentDidMount() {
-    }
-
-    componentWillUnmount() {
-    }
-
-    render() {
-        return <List>
-                {
-                    this.props.testbeds.map(function(testbed) {
-                        return <TestbedElement key={testbed.id}
-                                               testbed={testbed}
-                                               isSelected={this.props.current === testbed.id}
-                                               handleSelect={this.props.handleSelect} />;
-                    }.bind(this))
-                }
-                </List>;
-    }
-}
-
-export { TestbedElement, TestbedList, TestbedListSetCurrent };
+export { TestbedElement, TestbedList };

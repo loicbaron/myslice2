@@ -3,10 +3,7 @@ import React from 'react';
 import actions from '../actions/UsersActions';
 import store from '../stores/UsersStore';
 
-import Dialog from './base/Dialog';
-import DialogPanel from './base/DialogPanel';
-import DialogHeader from './base/DialogHeader';
-import DialogBody from './base/DialogBody';
+import { DialogPanel, Dialog, DialogBody, DialogHeader, DialogFooter } from './base/Dialog';
 import Title from './base/Title';
 import { UserList } from './objects/User';
 import UsersFilter from './UsersFilter';

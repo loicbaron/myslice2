@@ -4,9 +4,7 @@ import store from '../stores/UsersStore';
 import actions from '../actions/UsersActions';
 
 import View from './base/View';
-import Panel from './base/Panel';
-import PanelHeader from './base/PanelHeader';
-import PanelBody from './base/PanelBody';
+import { Panel, PanelHeader, PanelBody } from './base/Panel';
 import Title from './base/Title';
 import Button from './base/Button';
 

@@ -1,18 +1,17 @@
- import React from 'react';
+import React from 'react';
 
 import store from '../../stores/views/Slice';
 import actions from '../../actions/views/Slice';
 
 import View from '../base/View';
-import Panel from '../base/Panel';
-import PanelHeader from '../base/PanelHeader';
-import PanelBody from '../base/PanelBody';
+import { Panel, PanelHeader, PanelBody } from '../base/Panel';
+import { SectionUserList } from '../sections/User';
 import Title from '../base/Title';
 import Text from '../base/Text';
 
 import SelectResourceDialog from '../dialogs/SelectResource';
-//
-//
+import { UserList } from '../objects/User';
+
 const SliceTitle = ({slice}) => {
     var title = slice.name || slice.shortname || '';
     var subtitle = slice.hrn || '';
@@ -78,59 +77,42 @@ class SliceView extends React.Component {
 
         }
 
-        if (this.state.current) {
-            var slice_title = this.state.current.name;
 
-            return (
-                <View>
-                    <Panel>
-                        <PanelHeader>
-                            <Title title={slice_title} subtitle={this.state.current.shortname}/>
-                        </PanelHeader>
-                        <PanelBody>
-                        </PanelBody>
-                        {dialog}
-                    </Panel>
-                    {panelRight}
-                </View>
-            );
-        } else {
-            return (
-                <View>
-                    <Panel>
-                        <PanelHeader>
-                            <SliceTitle slice={this.state.slice} />
-                        </PanelHeader>
-                        <PanelBody>
+        return (
+            <View>
+                <Panel>
+                    <PanelHeader>
+                        <SliceTitle slice={this.state.slice} />
+                    </PanelHeader>
+                    <PanelBody>
+                        <SectionUserList users={this.state.slice.users} />
+                    </PanelBody>
+                </Panel>
+                <Panel>
+                    <PanelHeader>
 
+                    </PanelHeader>
+                    <PanelBody>
+                        <Text>
+                            Please select the resources to reserve by choosing a Testbed (text to change)
+                        </Text>
+                        <ul>
+                        {
+                            this.state.testbeds.filter(function(testbed) {
+                                return testbed.type == 'AM';
+                            }).map(function(testbed) {
+                                    return <li key={testbed.id} onClick={() => this.addResources(testbed)}>{testbed.name}</li>;
+                            }.bind(this))
+                        }
+                        </ul>
+                    </PanelBody>
+                    {dialog}
+                </Panel>
 
-                        </PanelBody>
-                    </Panel>
-                    <Panel>
-                        <PanelHeader>
-
-                        </PanelHeader>
-                        <PanelBody>
-                            <Text>
-                                Please select the resources to reserve by choosing a Testbed (text to change)
-                            </Text>
-                            <ul>
-                            {
-                                this.state.testbeds.filter(function(testbed) {
-                                    return testbed.type == 'AM';
-                                }).map(function(testbed) {
-                                        return <li key={testbed.id} onClick={() => this.addResources(testbed)}>{testbed.name}</li>;
-                                }.bind(this))
-                            }
-                            </ul>
-                        </PanelBody>
-                        {dialog}
-                    </Panel>
-
-                </View>
-            );
-        }
+            </View>
+        );
     }
+
 }
 
 export default SliceView;

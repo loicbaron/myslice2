@@ -4,12 +4,10 @@ import store from '../../stores/views/Status';
 import actions from '../../actions/views/Status';
 
 import View from '../base/View';
-import Panel from '../base/Panel';
-import PanelHeader from '../base/PanelHeader';
-import PanelBody from '../base/PanelBody';
+import { Panel, PanelHeader, PanelBody } from '../base/Panel';
 import Title from '../base/Title';
 
-import { TestbedList, TestbedListSetCurrent } from '../objects/Testbed';
+import { TestbedList } from '../objects/Testbed';
 import { ResourceList } from '../objects/Resource';
 
 class StatusView extends React.Component {
@@ -70,7 +68,7 @@ class StatusView extends React.Component {
                         <Title title="Service Status" subtitle="" />
                     </PanelHeader>
                     <PanelBody>
-                        <TestbedListSetCurrent testbeds={this.state.testbeds}
+                        <TestbedList testbeds={this.state.testbeds}
                                      handleSelect={this.setCurrentTestbed}
                                      current={this.state.currentTestbed} />
                     </PanelBody>

@@ -7,13 +7,8 @@ import store from '../stores/DashboardStore';
 import actions from '../actions/DashboardActions';
 
 import View from './base/View';
-import Dialog from './base/Dialog';
-import DialogHeader from './base/DialogHeader';
-import DialogBody from './base/DialogBody';
-import DialogPanel from './base/DialogPanel';
-import Panel from './base/Panel';
-import PanelHeader from './base/PanelHeader';
-import PanelBody from './base/PanelBody';
+import { DialogPanel, Dialog, DialogBody, DialogHeader, DialogFooter } from './base/Dialog';
+import { Panel, PanelHeader, PanelBody } from './base/Panel';
 import Title from './base/Title';
 import Button from './base/Button';
 import Text from './base/Text';

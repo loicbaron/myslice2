@@ -84,7 +84,12 @@ class UserList extends React.Component {
                 <List>
                 {
                     this.props.users.map(function(user) {
-                        return <UserElement key={user.id} user={user} setCurrent={this.props.setCurrent} current={this.props.current} addUser={this.props.addUser} removeUser={this.props.removeUser} />;
+                        return <UserElement key={user.id}
+                                            user={user}
+                                            setCurrent={this.props.setCurrent}
+                                            current={this.props.current}
+                                            addUser={this.props.addUser}
+                                            removeUser={this.props.removeUser} />;
                     }.bind(this))
                 }
                 </List>
