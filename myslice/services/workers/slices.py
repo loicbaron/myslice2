@@ -24,18 +24,18 @@ from myslice.db import changes, connect
 from myslicelib.model.lease import Lease
 from myslicelib.model.resource import Resource
 from myslice.db.slice import Slice, SliceException
+from myslicelib.model.slice import Slices
 from myslice.db.user import User
 from myslicelib.query import q
 
-
-logger = logging.getLogger('myslice.service.experiments')
+logger = logging.getLogger('myslice.services.workers.experiments')
 
 def events_run(lock, qSliceEvents):
     """
-    Process the authority after approval 
+    Process the slice after approval 
     """
 
-    logger.info("Worker authorities events starting") 
+    logger.info("Worker slices events starting") 
 
     # db connection is shared between threads
     dbconnection = connect()
@@ -76,7 +76,7 @@ def events_run(lock, qSliceEvents):
                     if event.deletingObject():
                         sli = Slice(db.get(dbconnection, table='slices', id=event.object.id))
                         if not sli:
-                            raise Exception("Slices doesn't exist")
+                            raise Exception("Slice doesn't exist")
                         isSuccess = sli.delete(dbconnection, user_setup)
 
                     if event.addingObject():
@@ -159,10 +159,45 @@ def sync(lock):
     while True:
         with lock:
             logger.info("Worker slices starting synchronization")
+            syncSlices()
+        # sleep
+        time.sleep(86400)
 
-            # MySliceLib Query Slices
+def syncSlices(id=None):
+    try:
+        # DB connection
+        dbconnection = db.connect()
+
+        # Update an existing Slice
+        if id:
+            slices = Slices([Slice(db.get(dbconnection, table='slices', id=id))])
+        # MySliceLib Query Slices
+        else:
             slices = q(Slice).get()
 
+        if len(slices)==0:
+            logger.warning("Query slices is empty, check myslicelib and the connection with SFA Registry")
+
+        for slice in slices:
+            if len(slice.users) > 0:
+                try:
+                    u = User(db.get(dbconnection, table='users', id=slice.users[0]))
+
+                    # Synchronize resources of the slice only if we have the user's private key or its credentials
+                    # XXX Should use delegated Credentials
+                    #if (hasattr(u,'private_key') and u.private_key is not None and len(u.private_key)>0) or (hasattr(u,'credentials') and len(u.credentials)>0):
+                    if u.private_key or (hasattr(u,'credentials') and len(u.credentials)>0):
+                        user_setup = UserSetup(u,myslicelibsetup.endpoints)
+                        s = q(Slice, user_setup).id(slice.id).get()
+                except Exception as e:
+                    import traceback
+                    traceback.print_exc()
+                    logger.error("Problem with slice %s" % slice.id)
+            else:
+                print("slice %s has no users" % slice.hrn)
+
+        # update local slice table
+        if not id:
             # update local slice table
             if len(slices)>0:
                 lslices = db.slices(dbconnection, slices.dict())
@@ -181,22 +216,6 @@ def sync(lock):
             else:
                 logger.warning("Query slices is empty, check myslicelib and the connection with SFA Registry")
 
-            for slice in slices:
-                if len(slice.users) > 0:
-                    try:
-                        u = User(db.get(dbconnection, table='users', id=slice.users[0]))
-
-                        # Synchronize resources of the slice only if we have the user's private key or its credentials
-                        # XXX Should use delegated Credentials
-                        #if (hasattr(u,'private_key') and u.private_key is not None and len(u.private_key)>0) or (hasattr(u,'credentials') and len(u.credentials)>0):
-                        if u.private_key or (hasattr(u,'credentials') and len(u.credentials)>0):
-                            user_setup = UserSetup(u,myslicelibsetup.endpoints)
-                            s = q(Slice, user_setup).id(slice.id).get()
-                    except Exception as e:
-                        import traceback
-                        traceback.print_exc()
-                        logger.error("Problem with slice %s" % slice.id)
-                else:
-                    print("slice %s has no users" % slice.hrn)
-        # sleep
-        time.sleep(86400)
+    except Exception as e:
+        import traceback
+        traceback.print_exc()

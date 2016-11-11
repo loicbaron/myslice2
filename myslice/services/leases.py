@@ -5,6 +5,7 @@
 #   Will also manage slice/project creation, deletetion, status etc.
 #
 #   (c) 2016 Ciro Scognamiglio <ciro.scognamiglio@lip6.fr>
+#            Loïc Baron <loic.baron@lip6.fr>
 ##
 
 import logging
@@ -14,10 +15,9 @@ from queue import Queue
 import myslice.db as db
 from myslice.db import changes, connect, events
 from myslice.db.activity import Event, ObjectType
-from myslice.services.workers.projects import events_run as manageProjects, sync as syncProjects
-from myslice.services.workers.slices import events_run as manageSlices, sync as syncSlices
+from myslice.services.workers.leases import events_run as manageLeases, sync as syncLeases
 
-logger = logging.getLogger('myslice.service.experiments')
+logger = logging.getLogger('myslice.service.leases')
 
 def receive_signal(signum, stack):
     logger.info('Received signal %s', signum)
@@ -26,17 +26,17 @@ def receive_signal(signum, stack):
 
 def run():
     """
-    A Process that will manage Projects and Slices 
+    A Process that will manage Leases 
     """
     signal.signal(signal.SIGINT, receive_signal)
     signal.signal(signal.SIGTERM, receive_signal)
     signal.signal(signal.SIGHUP, receive_signal)
 
-    logger.info("Service experiments starting")
+    logger.info("Service leases starting")
+    print("Service Leases starts")
 
     # db connection is shared between threads
-    qProjects = Queue()
-    qSlices = Queue()
+    qLeases = Queue()
     lock = threading.Lock()
 
     # threads
@@ -44,28 +44,14 @@ def run():
 
     # projects manager
     for y in range(1):
-        t = threading.Thread(target=manageProjects, args=(lock, qProjects))
+        t = threading.Thread(target=manageLeases, args=(lock, qLeases))
         t.daemon = True
         threads.append(t)
         t.start()
 
     # projects sync
     for y in range(1):
-        t = threading.Thread(target=syncProjects, args=(lock,))
-        t.daemon = True
-        threads.append(t)
-        t.start()
-
-    # slices manager
-    for y in range(1):
-        t = threading.Thread(target=manageSlices, args=(lock, qSlices))
-        t.daemon = True
-        threads.append(t)
-        t.start()
-
-    # slices sync
-    for y in range(1):
-        t = threading.Thread(target=syncSlices, args=(lock,))
+        t = threading.Thread(target=syncLeases, args=(lock,))
         t.daemon = True
         threads.append(t)
         t.start()
@@ -87,10 +73,8 @@ def run():
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
         else:
-            if event.object.type == ObjectType.PROJECT:
-                qProjects.put(event)
-            if event.object.type == ObjectType.SLICE:
-                qSlices.put(event)
+            if event.object.type == ObjectType.LEASE:
+                qLeases.put(event)
 
     for activity in feed:
         try:
@@ -98,11 +82,8 @@ def run():
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
         else:
-            if event.object.type == ObjectType.PROJECT:
-                qProjects.put(event)
-            if event.object.type == ObjectType.SLICE:
-                qSlices.put(event)
-
+            if event.object.type == ObjectType.LEASE:
+                qLeases.put(event)
 
     # waits for the thread to finish
     for x in threads:
