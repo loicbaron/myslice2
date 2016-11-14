@@ -1,6 +1,6 @@
-import alt from '../alt';
-import actions from '../actions/AuthoritiesActions';
-import source from '../sources/AuthoritiesSource';
+import alt from '../../alt';
+import actions from '../../actions/forms/SelectAuthority';
+import source from '../../sources/forms/SelectAuthority';
 
 class AuthoritiesStore {
 

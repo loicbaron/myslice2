@@ -1,9 +1,10 @@
 import React from 'react';
 import Select from 'react-select';
-import store from '../stores/AuthoritiesStore';
-import actions from '../actions/AuthoritiesActions';
 
-export default class AuthoritiesSelect extends React.Component {
+import store from '../../stores/forms/SelectAuthority';
+import actions from '../../actions/forms/SelectAuthority';
+
+class SelectAuthority extends React.Component {
 
     constructor(props) {
         super(props);
@@ -31,9 +32,9 @@ export default class AuthoritiesSelect extends React.Component {
 
     setValue(value) {
 		this.setState({ value });
-        if(value){
+        if (value) {
             this.props.handleChange(value.value);
-        }else{
+        } else {
             this.props.handleChange(null);
         }
 	}
@@ -74,19 +75,23 @@ export default class AuthoritiesSelect extends React.Component {
 	}
 
     render() {
-        if(this.props.selected){
+        var placeholder = this.props.placeholder || "Select Organization";
+        var options = this.getOptions();
+
+        if (this.props.selected) {
             this.state.value = this.props.selected;
         }
-        let options = this.getOptions();
 
         return <Select
-            name="form-field-name"
-            placeholder="Select your Organization"
-            value={this.state.value}
-            valueRenderer={this.renderValue}
-            options={options}
-            optionRenderer={this.renderOption}
-            onChange={this.setValue}
-        />
+                    name="authority"
+                    placeholder={placeholder}
+                    value={this.state.value}
+                    valueRenderer={this.renderValue}
+                    options={options}
+                    optionRenderer={this.renderOption}
+                    onChange={this.setValue}
+                />
     }
 }
+
+export default SelectAuthority;

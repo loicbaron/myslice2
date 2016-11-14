@@ -1,5 +1,5 @@
 import axios from 'axios';
-import actions from '../actions/AuthoritiesActions';
+import actions from '../../actions/forms/SelectAuthority';
 
 const AuthoritiesSource = () => {
     return {
