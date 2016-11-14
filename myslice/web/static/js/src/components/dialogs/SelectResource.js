@@ -7,7 +7,6 @@ import { DialogPanel, Dialog, DialogBody, DialogHeader, DialogFooter } from '../
 import Title from '../base/Title';
 import Text from '../base/Text';
 import DateTime from '../base/DateTime';
-import List from '../base/List';
 import Button from '../base/Button';
 import InputText from '../InputText'
 import { ResourceList } from '../objects/Resource';
@@ -236,7 +235,7 @@ class SelectResourceDialog extends React.Component {
                         </button>
                         <ResourceList resources={this.state.resources}
                                       selected={this.state.selected}
-                                      handleSelect={(element) => this.selectResource(element)} />
+                                      handleSelect={this.selectResource} />
                     </DialogBody>
                     <DialogFooter>
                         {this.renderSelectedStatus()}
