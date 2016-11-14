@@ -103,6 +103,34 @@ const DialogHeader = ({children}) => {
 
 };
 
+const DialogBar = ({children}) => {
+    var num = React.Children.count(children);
+    if (num == 2) {
+        return (
+            <div className="d-bar">
+                <div className="row">
+                    <div className="col-sm-6">
+                        {children[0]}
+                    </div>
+                    <div className="col-sm-6">
+                        {children.slice(1)}
+                    </div>
+                </div>
+            </div>
+        );
+    } else {
+        return (
+            <div className="d-bar">
+                <div className="row">
+                    <div className="col-sm-12">
+                        {children}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+};
+
 const DialogBody = ({children}) =>
             <div className="d-body">
                 { children }
@@ -122,4 +150,4 @@ const DialogFooter = ({children}) => {
 
 };
 
-export { DialogPanel, Dialog, DialogBody, DialogFooter, DialogHeader };
+export { DialogPanel, Dialog, DialogBar, DialogBody, DialogFooter, DialogHeader };
