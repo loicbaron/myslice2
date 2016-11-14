@@ -11,7 +11,7 @@ import Button from './base/Button';
 import UsersInfo from './UsersInfo';
 import { UserList } from './objects/User';
 
-import AuthoritiesSelect from './AuthoritiesSelect';
+import AuthoritiesSelect from './forms/SelectAuthority';
 
 class UsersView extends React.Component {
 
