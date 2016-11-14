@@ -12,6 +12,7 @@ class SelectResourceDialog {
         this.all_resources = [];
         // the list of selected resources
         this.selected = [];
+        this.selectedIdList= [];
         // The type of the nodes
         this.type ='';
         this.time ='';
@@ -26,6 +27,7 @@ class SelectResourceDialog {
         this.filterResource = this.filterResource.bind(this);
 
         this.errorMessage = null;
+        this.message== {};
 
         this.bindListeners({
             updateTestbed: actions.UPDATE_TESTBED,
@@ -98,6 +100,15 @@ class SelectResourceDialog {
         this.selected.find((el) => {
             return (el.id === resource.id);
         });
+    }
+    SuccessReservation(response) {
+        this.message['type'] = "success";
+        this.message['msg'] = "Lease has been created.";
+    }
+
+    ErrorReservation(response) {
+        this.message['type'] = "error";
+        this.message['msg'] = response.data.error;
     }
 
     selectResource(resource) {

@@ -106,23 +106,42 @@ class SelectResourceDialog extends React.Component {
     }
 
     //Reserve Resources
+
     applyChanges() {
-  // calculate the end date needed for the POST /lease
+  // Data needed for POST /lease
 
-        //to have the duration on seconds
-        //var nu=this.state.duration.split(" ");
-          // console.log(nu[0]*60);
+        //Convert the duration on seconds
+        var nu=this.state.duration.split(" ");
+        this.state.duration= nu[0]*60;
+        console.log(this.state.duration);
+        var flag = false;
+        var msg = '';
+        if(!this.state.duration){
+            msg += ' Duration is required \n';
+            flag = true;
+        }
+        if(flag){
+            alert(msg);
+            return;
+        }
+
+
+
         //Convert the start date on timestamp
-
         var datum = Date.parse(this.state.start_date);
         var timeStamp = datum/1000;
-        //alert(this.state.start_date)​
-
         this.state.start_date= timeStamp;
-        console.log(this.state.start_date);
-        actions.submitReservation;
 
-        //console.log(this.state.time);
+
+        // Gather the Selected Resources
+        //var selectedIdList = [];
+        this.state.selected.map(function(res) {
+            this.state.selectedIdList.push(res.id);}.bind(this));
+        console.log(this.state.selectedIdList);
+
+
+        actions.submitReservation();
+
 
 
 
@@ -132,7 +151,9 @@ class SelectResourceDialog extends React.Component {
         if (this.state.selected.length > 0) {
             return <div>
                 You have selected <a>{this.state.selected.length} resource{this.state.selected.length > 1 ? "s":"" }</a>
-            </div>;
+             </div>;
+
+
         }
     }
 
@@ -161,7 +182,7 @@ class SelectResourceDialog extends React.Component {
                 reservation =
 
                     <div className="p-view-body">
-                        <p><img className="img" src="/static/images/iot.png" alt="FIT IoT Lab" /></p>
+                        <center><img className="img" src="/static/images/iot.png" alt="FIT IoT Lab" /></center>
                             <div className="container-fluid">
 
                                 <div className="row">
@@ -182,6 +203,10 @@ class SelectResourceDialog extends React.Component {
                                                               <option value="8 h">8 h</option>
                                                               <option value="24 h">24 h</option>
                                                           </select>
+                                                <br/>
+                                            <button className="apply" onClick={this.applyChanges.bind(this)} >
+                                                Submit
+                                                </button>
                                                 <br/>
                                             <form className="experimentForm" onSubmit={this.handleSubmit} >
                                                 Choose your nodes :
@@ -206,6 +231,7 @@ class SelectResourceDialog extends React.Component {
 
                                                 </div>
                                                 <br/>
+
                                                 Choose the type (M3, A8, WSN340)? <input type ="text" value={this.state.type} onChange={this.handleChangeType} placeholder="type" /><br/>
                                                 Site : <select  value={this.state.value} onChange={this.handleChange} >
                                                             {optionLocation}
@@ -226,16 +252,19 @@ class SelectResourceDialog extends React.Component {
                     <DialogHeader>
                         <Title title={this.props.testbed.name} />
                     </DialogHeader>
-                    <div>{reservation}</div>
+                    <div>{reservation}
+
+                    </div>
                     <DialogBody>
 
-                        <InputText name="filter" handleChange={this.handleFilter} placeholder="Filter" />
-                        <button className="apply" onClick={this.applyChanges.bind(this)} >
-                            Apply
-                        </button>
+                        <InputText name="filter" handleChange={this.handleFilter} placeholder="Filter by" />
+
                         <ResourceList resources={this.state.resources}
                                       selected={this.state.selected}
-                                      handleSelect={this.selectResource} />
+
+                                      handleSelect={this.selectResource}
+                        />
+
                     </DialogBody>
                     <DialogFooter>
                         {this.renderSelectedStatus()}

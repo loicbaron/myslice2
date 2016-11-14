@@ -34,7 +34,8 @@ const SelectResourceDialog = () => {
                         "testbed":state.testbed.id,
                         "slice_id": props.slice.id,
                         "start_time" : state.start_date,
-                        " duration" : state.duration
+                        " duration" : state.duration,
+                        "resources" :state.selectedIdList
                     });
             },
 
