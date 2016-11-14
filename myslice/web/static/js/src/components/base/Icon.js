@@ -45,6 +45,9 @@ const Icon = ({name, size}) => {
         case 'slice':
             iconClass += 'tasks';
             break;
+        case 'lease':
+            iconClass += 'calendar';
+            break;
         case 'resource':
             iconClass += 'server';
             break;
