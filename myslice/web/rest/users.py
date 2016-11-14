@@ -119,10 +119,10 @@ class UsersHandler(Api):
             - GET /users/<id>
                 (auth) User with <id>
 
-            - GET /users/(projects|slices)
-                (auth) Projects/Slices list of the authenticated user
+            - GET /users/(projects|slices|authorities)
+                (auth) Projects/Slices/Authorities list of the authenticated user
 
-            - GET /users/<id>/(projects|slices)
+            - GET /users/<id>/(projects|slices|authorities)
                 (auth) Projects/Slices list of the user with <id>
 
             :return:
@@ -200,7 +200,6 @@ class UsersHandler(Api):
                 response.append(user)
 
         # GET /users/[<id>/]projects
-        # GET /users/projects
         elif o == 'projects':
             if not id or not self.isUrn(id):
                 try:
@@ -251,8 +250,8 @@ class UsersHandler(Api):
                 item = yield cursor.next()
                 response.append(item)
 
-        # GET /users/authorities
-        elif not id and o == 'authorities':
+        # GET /users/[<id>/]authorities
+        elif o == 'authorities':
             if not id or not self.isUrn(id):
                 try:
                     id = current_user['id']
@@ -271,7 +270,6 @@ class UsersHandler(Api):
             while (yield cursor.fetch_next()):
                 authority = yield cursor.next()
                 response.append(authority)
-
 
         else:
             self.userError("invalid request")
