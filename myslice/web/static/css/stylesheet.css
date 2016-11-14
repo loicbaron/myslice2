@@ -89,9 +89,8 @@ input[type=text],
 input[type=password],
 input[type=email] {
     font-size:11pt;
-    padding:8px 12px;
-    border-color: #d9d9d9 #ccc #b3b3b3;
-    border-radius: 4px;
+    font-weight:100;
+    padding:6px 10px;
     border: 1px solid #ccc;
     color: #333;
     background-color:white;
@@ -423,16 +422,18 @@ div.registrationForm {
 }
 .dialog .d-panel .d-header {
 }
+.dialog .d-panel .d-bar {
+    padding:15px  0;
+    height:10vh;
+}
 .dialog .d-panel .d-body {
-    //position:absolute;
-    left:50px;
-    right:50px;
-    height:80vh;
+    height:70vh;
     overflow-y: auto;
 }
 .dialog .d-panel .d-footer {
     text-align:center;
-    padding:25px  0;
+    padding:15px  0;
+    height:10vh;
 }
 .dialog .d-panel .d-footer button {
     margin:0 25px;
