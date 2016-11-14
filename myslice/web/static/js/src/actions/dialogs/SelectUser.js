@@ -4,18 +4,18 @@ class SelectUserDialog {
 
     constructor() {
         this.generateActions(
-            'fetchUsers',
-            'fetchResources',
-            'updateResources',
-            'errorResources',
-            'updateStartDate',
-            'updateType',
-            'selectResource',
+            'updateUsers',
+            'updateUserElement',
+
             'updateFilter',
-            'updateTime',
-            'submitReservation',
-            'successReservation',
-            'errorreservation'
+            'updateFilteredUsers',
+
+            'fetchUsers',
+
+            'fetchFromUserAuthority',
+            'fetchFromAuthority',
+            'updateAuthority',
+            'errorUsers'
         );
     }
 

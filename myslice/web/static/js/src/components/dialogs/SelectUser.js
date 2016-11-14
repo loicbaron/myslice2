@@ -1,11 +1,13 @@
 import React from 'react';
 
-import actions from '../../actions/UsersActions';
-import store from '../../stores/UsersStore';
+import actions from '../../actions/dialogs/SelectUser';
+import store from '../../stores/dialogs/SelectUser';
 
-import { DialogPanel, Dialog, DialogBody, DialogHeader, DialogFooter } from '../base/Dialog';
+import { DialogPanel, Dialog, DialogBody, DialogHeader, DialogBar, DialogFooter } from '../base/Dialog';
 import Title from '../base/Title';
 import { UserList } from '../objects/User';
+
+import SelectAuthority from '../forms/SelectAuthority';
 import UsersFilter from '../UsersFilter';
 
 class SelectUserDialog extends React.Component {
@@ -19,10 +21,12 @@ class SelectUserDialog extends React.Component {
 
     componentDidMount() {
         store.listen(this.onChange);
+
         this.fetchUsers();
-        if(this.props.exclude.length>0){
-            actions.updateExcludeUsers(this.props.exclude);
-        }
+
+        // if (this.props.exclude.length > 0) {
+        //     actions.updateExcludeUsers(this.props.exclude);
+        // }
     }
 
     componentWillUnmount() {
@@ -48,12 +52,20 @@ class SelectUserDialog extends React.Component {
         }
     }
 
+    cancel() {
+
+    }
+
+    apply() {
+
+    }
+
     render() {
-        if(Object.keys(this.state.filter).length>0){
-            var usersList = <UserList users={this.state.filteredUsers} addUser={this.props.addUser} />
-        }else{
-            var usersList = <UserList users={this.state.users} addUser={this.props.addUser} />
-        }
+        // if (Object.keys(this.state.filter).length>0){
+        //     var usersList = <UserList users={this.state.filteredUsers} addUser={this.props.addUser} />
+        // } else {
+        //     var usersList = <UserList users={this.state.users} />
+        // }
 
         return (
             <Dialog close={this.props.close}>
@@ -61,10 +73,21 @@ class SelectUserDialog extends React.Component {
                     <DialogHeader>
                         <Title title="Add Users" />
                     </DialogHeader>
-                    <DialogBody>
+                    <DialogBar>
+                        <SelectAuthority placeholder="Filter by Organization" value={this.state.authority.id} handleChange="" />
                         <UsersFilter handleChange={this.handleFilter} users={this.state.users} />
-                        {usersList}
+                    </DialogBar>
+                    <DialogBody>
+                        <UserList users={this.state.users} />
                     </DialogBody>
+                    <DialogFooter>
+                        <button className="cancel" onClick={this.cancel} >
+                            Cancel
+                        </button>
+                        <button className="apply" onClick={this.apply} >
+                            Apply
+                        </button>
+                    </DialogFooter>
                 </DialogPanel>
             </Dialog>
         );

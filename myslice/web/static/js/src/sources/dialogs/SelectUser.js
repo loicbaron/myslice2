@@ -1,10 +1,11 @@
 import axios from 'axios';
-import actions from '../actions/UsersActions';
+import actions from '../../actions/dialogs/SelectUser';
 
-const UsersSource = () => {
+const SelectUserSource = () => {
     return {
-        fetch: {
+        fetchUsers: {
             remote(state) {
+
                 return axios.get('/api/v1/users');
             },
 
@@ -53,5 +54,5 @@ const UsersSource = () => {
     }
 };
 
-export default UsersSource;
+export default SelectUserSource;
 

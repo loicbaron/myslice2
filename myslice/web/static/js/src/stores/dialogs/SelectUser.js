@@ -1,20 +1,23 @@
-import alt from '../alt';
-import actions from '../actions/UsersActions';
-import source from '../sources/UsersSource';
+import alt from '../../alt';
+import actions from '../../actions/dialogs/SelectUser';
+import source from '../../sources/dialogs/SelectUser';
 
 class SelectUserDialog {
 
     constructor() {
 
-        /*
-            User List as retrieved from the API
-         */
+        // User List as retrieved from the API
         this.users = [];
 
-        /*
-            The actual list of users displayed
-         */
-        this.filteredUsers = [];
+        // Filtered users
+        this.filtered = [];
+
+        // Selected users
+        this.selected = [];
+
+        this.authority = {
+            id: null
+        };
 
         this.filter = {};
 
@@ -26,7 +29,9 @@ class SelectUserDialog {
 
             updateFilter: actions.UPDATE_FILTER,
             updateFilteredUsers: actions.UPDATE_FILTERED_USERS,
+
             fetchUsers: actions.FETCH_USERS,
+
             fetchFromUserAuthority: actions.FETCH_FROM_USER_AUTHORITY,
             fetchFromAuthority: actions.FETCH_FROM_AUTHORITY,
             updateAuthority: actions.UPDATE_AUTHORITY,
@@ -40,8 +45,10 @@ class SelectUserDialog {
     fetchUsers(filter) {
         this.filter = filter;
 
+        this.users = [];
+
         if (!this.getInstance().isLoading()) {
-            this.getInstance().fetch();
+            this.getInstance().fetchUsers();
         }
     }
 
@@ -77,6 +84,7 @@ class SelectUserDialog {
     }
 
     updateUsers(users) {
+        /*
         var exUsers = this.excludeUsers;
         var excludeU = function(el){
             for (var i=0; i<exUsers.length; i++) {
@@ -88,7 +96,7 @@ class SelectUserDialog {
             return true;
         };
 
-        if(Object.keys(this.filter).length>0){
+        if (Object.keys(this.filter).length>0) {
             if (users.hasOwnProperty('data')) {
                 this.filteredUsers = users.data.result;
             } else {
@@ -100,12 +108,14 @@ class SelectUserDialog {
                 });
             }
 
-        }else{
+        } else {
+        */
             if (users.hasOwnProperty('data')) {
                 this.users = users.data.result;
             } else {
                 this.users = users;
             }
+            /*
             if(exUsers.length>0){
                 this.users = this.users.filter(function(el){
                     return excludeU(el);
@@ -113,6 +123,7 @@ class SelectUserDialog {
             }
 
         }
+        */
     }
 
     updateFilter(filter) {
