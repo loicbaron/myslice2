@@ -65,13 +65,11 @@ class SliceElement extends React.Component {
 
 SliceElement.propTypes = {
     slice: React.PropTypes.object.isRequired,
-    removeSlice: React.PropTypes.bool,
     select: React.PropTypes.bool
 };
 
 SliceElement.defaultProps = {
     select: false,
-    removeSlice: false,
 };
 
 
