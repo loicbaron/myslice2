@@ -15,7 +15,7 @@ class SelectResourceDialog {
             'updateTime',
             'submitReservation',
             'successReservation',
-            'errorreservation'
+            'errorReservation'
         );
     }
 
