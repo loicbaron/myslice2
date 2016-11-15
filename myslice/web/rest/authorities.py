@@ -76,6 +76,28 @@ class AuthoritiesHandler(Api):
             cursor = yield r.table(o) \
                             .pluck(self.fields[o]) \
                             .filter({"authority": current_user['authority']}) \
+                            .merge(lambda user: {
+                                'authority': r.table('authorities').get(user['authority']) \
+                                       .pluck(self.fields_short['authorities']) \
+                                       .default({'id': user['authority']})
+                            }) \
+                            .merge(lambda user: {
+                                'pi_authorities': r.table('authorities').get_all(r.args(user['pi_authorities'])) \
+                                       .pluck(self.fields_short['authorities']) \
+                                       .coerce_to('array')
+                            }) \
+                                .merge(lambda user: {
+                                'projects': r.table('projects') \
+                                       .get_all(r.args(user['projects'])) \
+                                       .pluck(self.fields_short['projects']) \
+                                       .coerce_to('array')
+                            }) \
+                                .merge(lambda user: {
+                                'slices': r.table('slices') \
+                                       .get_all(r.args(user['slices'])) \
+                                       .pluck(self.fields_short['slices']) \
+                                       .coerce_to('array')
+                            }) \
                             .run(self.dbconnection)
             while (yield cursor.fetch_next()):
                 item = yield cursor.next()
@@ -91,8 +113,8 @@ class AuthoritiesHandler(Api):
                             .filter({"authority": id}) \
                             .merge(lambda user: {
                                 'authority': r.table('authorities').get(user['authority']) \
-                                                                    .pluck(self.fields_short['authorities']) \
-                                                                    .default({'id' : user['authority']})
+                                                            .pluck(self.fields_short['authorities']) \
+                                                            .default({'id' : user['authority']})
                             }) \
                             .merge(lambda user: {
                             'pi_authorities': r.table('authorities').get_all(r.args(user['pi_authorities'])) \
