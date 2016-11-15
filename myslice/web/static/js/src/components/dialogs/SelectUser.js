@@ -107,9 +107,11 @@ class SelectUserDialog extends React.Component {
         // } else {
         //     var usersList = <UserList users={this.state.users} />
         // }
-        var users = this.state.users;
+        var users = [];
         if (this.state.show_selected) {
             users = this.state.selected;
+        } else {
+            users = this.state.users;
         }
 
         return (
