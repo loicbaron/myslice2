@@ -138,15 +138,31 @@ const DialogBody = ({children}) =>
 
 const DialogFooter = ({children}) => {
 
-    return (
-        <div className="d-footer">
-            <div className="row">
-                <div className="col-sm-12">
-                    {children}
+    var num = React.Children.count(children);
+    if (num >= 2) {
+        return (
+            <div className="d-footer">
+                <div className="row">
+                    <div className="col-sm-6">
+                        {children[0]}
+                    </div>
+                    <div className="col-sm-6 d-footer-right">
+                        {children.slice(1)}
+                    </div>
                 </div>
             </div>
-        </div>
-    );
+        );
+    } else {
+        return (
+            <div className="d-footer">
+                <div className="row">
+                    <div className="col-sm-12">
+                        {children}
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
 };
 
