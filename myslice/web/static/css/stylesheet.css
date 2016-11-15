@@ -438,6 +438,18 @@ div.registrationForm {
 .dialog .d-panel .d-footer button {
     margin:0 25px;
 }
+.dialog .d-selected {
+    padding:5px 0;
+    text-align:center;
+}
+.dialog .d-selected span {
+    font-weight:700;
+}
+.dialog .d-selected a {
+    font-weight:700;
+    text-decoration:underline;
+    cursor:pointer;
+}
 /*
     Sections
 */
@@ -487,7 +499,7 @@ div.registrationForm {
 .elementList {
     list-style:none;
     margin:0;
-    padding:5px 4px 2px 20px;
+    padding:5px 1px 2px 19px;
 }
 .elementListSimple {
     list-style:none;
@@ -608,7 +620,7 @@ div.registrationForm {
 }
 .elementDetail {
     font-size:10pt;
-    padding:15px 0;
+    padding:15px 0 0 0;
 }
 .elementDate {
     font-size:9pt;
