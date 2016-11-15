@@ -4,14 +4,17 @@ class SelectUserDialog {
 
     constructor() {
         this.generateActions(
+            'fetchUsers',
             'updateUsers',
-            'updateUserElement',
+            'selectUser',
+            'filterAuthority',
+
+            'showSelected',
+            'showAll',
 
             'updateFilter',
             'updateFilteredUsers',
-
-            'fetchUsers',
-
+            'updateUserElement',
             'fetchFromUserAuthority',
             'fetchFromAuthority',
             'updateAuthority',

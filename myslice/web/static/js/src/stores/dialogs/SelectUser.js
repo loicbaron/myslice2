@@ -15,22 +15,33 @@ class SelectUserDialog {
         // Selected users
         this.selected = [];
 
-        this.authority = {
-            id: null
-        };
+        // Current Authority ID
+        this.authority = null;
 
-        this.filter = {};
+        // if true shows selected
+        this.show_selected = false;
 
         this.errorMessage = null;
 
         this.bindListeners({
-            updateUserElement: actions.UPDATE_USER_ELEMENT,
+            fetchUsers: actions.FETCH_USERS,
             updateUsers: actions.UPDATE_USERS,
+            selectUser: actions.SELECT_USER,
+            filterAuthority: actions.FILTER_AUTHORITY,
+
+            showSelected: actions.SHOW_SELECTED,
+            showAll: actions.SHOW_ALL,
+
+
+            updateUserElement: actions.UPDATE_USER_ELEMENT,
+
+
+
 
             updateFilter: actions.UPDATE_FILTER,
             updateFilteredUsers: actions.UPDATE_FILTERED_USERS,
 
-            fetchUsers: actions.FETCH_USERS,
+
 
             fetchFromUserAuthority: actions.FETCH_FROM_USER_AUTHORITY,
             fetchFromAuthority: actions.FETCH_FROM_AUTHORITY,
@@ -42,45 +53,13 @@ class SelectUserDialog {
         this.registerAsync(source);
     }
 
-    fetchUsers(filter) {
-        this.filter = filter;
+    fetchUsers() {
 
         this.users = [];
 
         if (!this.getInstance().isLoading()) {
             this.getInstance().fetchUsers();
         }
-    }
-
-    fetchFromUserAuthority(filter) {
-        this.filter = filter;
-
-        if (!this.getInstance().isLoading()) {
-            this.getInstance().fetchFromUserAuthority();
-        }
-    }
-
-    fetchFromAuthority() {
-        if (!this.getInstance().isLoading()) {
-            this.getInstance().fetchFromAuthority();
-        }
-    }
-
-    updateAuthority(authority) {
-        this.authority = authority;
-    }
-
-    updateUserElement(user) {
-        let index = this.users.findIndex(function(userElement) {
-            return (userElement.id === user.id);
-        });
-        if (index !== -1) {
-            this.users[index] = user;
-        } else {
-            this.users.unshift(user);
-        }
-
-        this.errorMessage = null;
     }
 
     updateUsers(users) {
@@ -125,6 +104,70 @@ class SelectUserDialog {
         }
         */
     }
+
+    filterAuthority(authority) {
+        this.authority = authority;
+        this.fetchUsers();
+    }
+
+    selectUser(user) {
+        let userId = this.selected.some(function(el) {
+            return el.id === user.id;
+        });
+
+        if (!userId) {
+            this.selected.push(user);
+        } else {
+            this.selected = this.selected.filter(function(el) {
+                return el.id !== user.id;
+            });
+        }
+
+        if (this.selected.length == 0) {
+            this.showAll();
+        }
+    }
+
+    showSelected() {
+        this.show_selected = true;
+    }
+
+    showAll() {
+        this.show_selected = false;
+    }
+
+    fetchFromUserAuthority(filter) {
+        this.filter = filter;
+
+        if (!this.getInstance().isLoading()) {
+            this.getInstance().fetchFromUserAuthority();
+        }
+    }
+
+    fetchFromAuthority() {
+        if (!this.getInstance().isLoading()) {
+            this.getInstance().fetchFromAuthority();
+        }
+    }
+
+    updateAuthority(authority) {
+        this.authority = authority;
+    }
+
+    updateUserElement(user) {
+        let index = this.users.findIndex(function(userElement) {
+            return (userElement.id === user.id);
+        });
+        if (index !== -1) {
+            this.users[index] = user;
+        } else {
+            this.users.unshift(user);
+        }
+
+        this.errorMessage = null;
+    }
+
+
 
     updateFilter(filter) {
         this.filter = filter;

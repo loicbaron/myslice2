@@ -16,6 +16,7 @@ class SelectUserDialog extends React.Component {
         super(props);
         this.state = store.getState();
         this.onChange = this.onChange.bind(this);
+        this.showSelected = this.showSelected.bind(this);
         this.handleFilter = this.handleFilter.bind(this);
     }
 
@@ -36,6 +37,46 @@ class SelectUserDialog extends React.Component {
     onChange(state) {
         this.setState(state);
     }
+
+    filterAuthority(authority) {
+        actions.filterAuthority(authority);
+    }
+
+    selectUser(user) {
+        actions.selectUser(user);
+    }
+
+    showSelected() {
+        actions.showSelected();
+    }
+
+    showAll() {
+        actions.showAll();
+    }
+
+    renderSelectedStatus() {
+        if (this.state.selected.length > 0) {
+
+            if (this.state.show_selected) {
+                return <div className="d-selected">
+                    You have selected <span>{this.state.selected.length + " user" + (this.state.selected.length > 1 ? "s" : "")}</span>
+                    &nbsp;(<a onClick={this.showAll}>Show all users</a>)
+                </div>;
+            } else {
+                return <div className="d-selected">
+                    You have selected <a onClick={this.showSelected}>{this.state.selected.length + " user" + (this.state.selected.length > 1 ? "s" : "")}</a>
+                </div>;
+            }
+
+        } else {
+
+            return <div className="d-selected">Select users</div>;
+
+        }
+    }
+
+
+
     handleFilter(value) {
         var f = {'email':value,'shortname':value}
         actions.updateFilter(f);
@@ -66,6 +107,10 @@ class SelectUserDialog extends React.Component {
         // } else {
         //     var usersList = <UserList users={this.state.users} />
         // }
+        var users = this.state.users;
+        if (this.state.show_selected) {
+            users = this.state.selected;
+        }
 
         return (
             <Dialog close={this.props.close}>
@@ -74,19 +119,27 @@ class SelectUserDialog extends React.Component {
                         <Title title="Add Users" />
                     </DialogHeader>
                     <DialogBar>
-                        <SelectAuthority placeholder="Filter by Organization" value={this.state.authority.id} handleChange="" />
+                        <SelectAuthority placeholder="Filter by Organization"
+                                         value={this.state.authority}
+                                         handleChange={this.filterAuthority} />
                         <UsersFilter handleChange={this.handleFilter} users={this.state.users} />
                     </DialogBar>
                     <DialogBody>
-                        <UserList users={this.state.users} />
+                        <UserList users={users}
+                                  selected={this.state.selected}
+                                  handleSelect={this.selectUser}
+                        />
                     </DialogBody>
                     <DialogFooter>
-                        <button className="cancel" onClick={this.cancel} >
-                            Cancel
-                        </button>
-                        <button className="apply" onClick={this.apply} >
-                            Apply
-                        </button>
+                        {this.renderSelectedStatus()}
+                        <div>
+                            <button className="cancel" onClick={this.cancel} >
+                                Cancel
+                            </button>
+                            <button className="apply" onClick={this.apply} >
+                                Apply
+                            </button>
+                        </div>
                     </DialogFooter>
                 </DialogPanel>
             </Dialog>
@@ -96,12 +149,10 @@ class SelectUserDialog extends React.Component {
 
 SelectUserDialog.propTypes = {
     close: React.PropTypes.func,
-    addUser: React.PropTypes.bool,
 };
 
 SelectUserDialog.defaultProps = {
     close: null,
-    addUser: false,
 };
 
 export default SelectUserDialog;
