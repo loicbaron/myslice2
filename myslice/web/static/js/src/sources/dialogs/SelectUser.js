@@ -30,30 +30,6 @@ const SelectUserSource = () => {
             }
         },
 
-        fetchFromUserAuthority: {
-            remote(state) {
-                return axios.get('/api/v1/authorities/users');
-            },
-            success: actions.updateUsers, // (required)
-            error: actions.errorUsers, // (required)
-
-            shouldFetch(state) {
-                return true
-            }
-        },
-
-        fetchFromAuthority: {
-            remote(state) {
-                return axios.get('/api/v1/authorities/'+state.authority+'/users');
-            },
-            success: actions.updateUsers, // (required)
-            error: actions.errorUsers, // (required)
-
-            shouldFetch(state) {
-                return true
-            }
-        },
-
     }
 };
 

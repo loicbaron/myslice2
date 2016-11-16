@@ -8,7 +8,6 @@ import Title from '../base/Title';
 import { UserList } from '../objects/User';
 
 import SelectAuthority from '../forms/SelectAuthority';
-import UsersFilter from '../UsersFilter';
 
 class SelectUserDialog extends React.Component {
 
@@ -17,17 +16,12 @@ class SelectUserDialog extends React.Component {
         this.state = store.getState();
         this.onChange = this.onChange.bind(this);
         this.showSelected = this.showSelected.bind(this);
-        this.handleFilter = this.handleFilter.bind(this);
+        this.cancel = this.cancel.bind(this);
     }
 
     componentDidMount() {
         store.listen(this.onChange);
-
-        this.fetchUsers();
-
-        // if (this.props.exclude.length > 0) {
-        //     actions.updateExcludeUsers(this.props.exclude);
-        // }
+        actions.fetchUsers();
     }
 
     componentWillUnmount() {
@@ -42,8 +36,16 @@ class SelectUserDialog extends React.Component {
         actions.filterAuthority(authority);
     }
 
+    filterUser(event) {
+        actions.filterUser(event.target.value);
+    }
+
     selectUser(user) {
         actions.selectUser(user);
+    }
+
+    clearSelection() {
+        actions.clearSelection();
     }
 
     showSelected() {
@@ -56,45 +58,24 @@ class SelectUserDialog extends React.Component {
 
     renderSelectedStatus() {
         if (this.state.selected.length > 0) {
-
             if (this.state.show_selected) {
                 return <div className="d-selected">
                     You have selected <span>{this.state.selected.length + " user" + (this.state.selected.length > 1 ? "s" : "")}</span>
-                    &nbsp;(<a onClick={this.showAll}>Show all users</a>)
+                    &nbsp;(<a onClick={this.showAll}>Show all users</a> | <a onClick={this.clearSelection}>Clear</a>)
                 </div>;
             } else {
                 return <div className="d-selected">
                     You have selected <a onClick={this.showSelected}>{this.state.selected.length + " user" + (this.state.selected.length > 1 ? "s" : "")}</a>
                 </div>;
             }
-
         } else {
-
             return <div className="d-selected">Select users</div>;
-
-        }
-    }
-
-
-
-    handleFilter(value) {
-        var f = {'email':value,'shortname':value}
-        actions.updateFilter(f);
-        actions.updateFilteredUsers();
-    }
-    /* fetch the users list */
-    fetchUsers(filter={}) {
-        switch (this.props.from){
-            case 'authority':
-                actions.fetchFromAuthority(filter);
-                break;
-            default:
-                actions.fetchUsers(filter);
         }
     }
 
     cancel() {
-
+        this.clearSelection();
+        this.props.close();
     }
 
     apply() {
@@ -102,20 +83,17 @@ class SelectUserDialog extends React.Component {
     }
 
     render() {
-        // if (Object.keys(this.state.filter).length>0){
-        //     var usersList = <UserList users={this.state.filteredUsers} addUser={this.props.addUser} />
-        // } else {
-        //     var usersList = <UserList users={this.state.users} />
-        // }
         var users = [];
         if (this.state.show_selected) {
             users = this.state.selected;
+        } else if (this.state.filtered.length > 0) {
+            users = this.state.filtered;
         } else {
             users = this.state.users;
         }
 
         return (
-            <Dialog close={this.props.close}>
+            <Dialog close={this.cancel}>
                 <DialogPanel>
                     <DialogHeader>
                         <Title title="Add Users" />
@@ -124,7 +102,11 @@ class SelectUserDialog extends React.Component {
                         <SelectAuthority placeholder="Filter by Organization"
                                          value={this.state.authority}
                                          handleChange={this.filterAuthority} />
-                        <UsersFilter handleChange={this.handleFilter} users={this.state.users} />
+                        <input
+                            type="text"
+                            onChange={this.filterUser}
+                            placeholder="Filter by name or email"
+                        />
                     </DialogBar>
                     <DialogBody>
                         <UserList users={users}
