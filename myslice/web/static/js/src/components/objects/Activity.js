@@ -121,6 +121,7 @@ class ActivityFilter extends React.Component {
             { value: 'project', label: 'Project', name: 'object' },
             { value: 'slice', label: 'Slice', name: 'object' },
             { value: 'resource', label: 'Resource', name: 'object' },
+            { value: 'lease', label: 'Lease', name: 'object' },
 
             { value: 'create', label: 'Create', name: 'action' },
             { value: 'update', label: 'Update', name: 'action' },
