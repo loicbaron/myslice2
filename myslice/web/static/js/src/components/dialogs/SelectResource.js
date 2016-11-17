@@ -111,7 +111,8 @@ class SelectResourceDialog extends React.Component {
   // Data needed for POST /lease
 
         //Convert the duration on seconds
-        var nu=this.state.duration.split(" ");
+        var time=this.state.duration;
+        var nu=time.split(' ');
         this.state.duration= nu[0]*60;
         console.log(this.state.duration);
         var flag = false;
@@ -189,30 +190,19 @@ class SelectResourceDialog extends React.Component {
                                     <div className="col-md-12">
                                         <div id="resourceReservation-form">
 
-                                                Configure your experiment :<br/>
-                                                Start date: <input type="date" placeholder="yyyy-mm-dd " value={this.state.start_date} onChange={this.handleStartDateChange.bind(this)} />
-                                                Time:  <input type="time" placeholder="hh:mm" value={this.state.time} onChange={this.handleTimeChange.bind(this)}/>
-                                                <br/>
-                                                Duration:<select value={this.state.duration} onChange={this.handleChangeDuration.bind(this)}>
-                                                              <option value="10 min">10 min</option>
-                                                              <option value="15 min">15 min </option>
-                                                              <option value="30 min ">30 min</option>
-                                                              <option value="1 h">1 h</option>
-                                                              <option value="2 h">2 h</option>
-                                                              <option value="4 h">4 h</option>
-                                                              <option value="8 h">8 h</option>
-                                                              <option value="24 h">24 h</option>
-                                                          </select>
-                                                <br/>
-                                            <button className="apply" onClick={this.applyChanges.bind(this)} >
-                                                Submit
-                                                </button>
-                                                <br/>
+
                                             <form className="experimentForm" onSubmit={this.handleSubmit} >
-                                                Choose your nodes :
+                                                Choose and select your nodes :
                                                 <br/>
+                                                 Site : <select  value={this.state.value} onChange={this.handleChange} >
+                                                            {optionLocation}
+                                                       </select>
+                                                <br/>
+
+                                                Choose the type (M3, A8, WSN340)? <input type ="text" value={this.state.type} onChange={this.handleChangeType} placeholder="choose the type and press enter" /><br/>
+
                                                 <div className="container">
-                                                Type : <ul className="nav nav-pills "  >
+                                                       <ul className="nav nav-pills "  >
                                                             <li className="active"><a data-toggle="pill" href="#home">A8 Node</a></li>
                                                             <li><a data-toggle="pill" href="#menu1">M3 Node</a></li>
                                                             <li><a data-toggle="pill" href="#menu2">WSN430 Node</a></li>
@@ -232,13 +222,26 @@ class SelectResourceDialog extends React.Component {
                                                 </div>
                                                 <br/>
 
-                                                Choose the type (M3, A8, WSN340)? <input type ="text" value={this.state.type} onChange={this.handleChangeType} placeholder="type" /><br/>
-                                                Site : <select  value={this.state.value} onChange={this.handleChange} >
-                                                            {optionLocation}
-                                                       </select>
-
                                             </form>
-
+                                        Now, configure your experiment :<br/>
+                                                Start date: <input type="date" placeholder="yyyy-mm-dd " value={this.state.start_date} onChange={this.handleStartDateChange.bind(this)} />
+                                                Time:  <input type="time" placeholder="hh:mm" value={this.state.time} onChange={this.handleTimeChange.bind(this)}/>
+                                                <br/>
+                                                Duration:<select value={this.state.duration} onChange={this.handleChangeDuration.bind(this)}>
+                                                              <option value="10 min">10 min</option>
+                                                              <option value="15 min">15 min </option>
+                                                              <option value="30 min ">30 min</option>
+                                                              <option value="1 h">1 h</option>
+                                                              <option value="2 h">2 h</option>
+                                                              <option value="4 h">4 h</option>
+                                                              <option value="8 h">8 h</option>
+                                                              <option value="24 h">24 h</option>
+                                                          </select>
+                                                <br/>
+                                            <button className="apply" onClick={this.applyChanges.bind(this)} >
+                                                Submit
+                                                </button>
+                                                <br/>
                                         </div>
                                     </div>
                                 </div>
@@ -250,18 +253,17 @@ class SelectResourceDialog extends React.Component {
             <Dialog close={this.props.close}>
                 <DialogPanel>
                     <DialogHeader>
-                        <Title title={this.props.testbed.name} />
+
                     </DialogHeader>
                     <div>{reservation}
 
                     </div>
                     <DialogBody>
 
-                        <InputText name="filter" handleChange={this.handleFilter} placeholder="Filter by" />
+
 
                         <ResourceList resources={this.state.resources}
                                       selected={this.state.selected}
-
                                       handleSelect={this.selectResource}
                         />
 
