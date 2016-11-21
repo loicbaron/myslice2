@@ -28,6 +28,21 @@ const NavBarSource = () => {
             shouldFetch(state) {
                 return true
             }
+        },
+        getProjects: {
+            remote(state) {
+                /*
+                    fetch the projects of the user
+                 */
+                return axios.get('/api/v1/users/projects');
+
+            },
+            success: actions.updateProjects, // (required)
+            error: actions.errorProjects, // (required)
+
+            shouldFetch(state) {
+                return true
+            }
         }
     }
 };

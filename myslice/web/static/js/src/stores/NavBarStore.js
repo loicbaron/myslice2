@@ -7,6 +7,7 @@ class NavBarStore {
     constructor() {
         /* the list of user slices to show on the menu */
         this.slices = [];
+        this.projects = [];
 
         /* the currently active slice */
         this.currentSlice = {};
@@ -18,7 +19,9 @@ class NavBarStore {
             setCurrentSlice: actions.SET_CURRENT_SLICE,
             updateSliceElement: actions.UPDATE_SLICE_ELEMENT,
             updateSlices: actions.UPDATE_SLICES,
+            updateProjects: actions.UPDATE_PROJECTS,
             fetchSlices: actions.FETCH_SLICES,
+            fetchProjects: actions.FETCH_PROJECTS,
             showMenu: actions.SHOW_MENU
         });
 
@@ -34,7 +37,13 @@ class NavBarStore {
         }
 
     }
+    fetchProjects() {
 
+        if (!this.getInstance().isLoading()) {
+            this.getInstance().getProjects();
+        }
+
+    }
     /*
         set the current slice
         - from the url if we are in /slices/example.slice.hrn
@@ -103,6 +112,14 @@ class NavBarStore {
             this.setCurrentSlice(hrn);
         } else {
             this.setCurrentSlice();
+        }
+    }
+
+    updateProjects(projects) {
+        if (projectss.hasOwnProperty('data')) {
+            this.projects = projects.data.result;
+        } else {
+            this.projects = projects;
         }
     }
 

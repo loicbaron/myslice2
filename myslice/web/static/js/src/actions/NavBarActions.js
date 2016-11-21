@@ -5,9 +5,11 @@ class NavBarActions {
     constructor() {
         this.generateActions(
             'fetchSlices',
+            'fetchProjects',
             'setCurrentSlice',
             'getCurrentSlice',
             'updateSlices',
+            'updateProjects',
             'updateSliceElement',
             'showMenu'
         );
