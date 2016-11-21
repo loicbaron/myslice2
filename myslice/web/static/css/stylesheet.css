@@ -234,7 +234,6 @@ div.registrationForm {
     left:5px;
     margin-bottom:15px;
     margin-right:15px;
-    padding:10px;
     color:black;
     border:1pt solid white;
     box-shadow: 1px 1px 3px 0 rgba(0, 0, 0, 0.2);
@@ -265,12 +264,12 @@ div.registrationForm {
 .slices-menu ul {
     padding:0;
     margin:0;
-    width: 300%;
+    width: 100%;
     list-style:none;
 }
 .slices-menu li {
     float:left;
-    width:300%;
+    width:100%;
     padding:15px;
     cursor:pointer;
 }
@@ -299,7 +298,9 @@ div.registrationForm {
     margin:0;
     padding:0;
 }
-
+.slices-menu li h5:hover {
+    color:#6a52d0;
+}
 /*
     PANELS
 */

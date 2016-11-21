@@ -3,30 +3,43 @@ import React from 'react';
 import store from '../../stores/NavBarStore';
 import actions from '../../actions/NavBarActions';
 
+const ProjectMenuEntry = ({project, slices}) =>{
+    return (<li key={project}>
+            <h4><i className="fa fa-flask"></i> {project}</h4>
+            {
+            slices.map(function(slice){
+                //let active = this.state.currentSlice.id === slice.id;
+                let active = false;
+                return <SlicesMenuEntry key={slice.id} slice={slice} active={active} />
+            }.bind(this))
+            }
+            </li>);
+};
+
+ProjectMenuEntry.propTypes = {
+    slices: React.PropTypes.array.isRequired,
+    project: React.PropTypes.oneOfType([
+    React.PropTypes.string,
+    React.PropTypes.number])
+};
 
 const SlicesMenuEntry = ({slice, active}) => {
     var sliceLabel = slice.name || slice.shortname;
     var projectLabel = slice.project.name || slice.project.shortname;
-    var className = "slice-menu-entry";
+    var className = "col-md-4";
+    var style = {'padding-bottom':'5px'};
 
     if (active) {
         className += " active";
     }
 
     if (!projectLabel) {
-        return (<div className={className}>
-            <li className={className} onClick={() => window.location.href = "/slices/" + slice.hrn}>
-                <h4><i className="fa fa-tasks fa-lg"></i>{sliceLabel}</h4>
-
-            </li>
+        return (<div className={className} style={style}>
+                <h5 onClick={() => window.location.href = "/slices/" + slice.hrn}><i className="fa fa-tasks fa-lg"></i>{sliceLabel}</h5>
         </div> );
     } else {
-        return (<div className={className}>
-            <li className={className} onClick={() => window.location.href = "/slices/" + slice.hrn}>
-                <h5><i className="fa fa-flask"></i> {projectLabel}</h5>
-                <h4><i className="fa fa-tasks fa-lg"></i>{sliceLabel}</h4>
-
-            </li>
+        return (<div className={className} style={style}>
+                <h5 onClick={() => window.location.href = "/slices/" + slice.hrn}><i className="fa fa-tasks fa-lg"></i>{sliceLabel}</h5>
         </div>);
     }
 };
@@ -99,19 +112,37 @@ class SlicesMenu extends React.Component {
 
     render() {
         var menu = null;
-
+        var project_slices = Array();
+        for(var i in this.state.slices){
+            var s = this.state.slices[i];
+            if (s.project.shortname === undefined){
+                var p = "No Project";
+            }else{
+                var p = s.project.shortname.toString();
+            }
+            if(project_slices.hasOwnProperty(p)){
+                project_slices[p].push(s);
+            }else{
+                project_slices[p] = [s];
+            }
+        }
+        var items = [];
+        for(var project in project_slices){
+            var slices = project_slices[project];
+            var item = <ProjectMenuEntry key={project} project={project} slices={slices} />
+            items.push(item);
+        }
+        //console.log(project_slices);
         if (this.state.slicesMenu) {
+            var padding={'padding':'10px'};
             menu = <div className="slices-menu" onMouseLeave={this.hideMenu} onMouseEnter={this.showMenu}>
-                        <div>
+                        <div style={padding}>
                             <ul>
-                                {
-                                    this.state.slices.map(function(slice) {
-                                        let active = this.state.currentSlice.id === slice.id;
-
-                                        return <SlicesMenuEntry key={slice.id} slice={slice} active={active} />
-
-                                    }.bind(this))
-                                }
+                            {
+                            items.map(function(item){
+                                return item;
+                            }.bind(this))
+                            }
                             </ul>
                         </div>
                     </div>;
