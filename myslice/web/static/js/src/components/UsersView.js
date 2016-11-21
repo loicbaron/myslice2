@@ -78,7 +78,7 @@ class UsersView extends React.Component {
                         <Title title={user_title} subtitle={this.state.current.user.hrn} />
                     </PanelHeader>
                     <PanelBody>
-                        <UsersInfo selected={this.state.current.user} />
+                        <UsersInfo element={this.state.current.user} />
                     </PanelBody>
                 </Panel>
             ;
@@ -131,7 +131,7 @@ class UsersView extends React.Component {
                                     {selectAuthority}
                                     </div>
                                 </div>
-                                <UserList select={true} users={this.state.users} setCurrent={this.setCurrentUser} current={this.state.current.user} />
+                                <UserList select={true} users={this.state.users} handleSelect={this.setCurrentUser} current={this.state.current.user} />
                             </PanelBody>
                         </Panel>
                         {panelRight}
@@ -147,7 +147,7 @@ class UsersView extends React.Component {
                             <PanelBody>
                                 <div className="row">
                                 </div>
-                                <UsersList select={true} users={this.state.users} setCurrent={this.setCurrentUser} current={this.state.current.user} />
+                                <UserList select={true} users={this.state.users} handleSelect={this.setCurrentUser} current={this.state.current.user} />
                             </PanelBody>
                         </Panel>
                         {panelRight}
