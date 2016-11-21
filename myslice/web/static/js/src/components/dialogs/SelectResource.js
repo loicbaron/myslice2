@@ -110,11 +110,23 @@ class SelectResourceDialog extends React.Component {
     applyChanges() {
   // Data needed for POST /lease
 
+       //Convert the start date+duration on timestamp
+
+        var datum = Date.parse(this.state.start_date.concat(" ".concat(this.state.time)));
+        var timeStamp = datum/1000;
+        this.state.start_date= timeStamp;
+         console.log(this.state.start_date);
+
+        // Gather the Selected Resources Id in "selectedIdList"
+
+        this.state.selected.map(function(res) {
+            this.state.selectedIdList.push(res.id);}.bind(this));
+        console.log(this.state.selectedIdList);
+
         //Convert the duration on seconds
         var time=this.state.duration;
         var nu=time.split(' ');
         this.state.duration= nu[0]*60;
-        console.log(this.state.duration);
         var flag = false;
         var msg = '';
         if(!this.state.duration){
@@ -128,22 +140,7 @@ class SelectResourceDialog extends React.Component {
 
 
 
-        //Convert the start date on timestamp
-        var datum = Date.parse(this.state.start_date);
-        var timeStamp = datum/1000;
-        this.state.start_date= timeStamp;
-
-
-        // Gather the Selected Resources
-        //var selectedIdList = [];
-        this.state.selected.map(function(res) {
-            this.state.selectedIdList.push(res.id);}.bind(this));
-        console.log(this.state.selectedIdList);
-
-
         actions.submitReservation();
-
-
 
 
     }
@@ -194,7 +191,7 @@ class SelectResourceDialog extends React.Component {
                                             <form className="experimentForm" onSubmit={this.handleSubmit} >
                                                 Choose and select your nodes :
                                                 <br/>
-                                                 Site : <select  value={this.state.value} onChange={this.handleChange} >
+                                                 Site : <select  defaultValue={"-- Select the site --"} value={this.state.value} onChange={this.handleChange} >
                                                             {optionLocation}
                                                        </select>
                                                 <br/>
@@ -223,7 +220,6 @@ class SelectResourceDialog extends React.Component {
                                                 <br/>
 
                                             </form>
-                                        Now, configure your experiment :<br/>
                                                 Start date: <input type="date" placeholder="yyyy-mm-dd " value={this.state.start_date} onChange={this.handleStartDateChange.bind(this)} />
                                                 Time:  <input type="time" placeholder="hh:mm" value={this.state.time} onChange={this.handleTimeChange.bind(this)}/>
                                                 <br/>
@@ -238,10 +234,7 @@ class SelectResourceDialog extends React.Component {
                                                               <option value="24 h">24 h</option>
                                                           </select>
                                                 <br/>
-                                            <button className="apply" onClick={this.applyChanges.bind(this)} >
-                                                Submit
-                                                </button>
-                                                <br/>
+
                                         </div>
                                     </div>
                                 </div>
@@ -273,6 +266,9 @@ class SelectResourceDialog extends React.Component {
                         <button className="cancel" onClick={this.cancel} >
                             Cancel
                         </button>
+                        <button className="apply" onClick={this.applyChanges.bind(this)} >
+                                                Apply
+                                                </button>
 
                     </DialogFooter>
                 </DialogPanel>
