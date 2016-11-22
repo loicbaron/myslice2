@@ -71,7 +71,6 @@ class Element extends React.Component {
         var options = this.props.options;
         var status = this.props.status;
 
-
         if (this.props.type) {
             className += ' ' + this.props.type;
         }
