@@ -132,7 +132,10 @@ class SlicesMenu extends React.Component {
             var item = <ProjectMenuEntry key={project} project={project} slices={slices} />
             items.push(item);
         }
-        //console.log(project_slices);
+        if(project_slices.length==0){
+            item = <div key='0'><a href="/projects">Create a new project</a></div>;
+            items.push(item);
+        }
         if (this.state.slicesMenu) {
             var padding={'padding':'10px'};
             menu = <div className="slices-menu" onMouseLeave={this.hideMenu} onMouseEnter={this.showMenu}>
