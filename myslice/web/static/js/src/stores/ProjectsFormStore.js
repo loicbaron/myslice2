@@ -90,7 +90,9 @@ class ProjectsFormStore {
 
     submitSuccess(response) {
         this.message['type'] = "success";
-        this.message['msg'] = "Project "+this.name+" has been created.";
+        this.message['msg'] = "Project "+this.name+" has been requested, it will apear in your dashboard after validation.";
+        // XXX Should manage the PI case
+        //this.message['msg'] = "Project "+this.name+" has been created.";
     }
 
     submitError(response) {

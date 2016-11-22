@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Element from './base/Element';
+import { Element } from './base/Element';
 import ElementDetails from './base/ElementDetails';
 import ElementTitle from './base/ElementTitle';
 import LogList from './base/LogList';
