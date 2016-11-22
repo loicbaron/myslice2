@@ -70,29 +70,29 @@ if __name__ == '__main__':
     p.daemon = True
     p.start()
 
-    ###
-    ##Process: users
     ##
-    #p = multiprocessing.Process(target=serviceUsers)
-    #processes.append(p)
-    #p.daemon = True
-    #p.start()
+    #Process: users
+    #
+    p = multiprocessing.Process(target=serviceUsers)
+    processes.append(p)
+    p.daemon = True
+    p.start()
 
-    ###
-    ##Process: authorities
     ##
-    #p = multiprocessing.Process(target=serviceAuthorities)
-    #processes.append(p)
-    #p.daemon = True
-    #p.start()
+    #Process: authorities
+    #
+    p = multiprocessing.Process(target=serviceAuthorities)
+    processes.append(p)
+    p.daemon = True
+    p.start()
 
-    ###
-    ##Process: emails
     ##
-    #p = multiprocessing.Process(target=serviceEmails)
-    #processes.append(p)
-    #p.daemon = True
-    #p.start()
+    #Process: emails
+    #
+    p = multiprocessing.Process(target=serviceEmails)
+    processes.append(p)
+    p.daemon = True
+    p.start()
 
     for proc in processes:
         proc.join()
