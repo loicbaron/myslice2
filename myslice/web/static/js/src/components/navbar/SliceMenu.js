@@ -27,7 +27,7 @@ const SlicesMenuEntry = ({slice, active}) => {
     var sliceLabel = slice.name || slice.shortname;
     var projectLabel = slice.project.name || slice.project.shortname;
     var className = "col-md-4";
-    var style = {'padding-bottom':'5px'};
+    var style = {'paddingBottom':'5px'};
 
     if (active) {
         className += " active";
@@ -132,8 +132,8 @@ class SlicesMenu extends React.Component {
             var item = <ProjectMenuEntry key={project} project={project} slices={slices} />
             items.push(item);
         }
-        if(project_slices.length==0){
-            item = <div key='0'><a href="/projects">Create a new project</a></div>;
+        if(this.state.slices.length==0){
+            item = <div key='0'><a href="/projects">You have no Slice <br/> Create one in a Project</a></div>;
             items.push(item);
         }
         if (this.state.slicesMenu) {
