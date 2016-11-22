@@ -182,50 +182,39 @@ class SelectResourceDialog extends React.Component {
          switch(this.props.testbed.name) {
             case 'FIT IoT-Lab':
                 reservation =
-
-                    <div className="p-view-body">
-                            <div className="container-fluid">
-                                <div className="row">
-
-                                    <div className="col-md-12">
-                                        <div id="resourceReservation-form">
-
-                                            <form className="experimentForm" onSubmit={this.handleSubmit} >
-
-                                                <br/>
-                                                 Site : <select  value={this.state.value} onChange={this.handleChange} >
-                                                          <option value="">Choose the site</option>
-                                                         {optionLocation}
-                                                       </select>
-                                                <br/>
-
-
-
-                                                <div className="container">
-                                                       <ul className="nav nav-pills "  >
-                                                            <li ><a data-toggle="pill" href="#home">A8 Node</a></li>
-                                                            <li><a data-toggle="pill" href="#menu1">M3 Node</a></li>
-                                                            <li><a data-toggle="pill" href="#menu2">WSN430 Node</a></li>
-                                                       </ul>
-                                                <div className="tab-content">
-                                                     <div id="home" className="tab-pane fade in active">
-                                                            <p>The A8 open node is the most powerful IoT-LAB node and allows to run high-level OS like Linux.<br/>
-                                                            for more information  <a href="https://www.iot-lab.info/hardware/a8">click here</a></p>
-                                                        </div>
-                                                        <div id="menu1" className="tab-pane fade">
-                                                            <p>The M3 open node is based on a STM32 (ARM Cortex M3) micro-controller.</p>
-                                                        </div>
-                                                        <div id="menu2" className="tab-pane fade">
-                                                            <p>The WSN430 open node is a WSN430 node based on a low power MSP430-based platform, with a fully functional ISM radio interface and a set of standard sensors.</p>
-                                                        </div>
-                                                     </div>
-                                                </div>
-                                                <br/>
-
-                                            </form>
-                                                Start date: <input type="date" placeholder="yyyy-mm-dd " value={this.state.start_date} onChange={this.handleStartDateChange.bind(this)} />
-                                                Time:  <input type="time" placeholder="hh:mm" value={this.state.time} onChange={this.handleTimeChange.bind(this)}/>
-                                                Duration:<select value={this.state.duration} onChange={this.handleChangeDuration.bind(this)}>
+<div className="container">
+<div className="row">
+  <div className="col-sm-2">Site : <select  value={this.state.value} onChange={this.handleChange} >
+                                        <option value="">Choose the site</option>
+                                        {optionLocation}
+                                   </select></div>
+  <div className="col-sm-5"><center><img className="img" src="/static/images/iot.png" alt="FIT IoT Lab" /></center></div>
+</div>
+<div className="row">
+   <div className="col-sm-1">Type:</div>
+    <div className="col-sm-6">
+      <ul className="nav nav-pills"  >
+          <li ><a data-toggle="pill" href="#home">A8 Node</a></li>
+          <li><a data-toggle="pill" href="#menu1">M3 Node</a></li>
+          <li><a data-toggle="pill" href="#menu2">WSN430 Node</a></li>
+      </ul>
+      <div className="tab-content">
+          <div className="tab-pane fade in active" id="home"><p>The A8 open node is the most powerful IoT-LAB node and allows to run high-level OS like Linux.
+                                                            For more information click  <a href="https://www.iot-lab.info/hardware/a8">here</a></p>
+          </div>
+          <div className="tab-pane fade" id="menu1"><p>The M3 open node is based on a STM32 (ARM Cortex M3) micro-controller.
+                                                            For more information click<a href="https://www.iot-lab.info/hardware/m3"> here</a></p>
+          </div>
+          <div className="tab-pane fade" id="menu2"><p>The WSN430 open node is a WSN430 node based on a low power MSP430-based platform with a fully functional ISM radio interface and a set of standard sensors.
+                                                            For more information click  <a href="https://www.iot-lab.info/hardware/wsn430">here</a></p>
+          </div>
+      </div>
+    </div>
+</div>
+    <div className="row">
+  <div className="col-sm-3">Start date: <input type="date" placeholder="yyyy-mm-dd " value={this.state.start_date} onChange={this.handleStartDateChange.bind(this)} /></div>
+  <div className="col-sm-3"> Time:  <input type="time" placeholder="hh:mm" value={this.state.time} onChange={this.handleTimeChange.bind(this)}/></div>
+  <div className="col-sm-2">Duration:<select value={this.state.duration} onChange={this.handleChangeDuration.bind(this)}>
                                                               <option value="10 min">10 min</option>
                                                               <option value="15 min">15 min </option>
                                                               <option value="30 min ">30 min</option>
@@ -235,12 +224,15 @@ class SelectResourceDialog extends React.Component {
                                                               <option value="8 h">8 h</option>
                                                               <option value="24 h">24 h</option>
                                                           </select>
-                                                <br/>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+  </div>
+
+  </div>
+
+</div>
+
+
+
+
                 break;
         }
         return (
