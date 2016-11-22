@@ -27,7 +27,7 @@ class SelectResourceDialog {
         this.filterResource = this.filterResource.bind(this);
 
         this.errorMessage = null;
-        this.message== {};
+        this.message = {};
 
         this.bindListeners({
             updateTestbed: actions.UPDATE_TESTBED,
@@ -39,6 +39,8 @@ class SelectResourceDialog {
             updateType: actions.UPDATE_TYPE,
             selectResource: actions.SELECT_RESOURCE,
             updateFilter : actions.UPDATE_FILTER,
+            SuccessReservation : actions.SUCCESS_RESERVATION,
+            ErrorReservation : actions.ERROR_RESERVATION,
 
 
         });
@@ -62,6 +64,7 @@ class SelectResourceDialog {
         if (!this.getInstance().isLoading()) {
             this.getInstance().resources();
         }
+
 
     }
 
@@ -101,7 +104,7 @@ class SelectResourceDialog {
             return (el.id === resource.id);
         });
     }
-    SuccessReservation(response) {
+    SuccessReservation() {
         this.message['type'] = "success";
         this.message['msg'] = "Lease has been created.";
     }
