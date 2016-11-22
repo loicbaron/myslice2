@@ -88,12 +88,16 @@ class SelectResourceDialog extends React.Component {
         })
         */
     }
-
+// Filter by site
     handleChange(event) {
-        this.setState({value: event.target.value});
 
+        this.setState({value: event.target.value});
+        actions.updateFilter(event.target.value);
 
     }
+
+
+
     handleChangeDuration(event) {
         this.setState({duration: event.target.value});
 
@@ -180,33 +184,33 @@ class SelectResourceDialog extends React.Component {
                 reservation =
 
                     <div className="p-view-body">
-                        <center><img className="img" src="/static/images/iot.png" alt="FIT IoT Lab" /></center>
                             <div className="container-fluid">
-
                                 <div className="row">
+
                                     <div className="col-md-12">
                                         <div id="resourceReservation-form">
 
-
                                             <form className="experimentForm" onSubmit={this.handleSubmit} >
-                                                Choose and select your nodes :
+
                                                 <br/>
-                                                 Site : <select  defaultValue={"-- Select the site --"} value={this.state.value} onChange={this.handleChange} >
-                                                            {optionLocation}
+                                                 Site : <select  value={this.state.value} onChange={this.handleChange} >
+                                                          <option value="">Choose the site</option>
+                                                         {optionLocation}
                                                        </select>
                                                 <br/>
 
-                                                Choose the type (M3, A8, WSN340)? <input type ="text" value={this.state.type} onChange={this.handleChangeType} placeholder="choose the type and press enter" /><br/>
+
 
                                                 <div className="container">
                                                        <ul className="nav nav-pills "  >
-                                                            <li className="active"><a data-toggle="pill" href="#home">A8 Node</a></li>
+                                                            <li ><a data-toggle="pill" href="#home">A8 Node</a></li>
                                                             <li><a data-toggle="pill" href="#menu1">M3 Node</a></li>
                                                             <li><a data-toggle="pill" href="#menu2">WSN430 Node</a></li>
                                                        </ul>
-                                                    <div className="tab-content">
-                                                        <div id="home" className="tab-pane fade in active">
-                                                            <p>The A8 open node is the most powerful IoT-LAB node and allows to run high-level OS like Linux.</p>
+                                                <div className="tab-content">
+                                                     <div id="home" className="tab-pane fade in active">
+                                                            <p>The A8 open node is the most powerful IoT-LAB node and allows to run high-level OS like Linux.<br/>
+                                                            for more information  <a href="https://www.iot-lab.info/hardware/a8">click here</a></p>
                                                         </div>
                                                         <div id="menu1" className="tab-pane fade">
                                                             <p>The M3 open node is based on a STM32 (ARM Cortex M3) micro-controller.</p>
@@ -214,15 +218,13 @@ class SelectResourceDialog extends React.Component {
                                                         <div id="menu2" className="tab-pane fade">
                                                             <p>The WSN430 open node is a WSN430 node based on a low power MSP430-based platform, with a fully functional ISM radio interface and a set of standard sensors.</p>
                                                         </div>
-                                                    </div>
-
+                                                     </div>
                                                 </div>
                                                 <br/>
 
                                             </form>
                                                 Start date: <input type="date" placeholder="yyyy-mm-dd " value={this.state.start_date} onChange={this.handleStartDateChange.bind(this)} />
                                                 Time:  <input type="time" placeholder="hh:mm" value={this.state.time} onChange={this.handleTimeChange.bind(this)}/>
-                                                <br/>
                                                 Duration:<select value={this.state.duration} onChange={this.handleChangeDuration.bind(this)}>
                                                               <option value="10 min">10 min</option>
                                                               <option value="15 min">15 min </option>
@@ -234,7 +236,6 @@ class SelectResourceDialog extends React.Component {
                                                               <option value="24 h">24 h</option>
                                                           </select>
                                                 <br/>
-
                                         </div>
                                     </div>
                                 </div>
