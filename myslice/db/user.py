@@ -39,6 +39,7 @@ class User(myslicelibUser):
         data['public_key'] = data.get('public_key', None)
         data['keys'] = data.get('keys', [])
         data['credentials'] = data.get('credentials', [])
+        data['terms'] = data.get('terms', 'on')
         super(User, self).__init__(data)
 
     def has_privilege(self, event):
