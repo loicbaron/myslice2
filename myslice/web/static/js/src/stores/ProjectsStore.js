@@ -19,6 +19,13 @@ class ProjectsStore {
 
         this.filter = [];
 
+
+        this.saving = null;
+
+
+
+
+
         this.addUserToProject = null;
         this.removeUserFromProject = null;
         this.removedUsers = {};
@@ -59,6 +66,12 @@ class ProjectsStore {
             fetchProjects: actions.FETCH_PROJECTS,
             errorProjects: actions.ERROR_PROJECTS,
             showDialog: actions.SHOW_DIALOG,
+
+            addUsers: actions.ADD_USERS,
+
+            saveProject: actions.SAVE_PROJECT,
+            errorSave: actions.ERROR_SAVE,
+            successSave: actions.SUCCESS_SAVE,
         });
 
         this.registerAsync(source);
@@ -125,6 +138,12 @@ class ProjectsStore {
     errorProjects(errorMessage) {
         console.log(errorMessage);
     }
+
+    addUsers(users) {
+        this.getInstance().addUsers(users);
+    }
+
+
 
     updateUsers(users) {
         if (users.hasOwnProperty('data')) {
@@ -206,6 +225,31 @@ class ProjectsStore {
     showDialog(dialog) {
         this.dialog = dialog;
     }
+
+
+    /*
+        Save Project
+        The "saveProject" state will be used
+     */
+    saveProject() {
+
+        if (!this.getInstance().isLoading()) {
+            this.getInstance().saveProject();
+        }
+
+    }
+
+    errorSave() {
+
+    }
+
+    successSave() {
+        // reset the saving state
+        this.saving = [];
+    }
+
+
+
 }
 
 

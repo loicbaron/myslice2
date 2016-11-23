@@ -60,6 +60,11 @@ const Icon = ({name, size}) => {
         case 'registry':
             iconClass += 'building';
             break;
+        case 'delete':
+            iconClass += 'trash';
+        case 'remove':
+            iconClass += 'minus-circle';
+            break;
         default:
             iconClass += 'question';
             break;

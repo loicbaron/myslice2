@@ -16,7 +16,7 @@ class Element extends React.Component {
     }
 
     renderIcon() {
-        var icon = this.props.icon;
+        var icon = this.props.icon || this.props.type;
 
         if (icon) {
             return (
@@ -40,31 +40,32 @@ class Element extends React.Component {
         }
     }
 
-    renderMenu() {
-        var rMenu = null;
-        if (this.props.options) {
-            rMenu =  this.props.options.map((option) => {
-                        return option;
-                    });
-        }
-        return rMenu;
-    }
-    renderStatus() {
+    renderOptions() {
         var status = this.props.element.status || this.props.status || null;
-        if(typeof(status) === 'object'){
-            if(status['online']){
-                status = 'online';
-            }else{
-                status = 'offline';
-            }
-        }
         var rStatus = null;
+        var rOptions = null;
+
         if (status) {
-           rStatus = <div className="elementStatus">
-               <Icon name={status} />&nbsp;{status}
-           </div>;
+            rStatus = <div className="elementStatus">
+                <Icon name={status} />&nbsp;{status}
+            </div>;
         }
-        return rStatus;
+
+        if (this.props.options) {
+            rOptions = this.props.options.map(function(option, i) {
+                if ((typeof option.label !== "undefined") && (typeof option.callback !== "undefined")) {
+                    return <div key={i} className={ "elementOption " + option.label }
+                                onClick={() => option.callback(this.props.element) }>
+                        <Icon name={option.label}/>{option.label}
+                    </div>;
+                }
+            }.bind(this));
+        }
+
+        return <div className="elementOptions">
+            {rStatus}
+            {rOptions}
+        </div>;
     }
     render() {
         var className = 'elementBox';
@@ -88,17 +89,13 @@ class Element extends React.Component {
         return (
             <li className={className} onClick={callback} style={this.props.minHeight}>
                 {this.renderIcon()}
-
-                <div className="elementMenu">
-                {this.renderStatus()}
-                {this.renderMenu()}
-                </div>
+                {this.renderOptions()}
                 {this.props.children}
                 {this.renderIconSelected()}
             </li>
         );
     }
-};
+}
 
 Element.propTypes = {
     element: React.PropTypes.object.isRequired,
@@ -106,7 +103,9 @@ Element.propTypes = {
     icon: React.PropTypes.string,
     iconSelected: React.PropTypes.string,
     isSelected: React.PropTypes.bool,
-    handleSelect: React.PropTypes.func
+    handleClick: React.PropTypes.func,
+    status: React.PropTypes.string,
+    options: React.PropTypes.array
 };
 
 Element.defaultProps = {

@@ -9,9 +9,12 @@ import { Panel, PanelHeader, PanelBody } from './base/Panel';
 import Title from './base/Title';
 import Button from './base/Button';
 
-import ProjectsInfo from './ProjectsInfo';
 import ProjectsForm from './ProjectsForm';
 import { ProjectList } from './objects/Project';
+
+import { UsersSection } from './sections/User';
+import { SlicesSection } from './sections/Slice';
+import DateTime from './base/DateTime';
 
 import SlicesForm from './SlicesForm';
 
@@ -27,6 +30,8 @@ class ProjectsView extends React.Component {
         this.showForm = this.showForm.bind(this);
         this.setCurrentProject = this.setCurrentProject.bind(this);
         this.closeDialog = this.closeDialog.bind(this);
+
+        this.addUsers = this.addUsers.bind(this);
     }
 
     componentDidMount() {
@@ -56,14 +61,43 @@ class ProjectsView extends React.Component {
         actions.showDialog('project');
     }
 
-    addUsers() {
+    selectUser() {
         actions.showDialog('users');
     }
+
     createSlice() {
         actions.showDialog('slice');
     }
+
     closeDialog() {
         actions.showDialog(null);
+    }
+
+    addUsers(users) {
+
+        this.state.saving = this.state.current.project;
+        for(let i = 0; i < users.length; i++) {
+            if (this.state.saving.pi_users.indexOf(users[i].id) == -1) {
+               this.state.saving.pi_users.push(users[i].id);
+            }
+        }
+
+        actions.saveProject();
+    }
+
+    /*
+        Remove User from the current project
+     */
+    removeUser(user) {
+        // todo
+    }
+
+    /*
+        Remove Slice from the current project
+     */
+    removeSlice(slice) {
+        // todo
+        //actions.deleteSlice(slice);
     }
 
     render() {
@@ -76,9 +110,11 @@ class ProjectsView extends React.Component {
             );
         }
 
+
+
         switch(this.state.dialog) {
             case 'users':
-                dialog = <UsersDialog close={this.closeDialog} from='authority' exclude={this.state.current.project.pi_users} addUser={true} />;
+                dialog = <UsersDialog cancel={this.closeDialog} apply={this.addUsers} />;
                 break;
             case 'slice':
                 dialog = <Dialog close={this.closeDialog}>
@@ -107,16 +143,80 @@ class ProjectsView extends React.Component {
         }
 
         if (this.state.current.project) {
-            let project_title = this.state.current.project.name || this.state.current.project.shortname;
+            let project = this.state.current.project;
+            let users = this.state.current.users;
+            let slices = this.state.current.slices;
+            let title = project.name || project.shortname;
+
+            /*
+             *  Define options for sections USER
+             * */
+            let userSectionOptions = [
+                {
+                    'label' : 'Add User',
+                    'icon' : 'plus-circle',
+                    'callback' : this.selectUser
+                }
+            ];
+
+            /*
+             *  Define options for list element USER
+             * */
+            let userListOptions = [
+                {
+                    'label' : 'remove',
+                    'callback' : this.removeUser
+                }
+            ];
+
+            /*
+             *  Define options for sections SLICE
+             * */
+            let sliceSectionOptions = [
+                {
+                    'label' : 'Create Slice',
+                    'icon' : 'plus-circle',
+                    'callback' : this.createSlice
+                }
+            ];
+
+            /*
+             *  Define options for list element SLICE
+             * */
+            let sliceListOptions = [
+                {
+                    'label' : 'remove',
+                    'callback' : this.removeSlice
+                }
+            ];
+
             panelRight =
                 <Panel>
                     <PanelHeader>
-                        <Title title={project_title} subtitle={this.state.current.project.shortname} />
+                        <Title title={title} subtitle={project.shortname} />
                         <Button label="Create Slice" icon="plus" handleClick={this.createSlice} />
-                        <Button label="Add Users" icon="plus" handleClick={this.addUsers} />
+                        <Button label="Add Users" icon="plus" handleClick={this.selectUser} />
                     </PanelHeader>
                     <PanelBody>
-                        <ProjectsInfo element={this.state.current} />
+                        <div>
+                            {project.id}
+                            <p>
+                                <a href={project.url} target="_blank">{project.url}</a>
+                            </p>
+                            <p>
+                                {project.description}
+                            </p>
+                            <DateTime label="Start" timestamp={project.start_date} />
+                            <DateTime label="End" timestamp={project.end_date} />
+                            <SlicesSection slices={slices}
+                                           sectionOptions={sliceSectionOptions}
+                                           listOptions={sliceListOptions}
+                            />
+                            <UsersSection users={users}
+                                          sectionOptions={userSectionOptions}
+                                          listOptions={userListOptions}
+                            />
+                        </div>
                     </PanelBody>
                 </Panel>;
         }

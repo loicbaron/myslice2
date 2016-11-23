@@ -67,7 +67,7 @@ class SliceView extends React.Component {
                 dialog = <SelectResourceDialog testbed={this.state.testbed} close={this.closeDialog} />;
                 break;
             case 'selectUser':
-                dialog = <SelectUserDialog close={this.closeDialog} />;
+                dialog = <SelectUserDialog cancel={this.closeDialog} />;
                 break;
 
         }

@@ -7,10 +7,7 @@ import ElementTitle from '../base/ElementTitle';
 import ElementId from '../base/ElementId';
 import DateTime from '../base/DateTime';
 
-// import AddUserToProject from '../AddUserToProject';
-// import RemoveUserFromProject from '../RemoveUserFromProject';
-
-const UserElement = ({user, isSelected, handleSelect}) => {
+const UserElement = ({user, isSelected, handleSelect, options}) => {
 
     var authority = user.authority.name || user.authority.shortname;
 
@@ -23,14 +20,6 @@ const UserElement = ({user, isSelected, handleSelect}) => {
     if (user.hasOwnProperty('projects')) {
         num_projects = user.projects.length
     }
-
-        // var button = '';
-        // if(this.props.addUser){
-        //     button = <AddUserToProject user={this.props.user} />
-        // }
-        // if(this.props.removeUser){
-        //     button = <RemoveUserFromProject user={this.props.user} />
-        // }
 
     var fullname = [ user.first_name, user.last_name ].join(' ');
     if (!fullname) {
@@ -50,8 +39,7 @@ const UserElement = ({user, isSelected, handleSelect}) => {
                  isSelected={isSelected}
                  handleSelect={handleSelect}
                  status={status}
-                 icon="user"
-                 iconSelected="check"
+                 options={options}
         >
             {/*<Avatar className="elementIcon" email={this.props.user.email} name={fullname} round={true} size={40} color="#CFE2F3" />*/}
             <ElementTitle label={fullname} detail={user.email} />
@@ -75,10 +63,11 @@ UserElement.propTypes = {
 UserElement.defaultProps = {
 };
 
-const UserList = ({users, selected, handleSelect}) =>
+const UserList = ({users, selected, handleSelect, options}) =>
     <List>
     {
         users.map(function(user) {
+
             var isSelected = false;
             if (selected) {
                  isSelected = selected.some(function (el) {
@@ -86,7 +75,12 @@ const UserList = ({users, selected, handleSelect}) =>
                 });
             }
 
-            return <UserElement key={user.id} user={user} isSelected={isSelected} handleSelect={handleSelect} />;
+            return <UserElement key={user.id}
+                                user={user}
+                                isSelected={isSelected}
+                                handleSelect={handleSelect}
+                                options={options}
+                    />;
         }.bind(this))
     }
     </List>;
