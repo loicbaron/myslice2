@@ -3,10 +3,11 @@ import React from 'react';
 import { Section, SectionHeader, SectionBody, SectionTitle, SectionOptions } from '../base/Section';
 import { UserList, UserListSimple } from '../objects/User';
 
-const UsersSection = ({users, title}) =>
+const UsersSection = ({users, title, options}) =>
     <Section>
         <SectionHeader>
             <SectionTitle title={title} />
+            <SectionOptions options={options} />
         </SectionHeader>
         <SectionBody>
             <UserList users={users} />
@@ -15,7 +16,8 @@ const UsersSection = ({users, title}) =>
 
 UsersSection.propTypes = {
     users: React.PropTypes.array.isRequired,
-    title: React.PropTypes.string
+    title: React.PropTypes.string,
+    options: React.PropTypes.array
 };
 
 UsersSection.defaultProps = {
