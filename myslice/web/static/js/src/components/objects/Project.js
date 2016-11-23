@@ -34,7 +34,7 @@ class ProjectElement extends React.Component {
             {
                 this.props.project.slices.map(function (slice) {
                     var slice_link="/slices/"+slice.hrn;
-                    return <span key={slice.id } className="elementLabel"><i className="fa fa-tasks fa-lg"></i>&nbsp;<a href={slice_link}>{slice.shortname}</a>&nbsp;</span>;
+                    return <span key={slice.id } className="elementLabel"><a href={slice_link}><i className="fa fa-tasks fa-lg"></i>&nbsp;{slice.shortname}</a>&nbsp;</span>;
                 }.bind(this))
             }
             </div>;
