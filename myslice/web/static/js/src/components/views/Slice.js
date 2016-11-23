@@ -10,6 +10,8 @@ import Title from '../base/Title';
 import Text from '../base/Text';
 import DateTime from '../base/DateTime';
 
+import { TestbedList } from '../objects/Testbed';
+
 import SelectResourceDialog from '../dialogs/SelectResource';
 import SelectUserDialog from '../dialogs/SelectUser';
 
@@ -82,7 +84,9 @@ class SliceView extends React.Component {
             }
         ];
 
-
+        var ams = this.state.testbeds.filter(function(testbed) {
+                    return testbed.type == 'AM';
+                  });
         return (
             <View>
                 <Panel>
@@ -113,11 +117,7 @@ class SliceView extends React.Component {
                         </Text>
                         <ul>
                         {
-                            this.state.testbeds.filter(function(testbed) {
-                                return testbed.type == 'AM';
-                            }).map(function(testbed) {
-                                    return <li key={testbed.id} onClick={() => this.addResources(testbed)}>{testbed.name}</li>;
-                            }.bind(this))
+                            <TestbedList testbeds={ams} handleSelect={this.addResources} />
                         }
                         </ul>
                     </PanelBody>

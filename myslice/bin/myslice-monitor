@@ -40,21 +40,21 @@ if __name__ == '__main__':
 
     processes = []
 
-    ###
-    ## Process: testbeds
     ##
-    #p = multiprocessing.Process(target=serviceTestbeds)
-    #processes.append(p)
-    #p.daemon = True
-    #p.start()
+    # Process: testbeds
+    #
+    p = multiprocessing.Process(target=serviceTestbeds)
+    processes.append(p)
+    p.daemon = True
+    p.start()
 
-    ###
-    ## Process: resources
     ##
-    #p = multiprocessing.Process(target=serviceResources)
-    #processes.append(p)
-    #p.daemon = True
-    #p.start()
+    # Process: resources
+    #
+    p = multiprocessing.Process(target=serviceResources)
+    processes.append(p)
+    p.daemon = True
+    p.start()
 
 
 

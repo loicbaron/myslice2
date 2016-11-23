@@ -60,7 +60,6 @@ class Element extends React.Component {
                     </div>;
                 }
             }.bind(this));
-
         }
 
         return <div className="elementOptions">
@@ -68,14 +67,12 @@ class Element extends React.Component {
             {rOptions}
         </div>;
     }
-
     render() {
         var className = 'elementBox';
         var style;
         var callback = null;
         var options = this.props.options;
         var status = this.props.status;
-
         if (this.props.type) {
             className += ' ' + this.props.type;
         }
@@ -116,7 +113,6 @@ Element.defaultProps = {
     icon: null,
     iconSelected: 'check',
     isSelected: false,
-    handleClick: () => { return null; },
     status: null,
     options: [],
 };
