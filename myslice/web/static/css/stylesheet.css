@@ -631,7 +631,7 @@ div.registrationForm {
     position:absolute;
     right:25px;
 }
-.elementMenu {
+.elementOptions {
     position:absolute;
     top:15px;
     right:15px;
@@ -642,14 +642,21 @@ div.registrationForm {
 .elementOption {
     display:none;
     font-size:9pt;
-    margin-bottom:8px;
+    margin-bottom:10px;
+    cursor: pointer;
 }
-.elementOption.delete {
+.elementOption:hover {
+    text-decoration:underline;
+}
+.elementOption i {
+    margin-right:5px;
+}
+.elementOption.delete, .elementOption.remove {
     color:red;
 }
 .elementStatus {
     font-size:9pt;
-    margin-bottom:8px;
+    margin-bottom:10px;
 }
 .elementStatus .new {
     color:#8E7CC3;

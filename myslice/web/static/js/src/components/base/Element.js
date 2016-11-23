@@ -16,7 +16,7 @@ class Element extends React.Component {
     }
 
     renderIcon() {
-        var icon = this.props.icon;
+        var icon = this.props.icon || this.props.type;
 
         if (icon) {
             return (
@@ -40,10 +40,10 @@ class Element extends React.Component {
         }
     }
 
-    renderMenu() {
+    renderOptions() {
         var status = this.props.element.status || this.props.status || null;
         var rStatus = null;
-        var rMenu = null;
+        var rOptions = null;
 
         if (status) {
             rStatus = <div className="elementStatus">
@@ -52,15 +52,20 @@ class Element extends React.Component {
         }
 
         if (this.props.options) {
-            rMenu =  this.props.options.map((option) => {
-                        return option;
-                    });
+            rOptions = this.props.options.map(function(option, i) {
+                if ((typeof option.label !== "undefined") && (typeof option.callback !== "undefined")) {
+                    return <div key={i} className={ "elementOption " + option.label }
+                                onClick={() => option.callback(this.props.element) }>
+                        <Icon name={option.label}/>{option.label}
+                    </div>;
+                }
+            }.bind(this));
 
         }
 
-        return <div className="elementMenu">
+        return <div className="elementOptions">
             {rStatus}
-            {rMenu}
+            {rOptions}
         </div>;
     }
 
@@ -87,13 +92,13 @@ class Element extends React.Component {
         return (
             <li className={className} onClick={callback} style={this.props.minHeight}>
                 {this.renderIcon()}
-                {this.renderMenu()}
+                {this.renderOptions()}
                 {this.props.children}
                 {this.renderIconSelected()}
             </li>
         );
     }
-};
+}
 
 Element.propTypes = {
     element: React.PropTypes.object.isRequired,
@@ -101,7 +106,9 @@ Element.propTypes = {
     icon: React.PropTypes.string,
     iconSelected: React.PropTypes.string,
     isSelected: React.PropTypes.bool,
-    handleClick: React.PropTypes.func
+    handleClick: React.PropTypes.func,
+    status: React.PropTypes.string,
+    options: React.PropTypes.array
 };
 
 Element.defaultProps = {
@@ -109,6 +116,7 @@ Element.defaultProps = {
     icon: null,
     iconSelected: 'check',
     isSelected: false,
+    handleClick: () => { return null; },
     status: null,
     options: [],
 };
