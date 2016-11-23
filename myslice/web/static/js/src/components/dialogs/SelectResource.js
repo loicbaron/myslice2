@@ -104,9 +104,15 @@ class SelectResourceDialog extends React.Component {
 
     }
      handleChangeType(event) {
-          actions.updateType(event.target.value);
+          //actions.updateType(event.target.value);
 
 
+           //
+         event.preventDefault()
+         var el = event.target.textContent
+
+         console.log(el)
+         actions.updateFilter(el);
     }
 
     //Reserve Resources
@@ -190,23 +196,25 @@ class SelectResourceDialog extends React.Component {
                                    </select></div>
   <div className="col-sm-5"><center><img className="img" src="/static/images/iot.png" alt="FIT IoT Lab" /></center></div>
 </div>
-<div className="row">
+<div  className="row">
    <div className="col-sm-1">Type:</div>
-    <div className="col-sm-6">
+    <div id="Type" className="col-sm-6">
       <ul className="nav nav-pills"  >
-          <li ><a data-toggle="pill" href="#home">A8 Node</a></li>
-          <li><a data-toggle="pill" href="#menu1">M3 Node</a></li>
-          <li><a data-toggle="pill" href="#menu2">WSN430 Node</a></li>
+          <li ><a onClick={this.handleChangeType.bind(this)} data-toggle="tab" href="#home">A8</a></li>
+          <li><a onClick={this.handleChangeType.bind(this)} data-toggle="tab" href="#menu1">M3</a></li>
+          <li><a onClick={this.handleChangeType.bind(this)} data-toggle="tab" href="#menu2">WSN430</a></li>
       </ul>
-      <div className="tab-content">
-          <div className="tab-pane fade in active" id="home"><p>The A8 open node is the most powerful IoT-LAB node and allows to run high-level OS like Linux.
-                                                            For more information click  <a href="https://www.iot-lab.info/hardware/a8">here</a></p>
-          </div>
-          <div className="tab-pane fade" id="menu1"><p>The M3 open node is based on a STM32 (ARM Cortex M3) micro-controller.
-                                                            For more information click<a href="https://www.iot-lab.info/hardware/m3"> here</a></p>
-          </div>
-          <div className="tab-pane fade" id="menu2"><p>The WSN430 open node is a WSN430 node based on a low power MSP430-based platform with a fully functional ISM radio interface and a set of standard sensors.
-                                                            For more information click  <a href="https://www.iot-lab.info/hardware/wsn430">here</a></p>
+      <div className="panel-body">
+          <div className="tab-content clearfix">
+              <div className="tab-pane fade in active" id="home"><p>The A8 open node is the most powerful IoT-LAB node and allows to run high-level OS like Linux.
+                                                                For more information click  <a href="https://www.iot-lab.info/hardware/a8">here</a></p>
+              </div>
+              <div className="tab-pane fade" id="menu1"><p>The M3 open node is based on a STM32 (ARM Cortex M3) micro-controller.
+                                                                For more information click<a href="https://www.iot-lab.info/hardware/m3"> here</a></p>
+              </div>
+              <div className="tab-pane fade" id="menu2"><p>The WSN430 open node is a WSN430 node based on a low power MSP430-based platform with a fully functional ISM radio interface and a set of standard sensors.
+                                                                For more information click  <a href="https://www.iot-lab.info/hardware/wsn430">here</a></p>
+              </div>
           </div>
       </div>
     </div>
@@ -227,6 +235,10 @@ class SelectResourceDialog extends React.Component {
   </div>
 
   </div>
+
+
+
+
 
 </div>
 
