@@ -17,6 +17,7 @@ class SelectUserDialog extends React.Component {
         this.onChange = this.onChange.bind(this);
         this.showSelected = this.showSelected.bind(this);
         this.cancel = this.cancel.bind(this);
+        this.apply = this.apply.bind(this);
     }
 
     componentDidMount() {
@@ -75,11 +76,13 @@ class SelectUserDialog extends React.Component {
 
     cancel() {
         this.clearSelection();
-        this.props.close();
+        this.props.cancel();
     }
 
     apply() {
-
+        this.props.apply(this.state.selected);
+        //this.clearSelection();
+        //this.props.cancel();
     }
 
     render() {
@@ -133,10 +136,12 @@ class SelectUserDialog extends React.Component {
 
 SelectUserDialog.propTypes = {
     close: React.PropTypes.func,
+    apply: React.PropTypes.func,
 };
 
 SelectUserDialog.defaultProps = {
-    close: null,
+    close: () => { return null; },
+    apply: () => { return null; }
 };
 
 export default SelectUserDialog;
