@@ -41,36 +41,37 @@ class Element extends React.Component {
     }
 
     renderMenu() {
-        var status = this.props.element.status || this.props.status || null;
-        var rStatus = null;
         var rMenu = null;
-
-        if (status) {
-            rStatus = <div className="elementStatus">
-                <Icon name={status} />&nbsp;{status}
-            </div>;
-        }
-
         if (this.props.options) {
             rMenu =  this.props.options.map((option) => {
                         return option;
                     });
-
         }
-
-        return <div className="elementMenu">
-            {rStatus}
-            {rMenu}
-        </div>;
+        return rMenu;
     }
-
+    renderStatus() {
+        var status = this.props.element.status || this.props.status || null;
+        if(typeof(status) === 'object'){
+            if(status['online']){
+                status = 'online';
+            }else{
+                status = 'offline';
+            }
+        }
+        var rStatus = null;
+        if (status) {
+           rStatus = <div className="elementStatus">
+               <Icon name={status} />&nbsp;{status}
+           </div>;
+        }
+        return rStatus;
+    }
     render() {
         var className = 'elementBox';
         var style;
         var callback = null;
         var options = this.props.options;
         var status = this.props.status;
-
         if (this.props.type) {
             className += ' ' + this.props.type;
         }
@@ -87,7 +88,11 @@ class Element extends React.Component {
         return (
             <li className={className} onClick={callback} style={this.props.minHeight}>
                 {this.renderIcon()}
+
+                <div className="elementMenu">
+                {this.renderStatus()}
                 {this.renderMenu()}
+                </div>
                 {this.props.children}
                 {this.renderIconSelected()}
             </li>
@@ -101,7 +106,7 @@ Element.propTypes = {
     icon: React.PropTypes.string,
     iconSelected: React.PropTypes.string,
     isSelected: React.PropTypes.bool,
-    handleClick: React.PropTypes.func
+    handleSelect: React.PropTypes.func
 };
 
 Element.defaultProps = {
