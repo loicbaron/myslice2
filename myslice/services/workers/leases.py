@@ -166,7 +166,10 @@ def sync(lock):
                     syncSlices(l.slice_id)
 
         except Exception as e:
+            import traceback
+            traceback.print_exc()
             logger.exception("Service does not seem to be available")
+            logger.exception(str(e))
 
         logger.info("sleeping")
 
