@@ -6,99 +6,90 @@ import ElementTitle from '../base/ElementTitle';
 import ElementId from '../base/ElementId';
 import DateTime from '../base/DateTime';
 
-import DeleteSliceFromProject from '../DeleteSliceFromProject';
+const SliceElement = ({slice, isSelected, handleSelect, options}) => {
 
-class SliceElement extends React.Component {
+    var label = slice.name || slice.shortname;
+    var project = slice.project.name || slice.project.shortname;
+    var authority = '';
 
-    render() {
-        var label = this.props.slice.name || this.props.slice.shortname;
-        var project = this.props.slice.project.name || this.props.slice.project.shortname;
-        var authority = this.props.slice.authority.name || this.props.slice.authority.shortname;
-        var button = '';
-        var link = "/slices/"+this.props.slice.hrn;
-        if(this.props.removeSlice){
-            button = <DeleteSliceFromProject slice={this.props.slice} />
-        }
-
-        var options = [
-            'delete',
-            'test'
-        ];
-        return (
-             <Element element={this.props.slice}
-                      type="slice"
-                      select={this.props.select}
-                      status={this.props.slice.status}
-                      options={options}
-                      icon="slice"
-             >
-
-                 <a href={link}><ElementTitle label={label} detail={this.props.slice.shortname} /></a>
-                 <ElementId id={this.props.slice.id} />
-                 {button}
-                 <div className="elementDetail">
-                     <span className="elementLabel">Part of project</span> {project}
-                     <br />
-                     <span className="elementLabel">Managed by</span> {authority}
-                 </div>
-                 <div className="row elementDate">
-                     <div className="col-sm-3">
-                         <span className="elementLabel">Created</span>
-                         <br />
-                         <DateTime timestamp={this.props.slice.created} />
-                     </div>
-                     <div className="col-sm-3">
-                         <span className="elementLabel">Enabled</span>
-                         <br />
-                         <DateTime timestamp={this.props.slice.enabled} />
-                     </div>
-                     <div className="col-sm-3">
-                         <span className="elementLabel">Updated</span>
-                         <br />
-                         <DateTime timestamp={this.props.slice.updated} />
-                     </div>
-                 </div>
-             </Element>
-         );
+    if (typeof slice.authority !== 'undefined') {
+        authority = slice.authority.name || slice.authority.shortname;
     }
-}
+
+    var link = "/slices/" + slice.hrn;
+
+    return (
+         <Element type="slice"
+                  element={slice}
+                  isSelected={isSelected}
+                  handleSelect={handleSelect}
+                  status={status}
+                  options={options}
+         >
+
+             <a href={link}><ElementTitle label={label} detail={slice.shortname} /></a>
+             <ElementId id={slice.id} />
+             <div className="elementDetail">
+                 <span className="elementLabel">Part of project</span> {project}
+                 <br />
+                 <span className="elementLabel">Managed by</span> {authority}
+             </div>
+             <div className="row elementDate">
+                 <div className="col-sm-3">
+                     <span className="elementLabel">Created</span>
+                     <br />
+                     <DateTime timestamp={slice.created} />
+                 </div>
+                 <div className="col-sm-3">
+                     <span className="elementLabel">Enabled</span>
+                     <br />
+                     <DateTime timestamp={slice.enabled} />
+                 </div>
+                 <div className="col-sm-3">
+                     <span className="elementLabel">Updated</span>
+                     <br />
+                     <DateTime timestamp={slice.updated} />
+                 </div>
+             </div>
+         </Element>
+    );
+};
+
 
 SliceElement.propTypes = {
     slice: React.PropTypes.object.isRequired,
-    select: React.PropTypes.bool
 };
 
 SliceElement.defaultProps = {
-    select: false,
 };
 
+const SliceList = ({slices, selected, handleSelect, options}) =>
+    <List>
+    {
+        slices.map(function(slice) {
 
-class SliceList extends React.Component {
-
-    render() {
-        return (
-            <List>
-            {
-                this.props.slices.map(function(slice) {
-                    return <SliceElement key={slice.id} slice={slice} setCurrent={this.props.setCurrent} current={this.props.current} removeSlice={this.props.removeSlice} />;
-                }.bind(this))
+            var isSelected = false;
+            if (selected) {
+                 isSelected = selected.some(function (el) {
+                    return el.id === slice.id;
+                });
             }
-            </List>
-        );
+
+            return <SliceElement key={slice.id}
+                                 slice={slice}
+                                 isSelected={isSelected}
+                                 handleSelect={handleSelect}
+                                 options={options}
+                    />;
+        }.bind(this))
     }
-}
+    </List>;
 
 SliceList.propTypes = {
     slices: React.PropTypes.array.isRequired,
-    current: React.PropTypes.object,
-    removeSlice: React.PropTypes.bool,
-    setCurrent: React.PropTypes.func
 };
 
 SliceList.defaultProps = {
-    current: null,
-    setCurrent: null,
-    removeSlice: false,
 };
 
 export { SliceElement, SliceList};
