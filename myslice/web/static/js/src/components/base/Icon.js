@@ -62,6 +62,7 @@ const Icon = ({name, size}) => {
             break;
         case 'delete':
             iconClass += 'trash';
+            break;
         case 'remove':
             iconClass += 'minus-circle';
             break;
