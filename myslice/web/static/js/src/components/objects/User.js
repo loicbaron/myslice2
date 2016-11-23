@@ -7,9 +7,6 @@ import ElementTitle from '../base/ElementTitle';
 import ElementId from '../base/ElementId';
 import DateTime from '../base/DateTime';
 
-// import AddUserToProject from '../AddUserToProject';
-// import RemoveUserFromProject from '../RemoveUserFromProject';
-
 const UserElement = ({user, isSelected, handleSelect}) => {
 
     var authority = user.authority.name || user.authority.shortname;
@@ -79,6 +76,7 @@ const UserList = ({users, selected, handleSelect}) =>
     <List>
     {
         users.map(function(user) {
+
             var isSelected = false;
             if (selected) {
                  isSelected = selected.some(function (el) {
