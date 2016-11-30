@@ -56,7 +56,7 @@ class Element extends React.Component {
                 if ((typeof option.label !== "undefined") && (typeof option.callback !== "undefined")) {
                     return <div key={i} className={ "elementOption " + option.label }
                                 onClick={() => option.callback(this.props.element) }>
-                        <Icon name={option.label}/>{option.label}
+                        <Icon name={option.label} />{option.label}
                     </div>;
                 }
             }.bind(this));
@@ -71,8 +71,7 @@ class Element extends React.Component {
         var className = 'elementBox';
         var style;
         var callback = null;
-        var options = this.props.options;
-        var status = this.props.status;
+
         if (this.props.type) {
             className += ' ' + this.props.type;
         }
@@ -103,7 +102,7 @@ Element.propTypes = {
     icon: React.PropTypes.string,
     iconSelected: React.PropTypes.string,
     isSelected: React.PropTypes.bool,
-    handleClick: React.PropTypes.func,
+    handleSelect: React.PropTypes.func,
     status: React.PropTypes.string,
     options: React.PropTypes.array
 };
@@ -113,6 +112,7 @@ Element.defaultProps = {
     icon: null,
     iconSelected: 'check',
     isSelected: false,
+    handleSelect: () => { return null; },
     status: null,
     options: [],
 };

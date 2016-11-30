@@ -93,9 +93,9 @@ class ProjectsView extends React.Component {
     }
 
     /*
-        Remove Slice from the current project
+        Delete Slice
      */
-    removeSlice(slice) {
+    deleteSlice(slice) {
         // todo
         //actions.deleteSlice(slice);
     }
@@ -185,8 +185,8 @@ class ProjectsView extends React.Component {
              * */
             let sliceListOptions = [
                 {
-                    'label' : 'remove',
-                    'callback' : this.removeSlice
+                    'label' : 'delete',
+                    'callback' : this.deleteSlice
                 }
             ];
 
