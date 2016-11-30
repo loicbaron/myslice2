@@ -4,7 +4,7 @@ import signal
 import time
 
 from multiprocessing import Process
-from myslice.bin.fakeinterop import FakeInterop, FakeInteropConsumer
+from myslice.services.finterop.fakeinterop import FakeInterop, FakeInteropConsumer
 
 def receive_signal(signum, stack):
     print('Received signal %s', signum)

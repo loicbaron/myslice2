@@ -39,7 +39,15 @@ tables = [
         {
             'name' : 'activity',
             'pkey' : 'id'
-        }
+        },
+        {
+            'name' : 'sessions',
+            'pkey' : 'id'
+        },
+        {
+            'name' : 'messages',
+            'pkey' : 'id'
+        },
     ]
 
 def connect():

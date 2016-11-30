@@ -10,7 +10,7 @@ class FakeInterop():
 
     def __init__(self, queue_name='hello'):
         self._alive = True 
-
+        print("Initialize Queue %s" % queue_name)
         self.queue = queue_name
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(
                    'localhost'))

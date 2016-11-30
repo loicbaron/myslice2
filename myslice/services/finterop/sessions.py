@@ -2,10 +2,22 @@
 import logging
 import pika
 
+from pprint import pprint
+
+import rethinkdb as r
+import myslice.db as db
+from myslice import settings as s
+from myslice.lib.util import format_date
+
 logger = logging.getLogger('myslice.service.finterop.sessions')
 
+# DB connection
+dbconnection = db.connect()
+
+
 def start(queue_name):
-    logger.info("finterop session %s start" % queue_name) 
+    logger.info("finterop start listening session %s" % queue_name) 
+    print("start listening to %s" % queue_name)
     try:
         connection = pika.BlockingConnection(pika.ConnectionParameters(
                    'localhost'))
@@ -20,9 +32,19 @@ def start(queue_name):
         traceback.print_exc()
 
 def callback(ch, method, properties, body):
-    # TODO: add to DB
+    print("ch = ")
+    print(vars(ch))
+    print("method = ")
+    print(vars(method))
+    print("properties = ")
+    print(vars(properties))
     print(" [x] Received %r" % body)
     logger.info('Received %r' % body)
+
+    # TODO: add to DB
+    data = {'session':method.routing_key,'message':body.decode("utf-8"),'date':format_date()}
+
+    r.db(s.db.name).table('messages').insert(data, conflict='update').run(dbconnection)
 
 def stop(queue_name):
     try:
