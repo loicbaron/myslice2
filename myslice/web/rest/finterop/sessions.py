@@ -1,11 +1,15 @@
 import json
 import logging
 import threading
+from pprint import pprint
 from multiprocessing import Process
 
 import rethinkdb as r
+from rethinkdb.errors import ReqlNonExistenceError
+import myslice.db as db
+from myslice import settings as s
 
-from myslice.lib.util import myJSONEncoder
+from myslice.lib.util import myJSONEncoder, format_date
 from myslice.web.rest import Api
 
 from myslice.db.activity import Event, EventAction, ObjectType, DataType
@@ -13,13 +17,43 @@ from myslice.db import dispatch
 
 from myslice.services.finterop.sessions import start as startSession, stop as stopSession
 
-from myslice.bin.fakeinterop import FakeInterop
+from myslice.services.finterop.fakeinterop import FakeInterop
 
 from tornado import gen, escape
 
 logger = logging.getLogger('myslice.rest.finterop.sessions')
 
 class SessionsHandler(Api):
+
+    # DB connection
+    dbconnection = db.connect()
+
+    @gen.coroutine
+    def getSession(self, slice):
+        try:
+            data = yield r.db(s.db.name).table('sessions')\
+            .filter({'slice':'hi','status':'started'})\
+            .max('start_date').run(self.dbconnection)
+        except ReqlNonExistenceError:
+            return None
+        return data
+
+    @gen.coroutine
+    def startFakeInterop(self, session_id, slice_id):
+        fi = FakeInterop(session_id)
+        msg = 'Periodic message from FakeInterop'
+        for y in range(1):
+            ts = Process(target=fi.fake, args=(msg,))
+            self.threads[slice_id].append(ts)
+            ts.start()
+
+    @gen.coroutine
+    def listenSession(self, session_id, slice_id):
+        for y in range(1):
+            t = Process(target=startSession, args=(session_id,))
+            self.threads[slice_id].append(t)
+            t.start()
+
 
     @gen.coroutine
     def get(self, id=None, p=None):
@@ -54,29 +88,38 @@ class SessionsHandler(Api):
                 self.userError('this session has already started')
                 return
             else:
+                data = {'slice':id, 'status':'started', 'start_date':format_date()}
+                # Create a session in DB
+                session = yield r.db(s.db.name).table('sessions').insert(data, conflict='update').run(self.dbconnection)
+                session_id = session['generated_keys'][0]
+                # Add the session to the threads
                 self.threads[id] = []
+
                 # TODO: F-Interop Orchestrator Integration
                 # send a call to the F-Interop Orchestrator
 
                 # XXX Meanwhile start the FakeInterop session
-                fi = FakeInterop(id)
-                msg = 'Periodic message from FakeInterop'
-                for y in range(1):
-                    ts = Process(target=fi.fake, args=(msg,))
-                    self.threads[id].append(ts)
-                    ts.start()
+                yield self.startFakeInterop(session_id, id)
 
                 # listen to the session
-                print('Listen to the session %s' % id)
-                for y in range(1):
-                    t = Process(target=startSession, args=(id,))
-                    self.threads[id].append(t)
-                    t.start()
+                print('Listen to the session %s' % session_id)
+                yield self.listenSession(session_id, id)
 
         elif id and p == 'stop':
             # TODO: Check the status of the session in DB
             print(self.threads)
+            # Get session in DB
+            data = yield self.getSession(id)
+            print("DATA")
+            pprint(data)
+            if data:
+                data['status']='stopped'
+                data['end_date']=format_date()
+                # Update session in DB
+                r.db(s.db.name).table('sessions').get(data['id']).update(data).run(self.dbconnection)
+
             if id in self.threads:
+
                 # TODO: send a call to the F-Interop Orchestrator
 
                 # XXX Meanwhile stop FakeInterop process

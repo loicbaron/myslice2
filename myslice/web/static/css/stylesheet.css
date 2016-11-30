@@ -619,6 +619,9 @@ div.registrationForm {
     color:grey;
     margin-right:2px;
 }
+.elementLabel:hover a {
+    color:#6a52d0;
+}
 .elementDetail {
     font-size:10pt;
     padding:15px 0 0 0;

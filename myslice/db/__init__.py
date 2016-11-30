@@ -39,7 +39,15 @@ tables = [
         {
             'name' : 'activity',
             'pkey' : 'id'
-        }
+        },
+        {
+            'name' : 'sessions',
+            'pkey' : 'id'
+        },
+        {
+            'name' : 'messages',
+            'pkey' : 'id'
+        },
     ]
 
 def connect():
@@ -129,19 +137,19 @@ def syncResources(resources):
         u = resources.get(t['id'])
         if u is not None:
             # update
-            logger.info('updating resource {} ({})'.format(u.name, 'PLE'))
+            logger.info('updating resource {} ({})'.format(u.name, u.testbed))
             r.table('resources').update(u.dict()).run(dbconnection)
             # remove the element from the working set
             resources.remove(u)
         else:
             # delete
-            logger.info('deleting resource {} ({})'.format(t['name'], 'PLE'))
+            logger.info('deleting resource {} ({})'.format(t['name'], t.testbed))
             r.table('resources').get(t['id']).delete().run(dbconnection)
 
     # check new resources with the remaining elements
     for n in resources:
         # new
-        logger.info('new resource {} ({})'.format(n.name, 'PLE'))
+        logger.info('new resource {} ({})'.format(n.name, n.testbed))
         r.table('resources').insert(n.dict(), conflict='update').run(dbconnection)
 
     dbconnection.close()
