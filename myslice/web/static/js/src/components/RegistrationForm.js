@@ -85,7 +85,7 @@ class RegistrationForm extends React.Component {
                     <div className="row">
                         <div className="col-sm-4 col-sm-offset-4 inputForm">
                             <AuthoritiesSelect handleChange={this.updateAuthority}/>
-                            <a href="/addOrganization.html">Add organization</a>
+                            <a href="/addOrganization">Add organization</a>
                         </div>
                     </div>
                     <div className="row">

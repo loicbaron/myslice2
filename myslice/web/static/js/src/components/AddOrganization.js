@@ -4,7 +4,7 @@
 import InputText from './InputText';
 import actions from '../actions/AddOrganizationActions';
 import store from '../stores/AddOrganizationStore';
-class AddOrganisazation extends React.Component {
+class AddOrganization extends React.Component {
 
      constructor(props) {
         super(props);

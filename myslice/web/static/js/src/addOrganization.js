@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import ReactDOM from 'react-dom';
-import AddOrganization from './components/AddOrganisazation.js';
+import AddOrganization from './components/AddOrganization.js';
 
 ReactDOM.render(
   <AddOrganization />,
