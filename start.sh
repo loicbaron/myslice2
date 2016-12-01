@@ -1,10 +1,14 @@
 #!/bin/bash
 #service rethinkdb restart
+
+# Path of the script
+DIR=$(dirname "$0")
+
 #As deamon 
-/root/myslice/myslice/bin/myslice-live &
+$DIR/myslice/bin/myslice-live &
 #As deamon 
-/root/myslice/myslice/bin/myslice-monitor &
+$DIR/myslice/bin/myslice-monitor &
 # As deamon 
-/root/myslice/myslice/bin/myslice-server &
+$DIR/myslice/bin/myslice-server &
 #As deamon
-/root/myslice/myslice/bin/myslice-web &
+$DIR/myslice/bin/myslice-web &
