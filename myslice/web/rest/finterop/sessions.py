@@ -29,10 +29,10 @@ class SessionsHandler(Api):
     dbconnection = db.connect()
 
     @gen.coroutine
-    def getSession(self, slice):
+    def getSession(self, slice_id):
         try:
             data = yield r.db(s.db.name).table('sessions')\
-            .filter({'slice':'hi','status':'started'})\
+            .filter({'slice_id':slice_id,'status':'started'})\
             .max('start_date').run(self.dbconnection)
         except ReqlNonExistenceError:
             return None
@@ -88,7 +88,7 @@ class SessionsHandler(Api):
                 self.userError('this session has already started')
                 return
             else:
-                data = {'slice':id, 'status':'started', 'start_date':format_date()}
+                data = {'slice_id':id, 'status':'started', 'start_date':format_date()}
                 # Create a session in DB
                 session = yield r.db(s.db.name).table('sessions').insert(data, conflict='update').run(self.dbconnection)
                 session_id = session['generated_keys'][0]
