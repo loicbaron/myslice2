@@ -17,7 +17,7 @@ module.exports = {
         activity: "./activity.js",
         status: "./status.js",
         dashboard: "./dashboard.js",
-        addOrg : " ./addOrg.js"
+        addOrganization : "./addOrganization.js"
     },
     output: {
         filename: "[name].js",
