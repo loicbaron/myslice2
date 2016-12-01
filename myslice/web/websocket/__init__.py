@@ -1,6 +1,7 @@
-
 import jwt
 import logging, json
+
+from pprint import pprint
 
 from tornado import gen
 from sockjs.tornado import SockJSConnection
@@ -61,7 +62,7 @@ class WebsocketsHandler(SockJSConnection):
 
     clients = set()
     context = zmq.Context()
-    watch = ['projects', 'activity', 'requests']
+    watch = ['projects', 'activity', 'requests', 'sessions', 'messages']
 
     def on_open(self, request):
         self.authenticated = False
@@ -104,7 +105,7 @@ class WebsocketsHandler(SockJSConnection):
             else:
                 self.authenticated = True
                 logger.info("user {} connected".format(self.auth_user['id']))
-                self.send(json.dumps({'user':'authenticated'}))
+                self.send(json.dumps({'user':'authenticatedt'}))
                 return
 
         if self.authenticated and 'watch' in data:
@@ -141,8 +142,9 @@ class WebsocketsHandler(SockJSConnection):
                 self.close()
                 return
 
+            self.send(json.dumps({'user':'watching %s' % watch}))
+
             if watch == 'activity':
-                self.send(json.dumps({'user':'watching activity'}))
                 self.pubsub = ZMQPubSub(self.context, self._activity).connect().subscribe('activity')
 
             if watch == 'requests':
@@ -150,6 +152,14 @@ class WebsocketsHandler(SockJSConnection):
 
             if watch == 'projects':
                 self.pubsub = ZMQPubSub(self.context, self._projects).connect().subscribe('projects')
+
+            # F-Interop specific
+            if watch == 'sessions':
+                self.pubsub = ZMQPubSub(self.context, self._sessions).connect().subscribe('sessions')
+
+            if watch == 'messages':
+                self.pubsub = ZMQPubSub(self.context, self._messages).connect().subscribe('messages')
+
 
     def on_close(self):
 
@@ -196,4 +206,14 @@ class WebsocketsHandler(SockJSConnection):
         if self.auth_user['id'] in change['pi_users']:
             self.send(json.dumps({ 'projects': change }, ensure_ascii=False, cls=myJSONEncoder).encode('utf8'))
 
-            
+    def _sessions(self, message):
+        change = json.loads(message[1].decode('utf-8'))
+
+        if change['slice_id'] in self.auth_user['slices']:
+            self.send(json.dumps({ 'sessions': change }, ensure_ascii=False, cls=myJSONEncoder).encode('utf8'))
+
+    def _messages(self, message):
+        change = json.loads(message[1].decode('utf-8'))
+
+        if change['slice_id'] in self.auth_user['slices']:
+            self.send(json.dumps({ 'messages': change }, ensure_ascii=False, cls=myJSONEncoder).encode('utf8'))
