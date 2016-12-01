@@ -16,7 +16,8 @@ module.exports = {
         navbar: "./navbar.js",
         activity: "./activity.js",
         status: "./status.js",
-        dashboard: "./dashboard.js"
+        dashboard: "./dashboard.js",
+        addOrg : " ./addOrg.js"
     },
     output: {
         filename: "[name].js",

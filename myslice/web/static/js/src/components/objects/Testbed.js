@@ -6,13 +6,11 @@ import ElementTitle from '../base/ElementTitle';
 import ElementId from '../base/ElementId';
 import DateTime from '../base/DateTime';
 
-const TestbedElement = ({testbed, isSelected, handleSelect}) => {
-    testbed.status=testbed.status.online ? 'online' : 'offline';
-    return (
+const TestbedElement = ({testbed, isSelected, handleSelect}) =>
      <Element element={testbed}
               type="testbed"
               handleSelect={handleSelect}
-              status={testbed.status}
+        //      status={testbed.status.online ? 'online' : 'offline'}
               icon={testbed.type == 'AM' ? 'testbed' : 'registry'}
      >
          <ElementTitle label={testbed.name} detail={testbed.hostname} />
@@ -34,9 +32,7 @@ const TestbedElement = ({testbed, isSelected, handleSelect}) => {
                  <DateTime timestamp={null} />
              </div>
          </div>
-     </Element>
-    );
-};
+     </Element>;
 
 
 TestbedElement.propTypes = {
@@ -62,7 +58,8 @@ const TestbedList = ({testbeds, selected, handleSelect}) => {
                 return <TestbedElement key={testbed.id}
                                        testbed={testbed}
                                        isSelected={isSelected}
-                                       handleSelect={handleSelect} />;
+                                       handleSelect={handleSelect}
+                                       />;
             })
         }
     </List>;

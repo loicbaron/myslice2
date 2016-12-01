@@ -82,7 +82,8 @@
     margin-right:4px;
 }
 
-@media (max-width: 767px) {
+
+@media (max-width: 2000px) {
   .navbar-default .navbar-nav .open .dropdown-menu > li > a {
   }
   .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover,

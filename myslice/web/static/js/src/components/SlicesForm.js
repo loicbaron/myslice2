@@ -49,7 +49,6 @@ class SlicesForm extends React.Component {
         console.log(this.props.project);
         console.log(this.props.project.id);
         actions.updateProject(this.props.project.id);
-
         var flag = false;
         var msg = '';
         if(!label){

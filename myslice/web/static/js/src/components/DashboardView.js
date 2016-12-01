@@ -103,7 +103,7 @@ and sensing capabilities; ad-hoc wireless and wireless broadband access networks
             </Panel>
             <Panel>
                 <PanelHeader >
-                    <Title title="Projects"/>
+                    <Title title="Projects & Slices"/>
 
 
                     <Button label="Request Project" icon="plus" handleClick={this.showForm} />
