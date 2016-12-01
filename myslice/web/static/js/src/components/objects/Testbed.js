@@ -6,33 +6,39 @@ import ElementTitle from '../base/ElementTitle';
 import ElementId from '../base/ElementId';
 import DateTime from '../base/DateTime';
 
-const TestbedElement = ({testbed, isSelected, handleSelect}) =>
-     <Element element={testbed}
-              type="testbed"
-              handleSelect={handleSelect}
-        //      status={testbed.status.online ? 'online' : 'offline'}
-              icon={testbed.type == 'AM' ? 'testbed' : 'registry'}
-     >
-         <ElementTitle label={testbed.name} detail={testbed.hostname} />
-         <ElementId id={testbed.id} />
+const TestbedElement = ({testbed, isSelected, handleSelect, options}) => {
+    let status = testbed.status.online ? 'online' : 'offline';
+    let icon = testbed.type == 'AM' ? 'testbed' : 'registry';
+    console.log(status);
+    return (
+        <Element element={testbed}
+                 type="testbed"
+                 handleSelect={handleSelect}
+                 status={status}
+                 icon={icon}
+        >
+            <ElementTitle label={testbed.name} detail={testbed.hostname}/>
+            <ElementId id={testbed.id}/>
 
-         <div className="elementDetail">
-             <span className="elementLabel">API</span>
-             &nbsp;{testbed.api.protocol}
-             &nbsp;{testbed.api.type}
-             &nbsp;&nbsp;
-             <span className="elementLabel">version</span> {testbed.api.version}
-             <br />
-             <span className="elementLabel">URL</span> {testbed.url}
-         </div>
-         <div className="row elementDate">
-             <div className="col-sm-3">
-                 <span className="elementLabel">Last update</span>
-                 <br />
-                 <DateTime timestamp={null} />
-             </div>
-         </div>
-     </Element>;
+            <div className="elementDetail">
+                <span className="elementLabel">API</span>
+                &nbsp;{testbed.api.protocol}
+                &nbsp;{testbed.api.type}
+                &nbsp;&nbsp;
+                <span className="elementLabel">version</span> {testbed.api.version}
+                <br />
+                <span className="elementLabel">URL</span> {testbed.url}
+            </div>
+            <div className="row elementDate">
+                <div className="col-sm-3">
+                    <span className="elementLabel">Last update</span>
+                    <br />
+                    <DateTime timestamp={null}/>
+                </div>
+            </div>
+        </Element>
+    );
+};
 
 
 TestbedElement.propTypes = {
@@ -58,12 +64,12 @@ const TestbedList = ({testbeds, selected, handleSelect}) => {
                 return <TestbedElement key={testbed.id}
                                        testbed={testbed}
                                        isSelected={isSelected}
-                                       handleSelect={handleSelect}
-                                       />;
+                                       handleSelect={handleSelect} />;
             })
         }
     </List>;
-}
+};
+
 TestbedList.propTypes = {
     testbeds: React.PropTypes.array.isRequired,
     handleSelect: React.PropTypes.func,
