@@ -6,9 +6,29 @@ import actions from '../actions/AddOrganizationActions';
 import store from '../stores/AddOrganizationStore';
 class AddOrganisazation extends React.Component {
 
+     constructor(props) {
+        super(props);
+        this.state = store.getState();
+        this.onChange = this.onChange.bind(this);
+    }
+
+    componentDidMount() {
+        store.listen(this.onChange);
+    }
+
+    componentWillUnmount() {
+        store.unlisten(this.onChange);
+    }
+
+    onChange(state) {
+        console.log("changed");
+        this.setState(state);
+    }
 
 
-
+    updateTerms(event) {
+       // actions.updateTerms(event.target.value);
+    }
      submitForm(event) {
         event.preventDefault();
         //actions.submitForm();
@@ -46,3 +66,9 @@ class AddOrganisazation extends React.Component {
         );
     }
 }
+
+AddOrganisazation.propTypes = {
+
+};
+
+export default AddOrganisazation;
