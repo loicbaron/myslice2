@@ -14,7 +14,6 @@ logger = logging.getLogger('myslice.service.finterop.sessions')
 # DB connection
 dbconnection = db.connect()
 
-
 def start(queue_name):
     logger.info("finterop start listening session %s" % queue_name) 
     print("start listening to %s" % queue_name)
@@ -41,8 +40,12 @@ def callback(ch, method, properties, body):
     print(" [x] Received %r" % body)
     logger.info('Received %r' % body)
 
+    # XXX For performance
+    # slice_id should be embeded into the message instead of accessing DB
+    session = r.db(s.db.name).table('sessions').get(method.routing_key).run(dbconnection)
+
     # TODO: add to DB
-    data = {'session':method.routing_key,'message':body.decode("utf-8"),'date':format_date()}
+    data = {'session':method.routing_key,'message':body.decode("utf-8"),'date':format_date(), 'slice_id':session['slice_id']}
 
     r.db(s.db.name).table('messages').insert(data, conflict='update').run(dbconnection)
 
