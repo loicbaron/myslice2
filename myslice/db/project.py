@@ -10,6 +10,7 @@ from myslice.lib import Status
 from myslice.lib.util import format_date
 from xmlrpc.client import Fault as SFAError
 
+
 class ProjectException(Exception):
     def __init__(self, errors):
         self.stack = errors

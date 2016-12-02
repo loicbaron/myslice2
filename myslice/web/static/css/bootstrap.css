@@ -1096,11 +1096,11 @@ h4,
 }
 h5,
 .h5 {
-  font-size: 14px;
+  font-size: 15px;
 }
 h6,
 .h6 {
-  font-size: 12px;
+  font-size: 14px;
 }
 p {
   margin: 0 0 10px;
@@ -3822,6 +3822,18 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   display: none;
   visibility: hidden;
 }
+.fade {
+        opacity: 0;
+        -webkit-transition: opacity 2.25s linear;
+        -moz-transition: opacity 2.25s linear;
+        -ms-transition: opacity 2.25s linear;
+    	-o-transition: opacity 2.25s linear;
+	    transition: opacity 2.25s linear;
+}
+
+
+
+
 .tab-content > .active {
   display: block;
   visibility: visible;

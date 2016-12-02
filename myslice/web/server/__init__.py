@@ -39,7 +39,7 @@ from myslice.web.websocket import WebsocketsHandler
 
 ##
 # Web controllers
-from myslice.web.controllers import login, logout, password, registration, home, activity, projects, slices, users, status
+from myslice.web.controllers import login, logout, password, registration, home, activity, projects, slices, users, status, addOrganization
 from myslice.web.controllers import test
 
 logging.basicConfig(level=logging.DEBUG)
@@ -141,6 +141,7 @@ class Application(web.Application):
             web.url(r'/status', status.Index),
             web.url(r'/static/(.*)', web.StaticFileHandler, {'path': self.static}),
             web.url(r'/test', test.Index),
+            web.url(r"/addOrganization", addOrganization.Index)
 
         ]
 

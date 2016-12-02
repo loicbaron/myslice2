@@ -28,7 +28,7 @@ Later:
 */
 
     render() {
-        var p = this.props.element;
+        var p = this.props.selected;
         let name = [p.first_name, p.last_name].join(' ');
         var projectsElement;
         if(p.projects){

@@ -70,7 +70,7 @@ class RegistrationForm extends React.Component {
 
             */
 
-    	    var emailRegExp = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    	    var emailRegExp = "/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/";
             var errorMessage = '';
             if(this.state.errorMessage){
                 errorMessage = <div className="row">
@@ -85,6 +85,7 @@ class RegistrationForm extends React.Component {
                     <div className="row">
                         <div className="col-sm-4 col-sm-offset-4 inputForm">
                             <AuthoritiesSelect handleChange={this.updateAuthority}/>
+                            <a href="/addOrganization">Add organization</a>
                         </div>
                     </div>
                     <div className="row">

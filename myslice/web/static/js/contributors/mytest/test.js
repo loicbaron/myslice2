@@ -29,7 +29,8 @@ function launchWS(token){
       ws.onopen = function() {
         console.log('opening...');
         ws.send(JSON.stringify({'auth' : token}));
-        ws.send(JSON.stringify({'watch': 'activity'}));
+        ws.send(JSON.stringify({'watch': 'sessions'}));
+        ws.send(JSON.stringify({'watch': 'messages'}));
       }
       
       ws.onerror = function(error) {

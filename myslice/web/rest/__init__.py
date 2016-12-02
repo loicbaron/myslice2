@@ -58,11 +58,16 @@ class Api(cors.CorsMixin, web.RequestHandler):
             pi_auth = self.get_current_user()['pi_authorities']
             for auth in pi_auth:
                 m = auth_pattern.match(auth)
+                # User has only Projects and No Authorities under pi_authorities
+                if m is None:
+                    return False
                 hrn_length = len(m.group('hrn').split(':'))
                 if hrn_length == 1:
                     return True
         except Exception as e:
-            self.serverError("enable to identify user permission")
+            import traceback
+            traceback.print_exc()
+            self.serverError("unable to identify user permission")
         finally:
             return False
 

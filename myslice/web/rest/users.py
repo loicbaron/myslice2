@@ -726,7 +726,7 @@ class ProfileHandler(Api):
 
 class UserTokenHandler(Api):
     """
-    PUT /usertoken
+    GET /usertoken
 
     :return:
     """
@@ -755,6 +755,8 @@ class UserTokenHandler(Api):
                                 "id" : current_user_id,
                                 "admin" : admin,
                                 "pi_auth" : pi_auth,
+                                "projects" : user['projects'],
+                                "slices" : user['slices'],
                                 },
                                 secret, algorithm='HS256')
         except Exception as e:

@@ -1,3 +1,5 @@
+'use strict';
+
 /* webpack.config.js */
 var path = require('path');
 var webpack = require('webpack');
@@ -5,38 +7,35 @@ var webpack = require('webpack');
 module.exports = {
     context: __dirname,
     entry: {
-        settings :"./settings.js",
-        password :"./password.js",
+        settings: "./settings.js",
+        password: "./password.js",
         projects: "./projects.js",
         slice: "./slice.js",
         users: "./users.js",
         registration: "./registration.js",
-        password_forgot :"./password_forgot.js",
+        password_forgot: "./password_forgot.js",
         login: "./login.js",
         navbar: "./navbar.js",
         activity: "./activity.js",
         status: "./status.js",
-        dashboard: "./dashboard.js",
-        addOrganization : "./addOrganization.js"
+        dashboard: "./dashboard.js"
     },
     output: {
         filename: "[name].js",
-        path: "../build/",
+        path: "../build/"
     },
     module: {
-    loaders: [
-        {
+        loaders: [{
             test: /\.jsx?$/,
-            include: [
-                __dirname,
-            ],
+            include: [__dirname],
             exclude: /node_modules/,
             loader: 'babel-loader',
             query: {
                 presets: ['es2015', 'react'],
                 compact: false
             }
-        }, { test: /\.css$/, loader: 'style-loader!css-loader' },
-    ]
-    },
+        }, { test: /\.css$/, loader: 'style-loader!css-loader' }]
+    }
 };
+
+//# sourceMappingURL=webpack.config-compiled.js.map

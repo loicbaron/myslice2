@@ -47,8 +47,8 @@ myslicelibsetup.endpoints = [
             #Endpoint(url="http://www.wall2.ilabt.iminds.be:12369/protogeni/xmlrpc/am/3.0",type="AM",name="Virtual Wall 2"),
             #Endpoint(url="https://fuseco.fokus.fraunhofer.de/api/sfa/am/v3",type="AM"),
             Endpoint(url="https://griffin.ipv6.lip6.fr:8001/RPC2",type="AM",name="FIT WiFi UPMC"),
-            #Endpoint(url="https://portal.onelab.eu:6080",type="Reg",name="OneLab Registry"),
-            Endpoint(url="https://localhost:12345",type="Reg", timeout=10, name="OneLab Registry"),
+            Endpoint(url="https://portal.onelab.eu:6080",type="Reg",name="OneLab Registry"),
+            #Endpoint(url="https://dev.myslice.info:12345",type="Reg", timeout=10, name="OneLab Registry"),
             #Endpoint(url="https://sfa-fed4fire.pl.sophia.inria.fr:443",type="Reg")
         ]
 
