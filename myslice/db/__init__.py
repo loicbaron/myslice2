@@ -95,20 +95,20 @@ def syncTestbeds(testbeds):
         u = testbeds.get(t['id'])
         if u is not None:
             # update
-            logger.info('updating testbed {} ({})'.format(u.name, u.type))
             r.table('testbeds').update(u.dict()).run(dbconnection)
             # remove the element from the working set
             testbeds.remove(u)
+            logger.info('updating testbed {} ({})'.format(u.name, u.type))
         else:
             # delete
-            logger.info('deleting testbed {} ({})'.format(t['name'], t['type']))
             r.table('testbeds').get(t['id']).delete().run(dbconnection)
+            logger.info('deleting testbed {} ({})'.format(t['name'], t['type']))
 
     # check new testbeds with the remaining elements
     for n in testbeds:
         # new
-        logger.info('new testbed {} ({})'.format(n.name, n.type))
         r.table('testbeds').insert(n.dict(), conflict='update').run(dbconnection)
+        logger.info('new testbed {} ({})'.format(n.name, n.type))
 
     dbconnection.close()
 
@@ -137,20 +137,20 @@ def syncResources(resources):
         u = resources.get(t['id'])
         if u is not None:
             # update
-            logger.info('updating resource {} ({})'.format(u.name, u.testbed))
             r.table('resources').update(u.dict()).run(dbconnection)
             # remove the element from the working set
             resources.remove(u)
+            logger.info('updating resource {} ({})'.format(u.name, u.testbed))
         else:
             # delete
-            logger.info('deleting resource {} ({})'.format(t['name'], t.testbed))
             r.table('resources').get(t['id']).delete().run(dbconnection)
+            logger.info('deleting resource {} ({})'.format(t['name'], t.testbed))
 
     # check new resources with the remaining elements
     for n in resources:
         # new
-        logger.info('new resource {} ({})'.format(n.name, n.testbed))
         r.table('resources').insert(n.dict(), conflict='update').run(dbconnection)
+        logger.info('new resource {} ({})'.format(n.name, n.testbed))
 
     dbconnection.close()
 
