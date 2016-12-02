@@ -87,7 +87,6 @@ def events_run(lock, qLeasesEvents):
 
                 if event.deletingObject(): 
                     lease = Lease(db.get(dbconnection, table='leases', id=event.object.id))
-#            Loïc Baron <loic.baron@lip6.fr>
                     if not lease:
                         raise Exception("Lease doesn't exist")
 
@@ -154,16 +153,17 @@ def sync(lock):
             db.syncLeases(ll)
 
             for l in ll:
-                print("Synchronize slice %s" % l.slice_id)
-                logger.info("Synchronize slice %s" % l.slice_id)
-                # if the slice is part of the portal
-                print("db get slices")
-                tmp = db.get(dbconnection, table='slices', id=l.slice_id)
-                print(tmp)
-                if db.get(dbconnection, table='slices', id=l.slice_id):
-                    print("it should sync")
-                    pprint(l)
-                    syncSlices(l.slice_id)
+                if hasattr(l, 'slice_id'):
+                    print("Synchronize slice %s" % l.slice_id)
+                    logger.info("Synchronize slice %s" % l.slice_id)
+                    # if the slice is part of the portal
+                    print("db get slices")
+                    tmp = db.get(dbconnection, table='slices', id=l.slice_id)
+                    print(tmp)
+                    if db.get(dbconnection, table='slices', id=l.slice_id):
+                        print("it should sync")
+                        pprint(l)
+                        syncSlices(l.slice_id)
 
         except Exception as e:
             import traceback
