@@ -96,19 +96,28 @@ def syncTestbeds(testbeds):
         if u is not None:
             # update
             logger.info('updating testbed {} ({})'.format(u.name, u.type))
-            r.table('testbeds').update(u.dict()).run(dbconnection)
+            try:
+                r.table('testbeds').update(u.dict()).run(dbconnection)
+            except Exception as e:
+                logger.error('{}'.format(str(e)))
             # remove the element from the working set
             testbeds.remove(u)
         else:
             # delete
             logger.info('deleting testbed {} ({})'.format(t['name'], t['type']))
-            r.table('testbeds').get(t['id']).delete().run(dbconnection)
+            try:
+                r.table('testbeds').get(t['id']).delete().run(dbconnection)
+            except Exception as e:
+                logger.error('{}'.format(str(e)))
 
     # check new testbeds with the remaining elements
     for n in testbeds:
         # new
         logger.info('new testbed {} ({})'.format(n.name, n.type))
-        r.table('testbeds').insert(n.dict(), conflict='update').run(dbconnection)
+        try:
+            r.table('testbeds').insert(n.dict(), conflict='update').run(dbconnection)
+        except Exception as e:
+            logger.error('{}'.format(str(e)))
 
     dbconnection.close()
 
