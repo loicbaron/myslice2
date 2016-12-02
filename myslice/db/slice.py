@@ -50,6 +50,11 @@ class Slice(myslicelibSlice):
             user = user.merge(dbconnection)
             db.users(dbconnection, user.dict())
 
+        # Update the Project of the slice
+        project = db.get(dbconnection, table='projects', id=self.project)
+        project['slices'] = project['slices'] + [self.id]
+        db.projects(dbconnection, project)
+
         # Insert / Delete Leases if necessary
         if self.hasLeases:
             flag = -1
@@ -96,6 +101,11 @@ class Slice(myslicelibSlice):
             user = q(User).id(u).get().first()
             user = user.merge(dbconnection)
             db.users(dbconnection, user.dict())
+
+        # Update the Project of the slice
+        project = db.get(dbconnection, table='projects', id=self.project)
+        project['slices'] = list(set(project['slices']) - set([self.id]))
+        db.projects(dbconnection, project)
 
         if errors:
             raise SliceException(errors)
