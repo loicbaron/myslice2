@@ -49,10 +49,11 @@ class AddOrganization extends React.Component {
         //actions.submitForm();
     }
     render() {
-         var emailRegExp = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+         var emailRegExp = "/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/";
 
         return (
                     <form onSubmit={this.submitForm}>
+
                         <div className="row">
                             <div className="col-sm-7 col-sm-offset-3">
                                 <p className="inputDescription">
@@ -93,16 +94,17 @@ class AddOrganization extends React.Component {
                     <div className="row">
                         <InputText name="password" handleChange={this.updatePassword} placeholder="Password" regex=".{8,}$" message="must be at least 8 characters" type="password" />
                     </div>
-                        <div className="col-sm-8">
-                            <button className="large" type="submit" value="Save">
-                            <i className="fa fa-floppy-o" aria-hidden="true"></i> Save
-                            </button>
-                        </div>
+
                         <div className="row">
                         <div className="col-sm-4 col-sm-offset-4 inputForm">
                             <input type="checkbox" name="terms" onChange={this.updateTerms} />&nbsp;&nbsp; I agree to the&nbsp;
                             <a href="#" data-toggle="modal" data-target="#myModal">terms and conditions.</a>
                         </div>
+                        </div>
+                        <div className="row">
+                            <button className="large" type="submit" value="Save">
+                            <i className="fa fa-floppy-o" aria-hidden="true"></i> Save
+                            </button>
                         </div>
                     </form>
 
