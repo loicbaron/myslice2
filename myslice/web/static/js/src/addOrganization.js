@@ -7,7 +7,7 @@ import AddOrganization from './components/AddOrganization.js';
 
 ReactDOM.render(
   <AddOrganization />,
-  document.getElementById('AddOrganization')
+  document.getElementById('addOrganization')
 );
 
 
