@@ -1,6 +1,9 @@
 /**
  * Created by amirabradai on 29/11/2016.
  */
+import React from 'react';
+import ReactDOM from 'react-dom';
+//var React = require('react');
 import InputText from './InputText';
 import actions from '../actions/AddOrganizationActions';
 import store from '../stores/AddOrganizationStore';
@@ -8,7 +11,8 @@ class AddOrganization extends React.Component {
 
      constructor(props) {
         super(props);
-        this.state = store.getState();
+         this.state={};
+       // this.state = store.getState();
         this.onChange = this.onChange.bind(this);
     }
 
@@ -61,14 +65,24 @@ class AddOrganization extends React.Component {
                             <a href="#" data-toggle="modal" data-target="#myModal">terms and conditions.</a>
                         </div>
                     </div>
+                    <div className="col-sm-8">
+                        <button className="large" type="submit" value="Save">
+                        <i className="fa fa-floppy-o" aria-hidden="true"></i> Save
+                        </button>
+                    </div>
+                    <div className="col-sm-4">
+                        <button className="large" value="Cancel" onClick={this.props.close}>
+                        <i className="fa fa-times" aria-hidden="true"></i> Cancel
+                         </button>
+                    </div>
                     </form>
 
         );
     }
 }
 
-AddOrganisazation.propTypes = {
+AddOrganization.propTypes = {
 
 };
 
-export default AddOrganisazation;
+export default AddOrganization;
