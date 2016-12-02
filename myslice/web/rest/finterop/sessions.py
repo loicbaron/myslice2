@@ -66,7 +66,6 @@ class SessionsHandler(Api):
         response = []
         current_user = self.get_current_user()
         logger.info('get session')
-        print('get session %s' % id)
 
         if not current_user:
             self.userError('not authenticated ')
