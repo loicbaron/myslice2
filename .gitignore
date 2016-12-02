@@ -5,3 +5,4 @@ __pycache__
 myslice.egg-info
 build
 node_modules
+rethinkdb_data
