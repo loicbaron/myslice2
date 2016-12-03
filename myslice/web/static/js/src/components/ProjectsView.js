@@ -154,7 +154,7 @@ class ProjectsView extends React.Component {
             let userSectionOptions = [
                 {
                     'label' : 'Add User',
-                    'icon' : 'plus-circle',
+                    'icon' : 'add',
                     'callback' : this.selectUser
                 }
             ];
@@ -175,7 +175,7 @@ class ProjectsView extends React.Component {
             let sliceSectionOptions = [
                 {
                     'label' : 'Create Slice',
-                    'icon' : 'plus-circle',
+                    'icon' : 'create',
                     'callback' : this.createSlice
                 }
             ];
