@@ -1,13 +1,13 @@
 import React from 'react';
 
 const Icon = ({name, size}) => {
-    var icon;
+    let icon;
 
     if (name) {
         icon = name.toLowerCase()
     }
 
-    var iconClass = 'fa fa-lg fa-';
+    let iconClass = 'fa fa-lg fa-';
 
     switch(icon) {
         case 'approved':
@@ -63,6 +63,10 @@ const Icon = ({name, size}) => {
         case 'delete':
             iconClass += 'trash';
             break;
+        case 'add':
+        case 'create':
+            iconClass += 'plus-circle';
+            break;
         case 'remove':
             iconClass += 'minus-circle';
             break;
@@ -90,4 +94,36 @@ const Icon = ({name, size}) => {
     return <i className={iconClass} />;
 };
 
-export default Icon;
+const TechnologyIcon = ({name, size}) => {
+    let icon = 'default';
+    let label = null;
+
+    if (name) {
+        icon = name.toLowerCase()
+    }
+
+    switch(icon) {
+        case 'iot':
+            label = 'IoT';
+            break;
+        default:
+            label = icon.charAt(0).toUpperCase() + icon.slice(1);
+            break;
+    }
+
+    return <div className={"technologyLabel " + size}>
+        <img className={"technologyIcon " + size + " " + icon} src={"/static/icons/technologies/" + icon + ".svg"} />
+        {label}
+    </div>;
+};
+
+TechnologyIcon.propTypes = {
+    name: React.PropTypes.string,
+    size: React.PropTypes.string,
+};
+
+TechnologyIcon.defaultProps = {
+    size: "normal"
+};
+
+export { Icon, TechnologyIcon};
