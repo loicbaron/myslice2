@@ -653,7 +653,7 @@ ul.elementOptions li {
     float:left;
     border-right:1px solid #DCDCF8;
     padding-right:15px;
-    padding-left:6px;
+    padding-left:10px;
 }
 ul.elementOptions li:last-child {
     border:0;
@@ -715,6 +715,7 @@ ul.elementOptions li:first-child {
 .technologyLabel.small {
     font-size:14pt;
     font-weight:100;
+    line-height:1em;
 }
 
 .technologyLabel.normal {
@@ -728,6 +729,7 @@ ul.elementOptions li:first-child {
 .technologyLabel.big {
     font-size:28pt;
     font-weight:100;
+    vertical-align:bottom;
 }
 
 .technologyIcon.small {
