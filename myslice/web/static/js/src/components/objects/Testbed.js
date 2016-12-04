@@ -5,11 +5,12 @@ import { Element } from '../base/Element';
 import ElementTitle from '../base/ElementTitle';
 import ElementId from '../base/ElementId';
 import DateTime from '../base/DateTime';
+import { Icon } from '../base/Icon';
 
 const TestbedElement = ({testbed, isSelected, handleSelect, options}) => {
     let status = testbed.status.online ? 'online' : 'offline';
     let icon = testbed.type == 'AM' ? 'testbed' : 'registry';
-    console.log(status);
+
     return (
         <Element element={testbed}
                  type="testbed"
@@ -50,10 +51,6 @@ TestbedElement.defaultProps = {
 
 const TestbedList = ({testbeds, selected, handleSelect}) => {
 
-    if (!Array.isArray(selected)) {
-
-    }
-
     return <List>
         {
             testbeds.map(function (testbed) {
@@ -80,5 +77,37 @@ TestbedList.defaultProps = {
     selected: [],
 };
 
+const TestbedLabel = ({testbed, options}) => {
+    let status = testbed.connection.online ? 'online' : 'offline';
 
-export { TestbedElement, TestbedList };
+    return (<div>
+                <ElementTitle label={testbed.name} />
+                <ul className="elementOptions">
+                    <li className="elementStatus">
+                        <Icon name={status} />&nbsp;{status}
+                    </li>
+                {
+                    options.map(function(option, i) {
+                        if ((typeof option.label !== "undefined") && (typeof option.callback !== "undefined")) {
+                            return <li key={i} className={ "elementOption visible " + option.icon }
+                                        onClick={() => option.callback(testbed) }>
+                                <Icon name={option.icon} />{option.label}
+                            </li>;
+                        }
+                    })
+                }
+                </ul>
+            </div>
+    );
+};
+
+
+TestbedLabel.propTypes = {
+    testbed: React.PropTypes.object.isRequired,
+};
+
+TestbedLabel.defaultProps = {
+    options: []
+};
+
+export { TestbedElement, TestbedList, TestbedLabel };

@@ -1,5 +1,5 @@
 import React from 'react';
-import Icon from './Icon';
+import { Icon } from './Icon';
 
 class Element extends React.Component {
 
@@ -16,7 +16,7 @@ class Element extends React.Component {
     }
 
     renderIcon() {
-        var icon = this.props.icon || this.props.type;
+        let icon = this.props.icon || this.props.type;
 
         if (icon) {
             return (
@@ -41,9 +41,9 @@ class Element extends React.Component {
     }
 
     renderOptions() {
-        var status = this.props.element.status || this.props.status || null;
-        var rStatus = null;
-        var rOptions = null;
+        let status = this.props.status || this.props.element.status || null;
+        let rStatus = null;
+        let rOptions = null;
 
         if (status) {
             rStatus = <div className="elementStatus">
@@ -68,9 +68,9 @@ class Element extends React.Component {
         </div>;
     }
     render() {
-        var className = 'elementBox';
-        var style;
-        var callback = null;
+        let className = 'elementBox';
+        let style;
+        let callback = null;
 
         if (this.props.type) {
             className += ' ' + this.props.type;

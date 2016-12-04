@@ -10,7 +10,7 @@ import Title from '../base/Title';
 import Text from '../base/Text';
 import DateTime from '../base/DateTime';
 
-import { TestbedList } from '../objects/Testbed';
+import { TestbedSectionPanel } from '../sections/Testbed';
 
 import SelectResourceDialog from '../dialogs/SelectResource';
 import SelectUserDialog from '../dialogs/SelectUser';
@@ -49,10 +49,8 @@ class SliceView extends React.Component {
     addUser() {
         actions.selectUserDialog();
     }
-
     
     render() {
-
         var panelRight = null;
         var dialog = null;
 
@@ -74,19 +72,17 @@ class SliceView extends React.Component {
 
 
         /*
-        *  Define options for user section
+        *  Define options for testbed panel
         * */
-        var userSectionOptions = [
+
+        let testbedListOptions = [
             {
-                'label' : 'Add User',
-                'icon' : 'plus-circle',
-                'callback' : this.addUser
+                'label' : 'Add Resources',
+                'icon' : 'add',
+                'callback' : this.addResources
             }
         ];
 
-        var ams = this.state.testbeds.filter(function(testbed) {
-                    return testbed.type == 'AM';
-                  });
         return (
             <View>
                 <Panel>
@@ -104,7 +100,7 @@ class SliceView extends React.Component {
                             <DateTime label="Last updated" timestamp={this.state.slice.updated} />
 
                         </div>
-                        <UsersSectionSimple users={this.state.slice.users} options={userSectionOptions} />
+                        <UsersSectionSimple users={this.state.slice.users} />
                     </PanelBody>
                 </Panel>
                 <Panel>
@@ -115,11 +111,8 @@ class SliceView extends React.Component {
                         <Text>
                             Please select the resources to reserve by choosing a Testbed (text to change)
                         </Text>
-                        <ul>
-                        {
-                            <TestbedList testbeds={ams} handleSelect={this.addResources} />
-                        }
-                        </ul>
+                        <br />
+                        <TestbedSectionPanel testbeds={this.state.testbeds} listOptions={testbedListOptions} />
                     </PanelBody>
                     {dialog}
                 </Panel>

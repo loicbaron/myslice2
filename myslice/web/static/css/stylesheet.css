@@ -606,6 +606,7 @@ div.registrationForm {
 
 .elementTitle {
     font-size:14pt;
+    color:darkblue;
 }
 .elementTitle span {
     font-size:8pt;
@@ -641,6 +642,27 @@ div.registrationForm {
     top:15px;
     right:15px;
 }
+ul.elementOptions {
+    position:static;
+    top:auto;
+    right:auto;
+    margin:8px 0;
+    padding:0;
+    list-style:none;
+}
+ul.elementOptions li {
+    float:left;
+    border-right:1px solid #DCDCF8;
+    padding-right:15px;
+    padding-left:10px;
+}
+ul.elementOptions li:last-child {
+    border:0;
+    padding-right:0;
+}
+ul.elementOptions li:first-child {
+    padding-left:0;
+}
 .elementBox:hover .elementOption {
     display:block;
 }
@@ -650,6 +672,9 @@ div.registrationForm {
     margin-bottom:10px;
     cursor: pointer;
 }
+.elementOption.visible {
+    display:block;
+}
 .elementOption:hover {
     text-decoration:underline;
 }
@@ -658,6 +683,13 @@ div.registrationForm {
 }
 .elementOption.delete, .elementOption.remove {
     color:red;
+}
+.elementOption:hover.add {
+    color:darkblue;
+}
+
+.elementOption:hover.create {
+    color:green;
 }
 .elementStatus {
     font-size:9pt;
@@ -678,6 +710,46 @@ div.registrationForm {
 }
 .elementStatus .waiting, .elementStatus .pending  {
     color:#76A5AF;
+}
+
+.technologyBox {
+    margin-bottom:50px;
+}
+.technologyLabel {
+    line-height:1em;
+}
+.technologyLabel.small {
+    font-size:14pt;
+    font-weight:100;
+}
+.technologyLabel.normal {
+    font-size:20pt;
+    font-weight:100;
+    border-bottom:1px solid #DCDCF8;
+    padding-bottom:15px;
+    margin-bottom:15px;
+}
+.technologyLabel.big {
+    font-size:28pt;
+    font-weight:100;
+    vertical-align:bottom;
+}
+.technologyIcon {
+    vertical-align:middle;
+}
+.technologyIcon.small {
+    width:24px;
+    margin-right:10px;
+}
+.technologyIcon.normal {
+    width:45px;
+    height:45px;
+    margin-right:15px;
+}
+.technologyIcon.big {
+    width:60px;
+    margin-right:20px;
+    vertical-align:bottom;
 }
 
 /*
