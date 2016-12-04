@@ -18,7 +18,7 @@ const TestbedSectionPanel = ({testbeds, listOptions}) => {
         <SectionBody>
             {
                 technologies.map((technology) => {
-                    return <div key={technology} className="col-sm-6">
+                    return <div key={technology} className="col-sm-6 technologyBox">
                         <TechnologyIcon name={technology} />
                         {
                             testbeds.filter(function (testbed) {

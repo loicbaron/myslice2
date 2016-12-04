@@ -106,6 +106,9 @@ const TechnologyIcon = ({name, size}) => {
         case 'iot':
             label = 'IoT';
             break;
+        case 'vm':
+            label = 'Virtual Machines';
+            break;
         default:
             label = icon.charAt(0).toUpperCase() + icon.slice(1);
             break;

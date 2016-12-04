@@ -82,7 +82,6 @@ const TestbedLabel = ({testbed, options}) => {
 
     return (<div>
                 <ElementTitle label={testbed.name} />
-                <h6 className="">{testbed.url}</h6>
                 <ul className="elementOptions">
                     <li className="elementStatus">
                         <Icon name={status} />&nbsp;{status}
