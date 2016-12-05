@@ -80,16 +80,16 @@ TestbedList.defaultProps = {
 const TestbedLabel = ({testbed, options}) => {
     let status = testbed.connection.online ? 'online' : 'offline';
 
-    return (<div>
+    return (<div className="labelBox">
                 <ElementTitle label={testbed.name} />
-                <ul className="elementOptions">
-                    <li className="elementStatus">
-                        <Icon name={status} />&nbsp;{status}
+                <ul className="labelOptions">
+                    <li key={"status-" + testbed.id} className={"labelStatus " + status}>
+                        <Icon name={status} />{status}
                     </li>
                 {
-                    options.map(function(option, i) {
+                    options.map(function(option) {
                         if ((typeof option.label !== "undefined") && (typeof option.callback !== "undefined")) {
-                            return <li key={i} className={ "elementOption visible " + option.icon }
+                            return <li key={option.icon + "-" + testbed.id} className={ "labelOption visible " + option.icon }
                                         onClick={() => option.callback(testbed) }>
                                 <Icon name={option.icon} />{option.label}
                             </li>;

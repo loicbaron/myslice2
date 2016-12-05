@@ -183,7 +183,16 @@ input.error {
     font-style:italic;
     color: #333;
 }
-
+.selectDescription {
+    font-size:9pt;
+    color:#232323;
+}
+.selectLabel a, .selectLabel a:active {
+    color:blue;
+}
+.selectLabel a:hover {
+    text-decoration:underline;
+}
 p.inputDescription {
     font-size:9pt;
     color:#5e5e5e;
@@ -642,27 +651,6 @@ div.registrationForm {
     top:15px;
     right:15px;
 }
-ul.elementOptions {
-    position:static;
-    top:auto;
-    right:auto;
-    margin:8px 0;
-    padding:0;
-    list-style:none;
-}
-ul.elementOptions li {
-    float:left;
-    border-right:1px solid #DCDCF8;
-    padding-right:15px;
-    padding-left:10px;
-}
-ul.elementOptions li:last-child {
-    border:0;
-    padding-right:0;
-}
-ul.elementOptions li:first-child {
-    padding-left:0;
-}
 .elementBox:hover .elementOption {
     display:block;
 }
@@ -671,9 +659,6 @@ ul.elementOptions li:first-child {
     font-size:9pt;
     margin-bottom:10px;
     cursor: pointer;
-}
-.elementOption.visible {
-    display:block;
 }
 .elementOption:hover {
     text-decoration:underline;
@@ -687,10 +672,45 @@ ul.elementOptions li:first-child {
 .elementOption:hover.add {
     color:darkblue;
 }
-
 .elementOption:hover.create {
     color:green;
 }
+.labelBox {
+    padding-bottom:25px;
+}
+ul.labelOptions {
+    margin:0;
+    padding:0;
+    list-style:none;
+}
+ul.labelOptions li {
+    display:inline;
+    font-size:9pt;
+    border-right:1px solid #DCDCF8;
+    padding-right:15px;
+    padding-left:10px;
+    cursor: pointer;
+}
+ul.labelOptions li:last-child {
+    border:0;
+    padding-right:0;
+}
+ul.labelOptions li:first-child {
+    padding-left:0;
+}
+ul.labelOptions li:hover {
+    text-decoration:underline;
+}
+ul.labelOptions li i {
+    margin-right:5px;
+}
+ul.labelOptions li.delete, ul.labelOptions li.remove {
+    color:red;
+}
+ul.labelOptions li:hover.add {
+    color:darkblue;
+}
+
 .elementStatus {
     font-size:9pt;
     margin-bottom:10px;
@@ -698,58 +718,48 @@ ul.elementOptions li:first-child {
 .elementStatus .new {
     color:#8E7CC3;
 }
-
-.elementStatus .success, .elementStatus .enabled, .elementStatus .online {
+.elementStatus .success, .elementStatus .enabled, .elementStatus .online,
+.labelStatus .success, .labelStatus .enabled, .labelStatus .online {
     color:#93C47D;
 }
-.elementStatus .error, .elementStatus .denied, .elementStatus .offline {
+.elementStatus .error, .elementStatus .denied, .elementStatus .offline,
+.labelStatus .error, .labelStatus .denied, .labelStatus .offline {
     color:#E06666;
 }
-.elementStatus .warning {
+.elementStatus .warning,
+.labelStatus .warning {
     color:#F6B26B;
 }
-.elementStatus .waiting, .elementStatus .pending  {
+.elementStatus .waiting, .elementStatus .pending,
+.labelStatus .waiting, .labelStatus .pending {
     color:#76A5AF;
 }
 
 .technologyBox {
-    margin-bottom:50px;
+    margin-bottom:40px;
+}
+.technologyBox .technologyLabel {
+    text-align:right;
+}
+
+.technologyTestbeds {
+    border-left:1px solid #DCDCF8;
+    padding-top:25px;
+    padding-bottom:50px;
 }
 .technologyLabel {
     line-height:1em;
-}
-.technologyLabel.small {
-    font-size:14pt;
-    font-weight:100;
-}
-.technologyLabel.normal {
     font-size:20pt;
     font-weight:100;
-    border-bottom:1px solid #DCDCF8;
-    padding-bottom:15px;
-    margin-bottom:15px;
+    padding-top:25px;
 }
-.technologyLabel.big {
-    font-size:28pt;
-    font-weight:100;
-    vertical-align:bottom;
+.technologyLabel img {
+    margin-bottom:15px;
 }
 .technologyIcon {
     vertical-align:middle;
-}
-.technologyIcon.small {
-    width:24px;
-    margin-right:10px;
-}
-.technologyIcon.normal {
     width:45px;
     height:45px;
-    margin-right:15px;
-}
-.technologyIcon.big {
-    width:60px;
-    margin-right:20px;
-    vertical-align:bottom;
 }
 
 /*
