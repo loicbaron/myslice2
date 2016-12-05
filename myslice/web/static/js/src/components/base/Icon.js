@@ -94,39 +94,4 @@ const Icon = ({name, size}) => {
     return <i className={iconClass} />;
 };
 
-const TechnologyIcon = ({name, size}) => {
-    let icon = 'default';
-    let label = null;
-
-    if (name) {
-        icon = name.toLowerCase()
-    }
-
-    switch(icon) {
-        case 'iot':
-            label = 'IoT';
-            break;
-        case 'vm':
-            label = 'Virtual Machines';
-            break;
-        default:
-            label = icon.charAt(0).toUpperCase() + icon.slice(1);
-            break;
-    }
-
-    return <div className={"technologyLabel " + size}>
-        <img className={"technologyIcon " + size + " " + icon} src={"/static/icons/technologies/" + icon + ".svg"} />
-        {label}
-    </div>;
-};
-
-TechnologyIcon.propTypes = {
-    name: React.PropTypes.string,
-    size: React.PropTypes.string,
-};
-
-TechnologyIcon.defaultProps = {
-    size: "normal"
-};
-
-export { Icon, TechnologyIcon};
+export { Icon };
