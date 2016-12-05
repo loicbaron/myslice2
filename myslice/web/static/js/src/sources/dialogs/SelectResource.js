@@ -3,6 +3,20 @@ import actions from '../../actions/dialogs/SelectResource';
 
 const SelectResourceDialog = () => {
     return {
+
+        fetchResources: {
+            remote(state) {
+                return axios.get('/api/v1/testbeds/' + state.testbed.id + '/resources');
+            },
+
+            success: actions.updateResources,
+            error: actions.errorResources,
+
+            shouldFetch(state) {
+                return true
+            }
+        },
+
         testbeds: {
             remote(state) {
                 return axios.get('/api/v1/testbeds');
@@ -34,7 +48,7 @@ const SelectResourceDialog = () => {
                         "testbed":state.testbed.id,
                         "slice_id": currentSlice.id,
                         "start_time" : state.start_date,
-                        " duration" : state.duration,
+                        "duration" : state.duration,
                         "resources" :state.selectedIdList
                     });
             },
@@ -48,18 +62,7 @@ const SelectResourceDialog = () => {
 
         },
 
-        resources: {
-            remote(state) {
-                return axios.get('/api/v1/testbeds/'+state.testbed.id+'/resources');
-            },
 
-            success: actions.updateResources,
-            error: actions.errorResources,
-
-            shouldFetch(state) {
-                return true
-            }
-        }
     }
 };
 

@@ -4,13 +4,22 @@ class SelectResourceDialog {
 
     constructor() {
         this.generateActions(
-            'updateTestbed',
             'fetchResources',
             'updateResources',
             'errorResources',
+
+            'selectResource',
+            'clearSelection',
+            'showSelected',
+            'showAll',
+            'filterResources',
+
+
+            'updateTestbed',
+
+
             'updateStartDate',
             'updateType',
-            'selectResource',
             'updateFilter',
             'updateTime',
             'submitReservation',
