@@ -9,6 +9,7 @@ class NodeFilter extends React.Component {
             'selected': []
         };
         this.setValue = this.setValue.bind(this);
+        this.renderOption = this.renderOption.bind(this);
     }
 
     componentDidMount() {
@@ -24,9 +25,17 @@ class NodeFilter extends React.Component {
 
     getOptions() {
         return [
-            { value: 'a8', label: 'A8', type: 'hardware' },
-            { value: 'm3', label: 'M3', type: 'hardware' },
-            { value: 'wsn430', label: 'WSN430', type: 'hardware' },
+            { label: 'For more information on IoT nodes ', disabled: true,
+                link: 'https://www.iot-lab.info/hardware'  },
+            { value: 'a8', label: 'A8',
+                description: 'Powerful open node that can run generic high level OSs like Linux',
+                type: 'hardware' },
+            { value: 'm3', label: 'M3',
+                description: 'Open node based on the STM32 (ARM Cortex M3) micro-controller',
+                type: 'hardware' },
+            { value: 'wsn430', label: 'WSN430',
+                description: 'Open node based on a low power MSP430-based platform with ISM radio and standard sensors',
+                type: 'hardware' },
             { value: 'des', label: 'DES', type: 'hardware' },
             { value: 'custom', label: 'Custom', type: 'hardware' },
 
@@ -44,17 +53,27 @@ class NodeFilter extends React.Component {
         ];
     }
 
-    renderLink() {
-		return <a style={{ marginLeft: 5 }} href="/upgrade" target="_blank">C Upgrade here!</a>;
+    renderLink(link) {
+        if (link) {
+            return <a href={link} target="_blank">click here</a>;
+        }
 	}
+
+	renderDescription(description) {
+        if (description) {
+            return <div className="selectDescription">{description}</div>;
+        }
+    }
 
 	renderOption(option) {
 		return (
-            <span>
-                <span className="selectLabel">{option.label}</span>
-            </span>
+            <div>
+                <div className="selectLabel">{option.label}{this.renderLink(option.link)}</div>
+                {this.renderDescription(option.description)}
+            </div>
         );
 	}
+
 
 	renderValue(option) {
 		return (

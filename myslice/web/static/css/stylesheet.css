@@ -183,7 +183,16 @@ input.error {
     font-style:italic;
     color: #333;
 }
-
+.selectDescription {
+    font-size:9pt;
+    color:#232323;
+}
+.selectLabel a, .selectLabel a:active {
+    color:blue;
+}
+.selectLabel a:hover {
+    text-decoration:underline;
+}
 p.inputDescription {
     font-size:9pt;
     color:#5e5e5e;
