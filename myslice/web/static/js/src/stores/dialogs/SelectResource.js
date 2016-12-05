@@ -5,8 +5,28 @@ import source from '../../sources/dialogs/SelectResource';
 class SelectResourceDialog {
 
     constructor() {
-        // the testbed
+
+        // Resource List as retrieved from the API
+        this.resources = [];
+
+        // Filtered users
+        this.filtered = [];
+
+        // Selected users
+        this.selected = [];
+
+        // current testbed
         this.testbed = null;
+
+        // if true shows selected
+        this.show_selected = false;
+
+        this.errorMessage = null;
+
+
+
+
+
         // the list of resources
         this.resources = [];
         this.all_resources = [];
@@ -30,14 +50,23 @@ class SelectResourceDialog {
         this.message = {};
 
         this.bindListeners({
-            updateTestbed: actions.UPDATE_TESTBED,
             fetchResources: actions.FETCH_RESOURCES,
             updateResources: actions.UPDATE_RESOURCES,
             errorResources: actions.ERROR_RESOURCES,
+
+            selectResource: actions.SELECT_RESOURCE,
+            clearSelection: actions.CLEAR_SELECTION,
+            showSelected: actions.SHOW_SELECTED,
+            showAll: actions.SHOW_ALL,
+            filterResources: actions.FILTER_RESOURCES,
+
+
+
+            updateTestbed: actions.UPDATE_TESTBED,
+
             updateStartDate: actions.UPDATE_START_DATE,
             updateTime: actions.UPDATE_TIME,
             updateType: actions.UPDATE_TYPE,
-            selectResource: actions.SELECT_RESOURCE,
             updateFilter : actions.UPDATE_FILTER,
             SuccessReservation : actions.SUCCESS_RESERVATION,
             ErrorReservation : actions.ERROR_RESERVATION,
@@ -49,20 +78,17 @@ class SelectResourceDialog {
 
     }
 
-    updateTestbed(testbed) {
-        this.testbed = testbed;
-    }
-
     fetchResources(testbed = null) {
+
         this.resources = [];
-        this.all_resources = [];
+        this.filtered = [];
 
         if (testbed) {
             this.testbed = testbed;
         }
 
         if (!this.getInstance().isLoading()) {
-            this.getInstance().resources();
+            this.getInstance().fetchResources();
         }
 
 
@@ -75,12 +101,122 @@ class SelectResourceDialog {
             this.resources = resources;
         }
         // we do a copy of the object to avoid references
-        this.all_resources = Object.assign([], this.resources);
+        //this.all_resources = Object.assign([], this.resources);
     }
 
     errorResources(errorMessage) {
         console.log(errorMessage);
     }
+
+
+    selectResource(resource) {
+        let resourceId = this.selected.some(function(el) {
+            return el.id === resource.id;
+        });
+
+        if (!resourceId) {
+            this.selected.push(resource);
+        } else {
+            this.selected = this.selected.filter(function(el) {
+                return el.id !== resource.id;
+            });
+        }
+
+        if (this.selected.length == 0) {
+            this.showAll();
+        }
+    }
+
+    clearSelection() {
+        this.selected = [];
+        this.showAll();
+    }
+
+    showSelected() {
+        this.show_selected = true;
+    }
+
+    showAll() {
+        this.show_selected = false;
+    }
+
+    /*
+        filters = {
+            city: [], // array list
+            country: [],
+            hardware: []
+        }
+     */
+    filterResources(value) {
+        // value is an array
+        let filters = {
+            city: [],
+            country: [],
+            hardware: []
+        };
+
+        this.filtered = this.resources;
+
+        for(let i = 0; i < value.length; i++) {
+            filters[value[i].type].push(value[i].value)
+        }
+
+        Object.keys(filters).forEach(function(filter_name) {
+
+            switch(filter_name) {
+                case 'city':
+                    if (filters[filter_name].length > 0) {
+                        this.filtered = this.filtered.filter(function (el) {
+                            return typeof(el.location.city) !== 'undefined' && filters[filter_name].some(value =>
+                                el.location.city.toLowerCase().indexOf(value) != -1
+                            );
+                        });
+                    }
+                    break;
+                case 'country':
+                    if (filters[filter_name].length > 0) {
+                        this.filtered = this.filtered.filter(function (el) {
+                            return typeof(el.location.country) !== 'undefined' && filters[filter_name].some(value =>
+                                el.location.country.toLowerCase().indexOf(value) != -1
+                            );
+                        });
+                    }
+
+                    break;
+                case 'hardware':
+                    if (filters[filter_name].length > 0) {
+                        this.filtered = this.filtered.filter(function (el) {
+                            return typeof(el.hardware_types) !== 'undefined' && filters[filter_name].some(value =>
+                                    el.hardware_types.some(hw => hw.toLowerCase().indexOf(value) != -1)
+                            );
+                        });
+                    }
+                    break;
+                default:
+                    if (filters[filter_name].length > 0) {
+                        this.filtered = this.filtered.filter(function (el) {
+                            return typeof(el.location.name) !== 'undefined' && filters[filter_name].some(value =>
+                                el.name.toLowerCase().indexOf(value) != -1
+                            );
+                        });
+                    }
+            }
+
+        }.bind(this));
+
+
+    }
+
+    updateTestbed(testbed) {
+        this.testbed = testbed;
+    }
+
+
+
+
+
+
+
     updateStartDate(start_date) {
         this.start_date = start_date;
     }
@@ -114,25 +250,7 @@ class SelectResourceDialog {
         this.message['msg'] = response.data.error;
     }
 
-    selectResource(resource) {
-        let resourceId = this.selected.some(function(el) {
-            return el.id === resource.id;
-        });
 
-        if (!resourceId) {
-            this.selected.push(resource);
-        } else {
-            this.selected = this.selected.filter(function(el) {
-                return el.id !== resource.id;
-            });
-        }
-
-        // if ((typeof(resource.isSelected) === 'undefined') || (!resource.isSelected)) {
-        //     resource.isSelected = true;
-        // } else {
-        //     resource.isSelected = false;
-        // }
-    }
 
 }
 

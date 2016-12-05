@@ -51,8 +51,7 @@ class SliceView extends React.Component {
     }
     
     render() {
-        var panelRight = null;
-        var dialog = null;
+        let dialog = null;
 
         if (this.state.errorMessage) {
             return (
@@ -94,11 +93,9 @@ class SliceView extends React.Component {
                             <p>
                                 {this.state.slice.id}
                             </p>
-
                             <DateTime label="Created" timestamp={this.state.slice.created} />
                             <DateTime label="Enabled" timestamp={this.state.slice.enabled} />
                             <DateTime label="Last updated" timestamp={this.state.slice.updated} />
-
                         </div>
                         <UsersSectionSimple users={this.state.slice.users} />
                     </PanelBody>
@@ -116,7 +113,6 @@ class SliceView extends React.Component {
                     </PanelBody>
                     {dialog}
                 </Panel>
-
             </View>
         );
     }

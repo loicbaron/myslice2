@@ -3,12 +3,14 @@ import React from 'react';
 import actions from '../../actions/dialogs/SelectResource';
 import store from '../../stores/dialogs/SelectResource';
 
-import { DialogPanel, Dialog, DialogBody, DialogHeader, DialogFooter } from '../base/Dialog';
+import { DialogPanel, Dialog, DialogBody, DialogHeader, DialogFooter, DialogBar } from '../base/Dialog';
 import Title from '../base/Title';
 import Text from '../base/Text';
 import DateTime from '../base/DateTime';
 import Button from '../base/Button';
 import InputText from '../InputText'
+
+import IotFilter from '../filters/iot';
 import { ResourceList } from '../objects/Resource';
 
 class SelectResourceDialog extends React.Component {
@@ -21,7 +23,6 @@ class SelectResourceDialog extends React.Component {
         //this.handleChangeDuration = this.handleChangeDuration.bind(this);
         //this.handleStartDateChange = this.handleStartDateChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-
     }
 
     componentDidMount() {
@@ -36,6 +37,70 @@ class SelectResourceDialog extends React.Component {
     onChange(state) {
         this.setState(state);
     }
+
+    selectResource(resource) {
+        actions.selectResource(resource);
+    }
+
+    clearSelection() {
+        actions.clearSelection();
+    }
+
+    showSelected() {
+        actions.showSelected();
+    }
+
+    showAll() {
+        actions.showAll();
+    }
+
+    renderSelectedStatus() {
+        if (this.state.selected.length > 0) {
+            if (this.state.show_selected) {
+                return <div className="d-selected">
+                    You have selected <span>{this.state.selected.length + " resource" + (this.state.selected.length > 1 ? "s" : "")}</span>
+                    &nbsp;(<a onClick={this.showAll}>Show all resources</a> | <a onClick={this.clearSelection}>Clear</a>)
+                </div>;
+            } else {
+                return <div className="d-selected">
+                    You have selected <a onClick={this.showSelected}>{this.state.selected.length + " resource" + (this.state.selected.length > 1 ? "s" : "")}</a>
+                </div>;
+            }
+        } else {
+            return <div className="d-selected">Select resources</div>;
+        }
+    }
+
+    cancel() {
+        this.clearSelection();
+        this.props.cancel();
+    }
+
+    apply() {
+        this.props.apply(this.state.selected);
+        //this.clearSelection();
+        //this.props.cancel();
+    }
+
+    filterResources(filter) {
+        actions.filterResources(filter);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     handleSubmit(event) {
 
         // prevent the browser's default action of submitting the form
@@ -57,20 +122,7 @@ class SelectResourceDialog extends React.Component {
         actions.updateFilter(value);
     }
 
-    /* fetch the users list */
-    fetchUsers(filter={}) {
-        switch (this.props.from){
-            case 'authority':
-                actions.fetchFromAuthority(filter);
-                break;
-            default:
-                actions.fetchUsers(filter);
-        }
-    }
 
-    selectResource(element) {
-        actions.selectResource(element);
-    }
 
     handleStartDateChange(e) {
 
@@ -80,14 +132,7 @@ class SelectResourceDialog extends React.Component {
     handleTimeChange(e) {
        actions.updateTime(e.target.value);
     }
-    isSelected(resource) {
-        //console.log(this.state.selected);
-        /* TOFIX
-        this.state.selected.find((el) => {
-            return el.id === resource.id;
-        })
-        */
-    }
+
 // Filter by site
     handleChange(event) {
 
@@ -153,16 +198,6 @@ class SelectResourceDialog extends React.Component {
         actions.submitReservation();
 
 
-    }
-
-    renderSelectedStatus() {
-        if (this.state.selected.length > 0) {
-            return <div>
-                You have selected <a>{this.state.selected.length} resource{this.state.selected.length > 1 ? "s":"" }</a>
-             </div>;
-
-
-        }
     }
 
     render() {
@@ -247,20 +282,28 @@ class SelectResourceDialog extends React.Component {
 
                 break;
         }
+
+        let resources = [];
+        if (this.state.show_selected) {
+            resources = this.state.selected;
+        } else if (this.state.filtered.length > 0) {
+            resources = this.state.filtered;
+        } else {
+            resources = this.state.resources;
+        }
+
         return (
             <Dialog close={this.props.close}>
                 <DialogPanel>
                     <DialogHeader>
-
+                        <Title title="Add Resources" />
                     </DialogHeader>
-                    <div>{reservation}
-
-                    </div>
+                    <DialogBar>
+                        <IotFilter handleChange={this.filterResources} />
+                    </DialogBar>
                     <DialogBody>
 
-
-
-                        <ResourceList resources={this.state.resources}
+                        <ResourceList resources={resources}
                                       selected={this.state.selected}
                                       handleSelect={this.selectResource}
                         />
@@ -268,13 +311,14 @@ class SelectResourceDialog extends React.Component {
                     </DialogBody>
                     <DialogFooter>
                         {this.renderSelectedStatus()}
-                        <button className="cancel" onClick={this.cancel} >
-                            Cancel
-                        </button>
-                        <button className="apply" onClick={this.applyChanges.bind(this)} >
-                                                Apply
-                                                </button>
-
+                        <div>
+                            <button className="cancel" onClick={this.cancel} >
+                                Cancel
+                            </button>
+                            <button className="apply" onClick={this.apply} >
+                                Apply
+                            </button>
+                        </div>
                     </DialogFooter>
                 </DialogPanel>
             </Dialog>
