@@ -13,7 +13,6 @@ import DateTime from '../base/DateTime';
 import { TestbedSectionPanel } from '../sections/Testbed';
 
 import SelectResourceDialog from '../dialogs/SelectResource';
-import SelectUserDialog from '../dialogs/SelectUser';
 
 class SliceView extends React.Component {
 
@@ -42,12 +41,18 @@ class SliceView extends React.Component {
         actions.closeDialog();
     }
 
-    addResources(testbed) {
+    /*
+        Shows the add resources dialog for the selected testbed
+     */
+    selectResourceDialog(testbed) {
         actions.selectResourceDialog(testbed);
     }
 
-    addUser() {
-        actions.selectUserDialog();
+    /*
+        Once user select some resources and apply this wil be called.
+     */
+    addResources(resources) {
+        actions.saveSlice({resources: resources})
     }
     
     render() {
@@ -61,10 +66,7 @@ class SliceView extends React.Component {
 
         switch(this.state.dialog) {
             case 'selectResource':
-                dialog = <SelectResourceDialog testbed={this.state.testbed} close={this.closeDialog} />;
-                break;
-            case 'selectUser':
-                dialog = <SelectUserDialog cancel={this.closeDialog} />;
+                dialog = <SelectResourceDialog testbed={this.state.testbed} apply={this.addResources} cancel={this.closeDialog} />;
                 break;
 
         }
@@ -78,7 +80,7 @@ class SliceView extends React.Component {
             {
                 'label' : 'Add Resources',
                 'icon' : 'add',
-                'callback' : this.addResources
+                'callback' : this.selectResourceDialog
             }
         ];
 

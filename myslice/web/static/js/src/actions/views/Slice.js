@@ -8,6 +8,10 @@ class SliceView {
             'updateSlice',
             'errorSlice',
 
+            'saveSlice',
+            'saveSliceSuccess',
+            'saveSliceError',
+
             'fetchTestbeds',
             'updateTestbeds',
             'errorTestbeds',
