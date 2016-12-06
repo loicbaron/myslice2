@@ -204,6 +204,7 @@ class SlicesHandler(Api):
         :return:
         """
 
+        events = []
         response = []
         current_user = self.get_current_user()
 
@@ -214,13 +215,13 @@ class SlicesHandler(Api):
         if not self.request.body:
             self.userError("empty request")
             return
+
         if not current_user:
             self.userError('permission denied')
             return
 
         if self.isUrn(id):
             filter = {'id': id}
-
         elif self.isHrn(id):
             filter = {'hrn': id}
         else:
@@ -232,26 +233,28 @@ class SlicesHandler(Api):
         except json.decoder.JSONDecodeError as e:
             self.userError("malformed request", e.msg)
             return
-            # slice id from DB
-
 
         cursor = yield r.table('slices') \
             .filter(filter) \
             .merge(lambda slice: {
-            'authority': r.table('authorities').get(slice['authority']) \
-                   .pluck(self.fields_short['authorities']) \
-                   .default({'id': slice['authority']})
-        }) \
+                'authority': r.table('authorities').get(slice['authority']) \
+                       .pluck(self.fields_short['authorities']) \
+                       .default({'id': slice['authority']})
+            }) \
             .merge(lambda slice: {
-            'project': r.table('projects').get(slice['project']) \
-                   .pluck(self.fields_short['projects']) \
-                   .default({'id': slice['project']})
+                'project': r.table('projects').get(slice['project']) \
+                       .pluck(self.fields_short['projects']) \
+                       .default({'id': slice['project']})
 
-        }) \
+            }) \
             .run(self.dbconnection)
 
         while (yield cursor.fetch_next()):
             slice = yield cursor.next()
+
+        if not slice:
+            self.userError("problem with db")
+            return
 
         # handle authority as dict
         if "authority" in data and type(data["authority"]) is dict:
@@ -264,126 +267,27 @@ class SlicesHandler(Api):
         # handle user as dict
         if all(isinstance(n, dict) for n in data['users']):
             data['users'] = [x['id'] for x in data['users']]
-        ##
-        # slice user ADD
-        for data_user in data['users']:
-            # new user
-            if data_user not in slice['users']:
-                # dispatch event add user to slices
-                try:
-                    event = Event({
-                        'action': EventAction.ADD,
-                        'user': self.current_user['id'],
-                        'object': {
-                            'type': ObjectType.SLICE,
-                            'id': id,
-                        },
-                        'data': {
-                            'type': DataType.USER,
-                            'values': data_user
-                        }
-                    })
 
-                except AttributeError as e:
-                    self.userError("Can't create request", e)
-                    return
-                except Exception as e:
-                    self.userError("Can't create request", e)
-                    return
-                else:
-                    result = yield dispatch(self.dbconnection, event)
-                    response.append(result['generated_keys'])
-        # slice remove users
-        for u in slice['users']:
-            if u not in data['users']:
-                # dispatch event remove user from slice
-                try:
-                    event = Event({
-                        'action': EventAction.REMOVE,
-                        'user': self.current_user['id'],
-                        'object': {
-                            'type': ObjectType.SLICE,
-                            'id': id,
-                        },
-                        'data': {
-                            'type': DataType.USER,
-                            'values': u
-                        }
-                    })
+        # adding users
+        events += self.add_users(data, slice)
 
-                except AttributeError as e:
-                    self.userError("Can't create request", e)
-                    return
-                except Exception as e:
-                    self.userError("Can't create request", e)
-                    return
-                else:
-                    result = yield dispatch(self.dbconnection, event)
-                    response.append(result['generated_keys'])
+        # removing users
+        events += self.remove_users(data, slice)
 
-        # slices add/remove resources
-        addResources = []
-        # XXX Resource as a dict should be handled
-        for data_resource in data['resources']:
-            # new resource
-            if data_resource not in slice['resources']:
-                addResources.append(data_resource)
+        # adding resources
+        e = self.add_resources(data, slice)
+        if e:
+            events.append(e)
 
-        # dispatch event add resource to slices
-        try:
-            event = Event({
-                'action': EventAction.ADD,
-                'user': self.current_user['id'],
-                'object': {
-                    'type': ObjectType.RESOURCE,
-                    'id': id,
-                },
-                'data': {
-                    'type': DataType.RESOURCE,
-                    'values': addResources
-                }
-            })
+        # removing resources
+        e = self.remove_resources(data, slice)
+        if e:
+            events.append(e)
 
-        except AttributeError as e:
-            self.userError("Can't create request", e)
-            return
-        except Exception as e:
-            self.userError("Can't create request", e)
-            return
-        else:
-            result = yield dispatch(self.dbconnection, event)
-            response.append(result['generated_keys'])
-        ##
-        # slice remove resource
-        removeResources = []
-        # XXX Resource as a dict should be handled
-        for data_resource in slice['resources']:
-            if data_resource not in data['resources']:
-                removeResources.append(data_resource)
+        print(events)
 
-        # dispatch event remove resource from slice
-        try:
-            event = Event({
-                'action': EventAction.REMOVE,
-                'user': self.current_user['id'],
-                'object': {
-                    'type': ObjectType.RESOURCE,
-                    'id': id,
-                },
-                'data': {
-                    'type': DataType.RESOURCE,
-                    'values': removeResources
-                }
-            })
-
-        except AttributeError as e:
-            self.userError("Can't create request", e)
-            return
-        except Exception as e:
-            self.userError("Can't create request", e)
-            return
-        else:
-            result = yield dispatch(self.dbconnection, event)
+        for e in events:
+            result = yield dispatch(self.dbconnection, e)
             response.append(result['generated_keys'])
 
         # Leases: handled by POST /leases and DELETE /leases/<id>
@@ -438,3 +342,109 @@ class SlicesHandler(Api):
                     "error": None,
                     "debug": None,
                 }, cls=myJSONEncoder))
+
+    ##
+    # adding users
+    def add_users(self, data, slice):
+        events = []
+
+        # check if the users in the request are in the slice
+        for data_user in data['users']:
+            if data_user not in slice['users']:
+                # create event add user to slices
+                try:
+                    event = Event({
+                        'action': EventAction.ADD,
+                        'user': self.current_user['id'],
+                        'object': { 'type': ObjectType.SLICE, 'id': slice['id'] },
+                        'data': { 'type': DataType.USER, 'values': data_user }
+                    })
+                except Exception as e:
+                    # TODO: we should log here
+                    #log.error("Can't create request....")
+                    pass
+                else:
+                    events.append(event)
+
+        return events
+
+    ##
+    # remove users
+    def remove_users(self, data, slice):
+        events = []
+
+        # check if we need to remove users from the slice
+        for user in slice['users']:
+            if user not in data['users']:
+                # create event remove user from slice
+                try:
+                    event = Event({
+                        'action': EventAction.REMOVE,
+                        'user': self.current_user['id'],
+                        'object': { 'type': ObjectType.SLICE, 'id': slice['id'] },
+                        'data': { 'type': DataType.USER, 'values': user }
+                    })
+                except Exception as e:
+                    # TODO: we should log here
+                    # log.error("Can't create request....")
+                    pass
+                else:
+                    events.append(event)
+
+        return events
+
+    ##
+    # generated an event for adding resources
+    def add_resources(self, data, slice):
+        resources = []
+
+        # XXX Resource as a dict should be handled
+        for data_resource in data['resources']:
+            if data_resource not in slice['resources']:
+                resources.append(data_resource)
+
+        if not resources:
+            return False
+
+        # dispatch event add resource to slices
+        try:
+            event = Event({
+                'action': EventAction.ADD,
+                'user': self.current_user['id'],
+                'object': { 'type': ObjectType.SLICE, 'id': slice['id'] },
+                'data': { 'type': DataType.RESOURCE, 'values': resources }
+            })
+        except Exception as e:
+            # TODO: we should log here
+            # log.error("Can't create request....")
+            return False
+        else:
+            return event
+
+    ##
+    # generates an event for removing resources
+    def remove_resources(self, data, slice):
+        resources = []
+
+        # XXX Resource as a dict should be handled
+        for data_resource in slice['resources']:
+            if data_resource not in data['resources']:
+                resources.append(data_resource)
+
+        if not resources:
+            return False
+
+        # dispatch event remove resource from slice
+        try:
+            event = Event({
+                'action': EventAction.REMOVE,
+                'user': self.current_user['id'],
+                'object': { 'type': ObjectType.SLICE, 'id': slice['id'] },
+                'data': { 'type': DataType.RESOURCE, 'values': resources }
+            })
+        except Exception as e:
+            # TODO: we should log here
+            # log.error("Can't create request....")
+            return False
+        else:
+            return event
