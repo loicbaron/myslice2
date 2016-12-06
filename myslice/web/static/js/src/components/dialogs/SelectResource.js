@@ -22,7 +22,8 @@ class SelectResourceDialog extends React.Component {
         this.handleChange = this.handleChange.bind(this);
         //this.handleChangeDuration = this.handleChangeDuration.bind(this);
         //this.handleStartDateChange = this.handleStartDateChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
+        this.apply = this.apply.bind(this);
+        this.cancel = this.cancel.bind(this);
     }
 
     componentDidMount() {
@@ -78,8 +79,8 @@ class SelectResourceDialog extends React.Component {
 
     apply() {
         this.props.apply(this.state.selected);
-        //this.clearSelection();
-        //this.props.cancel();
+        this.clearSelection();
+        this.props.cancel();
     }
 
     filterResources(filter) {
@@ -328,7 +329,8 @@ class SelectResourceDialog extends React.Component {
 
 SelectResourceDialog.propTypes = {
     testbed: React.PropTypes.object.isRequired,
-    close: React.PropTypes.func.isRequired,
+    apply: React.PropTypes.func.isRequired,
+    cancel: React.PropTypes.func.isRequired,
 
 };
 
