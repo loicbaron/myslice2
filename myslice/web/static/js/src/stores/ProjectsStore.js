@@ -7,20 +7,24 @@ import common from '../utils/Commons';
 class ProjectsStore {
 
     constructor() {
-
+        // list of project
         this.projects = [];
 
-        /* the currently active project */
+        // the currently active project
         this.current = {
             project: null,
             users: [],
+            pi_users: [],
             slices: []
         };
+
+        // the saving project
+        this.saving = {};
 
         this.filter = [];
 
 
-        this.saving = null;
+
 
 
 
@@ -70,8 +74,8 @@ class ProjectsStore {
             addUsers: actions.ADD_USERS,
 
             saveProject: actions.SAVE_PROJECT,
-            errorSave: actions.ERROR_SAVE,
-            successSave: actions.SUCCESS_SAVE,
+            saveProjectError: actions.SAVE_PROJECT_ERROR,
+            saveProjectSuccess: actions.SAVE_PROJECT_SUCCESS,
         });
 
         this.registerAsync(source);
@@ -231,12 +235,40 @@ class ProjectsStore {
         Save Project
         The "saveProject" state will be used
      */
-    saveProject() {
+    saveProject(save) {
+        this.saving = this.current.project;
+        console.log(this.saving);
+        if (save.hasOwnProperty('users')) {
+            save.users.map(r => {
+                if (!this.saving.pi_users.includes(r.id)) {
+                    this.saving.pi_users.push(r.id);
+                }
+            });
+        }
+
+        if (save.hasOwnProperty('remove_user')) {
+            if (index = this.saving.pi_users.indexOf(save.remove_user.id)) {
+                this.saving.pi_users.splice(index, 1);
+            }
+        }
 
         if (!this.getInstance().isLoading()) {
             this.getInstance().saveProject();
         }
 
+    }
+
+    saveProjectSuccess(x) {
+        console.log(x);
+        // {"result": "success", "debug": null, "error": null, "events": [["858dddc3-5500-4ba1-a6b3-430ef32434d6"]]}
+
+        this.saving = {};
+    }
+
+    saveProjectError(x) {
+        console.log(x);
+
+        this.saving = {};
     }
 
     errorSave() {

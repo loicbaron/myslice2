@@ -61,12 +61,16 @@ class ProjectsView extends React.Component {
         actions.showDialog('project');
     }
 
-    selectUser() {
+    selectUserDialog() {
         actions.showDialog('users');
     }
 
-    createSlice() {
+    createSliceDialog() {
         actions.showDialog('slice');
+    }
+
+    confirmDialog() {
+
     }
 
     closeDialog() {
@@ -74,22 +78,14 @@ class ProjectsView extends React.Component {
     }
 
     addUsers(users) {
-
-        this.state.saving = this.state.current.project;
-        for(let i = 0; i < users.length; i++) {
-            if (this.state.saving.pi_users.indexOf(users[i].id) == -1) {
-               this.state.saving.pi_users.push(users[i].id);
-            }
-        }
-
-        actions.saveProject();
+        actions.saveProject({users: users});
     }
 
     /*
         Remove User from the current project
      */
     removeUser(user) {
-        // todo
+        actions.saveProject({remove_user: user});
     }
 
     /*
@@ -155,7 +151,7 @@ class ProjectsView extends React.Component {
                 {
                     'label' : 'Add User',
                     'icon' : 'add',
-                    'callback' : this.selectUser
+                    'callback' : this.selectUserDialog
                 }
             ];
 
@@ -165,7 +161,7 @@ class ProjectsView extends React.Component {
             let userListOptions = [
                 {
                     'label' : 'remove',
-                    'callback' : this.removeUser
+                    'callback' : this.confirmDialog
                 }
             ];
 
@@ -176,7 +172,7 @@ class ProjectsView extends React.Component {
                 {
                     'label' : 'Create Slice',
                     'icon' : 'create',
-                    'callback' : this.createSlice
+                    'callback' : this.createSliceDialog
                 }
             ];
 

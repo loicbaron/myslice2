@@ -32,8 +32,8 @@ class ProjectsActions {
 
 
             'saveProject',
-            'successSave',
-            'errorSave'
+            'saveProjectSuccess',
+            'saveProjectError'
         );
     }
 
