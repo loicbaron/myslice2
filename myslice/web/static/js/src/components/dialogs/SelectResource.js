@@ -331,7 +331,6 @@ SelectResourceDialog.propTypes = {
     testbed: React.PropTypes.object.isRequired,
     apply: React.PropTypes.func.isRequired,
     cancel: React.PropTypes.func.isRequired,
-
 };
 
 SelectResourceDialog.defaultProps = {

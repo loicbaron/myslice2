@@ -81,8 +81,8 @@ class SelectUserDialog extends React.Component {
 
     apply() {
         this.props.apply(this.state.selected);
-        //this.clearSelection();
-        //this.props.cancel();
+        this.clearSelection();
+        this.props.cancel();
     }
 
     render() {
@@ -135,13 +135,12 @@ class SelectUserDialog extends React.Component {
 }
 
 SelectUserDialog.propTypes = {
-    close: React.PropTypes.func,
-    apply: React.PropTypes.func,
+    apply: React.PropTypes.func.isRequired,
+    cancel: React.PropTypes.func.isRequired
 };
 
 SelectUserDialog.defaultProps = {
-    close: () => { return null; },
-    apply: () => { return null; }
+
 };
 
 export default SelectUserDialog;
