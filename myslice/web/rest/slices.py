@@ -344,7 +344,7 @@ class SlicesHandler(Api):
                 }, cls=myJSONEncoder))
 
     ##
-    # adding users
+    # generates an event for adding users
     def add_users(self, data, slice):
         events = []
 
@@ -369,7 +369,7 @@ class SlicesHandler(Api):
         return events
 
     ##
-    # remove users
+    # generates an event for removing users
     def remove_users(self, data, slice):
         events = []
 
@@ -394,7 +394,7 @@ class SlicesHandler(Api):
         return events
 
     ##
-    # generated an event for adding resources
+    # generates an event for adding resources
     def add_resources(self, data, slice):
         resources = []
 
