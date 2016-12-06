@@ -746,12 +746,14 @@ ul.labelOptions li:hover.add {
     border-left:1px solid #DCDCF8;
     padding-top:25px;
     padding-bottom:50px;
+    padding-left:50px;
 }
 .technologyLabel {
     line-height:1em;
     font-size:20pt;
     font-weight:100;
     padding-top:25px;
+    padding-right:50px;
 }
 .technologyLabel img {
     margin-bottom:15px;
