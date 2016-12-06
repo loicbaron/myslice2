@@ -95,8 +95,8 @@ def syncTestbeds(testbeds):
         u = testbeds.get(t['id'])
         if u is not None:
             # update
-            logger.info('updating testbed {} ({})'.format(u.name, u.type))
             try:
+                logger.info('updating testbed {} ({})'.format(u.name, u.type))
                 r.table('testbeds').update(u.dict()).run(dbconnection)
             except Exception as e:
                 logger.error('{}'.format(str(e)))
@@ -104,8 +104,8 @@ def syncTestbeds(testbeds):
             testbeds.remove(u)
         else:
             # delete
-            logger.info('deleting testbed {} ({})'.format(t['name'], t['type']))
             try:
+                logger.info('deleting testbed {} ({})'.format(t['name'], t['type']))
                 r.table('testbeds').get(t['id']).delete().run(dbconnection)
             except Exception as e:
                 logger.error('{}'.format(str(e)))
@@ -113,8 +113,8 @@ def syncTestbeds(testbeds):
     # check new testbeds with the remaining elements
     for n in testbeds:
         # new
-        logger.info('new testbed {} ({})'.format(n.name, n.type))
         try:
+            logger.info('new testbed {} ({})'.format(n.name, n.type))
             r.table('testbeds').insert(n.dict(), conflict='update').run(dbconnection)
         except Exception as e:
             logger.error('{}'.format(str(e)))
@@ -152,7 +152,7 @@ def syncResources(resources):
             resources.remove(u)
         else:
             # delete
-            logger.info('deleting resource {} ({})'.format(t['name'], t.testbed))
+            logger.info('deleting resource {} ({})'.format(t['name'], t['testbed']))
             r.table('resources').get(t['id']).delete().run(dbconnection)
 
     # check new resources with the remaining elements
