@@ -216,10 +216,6 @@ class SlicesHandler(Api):
             self.userError("empty request")
             return
 
-        if not current_user:
-            self.userError('permission denied')
-            return
-
         if self.isUrn(id):
             filter = {'id': id}
         elif self.isHrn(id):
@@ -236,17 +232,6 @@ class SlicesHandler(Api):
 
         cursor = yield r.table('slices') \
             .filter(filter) \
-            .merge(lambda slice: {
-                'authority': r.table('authorities').get(slice['authority']) \
-                       .pluck(self.fields_short['authorities']) \
-                       .default({'id': slice['authority']})
-            }) \
-            .merge(lambda slice: {
-                'project': r.table('projects').get(slice['project']) \
-                       .pluck(self.fields_short['projects']) \
-                       .default({'id': slice['project']})
-
-            }) \
             .run(self.dbconnection)
 
         while (yield cursor.fetch_next()):
@@ -283,8 +268,6 @@ class SlicesHandler(Api):
         e = self.remove_resources(data, slice)
         if e:
             events.append(e)
-
-        print(events)
 
         for e in events:
             result = yield dispatch(self.dbconnection, e)
