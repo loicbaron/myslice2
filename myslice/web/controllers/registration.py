@@ -2,6 +2,7 @@ from email.utils import parseaddr
 from tornado.web import MissingArgumentError
 from tornado import gen
 from rethinkdb import r
+from tornado import web
 
 from myslice.web.controllers import BaseController
 from myslice.web.controllers.login import check_password

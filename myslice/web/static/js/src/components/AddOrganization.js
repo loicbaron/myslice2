@@ -42,7 +42,7 @@ class AddOrganization extends React.Component {
     }
 
     updateTerms(event) {
-       // actions.updateTerms(event.target.value);
+        actions.updateTerms(event.target.value);
     }
      submitForm(event) {
         event.preventDefault();
@@ -102,9 +102,9 @@ class AddOrganization extends React.Component {
                         </div>
                         </div>
                         <div className="row">
-                            <button className="large" type="submit" value="Save">
-                            <i className="fa fa-floppy-o" aria-hidden="true"></i> Save
-                            </button>
+                        <div className="col-sm-4 col-sm-offset-4 inputSubmit">
+                            <input type="submit" className="btn btn-default"/>
+                        </div>
                         </div>
                     </form>
 
