@@ -21,7 +21,7 @@ class SliceView {
         };
 
         // the slice we are saving
-        this.saving = {}
+        this.saving = {};
 
         // the list of testbeds
         this.testbeds = [];
@@ -128,10 +128,14 @@ class SliceView {
     saveSliceSuccess(x) {
         console.log(x);
         // {"result": "success", "debug": null, "error": null, "events": [["858dddc3-5500-4ba1-a6b3-430ef32434d6"]]}
+
+        this.saving = {};
     }
 
     saveSliceError(x) {
         console.log(x);
+
+        this.saving = {};
     }
 
 }
