@@ -317,24 +317,26 @@ class ProjectsHandler(Api):
 
     def add_pi_users(self, data, project):
         events = []
-
+        pi_users = []
         # check if the users in the request are in the project
         for data_pi in data['pi_users']:
             if data_pi not in project['pi_users']:
-                # create event add user to project pis
-                try:
-                    event = Event({
-                        'action': EventAction.ADD,
-                        'user': self.current_user['id'],
-                        'object': {'type': ObjectType.PROJECT, 'id': project['id']},
-                        'data': {'type': DataType.PI, 'values': data_pi}
-                    })
-                except Exception as e:
-                    # TODO: we should log here
-                    # log.error("Can't create request....")
-                    pass
-                else:
-                    events.append(event)
+                pi_users.append(data_pi)
+        if len(pi_users)>0:
+            # create event add user to project pis
+            try:
+                event = Event({
+                    'action': EventAction.ADD,
+                    'user': self.current_user['id'],
+                    'object': {'type': ObjectType.PROJECT, 'id': project['id']},
+                    'data': {'type': DataType.PI, 'values': pi_users}
+                })
+            except Exception as e:
+                # TODO: we should log here
+                # log.error("Can't create request....")
+                pass
+            else:
+                events.append(event)
 
         return events
 
