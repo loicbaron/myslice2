@@ -23,6 +23,7 @@ class ProjectsStore {
 
         this.filter = [];
 
+        this.dialog = { name: null };
 
 
 
@@ -40,7 +41,7 @@ class ProjectsStore {
         this.deleteProj = null;
         this.deletedProjects = [];
 
-        this.dialog = null;
+
 
         this.errorMessage = null;
 
@@ -70,6 +71,7 @@ class ProjectsStore {
             fetchProjects: actions.FETCH_PROJECTS,
             errorProjects: actions.ERROR_PROJECTS,
             showDialog: actions.SHOW_DIALOG,
+            closeDialog: actions.CLOSE_DIALOG,
 
             addUsers: actions.ADD_USERS,
 
@@ -230,6 +232,10 @@ class ProjectsStore {
         this.dialog = dialog;
     }
 
+    closeDialog() {
+        this.dialog = { name: null };
+    }
+
 
     /*
         Save Project
@@ -237,7 +243,7 @@ class ProjectsStore {
      */
     saveProject(save) {
         this.saving = this.current.project;
-        console.log(this.saving);
+
         if (save.hasOwnProperty('users')) {
             save.users.map(r => {
                 if (!this.saving.pi_users.includes(r.id)) {
@@ -247,7 +253,9 @@ class ProjectsStore {
         }
 
         if (save.hasOwnProperty('remove_user')) {
-            if (index = this.saving.pi_users.indexOf(save.remove_user.id)) {
+            let index = this.saving.pi_users.indexOf(save.remove_user.id);
+            if (index >= 0) {
+                console.log('removing ' + save.remove_user.id);
                 this.saving.pi_users.splice(index, 1);
             }
         }

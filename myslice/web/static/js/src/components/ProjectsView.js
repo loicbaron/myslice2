@@ -4,7 +4,7 @@ import store from '../stores/ProjectsStore';
 import actions from '../actions/ProjectsActions';
 
 import View from './base/View';
-import { DialogPanel, Dialog, DialogBody, DialogHeader, DialogFooter } from './base/Dialog';
+import { DialogConfirm, DialogPanel, Dialog, DialogBody, DialogHeader, DialogFooter } from './base/Dialog';
 import { Panel, PanelHeader, PanelBody } from './base/Panel';
 import Title from './base/Title';
 import Button from './base/Button';
@@ -58,47 +58,50 @@ class ProjectsView extends React.Component {
     }
 
     showForm() {
-        actions.showDialog('project');
-    }
-
-    selectUserDialog() {
-        actions.showDialog('users');
-    }
-
-    createSliceDialog() {
-        actions.showDialog('slice');
-    }
-
-    confirmDialog() {
-
+        actions.showDialog({name: 'project'});
     }
 
     closeDialog() {
-        actions.showDialog(null);
+        actions.closeDialog();
+    }
+
+    /**
+     * User actions and dialogs
+     */
+    selectUserDialog() {
+        actions.showDialog({name: 'users'});
     }
 
     addUsers(users) {
         actions.saveProject({users: users});
     }
 
-    /*
-        Remove User from the current project
-     */
+    removeUserConfirm(user) {
+        actions.showDialog({name: 'removeUserConfirm', user: user});
+    }
+
     removeUser(user) {
         actions.saveProject({remove_user: user});
     }
 
-    /*
-        Delete Slice
+    /**
+     * Slice actions and dialogs
      */
+    createSliceDialog() {
+        actions.showDialog({name: 'slice'});
+    }
+
+    deleteSliceConfirm(slice) {
+        actions.showDialog({name: 'deleteSliceConfirm', slice: slice});
+    }
+
     deleteSlice(slice) {
-        // todo
-        //actions.deleteSlice(slice);
+        actions.deleteSlice(slice);
     }
 
     render() {
-        var panelRight = null;
-        var dialog = null;
+        let panelRight = null;
+        let dialog = null;
 
         if (this.state.errorMessage) {
             return (
@@ -107,33 +110,56 @@ class ProjectsView extends React.Component {
         }
 
 
-
-        switch(this.state.dialog) {
+        switch(this.state.dialog.name) {
             case 'users':
-                dialog = <UsersDialog cancel={this.closeDialog} apply={this.addUsers} />;
+                dialog = <UsersDialog apply={this.addUsers} cancel={this.closeDialog} />;
+                break;
+            case 'removeUserConfirm':
+                let fullname = [ this.state.dialog.user.first_name, this.state.dialog.user.last_name ].join(' ');
+                if (!fullname) {
+                    fullname = this.state.dialog.user.shortname;
+                }
+                dialog = <DialogConfirm confirm={() => this.removeUser(this.state.dialog.user)} cancel={this.closeDialog}>
+                    <p>
+                        The user {fullname} ({this.state.dialog.user.email})
+                        will be removed from the project {this.state.current.project.label}
+                        ({this.state.current.project.shortname}) and he won't be able to access it anymore.
+                    </p>
+                    <p>
+                        Are you sure you want to continue?
+                    </p>
+                </DialogConfirm>;
                 break;
             case 'slice':
-                dialog = <Dialog close={this.closeDialog}>
-                            <DialogPanel>
-                                <DialogHeader>
-                                    <Title title="New Slice" />
-                                </DialogHeader>
-                                <DialogBody>
-                                    <SlicesForm project={this.state.current.project} close={this.closeDialog} />
-                                </DialogBody>
-                            </DialogPanel>
+                dialog = <Dialog cancel={this.closeDialog}>
+                            <DialogHeader>
+                                <Title title="New Slice" />
+                            </DialogHeader>
+                            <DialogBody>
+                                <SlicesForm project={this.state.current.project} close={this.closeDialog} />
+                            </DialogBody>
                         </Dialog>;
                 break;
+            case 'deleteSliceConfirm':
+                dialog = <DialogConfirm confirm={() => this.deleteSlice(this.state.dialog.slice)} cancel={this.closeDialog}>
+                    <p>
+                        The slice ({this.state.dialog.slice.shortname}) will be deleted
+                        <br />
+                        All associated resources will be removed and data deployed on the resources will be lost.
+                    </p>
+                    <p>
+                        Are you sure you want to continue?
+                    </p>
+                </DialogConfirm>;
+                break;
             case 'project':
-                dialog = <Dialog close={this.closeDialog}>
-                            <DialogPanel>
-                                <DialogHeader>
-                                    <Title title="New Project" />
-                                </DialogHeader>
-                                <DialogBody>
-                                    <ProjectsForm close={this.closeDialog} />
-                                </DialogBody>
-                            </DialogPanel>
+                dialog = <Dialog cancel={this.closeDialog}>
+                            <DialogHeader>
+                                <Title title="New Project" />
+                            </DialogHeader>
+                            <DialogBody>
+                                <ProjectsForm close={this.closeDialog} />
+                            </DialogBody>
                         </Dialog>;
                 break;
         }
@@ -161,7 +187,7 @@ class ProjectsView extends React.Component {
             let userListOptions = [
                 {
                     'label' : 'remove',
-                    'callback' : this.confirmDialog
+                    'callback' : this.removeUserConfirm
                 }
             ];
 
@@ -182,7 +208,7 @@ class ProjectsView extends React.Component {
             let sliceListOptions = [
                 {
                     'label' : 'delete',
-                    'callback' : this.deleteSlice
+                    'callback' : this.deleteSliceConfirm
                 }
             ];
 
