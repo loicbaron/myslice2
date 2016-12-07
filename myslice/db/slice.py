@@ -94,6 +94,8 @@ class Slice(myslicelibSlice):
 
         result = super(Slice, self).delete(setup)
         errors = result['errors']
+        if errors:
+            raise SliceException(errors)
 
         db.delete(dbconnection, 'slices', self.id)
 
@@ -107,10 +109,7 @@ class Slice(myslicelibSlice):
         project['slices'] = list(set(project['slices']) - set([self.id]))
         db.projects(dbconnection, project)
 
-        if errors:
-            raise SliceException(errors)
-        else:
-            return True
+        return True
 
     def addLease(self, lease):
         self = super(Slice, self).addLease(lease)

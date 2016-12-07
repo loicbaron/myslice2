@@ -116,12 +116,11 @@ class User(myslicelibUser):
     def delete(self, dbconnection, setup=None):
         result = super(User, self).delete(setup)
         errors = result['errors']
-        
-        db.delete(dbconnection, 'users', self.getAttribute('id'))
-
         if errors:
             raise UserException(errors)
-        else:
-            return True
+
+        db.delete(dbconnection, 'users', self.getAttribute('id'))
+
+        return True
 
 

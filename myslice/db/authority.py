@@ -20,7 +20,9 @@ class Authority(myslicelibAuthority):
 
         result = super(Authority, self).save(setup)
         errors = result['errors']
-        
+        if errors:
+            raise AuthorityException(errors)
+
         result = { **(self.dict()), **result['data'][0]}
         # add status if not present and update on db
         if not 'status' in result:
@@ -45,10 +47,7 @@ class Authority(myslicelibAuthority):
             user = user.merge(dbconnection)
             db.users(dbconnection, user.dict())
 
-        if errors:
-            raise AuthorityException(errors)
-        else:
-            return True
+        return True
 
     def delete(self, dbconnection, setup=None):
         # Get Authority from local DB 
@@ -57,7 +56,9 @@ class Authority(myslicelibAuthority):
 
         result = super(Authority, self).delete(setup)
         errors = result['errors']
-        
+        if errors:
+            raise AuthorityException(errors)
+
         db.delete(dbconnection, 'authorities', self.id)
 
         for u in current['pi_users']:
@@ -69,7 +70,4 @@ class Authority(myslicelibAuthority):
             user = user.merge(dbconnection)
             db.users(dbconnection, user.dict())
 
-        if errors:
-            raise AuthorityException(errors)
-        else:
-            return True
+        return True
