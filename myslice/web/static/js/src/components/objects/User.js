@@ -9,28 +9,28 @@ import DateTime from '../base/DateTime';
 
 const UserElement = ({user, isSelected, handleSelect, options}) => {
 
-    var authority = user.authority.name || user.authority.shortname;
+    let authority = user.authority.name || user.authority.shortname;
 
-    var num_slices = 0;
+    let num_slices = 0;
     if (user.hasOwnProperty('slices')) {
         num_slices = user.slices.length
     }
 
-    var num_projects = 0;
+    let num_projects = 0;
     if (user.hasOwnProperty('projects')) {
         num_projects = user.projects.length
     }
 
-    var fullname = [ user.first_name, user.last_name ].join(' ');
+    let fullname = [ user.first_name, user.last_name ].join(' ');
     if (!fullname) {
         fullname = user.shortname;
     }
 
-    var status;
+    let status;
     if (user.available == 'true') {
-        status = 'online';
+        status = 'enabled';
     } else {
-        status = 'offline';
+        status = 'disabled';
     }
 
     return (
@@ -68,7 +68,7 @@ const UserList = ({users, selected, handleSelect, options}) =>
     {
         users.map(function(user) {
 
-            var isSelected = false;
+            let isSelected = false;
             if (selected) {
                  isSelected = selected.some(function (el) {
                     return el.id === user.id;
