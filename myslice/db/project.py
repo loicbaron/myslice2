@@ -25,6 +25,9 @@ class Project(myslicelibProject):
         result = super(Project, self).save(setup)
         errors = result['errors']
 
+        if errors:
+            raise ProjectException(errors)
+
         result = { **(self.dict()), **result['data'][0]}
         # add status if not present and update on db
         if not 'status' in result:
@@ -50,10 +53,7 @@ class Project(myslicelibProject):
             sl = q(Slice).id(s).get().first()
             db.slices(dbconnection, sl.dict())
 
-        if errors:
-            raise ProjectException(errors)
-        else:
-            return True
+        return True
 
     def delete(self, dbconnection,  setup=None):
         # Get Project from local DB 
@@ -63,13 +63,14 @@ class Project(myslicelibProject):
         result = super(Project, self).delete(setup)
         errors = result['errors']
 
+        if errors:
+            raise ProjectException(errors)
+
         db.delete(dbconnection, 'projects', self.id)
 
         for u in current['pi_users']:
             user = q(User).id(u).get().first()
             user = user.merge(dbconnection)
             db.users(dbconnection, user.dict())
-        if errors:
-            raise ProjectException(errors)
-        else:
-            return True
+
+        return True
