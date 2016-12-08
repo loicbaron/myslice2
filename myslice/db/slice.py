@@ -59,9 +59,6 @@ class Slice(myslicelibSlice):
         if self.hasLeases:
             flag = -1
             for lease in self.leases:
-                print("db.slice save leases")
-                print(lease)
-                pprint(result['leases'])
                 # No resources reserved
                 if len(result['leases'])==0:
                     flag = -1
@@ -94,8 +91,11 @@ class Slice(myslicelibSlice):
 
         result = super(Slice, self).delete(setup)
         errors = result['errors']
-        if errors:
-            raise SliceException(errors)
+
+        # Signal only Registry Errors
+        for err in errors:
+            if err['type'] == "Reg":
+                raise SliceException(errors)
 
         db.delete(dbconnection, 'slices', self.id)
 
@@ -108,6 +108,10 @@ class Slice(myslicelibSlice):
         project = db.get(dbconnection, table='projects', id=self.project)
         project['slices'] = list(set(project['slices']) - set([self.id]))
         db.projects(dbconnection, project)
+
+        # Warning if errors on AMs
+        #if errors:
+        #    raise SliceWarningException(errors)
 
         return True
 
