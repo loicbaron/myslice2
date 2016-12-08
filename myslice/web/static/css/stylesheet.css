@@ -431,19 +431,17 @@ div.registrationForm {
     background-color:#F6F6F6;
 }
 .dialog .d-panel .d-header {
+    padding-bottom:25px;
 }
 .dialog .d-panel .d-bar {
-    padding:15px  0;
-    height:10vh;
 }
 .dialog .d-panel .d-body {
-    height:70vh;
+    height:60vh;
     overflow-y: auto;
 }
 .dialog .d-panel .d-footer {
     text-align:center;
-    padding:15px  0;
-    height:10vh;
+    padding:25px  0;
 }
 .dialog .d-panel .d-footer button {
     margin:0 25px;

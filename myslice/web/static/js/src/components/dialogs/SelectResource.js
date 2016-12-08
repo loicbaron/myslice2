@@ -294,34 +294,32 @@ class SelectResourceDialog extends React.Component {
         }
 
         return (
-            <Dialog close={this.props.close}>
-                <DialogPanel>
-                    <DialogHeader>
-                        <Title title="Add Resources" />
-                    </DialogHeader>
-                    <DialogBar>
-                        <IotFilter handleChange={this.filterResources} />
-                    </DialogBar>
-                    <DialogBody>
+            <Dialog cancel={this.props.cancel}>
+                <DialogHeader>
+                    <Title title="Add Resources" />
+                </DialogHeader>
+                <DialogBar>
+                    <IotFilter handleChange={this.filterResources} />
+                </DialogBar>
+                <DialogBody>
 
-                        <ResourceList resources={resources}
-                                      selected={this.state.selected}
-                                      handleSelect={this.selectResource}
-                        />
+                    <ResourceList resources={resources}
+                                  selected={this.state.selected}
+                                  handleSelect={this.selectResource}
+                    />
 
-                    </DialogBody>
-                    <DialogFooter>
-                        {this.renderSelectedStatus()}
-                        <div>
-                            <button className="cancel" onClick={this.cancel} >
-                                Cancel
-                            </button>
-                            <button className="apply" onClick={this.apply} >
-                                Apply
-                            </button>
-                        </div>
-                    </DialogFooter>
-                </DialogPanel>
+                </DialogBody>
+                <DialogFooter>
+                    {this.renderSelectedStatus()}
+                    <div>
+                        <button className="cancel" onClick={this.cancel} >
+                            Cancel
+                        </button>
+                        <button className="apply" onClick={this.apply} >
+                            Apply
+                        </button>
+                    </div>
+                </DialogFooter>
             </Dialog>
         );
     }

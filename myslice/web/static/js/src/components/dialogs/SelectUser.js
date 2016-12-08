@@ -96,39 +96,37 @@ class SelectUserDialog extends React.Component {
         }
 
         return (
-            <Dialog close={this.cancel}>
-                <DialogPanel>
-                    <DialogHeader>
-                        <Title title="Add Users" />
-                    </DialogHeader>
-                    <DialogBar>
-                        <SelectAuthority placeholder="Filter by Organization"
-                                         value={this.state.authority}
-                                         handleChange={this.filterAuthority} />
-                        <input
-                            type="text"
-                            onChange={this.filterUser}
-                            placeholder="Filter by name or email"
-                        />
-                    </DialogBar>
-                    <DialogBody>
-                        <UserList users={users}
-                                  selected={this.state.selected}
-                                  handleSelect={this.selectUser}
-                        />
-                    </DialogBody>
-                    <DialogFooter>
-                        {this.renderSelectedStatus()}
-                        <div>
-                            <button className="cancel" onClick={this.cancel} >
-                                Cancel
-                            </button>
-                            <button className="apply" onClick={this.apply} >
-                                Apply
-                            </button>
-                        </div>
-                    </DialogFooter>
-                </DialogPanel>
+            <Dialog cancel={this.cancel}>
+                <DialogHeader>
+                    <Title title="Add Users" />
+                </DialogHeader>
+                <DialogBar>
+                    <SelectAuthority placeholder="Filter by Organization"
+                                     value={this.state.authority}
+                                     handleChange={this.filterAuthority} />
+                    <input
+                        type="text"
+                        onChange={this.filterUser}
+                        placeholder="Filter by name or email"
+                    />
+                </DialogBar>
+                <DialogBody>
+                    <UserList users={users}
+                              selected={this.state.selected}
+                              handleSelect={this.selectUser}
+                    />
+                </DialogBody>
+                <DialogFooter>
+                    {this.renderSelectedStatus()}
+                    <div>
+                        <button className="cancel" onClick={this.cancel} >
+                            Cancel
+                        </button>
+                        <button className="apply" onClick={this.apply} >
+                            Apply
+                        </button>
+                    </div>
+                </DialogFooter>
             </Dialog>
         );
     }

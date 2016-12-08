@@ -24,7 +24,9 @@ class ProjectsActions {
             'errorUsers',
             'updateSlices',
             'errorSlices',
+
             'showDialog',
+            'closeDialog',
 
             'deleteProject',
             'updateDeleteProject',

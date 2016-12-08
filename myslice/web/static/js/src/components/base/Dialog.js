@@ -1,81 +1,59 @@
 import React from 'react';
-
-const DialogPanel = ({children}) =>
-     <div className="container">
-        <div className="row">
-            <div className="col-sm-8 col-sm-offset-2">
-                <div className="d-panel">
-                    {children}
-                </div>
-            </div>
-        </div>
-    </div>;
+import Title from './Title';
 
 class Dialog extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            closed: false
-        };
-        this.open = this.open.bind(this);
-        this.close = this.close.bind(this);
         this._handleEscKey = this._handleEscKey.bind(this);
         this._handleClick = this._handleClick.bind(this);
     }
 
     _handleClick(event){
         if (event.target.className == "dialog") {
-            this.close();
+            this.props.cancel();
         }
     }
 
     _handleEscKey(event){
         if (event.keyCode == 27) {
-            this.close();
+            this.props.cancel();
         }
-    }
-
-    open() {
-        this.setState({
-            closed: false
-        });
-    }
-
-    close() {
-        this.setState({
-            closed: true
-        });
-        this.props.close();
     }
 
     render() {
-        if (!this.props.show) {
-            return (
-                <div className="dialog" onKeyDown={this._handleEscKey} onClick={this._handleClick} >
-                    <div className="dialogClose" onClick={this.close}>
-                        <i className="fa fa-close fa-2x fa-fw"></i>
-                    </div>
-                    {this.props.children}
+        return (
+            <div className="dialog" onKeyDown={this._handleEscKey} onClick={this._handleClick} >
+                <div className="dialogClose" onClick={this.props.cancel}>
+                    <i className="fa fa-close fa-2x fa-fw"></i>
                 </div>
-            );
-        } else {
-            return null;
-        }
+                <div className="container">
+                    <div className="row">
+                        <div className="col-sm-8 col-sm-offset-2">
+                            <div className="d-panel">
+                                {this.props.children}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
 }
 
 Dialog.propTypes = {
-    close: React.PropTypes.func,
+    cancel: React.PropTypes.func,
 };
 
 Dialog.defaultProps = {
+    cancel: () => {}
 };
 
 const DialogHeader = ({children}) => {
 
-    var num = React.Children.count(children);
+    let num = React.Children.count(children);
+
     if (num >= 2) {
         return (
             <div className="d-header">
@@ -104,7 +82,9 @@ const DialogHeader = ({children}) => {
 };
 
 const DialogBar = ({children}) => {
-    var num = React.Children.count(children);
+
+    let num = React.Children.count(children);
+
     if (num == 2) {
         return (
             <div className="d-bar">
@@ -133,12 +113,17 @@ const DialogBar = ({children}) => {
 
 const DialogBody = ({children}) =>
             <div className="d-body">
-                { children }
+                <div className="row">
+                    <div className="col-sm-12">
+                        {children}
+                    </div>
+                </div>
             </div>;
 
 const DialogFooter = ({children}) => {
 
-    var num = React.Children.count(children);
+    let num = React.Children.count(children);
+
     if (num >= 2) {
         return (
             <div className="d-footer">
@@ -166,4 +151,62 @@ const DialogFooter = ({children}) => {
 
 };
 
-export { DialogPanel, Dialog, DialogBar, DialogBody, DialogFooter, DialogHeader };
+const DialogAlert = ({title, cancel, children}) =>
+        <Dialog cancel={cancel}>
+            <DialogHeader>
+                <Title title={title} />
+            </DialogHeader>
+            <DialogBody>
+                {children}
+            </DialogBody>
+            <DialogFooter>
+                <div>
+                    <button className="ok" onClick={cancel}>
+                        Ok
+                    </button>
+                </div>
+            </DialogFooter>
+        </Dialog>;
+
+DialogAlert.propTypes = {
+    title: React.PropTypes.string,
+    cancel: React.PropTypes.func,
+};
+
+DialogAlert.defaultProps = {
+    title: 'Alert',
+    cancel: () => {}
+};
+
+const DialogConfirm = ({title, cancel, confirm, children}) =>
+        <Dialog cancel={cancel}>
+            <DialogHeader>
+                <Title title={title} />
+            </DialogHeader>
+            <DialogBody>
+                {children}
+            </DialogBody>
+            <DialogFooter>
+                <div>
+                    <button className="ok" onClick={cancel}>
+                        Cancel
+                    </button>
+                    <button className="confirm" onClick={confirm}>
+                        Confirm
+                    </button>
+                </div>
+            </DialogFooter>
+        </Dialog>;
+
+DialogConfirm.propTypes = {
+    title: React.PropTypes.string,
+    cancel: React.PropTypes.func,
+    confirm: React.PropTypes.func.isRequired,
+};
+
+DialogConfirm.defaultProps = {
+    title: 'Confirm',
+    cancel: () => {}
+};
+
+export { Dialog, DialogBar, DialogBody, DialogFooter, DialogHeader, DialogAlert, DialogConfirm };
