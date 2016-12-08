@@ -343,23 +343,26 @@ class ProjectsHandler(Api):
 
     def remove_pi_users(self, data, project):
         events = []
-
+        pi_users = []
         # check if the users in the project are int the delete request
         for project_pi in project['pi_users']:
             if project_pi not in data['pi_users']:
-                # dispatch event remove pi from project
-                try:
-                    event = Event({
-                        'action': EventAction.REMOVE,
-                        'user': self.current_user['id'],
-                        'object': { 'type': ObjectType.PROJECT, 'id': project['id'] },
-                        'data': { 'type': DataType.PI, 'values': project_pi }
-                    })
-                except Exception as e:
-                    # TODO: we should log here
-                    # log.error("Can't create request....")
-                    pass
-                else:
-                    events.append(event)
+                pi_users.append(project_pi)
+
+        if len(pi_users)>0:
+            # dispatch event remove pi from project
+            try:
+                event = Event({
+                    'action': EventAction.REMOVE,
+                    'user': self.current_user['id'],
+                    'object': { 'type': ObjectType.PROJECT, 'id': project['id'] },
+                    'data': { 'type': DataType.PI, 'values': pi_users }
+                })
+            except Exception as e:
+                # TODO: we should log here
+                # log.error("Can't create request....")
+                pass
+            else:
+                events.append(event)
 
         return events
