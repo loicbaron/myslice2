@@ -41,17 +41,21 @@ config_file = config_path
 
 ## Setup MySliceLib
 myslicelibsetup.endpoints = [
-            Endpoint(url="https://sfa3.planet-lab.eu:12346",type="AM", timeout=60, name="PlanetLab Europe"),
-            Endpoint(url="https://194.199.16.164:12346",type="AM", timeout=60, name="FIT IoT-Lab"),
+            Endpoint(url="https://sfa3.planet-lab.eu:12346",type="AM", timeout=60, name="PlanetLab Europe", technologies="vm"),
+            Endpoint(url="https://194.199.16.164:12346",type="AM", timeout=60, name="FIT IoT-Lab", technologies="iot,robot"),
             #Endpoint(url="https://www.wilab2.ilabt.iminds.be:12369/protogeni/xmlrpc/am/3.0",type="AM",name="WiLab.t"),
             #Endpoint(url="http://www.wall2.ilabt.iminds.be:12369/protogeni/xmlrpc/am/3.0",type="AM",name="Virtual Wall 2"),
             #Endpoint(url="https://fuseco.fokus.fraunhofer.de/api/sfa/am/v3",type="AM"),
-            Endpoint(url="https://griffin.ipv6.lip6.fr:8001/RPC2",type="AM",name="FIT WiFi UPMC"),
+            Endpoint(url="https://griffin.ipv6.lip6.fr:8001/RPC2",type="AM",name="FIT WiFi UPMC", technologies="wireless"),
+            Endpoint(url="https://faraday.inria.fr:12346/RPC2",type="AM",name="FIT R2Lab", technologies="wireless"),
             Endpoint(url="https://portal.onelab.eu:6080",type="Reg",name="OneLab Registry"),
             #Endpoint(url="https://dev.myslice.info:12345",type="Reg", timeout=10, name="OneLab Registry"),
             #Endpoint(url="https://sfa-fed4fire.pl.sophia.inria.fr:443",type="Reg")
         ]
 
+myslicelibsetup.registry_endpoints = [
+            Endpoint(url="https://dev.myslice.info:12345",type="Reg", timeout=10, name="OneLab Registry"),
+        ]
 
 #if os.path.exists(os.path.expanduser("~/.sfi/")):
 #    path = os.path.expanduser("~/.sfi/")
