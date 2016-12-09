@@ -11,6 +11,10 @@ def main():
 
     cursor = conn.cursor()
     cursor.execute('''SELECT email, password, config from user''')
+
+    # XXX TODO: get the account config of the user
+    #           generate a private key if necessary
+
     for row in cursor:
         user_info = json.loads(row[2])
         data = {'password': row[1], 'last_name': user_info['lastname'], 'first_name': user_info['firstname']}
