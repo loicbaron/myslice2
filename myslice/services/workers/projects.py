@@ -52,18 +52,23 @@ def events_run(lock, qProjectEvents):
                     isSuccess = False
 
                     u = User(db.get(dbconnection, table='users', id=event.user))
+                    # TODO: Registry Only
+                    #user_setup = UserSetup(u, myslicelibsetup.registry_endpoints)
                     user_setup = UserSetup(u, myslicelibsetup.endpoints)
-                    #pprint(user_setup)
 
                     if event.creatingObject() or event.updatingObject():
                         logger.info("creating or updating the object project {}".format(event.object.id)) 
                         
                         proj = Project(event.data)
                         proj.id = event.object.id
-                        pi = User(db.get(dbconnection, table='users', id=event.user))
-                        proj.addPi(pi) 
-                        # TODO: Registry Only
-                        isSuccess = proj.save(dbconnection)
+
+                        # XXX CASES TO BE CHECKED
+                        if u.id in proj.pi_users:
+                            isSuccess = proj.save(dbconnection, user_setup)
+                        else:
+                            pi = User(db.get(dbconnection, table='users', id=event.user))
+                            proj.addPi(pi)
+                            isSuccess = proj.save(dbconnection)
 
                     if event.deletingObject():
                         logger.info("deleting the object project {}".format(event.object.id)) 
@@ -71,7 +76,7 @@ def events_run(lock, qProjectEvents):
                         proj = Project(db.get(dbconnection, table='projects', id=event.object.id))
                         if not proj:
                             raise Exception("Projects doesn't exist")
-                        isSuccess = proj.delete(dbconnection)
+                        isSuccess = proj.delete(dbconnection, user_setup)
 
                     if event.addingObject():
                         logger.info("adding data to the object project {}".format(event.object.id)) 
