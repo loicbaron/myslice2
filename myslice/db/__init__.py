@@ -209,7 +209,7 @@ def getLeases():
     pass
 
 
-def get(dbconnection=None, table=None, id=None, filter=None):
+def get(dbconnection=None, table=None, id=None, filter=None, limit=None):
     if not table:
         raise NotImplementedError('table must be specified')
 
@@ -220,10 +220,19 @@ def get(dbconnection=None, table=None, id=None, filter=None):
         return r.db(s.db.name).table(table).get(id).run(dbconnection)
 
     if filter:
-        # return somthing with filter
-        return r.db(s.db.name).table(table).filter(filter).run(dbconnection)
+        if limit:
+            cursor = r.db(s.db.name).table(table).filter(filter).limit(limit).run(dbconnection)
+        else:
+            # return somthing with filter
+            cursor = r.db(s.db.name).table(table).filter(filter).run(dbconnection)
 
-    return r.db(s.db.name).table(table).run(dbconnection)
+    elif limit:
+        cursor = r.db(s.db.name).table(table).limit(limit).run(dbconnection)
+    else:
+        cursor = r.db(s.db.name).table(table).run(dbconnection)
+    res = list(cursor)
+    #process_results(res)
+    return res
 
 
 def users(dbconnection=None, data=None, id=None, email=None, hashing=None):
