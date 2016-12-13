@@ -28,15 +28,13 @@ class Element extends React.Component {
     }
 
     renderIconSelected() {
-        if (this.props.isSelected) {
-            switch (this.props.iconSelected) {
-                case 'arrow':
-                    return <i className="fa fa-arrow-right fa-lg arrow-right"></i>;
-                    break;
-                case 'check':
-                    return <i className="fa fa-check-square-o fa-lg check-right"></i>;
-                    break;
-            }
+        switch (this.props.isSelected) {
+            case "arrow":
+                return <i className="fa fa-arrow-right fa-lg arrow-right"></i>;
+                break;
+            case "check":
+                return <i className="fa fa-check-square-o fa-lg check-right"></i>;
+                break;
         }
     }
 
@@ -100,8 +98,7 @@ Element.propTypes = {
     element: React.PropTypes.object.isRequired,
     type: React.PropTypes.string,
     icon: React.PropTypes.string,
-    iconSelected: React.PropTypes.string,
-    isSelected: React.PropTypes.bool,
+    isSelected: React.PropTypes.string,
     handleSelect: React.PropTypes.func,
     status: React.PropTypes.string,
     options: React.PropTypes.array
@@ -110,8 +107,7 @@ Element.propTypes = {
 Element.defaultProps = {
     type: null,
     icon: null,
-    iconSelected: 'check',
-    isSelected: false,
+    isSelected: null,
     handleSelect: () => { return null; },
     status: null,
     options: [],
