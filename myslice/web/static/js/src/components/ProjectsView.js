@@ -65,6 +65,17 @@ class ProjectsView extends React.Component {
         actions.closeDialog();
     }
 
+    /*
+     * Projects actions and dialogs
+     */
+    deleteProjectConfirm(project) {
+        actions.showDialog({name: 'deleteProjectConfirm', project: project});
+    }
+
+    deleteProject(project) {
+        actions.deleteProject(project);
+    }
+
     /**
      * User actions and dialogs
      */
@@ -152,6 +163,20 @@ class ProjectsView extends React.Component {
                     </p>
                 </DialogConfirm>;
                 break;
+            case 'deleteProjectConfirm':
+                dialog = <DialogConfirm confirm={() => this.deleteProject(this.state.dialog.project)} cancel={this.closeDialog}>
+                    <p>
+                        The project ({this.state.dialog.project.shortname}) will be deleted
+                        <br />
+                        All associated slices and resources will be removed and data deployed on the resources will be lost.
+                        <br />
+                        The users associated with the project will not be able to access it anymore.
+                    </p>
+                    <p>
+                        Are you sure you want to continue?
+                    </p>
+                </DialogConfirm>;
+                break;
             case 'project':
                 dialog = <Dialog cancel={this.closeDialog}>
                             <DialogHeader>
@@ -163,6 +188,16 @@ class ProjectsView extends React.Component {
                         </Dialog>;
                 break;
         }
+
+        /*
+         *  Define options for list element SLICE
+         * */
+        let projectListOptions = [
+            {
+                'label' : 'delete',
+                'callback' : this.deleteProjectConfirm
+            }
+        ];
 
         if (this.state.current.project) {
             let project = this.state.current.project;
@@ -251,7 +286,11 @@ class ProjectsView extends React.Component {
                         <Button label="Request Project" icon="plus" handleClick={this.showForm} />
                     </PanelHeader>
                     <PanelBody>
-                        <ProjectList detailed={true} projects={this.state.projects} handleSelect={this.setCurrentProject} />
+                        <ProjectList projects={this.state.projects}
+                                     selected={this.state.current.project}
+                                     handleSelect={this.setCurrentProject}
+                                     options={projectListOptions}
+                        />
                     </PanelBody>
                     {dialog}
                 </Panel>
