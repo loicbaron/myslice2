@@ -63,27 +63,39 @@ SliceElement.propTypes = {
 SliceElement.defaultProps = {
 };
 
-const SliceList = ({slices, selected, handleSelect, options}) =>
-    <List>
-    {
-        slices.map(function(slice) {
+const SliceList = ({slices, selected, handleSelect, options}) => {
 
-            var isSelected = false;
-            if (selected) {
-                 isSelected = selected.some(function (el) {
-                    return el.id === slice.id;
-                });
-            }
+    let iconSelected = "arrow";
 
-            return <SliceElement key={slice.id}
-                                 slice={slice}
-                                 isSelected={isSelected}
-                                 handleSelect={handleSelect}
-                                 options={options}
-                    />;
-        }.bind(this))
+    if (selected) {
+        if (selected instanceof Array) {
+            iconSelected = "check";
+        } else {
+            selected = [selected];
+        }
     }
-    </List>;
+
+    return (<List>
+        {
+            slices.map(function (slice) {
+
+                let isSelected = false;
+                if (selected) {
+                    isSelected = selected.some(function (el) {
+                        return el.id === slice.id;
+                    });
+                }
+
+                return <SliceElement key={slice.id}
+                                     slice={slice}
+                                     isSelected={isSelected ? iconSelected : null}
+                                     handleSelect={handleSelect}
+                                     options={options}
+                />;
+            })
+        }
+    </List>);
+};
 
 SliceList.propTypes = {
     slices: React.PropTypes.array.isRequired,

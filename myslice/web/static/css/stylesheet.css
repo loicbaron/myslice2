@@ -522,9 +522,7 @@ div.registrationForm {
     padding:10px 15px 15px 30px;
     margin:0;
     margin-bottom:6px;
-    border:1px solid white;
-    box-shadow: none;
-    transition: box-shadow 0.05s ease-in;
+    border:2px solid white;
 }
 .elementListSimple .elementBox {
     padding-bottom:8px;
@@ -536,9 +534,8 @@ div.registrationForm {
     cursor:pointer;
 }
 .elementBox.selected {
-    background-color: #f5fafa;
-    box-shadow: 1px 1px 3px 0 rgba(34, 17, 68, 0.2), -1px -1px 3px 0 rgba(34, 17, 68, 0.2);
-    border: 1px solid rgba(34, 17, 68, 0.4);
+    background-color: #f5f5f5;
+    border:2px solid #4a4aba;
 }
 .elementBox .arrow-right, .elementBox .check-right {
     position:absolute;

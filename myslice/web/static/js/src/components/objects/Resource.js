@@ -48,21 +48,35 @@ ResourceElement.propTypes = {
 ResourceElement.defaultProps = {
 };
 
-const ResourceList = ({resources, selected, handleSelect}) =>
-    <List>
-    {
-        resources.map(function(resource) {
-            var isSelected = false;
-            if (selected) {
-                 isSelected = selected.some(function (el) {
-                    return el.id === resource.id;
-                });
-            }
+const ResourceList = ({resources, selected, handleSelect, options}) => {
 
-            return <ResourceElement key={resource.id} resource={resource} isSelected={isSelected} handleSelect={handleSelect} />;
-        }.bind(this))
+    let iconSelected = "check";
+
+    if ((selected) && (selected instanceof Object)) {
+        selected = [selected];
+        iconSelected = "arrow";
     }
-    </List>;
+
+    return (<List>
+        {
+            resources.map(function (resource) {
+                let isSelected = false;
+                if (selected) {
+                    isSelected = selected.some(function (el) {
+                        return el.id === resource.id;
+                    });
+                }
+
+                return <ResourceElement key={resource.id}
+                                        resource={resource}
+                                        isSelected={isSelected ? iconSelected : null}
+                                        handleSelect={handleSelect}
+                                        options={options}
+                />;
+            })
+        }
+    </List>);
+};
 
 ResourceList.propTypes = {
     resources: React.PropTypes.array.isRequired,

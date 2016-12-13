@@ -26,12 +26,7 @@ const UserElement = ({user, isSelected, handleSelect, options}) => {
         fullname = user.shortname;
     }
 
-    let status;
-    if (user.available == 'true') {
-        status = 'enabled';
-    } else {
-        status = 'disabled';
-    }
+    let status = user.status;
 
     return (
         <Element type="user"
@@ -63,27 +58,39 @@ UserElement.propTypes = {
 UserElement.defaultProps = {
 };
 
-const UserList = ({users, selected, handleSelect, options}) =>
-    <List>
-    {
-        users.map(function(user) {
+const UserList = ({users, selected, handleSelect, options}) => {
 
-            let isSelected = false;
-            if (selected) {
-                 isSelected = selected.some(function (el) {
-                    return el.id === user.id;
-                });
-            }
+    let iconSelected = "arrow";
 
-            return <UserElement key={user.id}
-                                user={user}
-                                isSelected={isSelected}
-                                handleSelect={handleSelect}
-                                options={options}
-                    />;
-        }.bind(this))
+    if (selected) {
+        if (selected instanceof Array) {
+            iconSelected = "check";
+        } else {
+            selected = [selected];
+        }
     }
-    </List>;
+
+    return (<List>
+        {
+            users.map(function(user) {
+
+                let isSelected = false;
+                if (selected) {
+                     isSelected = selected.some(function (el) {
+                        return el.id === user.id;
+                    });
+                }
+
+                return <UserElement key={user.id}
+                                    user={user}
+                                    isSelected={isSelected ? iconSelected : null}
+                                    handleSelect={handleSelect}
+                                    options={options}
+                />;
+            })
+        }
+    </List>)
+};
 
 UserList.propTypes = {
     users: React.PropTypes.array.isRequired,
