@@ -1,14 +1,36 @@
 import React from 'react';
 
+import { NotifyInfo, NotifySuccess, NotifyError, NotifyWarning  } from './Notification';
 
-const View = ({children}) => {
+const View = ({children, notification}) => {
 
-    var num = React.Children.count(children);
+    let num = React.Children.count(children);
+    let notificationElement = null;
+
+    if (notification) {
+            switch(notification.type) {
+                case 'info':
+                    notificationElement = <NotifyInfo message={notification.message} />;
+                    break;
+                case 'success':
+                    notificationElement = <NotifySuccess message={notification.message} />;
+                    break;
+                case 'error':
+                    notificationElement = <NotifyError message={notification.message} />;
+                    break;
+                case 'warning':
+                    notificationElement = <NotifyWarning message={notification.message} />;
+                    break;
+            }
+
+    }
+
 
     if (num == 1) {
 
         return <div className="p-center">
                     {children}
+                    {notificationElement}
                 </div>;
 
     } else if (num == 2) {
@@ -26,6 +48,7 @@ const View = ({children}) => {
                              {children[1]}
                          </div>
                     </div>
+                    {notificationElement}
                 </div>;
         } else if (leftPanel == 'PanelMenu') {
             return <div className="row">
@@ -39,6 +62,7 @@ const View = ({children}) => {
                             {children[1]}
                         </div>
                     </div>
+                {notificationElement}
             </div>
 
         }
