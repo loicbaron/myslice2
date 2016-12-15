@@ -1,5 +1,7 @@
 from pprint import pprint
 
+from myslice import myslicelibsetup
+
 from myslicelib.model.project import Project as myslicelibProject
 from myslicelib.query import q
 from myslice import db
@@ -39,7 +41,7 @@ class Project(myslicelibProject):
         if current is None:
             current = db.get(dbconnection, table='projects', id=self.id)
 
-        # XXX We only update the current pi_users, we must also update the Removed pi_users 
+        # update pi_users after Save
         pi_users = current['pi_users'] + self.getAttribute('pi_users')
         for u in pi_users:
             user = q(User).id(u).get().first()
@@ -47,10 +49,12 @@ class Project(myslicelibProject):
             db.users(dbconnection, user.dict())
 
         # update slices after Save
-        # XXX We only update the current slices, we must also update the Removed slices 
         slices = current['slices'] + self.getAttribute('slices')
+        if setup:
+            setup.setEndpoints(myslicelibsetup.endpoints)
+
         for s in current['slices']:
-            sl = q(Slice).id(s).get().first()
+            sl = q(Slice, setup).id(s).get().first()
             db.slices(dbconnection, sl.dict())
 
         return True
@@ -72,5 +76,7 @@ class Project(myslicelibProject):
             user = q(User).id(u).get().first()
             user = user.merge(dbconnection)
             db.users(dbconnection, user.dict())
+
+        # Slices will be removed by Sync
 
         return True

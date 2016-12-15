@@ -49,3 +49,7 @@ class UserSetup(Setup):
             import traceback
             traceback.print_exc()
             logger.error("Problem authenticating with user %s" % user)
+
+    def setEndpoints(self, endpoints):
+        self.endpoints = endpoints
+        return self
