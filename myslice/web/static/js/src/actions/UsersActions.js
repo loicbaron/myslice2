@@ -53,7 +53,9 @@ class UsersActions {
     revokePiRights(authority) {
         return authority;
     }
-
+    filterUser(value) {
+        return value;
+    }
 }
 
 export default alt.createActions(UsersActions);

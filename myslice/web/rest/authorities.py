@@ -180,6 +180,13 @@ class AuthoritiesHandler(Api):
             self.userError("Authority shortname must be specified")
             return
 
+        if not self.get_current_user():
+            # authority registration for new user
+            current_user_id = None
+        else:
+            # admin create user directly
+            current_user_id = self.get_current_user()['id']
+
         try:
             event = Event({
                 'action': EventAction.CREATE,

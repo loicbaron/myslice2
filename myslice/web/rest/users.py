@@ -3,6 +3,8 @@ import json
 import jwt
 import re
 
+from pprint import pprint
+
 from hmac import compare_digest as compare_hash
 from email.utils import parseaddr
 
