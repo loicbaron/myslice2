@@ -76,6 +76,7 @@ class ProjectsView extends React.Component {
 
     deleteProject(project) {
         actions.deleteProject(project);
+        actions.closeDialog();
     }
 
     /**
@@ -87,6 +88,7 @@ class ProjectsView extends React.Component {
 
     addUsers(users) {
         actions.saveProject({users: users});
+        actions.closeDialog();
     }
 
     removeUserConfirm(user) {
@@ -95,6 +97,7 @@ class ProjectsView extends React.Component {
 
     removeUser(user) {
         actions.saveProject({remove_user: user});
+        actions.closeDialog();
     }
 
     /**
@@ -110,6 +113,7 @@ class ProjectsView extends React.Component {
 
     deleteSlice(slice) {
         actions.deleteSlice(slice);
+        actions.closeDialog();
     }
 
     render() {
@@ -253,8 +257,6 @@ class ProjectsView extends React.Component {
                 <Panel>
                     <PanelHeader>
                         <Title title={title} subtitle={project.shortname} />
-                        <Button label="Create Slice" icon="plus" handleClick={this.createSlice} />
-                        <Button label="Add Users" icon="plus" handleClick={this.selectUser} />
                     </PanelHeader>
                     <PanelBody>
                         <div>
@@ -281,7 +283,7 @@ class ProjectsView extends React.Component {
         }
         var filters = [{'label':'Project', 'name':'object', 'value':'project'}];
         return (
-            <View>
+            <View notification={this.state.notification}>
                 <Panel>
                     <PanelHeader>
                         <Title title="Projects " />

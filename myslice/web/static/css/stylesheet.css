@@ -391,7 +391,7 @@ div.registrationForm {
 }
 .p-menu li a:hover {
     cursor:pointer;
-    border-bottom:2pt solid #221144;
+    border-bottom:2pt solid #150947;
 }
 .p-menu li i {
     text-align:center;
@@ -784,6 +784,87 @@ ul.labelOptions li:hover.add {
 
 }
 
+/*
+    NOTIFICATIONS
+ */
+.notificationContainer {
+    position:fixed;
+    top:-38px;
+    left:33%;
+    right:33%;
+    z-index:100;
+    height:35px;
+    line-height:35px;
+
+    -webkit-animation: slideDown 0.5s forwards, slideUp 0.5s forwards;
+    -webkit-animation-delay: 0.5s, 10s;
+    animation: slideDown 0.5s forwards, slideUp 0.5s forwards;
+    animation-delay: 0.5s, 10s;
+
+}
+@-webkit-keyframes slideDown {
+    0% { top: -38px; }
+    100% { top: 0; }
+}
+
+@keyframes slideDown {
+    0% { top: -38px; }
+    100% { top: 0; }
+}
+@-webkit-keyframes slideUp {
+    0% { top: 0; }
+    100% { top: -38px; }
+}
+
+@keyframes slideUp {
+    0% { top: 0; }
+    100% { top: -38px; }
+}
+
+.notificationContainer .notificationInfo {
+    background-color: #CFE2F3;
+    border-bottom:1px solid #3D85C6;
+    border-right:1px solid #3D85C6;
+    border-left:1px solid #3D85C6;
+    border-radius:0 0 5px 5px;
+    padding:0 6px;
+}
+.notificationContainer .notificationInfo i {
+    color:#3D85C6;
+}
+.notificationContainer .notificationSuccess {
+    background-color: #d9ead3;
+    border-bottom:1px solid #6AA84F;
+    border-right:1px solid #6AA84F;
+    border-left:1px solid #6AA84F;
+    border-radius:0 0 5px 5px;
+    padding:0 6px;
+}
+.notificationContainer .notificationSuccess i {
+    color:#6AA84F;
+}
+.notificationContainer .notificationError {
+    background-color: #F4CCCC;
+    border-bottom:1px solid #CC0000;
+    border-right:1px solid #CC0000;
+    border-left:1px solid #CC0000;
+    border-radius:0 0 5px 5px;
+    padding:0 6px;
+}
+.notificationContainer .notificationError i {
+    color:#CC0000;
+}
+.notificationContainer .notificationWarning {
+    background-color: #FCE5CD;
+    border-bottom:1px solid #E69138;
+    border-right:1px solid #E69138;
+    border-left:1px solid #E69138;
+    border-radius:0 0 5px 5px;
+    padding:0 6px;
+}
+.notificationContainer .notificationWarning i {
+    color:#E69138;
+}
 /*
     SETTINGS general for profile,password
 */

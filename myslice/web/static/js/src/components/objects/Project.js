@@ -21,6 +21,7 @@ const ProjectElement = ({project, isSelected, handleSelect, options}) => {
             slices = <span className="elementLabel">Slices: {project.slices.length}</span>
         }
         let slicesInDashboard;
+        console.log(project);
         if(project.slices){
             slicesInDashboard = <div>
             {
@@ -52,9 +53,13 @@ const ProjectElement = ({project, isSelected, handleSelect, options}) => {
         if(users || slices || authorityElement){
             projectElements = <div className="elementDetail">{users}&nbsp;&nbsp;{slices}<br/>{authorityElement}</div>
         }
-
-        let detailed = true;
-        if (detailed) {
+        var detailed = true;
+        for(var i in options){
+            if (options[i].hasOwnProperty('detailed') && options[i]['detailed']==false){
+                detailed = false;
+            }
+        }
+        if (detailed){
             return (
                 <Element type="project"
                          element={project}
@@ -74,16 +79,13 @@ const ProjectElement = ({project, isSelected, handleSelect, options}) => {
                     </div>
                 </Element>
             );
-        }
-        else
-            {
+        }else{
             return (
                 <Element type="project"
                          element={project}
                          isSelected={isSelected}
-                         iconSelect={iconSelect}
-                         handleClick={handleClick}
-                         minHeight={minHeight}
+                         handleSelect={handleSelect}
+                         options={options}
                          icon="project">
 
                     <a href="/projects"><ElementTitle label={label} detail={project.shortname} /></a>
@@ -100,13 +102,11 @@ const ProjectElement = ({project, isSelected, handleSelect, options}) => {
 ProjectElement.propTypes = {
     project: React.PropTypes.object.isRequired,
     handleClick: React.PropTypes.func,
-    removeProject: React.PropTypes.bool,
-    detailed: React.PropTypes.bool,
+    removeProject: React.PropTypes.bool
 };
 
 ProjectElement.defaultProps = {
-    removeProject: true,
-    detailed: true,
+    removeProject: true
 };
 
 const ProjectList = ({projects, selected, handleSelect, options}) => {

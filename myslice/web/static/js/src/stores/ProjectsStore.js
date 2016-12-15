@@ -25,7 +25,7 @@ class ProjectsStore {
 
         this.dialog = { name: null };
 
-
+        this.notification = {};
 
 
 
@@ -266,16 +266,38 @@ class ProjectsStore {
 
     }
 
-    saveProjectSuccess(x) {
-        console.log(x);
+    saveProjectSuccess(response) {
         // {"result": "success", "debug": null, "error": null, "events": [["858dddc3-5500-4ba1-a6b3-430ef32434d6"]]}
+        let r;
+
+        if (response.hasOwnProperty('data')) {
+            r = response.data;
+        } else {
+            r = response;
+        }
+
+        switch(r.result) {
+            case "success":
+                this.notification = { "type" : r.result, "message" : "Event successfully created" };
+                break;
+            case "error":
+                this.notification = { "type" : r.result, "message" : "An error has occurred" };
+                break;
+        }
 
         this.saving = {};
     }
 
     saveProjectError(x) {
-        console.log(x);
+        let r;
 
+        if (response.hasOwnProperty('data')) {
+            r = response.data;
+        } else {
+            r = response;
+        }
+
+        this.notification = { "type" : "error", "message" : "An error has occurred" };
         this.saving = {};
     }
 

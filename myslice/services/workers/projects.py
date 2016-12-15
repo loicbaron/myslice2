@@ -52,13 +52,13 @@ def events_run(lock, qProjectEvents):
                     isSuccess = False
 
                     u = User(db.get(dbconnection, table='users', id=event.user))
-                    # TODO: Registry Only
-                    #user_setup = UserSetup(u, myslicelibsetup.registry_endpoints)
-                    user_setup = UserSetup(u, myslicelibsetup.endpoints)
+                    # Registry Only
+                    user_setup = UserSetup(u, myslicelibsetup.registry_endpoints)
+                    #user_setup = UserSetup(u, myslicelibsetup.endpoints)
 
                     if event.creatingObject() or event.updatingObject():
                         logger.info("creating or updating the object project {}".format(event.object.id)) 
-                        
+
                         proj = Project(event.data)
                         proj.id = event.object.id
 

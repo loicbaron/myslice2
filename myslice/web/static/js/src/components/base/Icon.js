@@ -36,6 +36,9 @@ const Icon = ({name, size}) => {
         case 'offline':
             iconClass += 'exclamation';
             break;
+        case 'info':
+            iconClass += 'info';
+            break;
         case 'project':
             iconClass += 'flask';
             break;
