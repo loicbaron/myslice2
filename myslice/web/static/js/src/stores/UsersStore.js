@@ -17,6 +17,9 @@ class UsersStore {
         this.grantedAuthorities = [];
         this.revokedAuthorities = [];
 
+        // Filtered users
+        this.filtered = [];
+
         /* the currently active user */
         this.current = {
             user: null,
@@ -44,6 +47,8 @@ class UsersStore {
             errorUsers: actions.ERROR_USERS,
             grantPiRights: actions.GRANT_PI_RIGHTS,
             revokePiRights: actions.REVOKE_PI_RIGHTS,
+
+            filterUser: actions.FILTER_USER,
         });
 
         this.registerAsync(source);
@@ -51,6 +56,8 @@ class UsersStore {
 
     fetchUsers(filter) {
         this.filter = filter;
+        this.users = [];
+        this.filtered = [];
 
         if (!this.getInstance().isLoading()) {
             this.getInstance().fetch();
@@ -203,6 +210,18 @@ class UsersStore {
         this.revokePiAuthority = authority;
         this.current.user.pi_authorities.pop(authority);
         this.getInstance().putUser();
+    }
+    filterUser(value) {
+        if (value) {
+            this.filtered = this.users.filter(function(el) {
+                return el.email.indexOf(value) > -1 ||
+                        el.shortname.indexOf(value) > -1 ;
+                        //el.first_name.indexOf(value) > -1 ||
+                        //el.last_name.indexOf(value) > -1;
+            });
+        } else {
+            this.filtered = [];
+        }
     }
 }
 

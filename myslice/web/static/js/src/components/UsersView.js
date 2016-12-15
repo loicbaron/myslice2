@@ -11,7 +11,7 @@ import Button from './base/Button';
 import UsersInfo from './UsersInfo';
 import { UserList } from './objects/User';
 
-import AuthoritiesSelect from './forms/SelectAuthority';
+import SelectAuthority from './forms/SelectAuthority';
 
 class UsersView extends React.Component {
 
@@ -45,7 +45,9 @@ class UsersView extends React.Component {
             actions.updateUsers([]);
         }
     }
-
+    filterUser(event) {
+        actions.filterUser(event.target.value);
+    }
     /* set the current user */
     setCurrentUser(user) {
         actions.setCurrentUser(user);
@@ -68,7 +70,12 @@ class UsersView extends React.Component {
                 <div>Something is wrong</div>
             );
         }
-
+        let users = [];
+        if (this.state.filtered.length > 0) {
+            users = this.state.filtered;
+        } else {
+            users = this.state.users;
+        }
         if (this.state.current.user) {
             let user_title = this.state.current.user.first_name+" "+this.state.current.user.last_name;
             buttonActive = false;
@@ -90,7 +97,7 @@ class UsersView extends React.Component {
         }
         console.log("render UsersView");
         console.log(this.state.profile);
-        var selectAuthority = <AuthoritiesSelect handleChange={this.updateAuthority} selected={this.state.authority} />
+        var selectAuthority = <SelectAuthority handleChange={this.updateAuthority} selected={this.state.authority} />
         if(Object.keys(this.state.profile).length>0){
             console.log(this.state.profile.pi_authorities);
         } 
@@ -129,9 +136,14 @@ class UsersView extends React.Component {
                                 <div className="row">
                                     <div className="col-sm-10 col-sm-offset-1 inputForm">
                                     {selectAuthority}
+                                    <input
+                                        type="text"
+                                        onChange={this.filterUser}
+                                        placeholder="Filter by name or email"
+                                    />
                                     </div>
                                 </div>
-                                <UserList select={true} users={this.state.users} handleSelect={this.setCurrentUser} current={this.state.current.user} />
+                                <UserList select={true} users={users} handleSelect={this.setCurrentUser} current={this.state.current.user} />
                             </PanelBody>
                         </Panel>
                         {panelRight}
@@ -147,7 +159,7 @@ class UsersView extends React.Component {
                             <PanelBody>
                                 <div className="row">
                                 </div>
-                                <UserList select={true} users={this.state.users} handleSelect={this.setCurrentUser} current={this.state.current.user} />
+                                <UserList select={true} users={users} handleSelect={this.setCurrentUser} current={this.state.current.user} />
                             </PanelBody>
                         </Panel>
                         {panelRight}
