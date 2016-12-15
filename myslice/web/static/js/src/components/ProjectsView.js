@@ -12,6 +12,8 @@ import Button from './base/Button';
 import ProjectsForm from './ProjectsForm';
 import { ProjectList } from './objects/Project';
 
+import RequestsList from './RequestsList';
+
 import { UsersSection } from './sections/User';
 import { SlicesSection } from './sections/Slice';
 import DateTime from './base/DateTime';
@@ -277,7 +279,7 @@ class ProjectsView extends React.Component {
                     </PanelBody>
                 </Panel>;
         }
-
+        var filters = [{'label':'Project', 'name':'object', 'value':'project'}];
         return (
             <View>
                 <Panel>
@@ -291,6 +293,8 @@ class ProjectsView extends React.Component {
                                      handleSelect={this.setCurrentProject}
                                      options={projectListOptions}
                         />
+                        <Title title="Pending " />
+                        <RequestsList displayFilters={false} filters={filters} />
                     </PanelBody>
                     {dialog}
                 </Panel>

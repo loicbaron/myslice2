@@ -20,7 +20,12 @@ class RequestsList extends React.Component {
 
     componentWillMount() {
         store.listen(this.onChange);
-        actions.fetchRequests();
+        if(this.props.filters){
+            console.log(this.props.filters);
+            actions.fetchRequests(this.props.filters);
+        }else{
+            actions.fetchRequests();
+        }
     }
 
     componentDidMount() {
@@ -36,6 +41,7 @@ class RequestsList extends React.Component {
     }
 
     handleFilter(filter) {
+        console.log(filter);
         actions.fetchRequests(filter);
     }
 
@@ -61,10 +67,14 @@ class RequestsList extends React.Component {
             this.state.requests.sort(function(x, y) {
                 return new Date(y.updated).getTime() - new Date(x.updated).getTime();
             })
-
+            if(this.props.displayFilters){
+                var filter = <RequestsFilter handleChange={this.handleFilter} />
+            }else{
+                var filter = "";
+            }
             return (
                 <div>
-                    <RequestsFilter handleChange={this.handleFilter} />
+                    {filter}
                     <List>
                         {
                             this.state.requests.map(function (request) {
@@ -84,10 +94,14 @@ class RequestsList extends React.Component {
 
 RequestsList.propTypes = {
     type: React.PropTypes.string,
+    filters: React.PropTypes.array,
+    displayFilters: React.PropTypes.bool
 }
 
 RequestsList.defaultProps = {
-    type: "requests"
+    type: "requests",
+    filters: [],
+    displayFilters: true
 }
 
 export default RequestsList;

@@ -21,6 +21,12 @@ class RequestsHandler(Api):
 
         Request list or request with <id>
 
+            filter: {
+                action : [ <create|update|delete|add|remove>, ... ],
+                status : [ <new|pending|denied|approved|waiting|running|success|error|warning>, ... ],
+                object : [ <authority|user|project|slice|resource>, ... ]
+            }
+
         :return:
         """
 
@@ -95,7 +101,13 @@ class RequestsHandler(Api):
                 
                 (activity['user'] == current_user_id)).filter(lambda activity:
 
+                (len(filter['action']) == 0 or r.expr(filter['action']).contains(activity['action']))
+                                                        ).filter(lambda activity:
+
                 (len(filter['status']) == 0 or r.expr(filter['status']).contains(activity['status']))
+                                                        ).filter(lambda activity:
+
+                (len(filter['object']) == 0 or r.expr(filter['object']).contains(activity['object']['type']))
                                                         ).merge(
                 {"executable": False}
                                                         ).run(self.dbconnection)
