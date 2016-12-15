@@ -80,8 +80,9 @@ class DashboardView extends React.Component {
                         </Dialog>;
         }
         var projectsList = '';
+        var options = [{'detailed':false}];
         if(this.state.projects){
-            projectsList = <ProjectList detailed ={false} projects={this.state.projects}  />
+            projectsList = <ProjectList options={options} projects={this.state.projects}  />
         }
 // The view of the dashboard page
         return (
