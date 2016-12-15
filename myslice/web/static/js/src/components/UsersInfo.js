@@ -28,35 +28,34 @@ Later:
 */
 
     render() {
-        var p = this.props.selected;
-        let name = [p.first_name, p.last_name].join(' ');
+        var u = this.props.element;
+        if(u.hasOwnProperty('first_name') && u.hasOwnProperty('last_name')){
+            let name = [u.first_name, u.last_name].join(' ');
+        }else{
+            let name = u.shortname;
+        }
         var projectsElement;
-        if(p.projects){
-            projectsElement = <div><Title title="Projects" /><ProjectList projects={p.projects} /></div>
+        if(u.projects){
+            projectsElement = <div><Title title="Projects" /><ProjectList projects={u.projects} /></div>
         }
         var authorityElement;
-        if(p.authority){
+        if(u.authority){
             var a = [];
-            a.push(p.authority);
-            console.log("UsersInfo p.authority");
-            console.log(p.authority);
-            console.log(p.pi_authorities);
-            authorityElement = <div><Title title="Authority" subtitle="" /><AuthorityList authorities={a} grant={true} revoke={false} rights={p.pi_authorities} /></div>
+            a.push(u.authority);
+            authorityElement = <div><Title title="Authority" subtitle="" /><AuthorityList authorities={a} grant={true} revoke={false} rights={u.pi_authorities} /></div>
         }
 
         var authoritiesElement;
-        if(p.pi_authorities){
-            console.log("UsersInfo pi_authorities");
-            console.log(p.pi_authorities);
-            authoritiesElement = <div><Title title="Manager" subtitle="" /><AuthorityList authorities={p.pi_authorities} grant={false} revoke={true} rights={p.pi_authorities} /></div>
+        if(u.pi_authorities){
+            authoritiesElement = <div><Title title="Manager" subtitle="" /><AuthorityList authorities={u.pi_authorities} grant={false} revoke={true} rights={u.pi_authorities} /></div>
         }
         return (
         <div>
             <div className = "row">
                 <div className="col-sm-2 vcenter settings-group profileAvatar">
-                <Avatar className="avatar" email={p.email} name={name} round={true} />
+                <Avatar className="avatar" email={u.email} name={name} round={true} />
                 </div>
-                <div className="col-sm-8 vcenter">{p.email}</div>
+                <div className="col-sm-8 vcenter">{u.email}</div>
             </div>
             {authorityElement}
             {authoritiesElement}
