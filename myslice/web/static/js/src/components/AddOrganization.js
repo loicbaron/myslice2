@@ -46,10 +46,14 @@ class AddOrganization extends React.Component {
     }
      submitForm(event) {
         event.preventDefault();
+         //extract domains
+         var nu=this.state.email.split('@');
+         this.state.domains.push(nu[1]);
+         console.log(this.state.domanis)
         //actions.submitForm();
     }
     render() {
-         var emailRegExp = "/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/";
+         var emailRegExp = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
         return (
                     <form onSubmit={this.submitForm}>
