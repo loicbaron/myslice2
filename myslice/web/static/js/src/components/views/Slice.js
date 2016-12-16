@@ -6,11 +6,13 @@ import actions from '../../actions/views/Slice';
 import View from '../base/View';
 import { Panel, PanelHeader, PanelBody } from '../base/Panel';
 import { UsersSectionSimple } from '../sections/User';
+import { ResourcesSection } from '../sections/Resource';
 import Title from '../base/Title';
 import Text from '../base/Text';
 import DateTime from '../base/DateTime';
 
 import { TestbedSectionPanel } from '../sections/Testbed';
+import { ResourceList } from '../objects/Resource';
 
 import SelectResourceDialog from '../dialogs/SelectResource';
 
@@ -70,7 +72,7 @@ class SliceView extends React.Component {
                 break;
 
         }
-
+        console.log(this.state.slice);
 
         /*
         *  Define options for testbed panel
@@ -96,9 +98,9 @@ class SliceView extends React.Component {
                                 {this.state.slice.id}
                             </p>
                             <DateTime label="Created" timestamp={this.state.slice.created} />
-                            <DateTime label="Enabled" timestamp={this.state.slice.enabled} />
                             <DateTime label="Last updated" timestamp={this.state.slice.updated} />
                         </div>
+                        <ResourcesSection resources={this.state.slice.resources} />
                         <UsersSectionSimple users={this.state.slice.users} />
                     </PanelBody>
                 </Panel>

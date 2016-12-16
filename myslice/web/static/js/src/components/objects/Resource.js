@@ -1,5 +1,6 @@
 import React from 'react';
 
+import Title from '../base/Title';
 import { List, ListSimple } from '../base/List';
 import { Element } from '../base/Element';
 import ElementTitle from '../base/ElementTitle';
@@ -56,7 +57,11 @@ const ResourceList = ({resources, selected, handleSelect, options}) => {
         selected = [selected];
         iconSelected = "arrow";
     }
-
+    if(resources.length==0){
+        return (
+            <div>No Resources</div>
+        );
+    }
     return (<List>
         {
             resources.map(function (resource) {
