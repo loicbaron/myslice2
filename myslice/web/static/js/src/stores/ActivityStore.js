@@ -8,6 +8,9 @@ class ActivityStore {
         this.activity = [];
         this.errorMessage = null;
 
+        // Filtered events
+        this.filtered = [];
+
         this.bindListeners({
             updateActivity: actions.UPDATE_ACTIVITY,
             updateActivityElement: actions.UPDATE_ACTIVITY_ELEMENT,
@@ -17,6 +20,8 @@ class ActivityStore {
 
             fetchActivity: actions.FETCH_ACTIVITY,
             watchActivity: actions.WATCH_ACTIVITY,
+
+            filterEvent: actions.FILTER_EVENT,
         });
 
         this.registerAsync(source);
@@ -37,6 +42,7 @@ class ActivityStore {
 
     fetchActivity(filter) {
         this.activity = [];
+        this.filtered = [];
         this.filter = {
             'action': [],
             'status': [],
@@ -87,6 +93,31 @@ class ActivityStore {
         // optionally return false to suppress the store change event
     }
 
+    filterEvent(value){
+        var self = this;
+        if(value){
+            this.filtered = this.activity.filter(function(el) {
+                return self.searchText(el, value);
+            });
+        }else{
+            this.filtered = [];
+        }
+    }
+    searchText(el, value){
+        var k;
+        for(k in el){
+            if(Array.isArray(el[k]) || (typeof el[k] === 'object')){
+                if(this.searchText(el[k], value)){
+                    return true;
+                }
+            }else{
+                if(el[k]!=null && el[k].toString().indexOf(value)>-1){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }
 
 
