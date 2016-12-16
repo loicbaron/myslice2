@@ -8,10 +8,12 @@ import actions from '../actions/AddOrganizationActions';
 class AddOrganizationStore {
 
 constructor() {
-        this.authority = '';
+
         this.email = '';
+        this.authority= '';
         this.password = '';
         this.first_name = '';
+        this.domains=[ ];
         this.last_name = '';
         this.terms = false;
         this.loading = false;
@@ -26,8 +28,8 @@ constructor() {
             updateTerms: actions.UPDATE_TERMS,
             updateLoading: actions.LOADING,
             submitForm: actions.SUBMIT_FORM,
-            submitSuccess: actions.SUBMIT_SUCCESS,
-            submitError: actions.SUBMIT_ERROR,
+            submitAuthoritySuccess: actions.SUBMIT_SUCCESS,
+            submitAuthorityError: actions.SUBMIT_ERROR,
         });
 
       //  this.registerAsync(source);
@@ -67,11 +69,11 @@ constructor() {
         }
     }
 
-    submitSuccess(response) {
+    submitAuthoritySuccess(response) {
         this.success = true;
     }
 
-    submitError(response) {
+    submitAuthorityError(response) {
         this.errorMessage = response.data.error;
     }
 
