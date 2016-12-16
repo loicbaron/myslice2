@@ -116,7 +116,7 @@ class SliceView {
         if (save.hasOwnProperty('resources')) {
             save.resources.map(r => {
                 if (!this.saving.resources.includes(r.id)) {
-                    this.saving.resources.push(r.id);
+                    this.saving.resources.push(r);
                 }
             });
         }

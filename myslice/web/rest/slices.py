@@ -333,6 +333,8 @@ class SlicesHandler(Api):
 
         # check if the users in the request are in the slice
         for data_user in data['users']:
+            if isinstance(data_user, dict):
+                data_user = data_user['id']
             if data_user not in slice['users']:
                 # create event add user to slices
                 try:
@@ -356,9 +358,10 @@ class SlicesHandler(Api):
     def remove_users(self, data, slice):
         events = []
 
+        data_users = [d['id'] if isinstance(d,dict) else d for d in data['users']]
         # check if we need to remove users from the slice
         for user in slice['users']:
-            if user not in data['users']:
+            if user not in data_users:
                 # create event remove user from slice
                 try:
                     event = Event({
@@ -383,6 +386,8 @@ class SlicesHandler(Api):
 
         # XXX Resource as a dict should be handled
         for data_resource in data['resources']:
+            if isinstance(data_resource, dict):
+                data_resource = data_resource['id']
             if data_resource not in slice['resources']:
                 resources.append(data_resource)
 
@@ -409,9 +414,10 @@ class SlicesHandler(Api):
     def remove_resources(self, data, slice):
         resources = []
 
+        data_resources = [d['id'] if isinstance(d,dict) else d for d in data['resources']]
         # XXX Resource as a dict should be handled
         for data_resource in slice['resources']:
-            if data_resource not in data['resources']:
+            if data_resource not in data_resources:
                 resources.append(data_resource)
 
         if not resources:

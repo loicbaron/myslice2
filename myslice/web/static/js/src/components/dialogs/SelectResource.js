@@ -202,6 +202,7 @@ class SelectResourceDialog extends React.Component {
     }
 
     render() {
+        console.log(this.state.selected);
         // if(Object.keys(this.state.filter).length>0){
         //     var usersList = <UsersList users={this.state.filteredUsers} addUser={this.props.addUser} />
         // }else{

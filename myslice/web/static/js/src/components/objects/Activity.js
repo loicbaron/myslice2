@@ -9,6 +9,8 @@ import ElementDetails from '../base/ElementDetails';
 import LogList from '../base/LogList';
 import DateTime from '../base/DateTime';
 
+import { DialogBar } from '../base/Dialog';
+
 import store from '../../stores/ActivityStore';
 import actions from '../../actions/ActivityActions';
 
@@ -209,10 +211,18 @@ class ActivityList extends React.Component {
 
     handleFilter(filter) {
         actions.fetchActivity(filter);
-
+    }
+    filterEvent(event) {
+        actions.filterEvent(event.target.value);
     }
 
     render() {
+        let activity = [];
+        if (this.state.filtered.length > 0) {
+            activity = this.state.filtered;
+        } else {
+            activity = this.state.activity;
+        }
 
         if (this.state.errorMessage) {
             return (
@@ -220,22 +230,29 @@ class ActivityList extends React.Component {
             );
         }
 
-        if (!this.state.activity) {
+        if (!activity) {
                 return <LoadingPanel show="true" />;
         } else {
 
             let self = this;
-            this.state.activity.sort(function(x, y) {
+            activity.sort(function(x, y) {
                 return new Date(y.updated).getTime() - new Date(x.updated).getTime();
             })
 
             return (
                 <div>
-                    <ActivityFilter handleChange={this.handleFilter} />
+                    <DialogBar>
+                        <ActivityFilter handleChange={this.handleFilter} />
+                        <input
+                            type="text"
+                            onChange={this.filterEvent}
+                            placeholder="Filter"
+                        />
+                    </DialogBar>
                     <List>
                         {
-                            this.state.activity.map(function (activity) {
-                                return <ActivityElement key={activity.id} activity={activity}/>;
+                            activity.map(function (a) {
+                                return <ActivityElement key={a.id} activity={a}/>;
                             })
                         }
                     </List>

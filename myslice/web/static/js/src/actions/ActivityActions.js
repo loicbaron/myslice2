@@ -48,7 +48,9 @@ class ActivityActions {
         return data;
     }
 
-
+    filterEvent(value) {
+        return value;
+    }
 }
 
 export default alt.createActions(ActivityActions);
