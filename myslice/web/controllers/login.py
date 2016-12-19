@@ -108,6 +108,8 @@ def check_password(plain_password, encrypted_password):
             return True
     except ValueError:
         print("this is not an md5 legacy password")
+
+    try:
         if sha256_crypt.verify(plain_password, encrypted_password):
             return True
         else:
