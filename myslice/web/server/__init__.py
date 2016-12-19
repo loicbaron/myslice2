@@ -137,6 +137,7 @@ class Application(web.Application):
             web.url(r'/projects', projects.Projects),
             web.url(r'/slices/([a-z0-9\._\-]+)', slices.Slices),
             web.url(r'/users', users.Users),
+            web.url(r'/users/?(' + self.urn_regex + ')', users.Users),
             web.url(r'/activity', activity.Index),
             web.url(r'/status', status.Index),
             web.url(r'/static/(.*)', web.StaticFileHandler, {'path': self.static}),

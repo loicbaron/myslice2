@@ -11,6 +11,7 @@ import Button from './base/Button';
 import UsersInfo from './UsersInfo';
 import { UserList } from './objects/User';
 
+import { DialogBar } from './base/Dialog';
 import SelectAuthority from './forms/SelectAuthority';
 
 class UsersView extends React.Component {
@@ -134,14 +135,14 @@ class UsersView extends React.Component {
                             </PanelHeader>
                             <PanelBody>
                                 <div className="row">
-                                    <div className="col-sm-10 col-sm-offset-1 inputForm">
+                                    <DialogBar>
                                     {selectAuthority}
                                     <input
                                         type="text"
                                         onChange={this.filterUser}
                                         placeholder="Filter by name or email"
                                     />
-                                    </div>
+                                    </DialogBar>
                                 </div>
                                 <UserList select={true} users={users} handleSelect={this.setCurrentUser} current={this.state.current.user} />
                             </PanelBody>

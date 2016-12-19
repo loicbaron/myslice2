@@ -10,6 +10,7 @@ import LogList from '../base/LogList';
 import DateTime from '../base/DateTime';
 
 import { DialogBar } from '../base/Dialog';
+import { UserElementAvatar } from './User';
 
 import store from '../../stores/ActivityStore';
 import actions from '../../actions/ActivityActions';
@@ -54,6 +55,11 @@ class ActivityElement extends React.Component {
         }else{
             var data = this.props.activity.data;
         }
+        if(this.props.activity.user){
+            var user = this.props.activity.user;
+        }else{
+            var user = {'id':'','first_name':'New', 'last_name':'User','email':''};
+        }
         return (
             <Element element={this.props.activity}
                      type={object}
@@ -71,6 +77,9 @@ class ActivityElement extends React.Component {
                         <span className="elementLabel">Updated</span>
                         <br />
                         <DateTime timestamp={this.props.activity.updated} />
+                    </div>
+                    <div className="col-sm-3">
+                        <UserElementAvatar user={this.props.activity.user} />
                     </div>
                 </div>
                 <ElementDetails data={data} key={this.props.activity.id} />

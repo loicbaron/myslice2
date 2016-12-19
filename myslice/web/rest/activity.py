@@ -84,7 +84,12 @@ class ActivityHandler(Api):
                                                         ).filter(lambda activity:
                     
                 (activity['user'] != current_user_id)
-                                                        ).run(self.dbconnection)
+                )\
+                .merge(lambda activity: {
+                    'user': r.table('users').get(activity['user']) \
+                                                        .default({'id' : activity['user']})
+                }) \
+                .run(self.dbconnection)
                                                         
             while (yield cursor.fetch_next()):
                 item = yield cursor.next()
@@ -103,7 +108,12 @@ class ActivityHandler(Api):
 
                                                         ).filter(lambda activity:
                 (activity['user'] == current_user_id)
-                                                        ).run(self.dbconnection)
+                )\
+                .merge(lambda activity: {
+                    'user': r.table('users').get(activity['user']) \
+                                                        .default({'id' : activity['user']})
+                }) \
+                .run(self.dbconnection)
 
             while (yield cursor.fetch_next()):
                 item = yield cursor.next()
