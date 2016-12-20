@@ -49,35 +49,49 @@ class SelectAuthority extends React.Component {
         });
     }
 
-    renderLink() {
-		return <a style={{ marginLeft: 5 }} href="/upgrade" target="_blank">C Upgrade here!</a>;
-	}
+
 
 	renderOption(option) {
 		return (
-            <span>
-                <span className="selectLabel">{option.label}</span>
+
+             <span>
+                <span className="selectLabel">{option.label} </span>
                 &nbsp;
                 <span className="selectShortname">({option.shortname})</span>
+                &nbsp;
+
             </span>
+
+
         );
 	}
 
 	renderValue(option) {
 		return (
             <span>
-                <span>{option.label}</span>
+                <span>{option.label} {this.renderLink(option.link)} </span>
                 &nbsp;
                 <i>{option.shortname}</i>
+
             </span>
         );
 
 	}
 
+
+	renderLink(link) {
+        if (link) {
+            return <a href={link} target="_blank">click here</a>;
+        }
+
+
+
+	}
     render() {
         var placeholder = this.props.placeholder || "Select Organization";
-        var options = this.getOptions();
-
+        let options = this.getOptions().concat ( [{label: 'To add Organization ', disabled: true,
+              link: '/AddOrganization'}] );
+         console.log (options);
         if (this.props.selected) {
             this.state.value = this.props.selected;
         }
