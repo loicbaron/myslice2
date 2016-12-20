@@ -12,14 +12,14 @@ const AddOrganizationSource = () => {
             remote(state) {
                 return axios.post('/api/v1/authorities', {
 
-                    'name': state.name,
+                    'name': state.aname,
                     'domains': state.domains,
-                    'shortname' : state.shortname,
-                    'authority': "urn:publicid:IDN+onelab+authority+sa",
+                    //'shortname' : state.shortname,
+                    shortname: 'v',
+                    'authority': 'urn:publicid:IDN+onelab+authority+sa',
 
                     'users': [{ 'first_name': state.first_name,
                                'last_name': state.last_name,
-                               'shortname':state.short_name,
                                'password': state.password,
                                'email': state.email,
                                'terms': state.terms,

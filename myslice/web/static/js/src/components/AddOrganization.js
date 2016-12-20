@@ -6,13 +6,15 @@ var React = require('react');
 import InputText from './InputText';
 import actions from '../actions/AddOrganizationActions';
 import store from '../stores/AddOrganizationStore';
+import LoadingPanel from './LoadingPanel';
 class AddOrganization extends React.Component {
 
      constructor(props) {
         super(props);
-         this.state={};
-       // this.state = store.getState();
+       //  this.state={};
+        this.state = store.getState();
         this.onChange = this.onChange.bind(this);
+         this.submitForm = this.submitForm.bind(this);
     }
 
     componentDidMount() {
@@ -33,6 +35,12 @@ class AddOrganization extends React.Component {
     updatePassword(value) {
         actions.updatePassword(value);
     }
+    updateAName(value) {
+        actions.updateAName(value);
+    }
+    updateSiteweb(value) {
+        actions.updateSiteweb(value);
+    }
     updateFirstname(value) {
         actions.updateFirstname(value);
     }
@@ -43,13 +51,20 @@ class AddOrganization extends React.Component {
     updateTerms(event) {
         actions.updateTerms(event.target.value);
     }
+
      submitForm(event) {
         event.preventDefault();
          //extract domains
+
          var nu=this.state.email.split('@');
          this.state.domains.push(nu[1]);
          console.log(this.state.domains)
-        //actions.submitForm();
+
+         // exract shortname
+          var u=this.state.siteweb.split('.');
+         this.state.shortname= u[1];
+         console.log(this.state.shortname);
+        actions.submitForm();
     }
     render() {
         // var emailRegExp = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -70,10 +85,10 @@ class AddOrganization extends React.Component {
                         </div>
 
                         <div className="row">
-                            <InputText name="organization" placeholder="Name" />
+                            <InputText name="aname" handleChange={this.updateAName} placeholder="Name" />
                         </div>
                         <div className="row">
-                            <InputText name="web" placeholder="http://" />
+                            <InputText name="siteweb" handleChange={this.updateSiteweb} placeholder="http://" />
                         </div>
                     <div className="row">
                         <div className="col-md-3">
@@ -114,7 +129,15 @@ class AddOrganization extends React.Component {
                         <div className="col-sm-4 col-sm-offset-4 inputSubmit">
                             <input type="submit" className="btn btn-default"/>
                         </div>
+                    </div>
+
+                    <div className="row">
+                        <div className="col-sm-4 col-sm-offset-4">
+                            {this.state.message}
                         </div>
+                    </div>
+                    <LoadingPanel show={this.state.loading}/>
+
                     </form>
 
         );

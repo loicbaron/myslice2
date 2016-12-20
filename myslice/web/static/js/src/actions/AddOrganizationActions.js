@@ -8,6 +8,12 @@ class AddOrganizationActions {
     updateEmail(email) {
         return email;
     }
+    updateSiteweb(siteweb) {
+        return siteweb;
+    }
+    updateAName(aname) {
+        return aname;
+    }
 
     updatePassword(password) {
         console.log("action pass");
@@ -41,6 +47,15 @@ class AddOrganizationActions {
     }
 
     submitError(response) {
+        this.loading(false);
+        return response;
+    }
+    submitAuthoritySuccess(response) {
+        this.loading(false);
+        return response;
+    }
+
+    submitAuthorityError(response) {
         this.loading(false);
         return response;
     }
