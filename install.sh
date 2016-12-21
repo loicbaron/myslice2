@@ -18,6 +18,7 @@ apt-get update \
         && python3.5 get-pip.py
 
 apt-get -y install libffi-dev libffi6
+apt-get -y install wget
 
 #Installing RethinkDB 
 echo "deb http://download.rethinkdb.com/apt trusty main" > /etc/apt/sources.list.d/rethinkdb.list \
