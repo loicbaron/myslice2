@@ -39,3 +39,11 @@ job0:
   script: 
     - ./key_to_file.py
     - ./tests/echo.py
+
+job1:
+  script:
+    - ./start.sh
+
+job2:
+  script:
+    - ./tests/rest_activity_authority.py
