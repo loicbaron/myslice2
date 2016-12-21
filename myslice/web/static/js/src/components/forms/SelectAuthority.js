@@ -11,6 +11,7 @@ class SelectAuthority extends React.Component {
         this.state = store.getState();
         this.onChange = this.onChange.bind(this);
         this.setValue = this.setValue.bind(this);
+        this.renderOption = this.renderOption.bind(this)
     }
 
     componentDidMount() {
@@ -55,10 +56,12 @@ class SelectAuthority extends React.Component {
 		return (
 
              <span>
-                <span className="selectLabel">{option.label} </span>
+                <span className="selectLabel">{option.label} {this.renderLink(option.link)} </span>
                 &nbsp;
-                <span className="selectShortname">({option.shortname} <a href={option.link} >click here</a>)</span>
+                <span className="selectShortname">({option.shortname} ) </span>
                 &nbsp;
+
+
 
             </span>
 
@@ -83,6 +86,7 @@ class SelectAuthority extends React.Component {
         if (link) {
             return <a href={link} target="_blank">click here</a>;
         }
+        else { return <div></div>}
 
 
 
