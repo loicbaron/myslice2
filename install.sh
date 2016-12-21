@@ -16,6 +16,8 @@ apt-get update \
         && curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py" \
         && python3.5 get-pip.py
 
+pip --version
+
 apt-get -y install libffi-dev libffi6
 
 apt-get -y install wget libssl-dev libcurl4-openssl-dev curl git
@@ -30,8 +32,8 @@ echo "deb http://download.rethinkdb.com/apt trusty main" > /etc/apt/sources.list
 # Installing myslicelib
 cd /root/ \
         && git clone http://gitlab.noc.onelab.eu/onelab/myslicelib.git \
-        && pip3.5 install --upgrade pip \
-        && pip3.5 install -r myslicelib/requirements.txt \
+        && pip install --upgrade pip \
+        && pip install -r myslicelib/requirements.txt \
         && cd myslicelib \
         && python3.5 setup.py develop
 
@@ -43,7 +45,7 @@ echo "Installing myslice" \
         && cd /root/ \
         && git clone http://gitlab.noc.onelab.eu/onelab/myslice.git \
         && apt-get -y install libzmq3-dev curl nodejs \
-        && pip3.5 install -r myslice/requirements.txt \
+        && pip install -r myslice/requirements.txt \
         && cd myslice \
         && python3.5 setup.py develop \
         && cd /root/ \
