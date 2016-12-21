@@ -6,21 +6,23 @@
 
 #Installing required software 
 
+apt-get -y install wget libssl-dev libcurl4-openssl-dev curl git
+
+apt-get -y install python3-pip
+
+pip --version
+
 apt-get update \
         && apt-get -y upgrade \
         && apt-get -y install software-properties-common python-software-properties \
 		&& add-apt-repository -y ppa:fkrull/deadsnakes \
         && apt-get update \
         && apt-get -y install python3.5 python3.5-dev \
-        && apt-get -y install libxml2 libxslt \
+        && apt-get -y install libxml2 \
         && curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py" \
         && python3.5 get-pip.py
 
-pip --version
-
 apt-get -y install libffi-dev libffi6
-
-apt-get -y install wget libssl-dev libcurl4-openssl-dev curl git
 
 #Installing RethinkDB 
 echo "deb http://download.rethinkdb.com/apt trusty main" > /etc/apt/sources.list.d/rethinkdb.list \
