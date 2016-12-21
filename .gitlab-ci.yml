@@ -1,11 +1,4 @@
-stages:
-  - build
-  - deploy
-  - test
-
-job0: 
-  stage: build
-  script: 
+before_script:
   	# Install ssh-agent if not already installed, it is required by Docker.
   	# (change apt-get to yum if you use a CentOS-based image)
   	- 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
@@ -23,25 +16,15 @@ job0:
   	- mkdir -p ~/.ssh
   	- 'echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
 
-  	# INSTALL MYSLICE
-  	- echo "deb http://ftp.debian.org/debian jessie main non-free contrib" | tee -a /etc/apt/sources.list
-  	- echo "deb-src http://ftp.debian.org/debian jessie main non-free contrib" | tee -a /etc/apt/sources.list
-  	- echo "deb http://ftp.debian.org/debian jessie-updates main contrib non-free" | tee -a /etc/apt/sources.list
-  	- echo "deb-src http://ftp.debian.org/debian jessie-updates main contrib non-free" | tee -a /etc/apt/sources.list
-  	- "apt-get update"
-  	- "apt-get -y install nodejs npm"
-  	- "cd ./myslice/web/static/js/ && npm install && cd -"
-  	- npm install -g webpack
-  	- ln -s /usr/bin/nodejs /usr/bin/node
-  	- "cd ./myslice/web/static/js/src && webpack && cd -"
-  	- "pip3 install -r requirements.txt"
-  	- "python3.5 setup.py develop"
+stages:
+  - build
+  - deploy
+  - test
 
-  	# INSTALL MYSLICELIB
-  	- "git clone git@gitlab.noc.onelab.eu:onelab/myslicelib.git /root/myslicelib"
-  	- "cd /root/myslicelib && python3.5 setup.py develop"
-  	- "cd -"
-
+job0: 
+  stage: build
+  script: 
+    - ./install.sh
     - ./key_to_file.py
     - ./tests/echo.py
 
