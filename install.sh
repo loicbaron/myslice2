@@ -13,12 +13,12 @@ apt-get update \
         && apt-get update \
         && apt-get -y install python3.5 python3.5-dev \
         && apt-get -y install libxml2 libxslt \
-        && apt-get -y install wget libssl-dev libcurl4-openssl-dev curl git \
         && curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py" \
         && python3.5 get-pip.py
 
 apt-get -y install libffi-dev libffi6
-apt-get -y install wget
+
+apt-get -y install wget libssl-dev libcurl4-openssl-dev curl git
 
 #Installing RethinkDB 
 echo "deb http://download.rethinkdb.com/apt trusty main" > /etc/apt/sources.list.d/rethinkdb.list \
