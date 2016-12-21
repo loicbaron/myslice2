@@ -57,7 +57,7 @@ class SelectAuthority extends React.Component {
              <span>
                 <span className="selectLabel">{option.label} </span>
                 &nbsp;
-                <span className="selectShortname">({option.shortname})</span>
+                <span className="selectShortname">({option.shortname} <a href={option.link} >click here</a>)</span>
                 &nbsp;
 
             </span>
@@ -69,7 +69,7 @@ class SelectAuthority extends React.Component {
 	renderValue(option) {
 		return (
             <span>
-                <span>{option.label} {this.renderLink(option.link)} </span>
+                <span>{option.label}  </span>
                 &nbsp;
                 <i>{option.shortname}</i>
 
@@ -90,8 +90,8 @@ class SelectAuthority extends React.Component {
     render() {
         var placeholder = this.props.placeholder || "Select Organization";
         let options = this.getOptions().concat ( [{label: 'To add Organization ', disabled: true,
-              link: '/AddOrganization'}] );
-         console.log (options);
+              link: '/addOrganization'}] );
+
         if (this.props.selected) {
             this.state.value = this.props.selected;
         }
