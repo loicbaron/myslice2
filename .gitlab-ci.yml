@@ -17,24 +17,10 @@ before_script:
   - mkdir -p ~/.ssh
   - 'echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
 
-stages:
-  - build
-  - deploy
-  - test
-
 job0: 
-  stage: build
   script: 
     - ./install.sh
     - ./key_to_file.py
     - ./tests/echo.py
-
-job1:
-  stage: deploy
-  script:
     - ./start.sh
-
-job2:
-  stage: test
-  script:
     - ./tests/rest_activity_authority.py
