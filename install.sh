@@ -45,7 +45,7 @@ echo "Installing myslice" \
         && cd myslice \
         && python3.5 setup.py develop \
         && cd /root/ \
-        && curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash - \
+        && curl -sL https://deb.nodesource.com/setup_4.x \
         && apt-get -y install nodejs \
         && cd /root/myslice/myslice/web/static/js/src/ \
         && npm install \
