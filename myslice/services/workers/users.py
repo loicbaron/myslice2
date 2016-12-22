@@ -105,7 +105,7 @@ def update_credentials(users):
                     u.public_key = u.keys[0]
     return users
 
-def sync(lock, email=None):
+def sync(lock, email=None, job=True):
     """
     A thread that will sync users with the local rethinkdb
     """
@@ -119,7 +119,9 @@ def sync(lock, email=None):
             logger.info("Worker users starting synchronization")
 
             if email:
+                print("get user")
                 users = q(User).filter('email', email).get()
+                pprint(users)
             else:
                 users = q(User).get()
             users = update_credentials(users)
@@ -144,6 +146,7 @@ def sync(lock, email=None):
                 logger.warning("Query users is empty, check myslicelib and the connection with SFA Registry")
 
             logger.info("Worker users finished period synchronization") 
-        
-        # sleep
-        time.sleep(86400)
+
+        if job:
+            # sleep
+            time.sleep(86400)
