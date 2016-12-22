@@ -12,3 +12,7 @@ with open("/var/myslice/myslice.pkey", "w") as f:
 cert = os.environ['MYSLICE_CERT']
 with open("/var/myslice/myslice.cert", "w") as f:
     f.write(cert)
+
+cert = os.environ['MYSLICE_PUB']
+with open("/var/myslice/myslice.pub", "w") as f:
+    f.write(cert)
