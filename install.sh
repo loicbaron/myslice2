@@ -60,3 +60,4 @@ echo "Installing myslice" \
 
 mkdir /var/myslice
 service rethinkdb start
+/root/myslice//myslice/bin/db-setup
