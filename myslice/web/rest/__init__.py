@@ -5,6 +5,7 @@ import tornado_cors as cors
 from tornado import web
 import re
 
+from myslice.lib.util import myJSONEncoder
 
 logger = logging.getLogger(__name__)
 
@@ -45,6 +46,31 @@ class Api(cors.CorsMixin, web.RequestHandler):
         user = json.loads(str(cookie, "utf-8"))
 
         return user
+
+    def set_current_user(self, user):
+        is_root = False
+        is_pi = False
+        for auth in user.get('pi_authorities',[]):
+            if len(auth.split('+')[1].split(':'))==1:
+                is_root = True
+                is_pi = True
+                break
+            elif len(auth.split('+')[1].split(':'))==2:
+                is_pi = True
+
+        ##
+        # user finally logged in, set cookie
+        self.set_secure_cookie("user", str(json.dumps({
+            'id': user['id'],
+            'email': user['email'],
+            'first_name': user.get('first_name', ''),
+            'last_name': user.get('last_name', ''),
+            'authority': user['authority'],
+            'slices': user.get('slices',[]),
+            'pi_authorities': user.get('pi_authorities',[]),
+            'is_root': is_root,
+            'is_pi': is_pi,
+        }, cls=myJSONEncoder)))
 
     def set_default_headers(self):
         # Allow CORS
