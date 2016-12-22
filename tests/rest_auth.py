@@ -7,7 +7,7 @@ import unittest
 
 from pprint import pprint
 
-from tests import s
+from config import s
 
 class TestAuth(unittest.TestCase):
 

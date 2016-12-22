@@ -27,6 +27,6 @@ job0:
     - ./install.sh
     - ./key_to_file.py
     - ./init_user.py -e $ADMIN_EMAIL -P $ADMIN_PASSWORD -k /var/myslice/myslice.pkey -p /var/myslice/myslice.pub
-    - ./tests/echo.py
     - ./start.sh
-    - ./tests/rest/auth.py
+    - ./tests/echo.py
+    - ./tests/rest_auth.py
