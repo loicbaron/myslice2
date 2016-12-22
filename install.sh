@@ -61,4 +61,4 @@ echo "Installing myslice" \
 mkdir /var/myslice
 echo "bind=all" > /etc/rethinkdb/instances.d/myslice.conf
 /etc/init.d/rethinkdb start
-/root/myslice//myslice/bin/db-setup
+/root/myslice/myslice/bin/db-setup
