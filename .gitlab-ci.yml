@@ -1,4 +1,9 @@
 image: ubuntu:14.04
+
+variables:
+  ADMIN_EMAIL: "support@myslice.info"
+  ADMIN_PASSWORD: "my_password"
+
 before_script:
   # Install ssh-agent if not already installed, it is required by Docker.
   # (change apt-get to yum if you use a CentOS-based image)
@@ -21,6 +26,7 @@ job0:
   script: 
     - ./install.sh
     - ./key_to_file.py
+    - ./init_user.py -e $ADMIN_EMAIL -P $ADMIN_PASSWORD -k /var/myslice/myslice.pkey -p /var/myslice/myslice.pub
     - ./tests/echo.py
     - ./start.sh
-    - ./tests/rest_activity_authority.py
+    - ./tests/rest/auth.py
