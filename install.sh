@@ -59,5 +59,6 @@ echo "Installing myslice" \
         && webpack
 
 mkdir /var/myslice
-service rethinkdb start
+echo "bind=all" > /etc/rethinkdb/instances.d/myslice.conf
+/etc/init.d/rethinkdb start
 /root/myslice//myslice/bin/db-setup
