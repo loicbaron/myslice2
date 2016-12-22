@@ -36,7 +36,7 @@ def main(argv):
    
     # Synchronize the users from SFA Registry into the DB 
     lock = threading.Lock()
-    syncUsers(lock)
+    syncUsers(lock, email=email)
 
     # Get the user that we want to update
     dbconnection = db.connect()

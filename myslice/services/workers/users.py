@@ -105,7 +105,7 @@ def update_credentials(users):
                     u.public_key = u.keys[0]
     return users
 
-def sync(lock):
+def sync(lock, email=None):
     """
     A thread that will sync users with the local rethinkdb
     """
@@ -118,7 +118,10 @@ def sync(lock):
         with lock:
             logger.info("Worker users starting synchronization")
 
-            users = q(User).get()
+            if email:
+                users = q(User).filter('email', email).get()
+            else:
+                users = q(User).get()
             users = update_credentials(users)
             """
             update local user table
