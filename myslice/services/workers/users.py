@@ -113,40 +113,46 @@ def sync(lock, email=None, job=True):
     # DB connection
     dbconnection = db.connect()
 
-    while True:
-        # acquires lock
-        with lock:
-            logger.info("Worker users starting synchronization")
+    if job:
+        while True:
+            syncUsers(lock, email)
 
-            if email:
-                print("get user")
-                users = q(User).filter('email', email).get()
-                pprint(users)
-            else:
-                users = q(User).get()
-            users = update_credentials(users)
-            """
-            update local user table
-            """
-            if len(users)>0:
-                lusers = db.users(dbconnection, users.dict())
-
-                for ls in lusers :
-                    # add status if not present and update on db
-                    if not 'status' in ls:
-                        ls['status'] = Status.ENABLED
-                        ls['enabled'] = format_date()
-                        db.users(dbconnection, ls)
-
-                    if not users.has(ls['id']) and ls['status'] is not Status.PENDING:
-                        # delete resourc that have been deleted elsewhere
-                        db.delete(dbconnection, 'users', ls['id'])
-                        logger.info("User {} deleted".format(ls['id']))
-            else:
-                logger.warning("Query users is empty, check myslicelib and the connection with SFA Registry")
-
-            logger.info("Worker users finished period synchronization") 
-
-        if job:
             # sleep
             time.sleep(86400)
+    else:
+        syncUsers(lock, email)
+
+def syncUsers(lock, email):
+    # acquires lock
+    with lock:
+        logger.info("Worker users starting synchronization")
+
+        if email:
+            print("get user")
+            users = q(User).filter('email', email).get()
+            pprint(users)
+        else:
+            users = q(User).get()
+        users = update_credentials(users)
+        """
+        update local user table
+        """
+        if len(users)>0:
+            lusers = db.users(dbconnection, users.dict())
+
+            for ls in lusers :
+                # add status if not present and update on db
+                if not 'status' in ls:
+                    ls['status'] = Status.ENABLED
+                    ls['enabled'] = format_date()
+                    db.users(dbconnection, ls)
+
+                if not users.has(ls['id']) and ls['status'] is not Status.PENDING:
+                    # delete resourc that have been deleted elsewhere
+                    db.delete(dbconnection, 'users', ls['id'])
+                    logger.info("User {} deleted".format(ls['id']))
+        else:
+            logger.warning("Query users is empty, check myslicelib and the connection with SFA Registry")
+
+        logger.info("Worker users finished period synchronization") 
+
