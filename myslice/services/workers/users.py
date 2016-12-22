@@ -110,9 +110,6 @@ def sync(lock, email=None, job=True):
     A thread that will sync users with the local rethinkdb
     """
 
-    # DB connection
-    dbconnection = db.connect()
-
     if job:
         while True:
             syncUsers(lock, email)
@@ -123,6 +120,9 @@ def sync(lock, email=None, job=True):
         syncUsers(lock, email)
 
 def syncUsers(lock, email):
+    # DB connection
+    dbconnection = db.connect()
+
     # acquires lock
     with lock:
         logger.info("Worker users starting synchronization")
@@ -155,4 +155,3 @@ def syncUsers(lock, email):
             logger.warning("Query users is empty, check myslicelib and the connection with SFA Registry")
 
         logger.info("Worker users finished period synchronization") 
-
