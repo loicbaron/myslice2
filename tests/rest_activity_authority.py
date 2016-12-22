@@ -7,7 +7,7 @@ import unittest
 
 from pprint import pprint
 
-from tests import s
+#from tests import s
 
 class TestAuthority(unittest.TestCase):
 
