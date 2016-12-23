@@ -22,6 +22,6 @@ class TestDeployment(unittest.TestCase):
         #print(r.text)
 
 if __name__ == '__main__':
-    # sleep 5 sec waiting that the services start
-    time.sleep(5)
+    # sleep 10 sec waiting that the services start
+    time.sleep(10)
     unittest.main()
