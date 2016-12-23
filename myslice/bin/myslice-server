@@ -10,6 +10,7 @@
 '''
 
 import signal
+import time
 import logging
 import multiprocessing
 
@@ -47,33 +48,17 @@ if __name__ == '__main__':
     processes = []
 
     ##
+    #Process: emails
+    #
+    p = multiprocessing.Process(target=serviceEmails)
+    processes.append(p)
+    p.daemon = True
+    p.start()
+
+    ##
     # Process: activity
     #
     p = multiprocessing.Process(target=serviceActivity)
-    processes.append(p)
-    p.daemon = True
-    p.start()
-
-    ##
-    # Process: experiments
-    #
-    p = multiprocessing.Process(target=serviceExperiments)
-    processes.append(p)
-    p.daemon = True
-    p.start()
-
-    ###
-    #  Process : leases
-    ##
-    p = multiprocessing.Process(target=serviceLeases)
-    processes.append(p)
-    p.daemon = True
-    p.start()
-
-    ##
-    #Process: users
-    #
-    p = multiprocessing.Process(target=serviceUsers)
     processes.append(p)
     p.daemon = True
     p.start()
@@ -87,9 +72,30 @@ if __name__ == '__main__':
     p.start()
 
     ##
-    #Process: emails
+    #Process: users
     #
-    p = multiprocessing.Process(target=serviceEmails)
+    # Sleep to avoid empty results from SFA
+    time.sleep(10)
+    p = multiprocessing.Process(target=serviceUsers)
+    processes.append(p)
+    p.daemon = True
+    p.start()
+
+
+    ##
+    # Process: experiments
+    #
+    # Sleep to avoid empty results from SFA
+    time.sleep(10)
+    p = multiprocessing.Process(target=serviceExperiments)
+    processes.append(p)
+    p.daemon = True
+    p.start()
+
+    ###
+    #  Process : leases
+    ##
+    p = multiprocessing.Process(target=serviceLeases)
     processes.append(p)
     p.daemon = True
     p.start()
