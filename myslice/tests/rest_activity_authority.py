@@ -7,12 +7,13 @@ import unittest
 
 from pprint import pprint
 
-#from tests import s
+from config import s
 
 class TestAuthority(unittest.TestCase):
 
     def setUp(self):
         self.timeout = 10
+        self.cookies = s['cookies']
 
     def test_0_invalidRequest(self):
         payload = {'key1': 'value1', 'key2': 'value2'}

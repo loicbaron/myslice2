@@ -7,9 +7,9 @@ import unittest
 
 from pprint import pprint
 
-from config import s
+from myslice.tests.config import s
 
-class TestAuth(unittest.TestCase):
+class TestLogin(unittest.TestCase):
 
     def setUp(self):
         self.timeout = 10
