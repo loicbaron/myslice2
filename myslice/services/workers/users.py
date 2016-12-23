@@ -73,7 +73,7 @@ def events_run(lock, qUserEvents):
                     if event.updatingObject():
                         logger.info("Updating user {}".format(event.object.id))
                         user = User(event.data)
-                        user.email = db.users(dbconnection, id=event.object.id)['email']
+                        user.email = User(db.users(dbconnection, id=event.object.id)).email
                         user.id = event.object.id
                         isSuccess = user.save(dbconnection, user_setup)
                 except Exception as e:
