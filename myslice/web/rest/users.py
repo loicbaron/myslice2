@@ -132,6 +132,9 @@ class UsersHandler(Api):
 
         response = []
         current_user = self.get_current_user()
+        if not current_user:
+            self.userError("not authenticated")
+            return
 
         # GET /users
         if not id and not o:
@@ -391,12 +394,16 @@ class UsersHandler(Api):
             return
 
         # user id from DB
+        user = None
         cursor = yield r.table('users') \
             .filter({'id': id}) \
             .run(self.dbconnection)
         while (yield cursor.fetch_next()):
             user = yield cursor.next()
 
+        if not user:
+            self.userError("this user %s does NOT exist" % id)
+            return
         # If password changed, encrypt the new one
         print(data)
         if "password" in data and user["password"] != crypt_password(data["password"]):
@@ -567,25 +574,32 @@ class UsersHandler(Api):
         # Check if the current user is PI of the authority of the user 
         # Or an upper authority 
         current_user = self.get_current_user()
+        if not current_user:
+            self.userError("not authenticated")
+            return
         try:
+            # user id from DB
+            user = None
+            cursor = yield r.table('users') \
+                .filter({'id': id}) \
+                .run(self.dbconnection)
+            while (yield cursor.fetch_next()):
+                user = yield cursor.next()
+
+            if not user:
+                self.userError("this user %s does NOT exist" % id)
+                return
+
             if current_user['id']!=id:
                 # Check if the user has the right to delete
                 # PI of user's authority or PI of root authority
-
-                # user id from DB
-                cursor = yield r.table('users') \
-                    .filter({'id': id}) \
-                    .run(self.dbconnection)
-                while (yield cursor.fetch_next()):
-                    user = yield cursor.next()
-
                 a = yield r.table('authorities').get(user['authority']).run(self.dbconnection)
-                root_auth = yield r.table('authorities').get(a.authority).run(self.dbconnection)
+                root_auth = yield r.table('authorities').get(a['authority']).run(self.dbconnection)
                 if current_user['id'] not in a['pi_users'] and current_user['id'] not in root_auth['pi_users']:
                     self.userError("your user has no rights on authority: %s" % id)
                     return
-        except Exception:
-            self.userError("not authenticated ")
+        except Exception as e:
+            self.userError(e)
             return
         try:
             event = Event({
@@ -594,7 +608,8 @@ class UsersHandler(Api):
                 'object': {
                     'type': ObjectType.USER,
                     'id': id,
-                }
+                },
+                'data': {'authority': user['authority']}
             })
         except AttributeError as e:
             self.userError("Can't create request", e)
