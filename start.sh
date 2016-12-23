@@ -14,3 +14,4 @@ $DIR/myslice/bin/myslice-monitor &
 $DIR/myslice/bin/myslice-web &
 
 ps -aux | grep 'myslice'
+tail -100 /var/log/myslice/myslice-web.log
