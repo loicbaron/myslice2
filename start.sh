@@ -12,3 +12,5 @@ $DIR/myslice/bin/myslice-live &
 $DIR/myslice/bin/myslice-monitor &
 #As deamon
 $DIR/myslice/bin/myslice-web &
+
+ps -aux | grep 'myslice'
