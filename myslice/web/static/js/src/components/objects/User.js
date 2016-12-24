@@ -6,6 +6,7 @@ import { Element } from '../base/Element';
 import ElementTitle from '../base/ElementTitle';
 import ElementId from '../base/ElementId';
 import DateTime from '../base/DateTime';
+import { Icon } from '../base/Icon';
 
 const UserElement = ({user, isSelected, handleSelect, options}) => {
 
@@ -144,5 +145,21 @@ UserList.propTypes = {
 UserList.defaultProps = {
 };
 
+const UsersSummary = ({users}) =>
+    <div className="summaryList">
+        <div className="elementIcon summaryIcon user">
+            <Icon name="user" size="2x"/>
+        </div>
+        <ul>
+        {
+            users.map((user) =>
+                <li>
+                    {[ user.first_name, user.last_name ].join(' ')}
+                    <span>{user.email}</span>
+                </li>
+            )
+        }
+        </ul>
+    </div>;
 
-export { UserElement, UserElementSimple, UserList, UserListSimple };
+export { UserElement, UserElementSimple, UserList, UserListSimple, UsersSummary };
