@@ -6,13 +6,19 @@
 
 #Installing required software 
 
+apt-get -y install wget libssl-dev libcurl4-openssl-dev curl git
+
+apt-get -y install python3-pip
+
+pip --version
+
 apt-get update \
         && apt-get -y upgrade \
         && apt-get -y install software-properties-common python-software-properties \
-        && add-apt-repository -y ppa:fkrull/deadsnakes \
+		&& add-apt-repository -y ppa:fkrull/deadsnakes \
         && apt-get update \
         && apt-get -y install python3.5 python3.5-dev \
-        && apt-get -y install wget libssl-dev libcurl4-openssl-dev curl git \
+        && apt-get -y install libxml2-dev libxslt1-dev \
         && curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py" \
         && python3.5 get-pip.py
 
@@ -28,8 +34,8 @@ echo "deb http://download.rethinkdb.com/apt trusty main" > /etc/apt/sources.list
 # Installing myslicelib
 cd /root/ \
         && git clone http://gitlab.noc.onelab.eu/onelab/myslicelib.git \
-        && pip3.5 install --upgrade pip \
-        && pip3.5 install -r myslicelib/requirements.txt \
+        && pip install --upgrade pip \
+        && pip install -r myslicelib/requirements.txt \
         && cd myslicelib \
         && python3.5 setup.py develop
 
@@ -41,11 +47,11 @@ echo "Installing myslice" \
         && cd /root/ \
         && git clone http://gitlab.noc.onelab.eu/onelab/myslice.git \
         && apt-get -y install libzmq3-dev curl nodejs \
-        && pip3.5 install -r myslice/requirements.txt \
+        && pip install -r myslice/requirements.txt \
         && cd myslice \
         && python3.5 setup.py develop \
         && cd /root/ \
-        && curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash - \
+		&& curl -sL https://deb.nodesource.com/setup_4.x | bash - \
         && apt-get -y install nodejs \
         && cd /root/myslice/myslice/web/static/js/src/ \
         && npm install \
@@ -53,4 +59,8 @@ echo "Installing myslice" \
         && webpack
 
 mkdir /var/myslice
-service rethinkdb start
+echo "Configure RethinkDB"
+echo "bind=all" > /etc/rethinkdb/instances.d/myslice.conf
+/etc/init.d/rethinkdb start
+/root/myslice/myslice/bin/db-setup
+cd /root/myslice/

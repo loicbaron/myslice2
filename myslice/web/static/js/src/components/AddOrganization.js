@@ -1,19 +1,20 @@
 /**
  * Created by amirabradai on 29/11/2016.
  */
-import React from 'react';
-import ReactDOM from 'react-dom';
-//var React = require('react');
+
+var React = require('react');
 import InputText from './InputText';
 import actions from '../actions/AddOrganizationActions';
 import store from '../stores/AddOrganizationStore';
+import LoadingPanel from './LoadingPanel';
 class AddOrganization extends React.Component {
 
      constructor(props) {
         super(props);
-         this.state={};
-       // this.state = store.getState();
+       //  this.state={};
+        this.state = store.getState();
         this.onChange = this.onChange.bind(this);
+         this.submitForm = this.submitForm.bind(this);
     }
 
     componentDidMount() {
@@ -25,7 +26,7 @@ class AddOrganization extends React.Component {
     }
 
     onChange(state) {
-        console.log("changed");
+       // console.log("changed");
         this.setState(state);
     }
     updateEmail(value) {
@@ -33,6 +34,12 @@ class AddOrganization extends React.Component {
     }
     updatePassword(value) {
         actions.updatePassword(value);
+    }
+    updateAName(value) {
+        actions.updateAName(value);
+    }
+    updateSiteweb(value) {
+        actions.updateSiteweb(value);
     }
     updateFirstname(value) {
         actions.updateFirstname(value);
@@ -44,22 +51,32 @@ class AddOrganization extends React.Component {
     updateTerms(event) {
         actions.updateTerms(event.target.value);
     }
+
      submitForm(event) {
         event.preventDefault();
          //extract domains
+
          var nu=this.state.email.split('@');
          this.state.domains.push(nu[1]);
-         console.log(this.state.domanis)
-        //actions.submitForm();
+         console.log(this.state.domains)
+
+         // exract shortname
+          var u=this.state.siteweb.split('.');
+         this.state.shortname= u[1];
+         console.log(this.state.shortname);
+        actions.submitForm();
     }
     render() {
-         var emailRegExp = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        // var emailRegExp = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
         return (
                     <form onSubmit={this.submitForm}>
 
                         <div className="row">
-                            <div className="col-sm-7 col-sm-offset-3">
+                            <div className="col-md-3">
+                                <i className="fa fa-university" aria-hidden="true"></i>
+                            </div>
+                            <div className="col-sm-9">
                                 <p className="inputDescription">
                                    Please provide information about your organization and you will be as a manager.
                                    OneLab is open to enterprise, to scientific researchers, and to educators.
@@ -68,13 +85,16 @@ class AddOrganization extends React.Component {
                         </div>
 
                         <div className="row">
-                            <InputText name="organization" placeholder="Name" />
+                            <InputText name="aname" handleChange={this.updateAName} placeholder="Name" />
                         </div>
                         <div className="row">
-                            <InputText name="web" placeholder="http://" />
+                            <InputText name="siteweb" handleChange={this.updateSiteweb} placeholder="http://" />
                         </div>
                     <div className="row">
-                        <div className="col-sm-7 col-sm-offset-3">
+                        <div className="col-md-3">
+                            <i className="fa fa-user" aria-hidden="true"></i>
+                        </div>
+                        <div className="col-sm-9">
                             <p className="inputDescription">
                                 Please provide your First name, your last name and Email address (your identifier for logging in). <br />
                                 We will also contact you to verify your account and occasionally for important communications.
@@ -93,7 +113,7 @@ class AddOrganization extends React.Component {
                     </div>
 
                     <div className="row">
-                        <InputText name="email" handleChange={this.updateEmail} placeholder="Email address" regex={emailRegExp} message="Invalid email" />
+                        <InputText name="email" handleChange={this.updateEmail} placeholder="Email address"  message="Invalid email" />
                     </div>
                     <div className="row">
                         <InputText name="password" handleChange={this.updatePassword} placeholder="Password" regex=".{8,}$" message="must be at least 8 characters" type="password" />
@@ -109,7 +129,15 @@ class AddOrganization extends React.Component {
                         <div className="col-sm-4 col-sm-offset-4 inputSubmit">
                             <input type="submit" className="btn btn-default"/>
                         </div>
+                    </div>
+
+                    <div className="row">
+                        <div className="col-sm-4 col-sm-offset-4">
+                            {this.state.message}
                         </div>
+                    </div>
+                    <LoadingPanel show={this.state.loading}/>
+
                     </form>
 
         );

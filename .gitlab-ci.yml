@@ -1,14 +1,20 @@
+image: ubuntu:14.04
+
+variables:
+  ADMIN_EMAIL: "support@myslice.info"
+  ADMIN_PASSWORD: "my_password"
+
 before_script:
   # Install ssh-agent if not already installed, it is required by Docker.
   # (change apt-get to yum if you use a CentOS-based image)
   - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
-
+ 
   # Run ssh-agent (inside the build environment)
   - eval $(ssh-agent -s)
-
+ 
   # Add the SSH key stored in PRIVATE_DEPLOY_KEY variable to the agent store
   - ssh-add <(echo "$PRIVATE_DEPLOY_KEY")
-
+ 
   # For Docker builds disable host key checking. Be aware that by adding that
   # you are suspectible to man-in-the-middle attacks.
   # WARNING: Use this only with the Docker executor, if you use it with shell
@@ -16,26 +22,12 @@ before_script:
   - mkdir -p ~/.ssh
   - 'echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
 
-  # INSTALL MYSLICE
-  - echo "deb http://ftp.debian.org/debian jessie main non-free contrib" | tee -a /etc/apt/sources.list
-  - echo "deb-src http://ftp.debian.org/debian jessie main non-free contrib" | tee -a /etc/apt/sources.list
-  - echo "deb http://ftp.debian.org/debian jessie-updates main contrib non-free" | tee -a /etc/apt/sources.list
-  - echo "deb-src http://ftp.debian.org/debian jessie-updates main contrib non-free" | tee -a /etc/apt/sources.list
-  - "apt-get update"
-  - "apt-get -y install nodejs npm"
-  - "cd ./myslice/web/static/js/ && npm install && cd -"
-  - npm install -g webpack
-  - ln -s /usr/bin/nodejs /usr/bin/node
-  - "cd ./myslice/web/static/js/src && webpack && cd -"
-  - "pip3 install -r requirements.txt"
-  - "python3.5 setup.py develop"
-
-  # INSTALL MYSLICELIB
-  - "git clone git@gitlab.noc.onelab.eu:onelab/myslicelib.git /root/myslicelib"
-  - "cd /root/myslicelib && python3.5 setup.py develop"
-  - "cd -"
-
 job0: 
   script: 
+    - ./install.sh
     - ./key_to_file.py
-    - ./tests/echo.py
+    - ./init_user.py -e $ADMIN_EMAIL -P $ADMIN_PASSWORD -k /var/myslice/myslice.pkey -p /var/myslice/myslice.pub
+    - ./start.sh
+    - ./myslice/tests/deployment.py
+    - ./myslice/tests/rest_login.py
+    - ./myslice/tests/rest_users.py

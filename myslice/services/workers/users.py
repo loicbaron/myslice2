@@ -73,7 +73,7 @@ def events_run(lock, qUserEvents):
                     if event.updatingObject():
                         logger.info("Updating user {}".format(event.object.id))
                         user = User(event.data)
-                        user.email = db.users(dbconnection, id=event.object.id)['email']
+                        user.email = User(db.users(dbconnection, id=event.object.id)).email
                         user.id = event.object.id
                         isSuccess = user.save(dbconnection, user_setup)
                 except Exception as e:
@@ -105,42 +105,53 @@ def update_credentials(users):
                     u.public_key = u.keys[0]
     return users
 
-def sync(lock):
+def sync(lock, email=None, job=True):
     """
     A thread that will sync users with the local rethinkdb
     """
 
+    if job:
+        while True:
+            syncUsers(lock, email)
+
+            # sleep
+            time.sleep(86400)
+    else:
+        syncUsers(lock, email)
+
+def syncUsers(lock, email):
     # DB connection
     dbconnection = db.connect()
 
-    while True:
-        # acquires lock
-        with lock:
-            logger.info("Worker users starting synchronization")
+    # acquires lock
+    with lock:
+        logger.info("Worker users starting synchronization")
 
+        if email:
+            print("get user")
+            users = q(User).filter('email', email).get()
+            pprint(users)
+        else:
             users = q(User).get()
-            users = update_credentials(users)
-            """
-            update local user table
-            """
-            if len(users)>0:
-                lusers = db.users(dbconnection, users.dict())
+        users = update_credentials(users)
+        """
+        update local user table
+        """
+        if len(users)>0:
+            lusers = db.users(dbconnection, users.dict())
 
-                for ls in lusers :
-                    # add status if not present and update on db
-                    if not 'status' in ls:
-                        ls['status'] = Status.ENABLED
-                        ls['enabled'] = format_date()
-                        db.users(dbconnection, ls)
+            for ls in lusers :
+                # add status if not present and update on db
+                if not 'status' in ls:
+                    ls['status'] = Status.ENABLED
+                    ls['enabled'] = format_date()
+                    db.users(dbconnection, ls)
 
-                    if not users.has(ls['id']) and ls['status'] is not Status.PENDING:
-                        # delete resourc that have been deleted elsewhere
-                        db.delete(dbconnection, 'users', ls['id'])
-                        logger.info("User {} deleted".format(ls['id']))
-            else:
-                logger.warning("Query users is empty, check myslicelib and the connection with SFA Registry")
+                if not users.has(ls['id']) and ls['status'] is not Status.PENDING:
+                    # delete resourc that have been deleted elsewhere
+                    db.delete(dbconnection, 'users', ls['id'])
+                    logger.info("User {} deleted".format(ls['id']))
+        else:
+            logger.warning("Query users is empty, check myslicelib and the connection with SFA Registry")
 
-            logger.info("Worker users finished period synchronization") 
-        
-        # sleep
-        time.sleep(86400)
+        logger.info("Worker users finished period synchronization") 

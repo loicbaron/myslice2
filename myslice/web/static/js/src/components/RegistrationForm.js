@@ -1,4 +1,5 @@
-import React from 'react';
+
+var React = require('react');
 import actions from '../actions/RegistrationActions';
 import store from '../stores/RegistrationStore';
 import AuthoritiesSelect from './forms/SelectAuthority';
@@ -83,7 +84,11 @@ class RegistrationForm extends React.Component {
                 <form onSubmit={this.submitForm}>
                     {errorMessage}
                     <div className="row">
-                        <div className="col-sm-4 col-sm-offset-4 inputForm">
+
+                        <div className="col-md-3">
+                                <i className="fa fa-university" aria-hidden="true"></i>
+                        </div>
+                        <div className="col-sm-9">
                             <AuthoritiesSelect handleChange={this.updateAuthority}/>
                             <a href="/addOrganization">Add organization</a>
                         </div>

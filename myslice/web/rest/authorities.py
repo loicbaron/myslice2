@@ -190,7 +190,7 @@ class AuthoritiesHandler(Api):
         try:
             event = Event({
                 'action': EventAction.CREATE,
-                'user': self.get_current_user()['id'],
+                'user': current_user_id,
                 'object': {
                     'type': ObjectType.AUTHORITY,
                     'id': None

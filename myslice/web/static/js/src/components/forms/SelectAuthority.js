@@ -11,6 +11,7 @@ class SelectAuthority extends React.Component {
         this.state = store.getState();
         this.onChange = this.onChange.bind(this);
         this.setValue = this.setValue.bind(this);
+        this.renderOption = this.renderOption.bind(this)
     }
 
     componentDidMount() {
@@ -49,34 +50,51 @@ class SelectAuthority extends React.Component {
         });
     }
 
-    renderLink() {
-		return <a style={{ marginLeft: 5 }} href="/upgrade" target="_blank">C Upgrade here!</a>;
-	}
+
 
 	renderOption(option) {
 		return (
-            <span>
-                <span className="selectLabel">{option.label}</span>
+
+             <span>
+                <span className="selectLabel">{option.label} {this.renderLink(option.link)} </span>
                 &nbsp;
-                <span className="selectShortname">({option.shortname})</span>
+                <span className="selectShortname">({option.shortname} ) </span>
+                &nbsp;
+
+
+
             </span>
+
+
         );
 	}
 
 	renderValue(option) {
 		return (
             <span>
-                <span>{option.label}</span>
+                <span>{option.label}  </span>
                 &nbsp;
                 <i>{option.shortname}</i>
+
             </span>
         );
 
 	}
 
+
+	renderLink(link) {
+        if (link) {
+            return <a href={link} target="_blank">click here</a>;
+        }
+        else { return <div></div>}
+
+
+
+	}
     render() {
         var placeholder = this.props.placeholder || "Select Organization";
-        var options = this.getOptions();
+        let options = this.getOptions().concat ( [{label: 'To add Organization ', disabled: true,
+              link: '/addOrganization'}] );
 
         if (this.props.selected) {
             this.state.value = this.props.selected;

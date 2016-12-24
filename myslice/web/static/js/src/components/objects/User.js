@@ -23,8 +23,10 @@ const UserElement = ({user, isSelected, handleSelect, options}) => {
     }
 
     let fullname = [ user.first_name, user.last_name ].join(' ');
-    if (!fullname) {
+    if ((!fullname) && (user.shortname)) {
         fullname = user.shortname;
+    } else {
+        fullname = user.email;
     }
 
     let status = user.status;
@@ -101,17 +103,45 @@ UserList.defaultProps = {
 };
 
 
+const UserElementAvatar = ({user}) => {
 
+    var fullname = [ user.first_name, user.last_name ].join(' ');
+    if(!fullname){ 
+        if (user.shortname) {
+            fullname = user.shortname;
+        } else {
+            fullname = user.email;
+        }
+    }
+    var link = "/users/"+user.id;
+    return <div>
+               <a href={link}>
+               <Avatar email={user.email} name={fullname} round={true} size={35} color="#CFE2F3" />
+               <span>  {fullname}</span>
+               </a>
+           </div>;
+};
+
+UserElementAvatar.propTypes = {
+    user: React.PropTypes.object.isRequired
+};
+
+UserElementAvatar.defaultProps = {
+    user: {'id':'','first_name':'New', 'last_name':'User','email':''}
+};
 
 
 const UserElementSimple = ({user}) => {
 
     var fullname = [ user.first_name, user.last_name ].join(' ');
-    if ((!fullname) && (user.shortname)) {
-        fullname = user.shortname;
-    } else {
-        fullname = user.email;
+    if(!fullname){ 
+        if (user.shortname) {
+            fullname = user.shortname;
+        } else {
+            fullname = user.email;
+        }
     }
+
 
     return <Element element={user} type="user">
                 {/*<Avatar className="elementIcon" email={user.email} name={fullname} round={true} size={35} color="#CFE2F3" />*/}
@@ -162,4 +192,4 @@ const UsersSummary = ({users}) =>
         </ul>
     </div>;
 
-export { UserElement, UserElementSimple, UserList, UserListSimple, UsersSummary };
+export { UserElement, UserElementSimple, UserList, UserListSimple, UserElementAvatar };

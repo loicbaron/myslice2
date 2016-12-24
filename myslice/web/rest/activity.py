@@ -36,6 +36,16 @@ class ActivityHandler(Api):
 
         self.filter = {}
 
+        # User has to be authenticated
+        current_user = self.get_current_user()
+        if not current_user:
+            self.userError("not authenticated")
+            return
+
+        # TODO: User's right to see an event
+        # User that has send the event OR PI of the authority OR Admin
+
+
         # TODO: id must be a valid UUID
         if id:
             result = yield r.table('activity').get(id).run(self.dbconnection)
@@ -84,7 +94,12 @@ class ActivityHandler(Api):
                                                         ).filter(lambda activity:
                     
                 (activity['user'] != current_user_id)
-                                                        ).run(self.dbconnection)
+                )\
+                .merge(lambda activity: {
+                    'user': r.table('users').get(activity['user']) \
+                                                        .default({'id' : activity['user']})
+                }) \
+                .run(self.dbconnection)
                                                         
             while (yield cursor.fetch_next()):
                 item = yield cursor.next()
@@ -103,13 +118,18 @@ class ActivityHandler(Api):
 
                                                         ).filter(lambda activity:
                 (activity['user'] == current_user_id)
-                                                        ).run(self.dbconnection)
+                )\
+                .merge(lambda activity: {
+                    'user': r.table('users').get(activity['user']) \
+                                                        .default({'id' : activity['user']})
+                }) \
+                .run(self.dbconnection)
 
             while (yield cursor.fetch_next()):
                 item = yield cursor.next()
                 activity.append(item)
 
-            self.finish(json.dumps({"result": activity}, cls=myJSONEncoder))
+        self.finish(json.dumps({"result": activity}, cls=myJSONEncoder))
 
             
 

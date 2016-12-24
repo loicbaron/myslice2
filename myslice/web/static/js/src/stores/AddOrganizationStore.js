@@ -3,18 +3,23 @@
  */
 
 import alt from '../alt';
+import source from '../sources/AddOrganizationSource';
 import actions from '../actions/AddOrganizationActions';
 
 class AddOrganizationStore {
 
 constructor() {
-
+        this.aname='';
         this.email = '';
         this.authority= '';
         this.password = '';
         this.first_name = '';
+        this.siteweb = '';
+        this.shortname='';
+
         this.domains=[ ];
         this.last_name = '';
+        this.short_name = '';
         this.terms = false;
         this.loading = false;
         this.success = false;
@@ -24,15 +29,17 @@ constructor() {
             updateEmail: actions.UPDATE_EMAIL,
             updatePassword: actions.UPDATE_PASSWORD,
             updateFirstname: actions.UPDATE_FIRSTNAME,
+            updateSiteweb: actions.UPDATE_SITEWEB,
+            updateAName: actions.UPDATE_ANAME,
             updateLastname: actions.UPDATE_LASTNAME,
             updateTerms: actions.UPDATE_TERMS,
             updateLoading: actions.LOADING,
             submitForm: actions.SUBMIT_FORM,
-            submitAuthoritySuccess: actions.SUBMIT_SUCCESS,
-            submitAuthorityError: actions.SUBMIT_ERROR,
+            submitAuthoritySuccess: actions.SUBMIT_AUTHORITY_SUCCESS,
+            submitAuthorityError: actions.SUBMIT_AUTHORITY_ERROR,
         });
 
-      //  this.registerAsync(source);
+        this.registerAsync(source);
     }
 
 
@@ -40,6 +47,15 @@ constructor() {
     updateEmail(email) {
         console.log("update email = "+email);
         this.email = email;
+    }
+    updateSiteweb(siteweb) {
+
+        this.siteweb = siteweb;
+    }
+
+    updateAName(aname) {
+
+        this.aname = aname;
     }
     updatePassword(password) {
         console.log("update password");
@@ -64,8 +80,8 @@ constructor() {
     }
 
     submitForm() {
-        if (!this.getInstance().isLoading()) {
-            this.getInstance().submit();
+       if (!this.getInstance().isLoading()) {
+            this.getInstance().submitAuthority();
         }
     }
 
@@ -76,13 +92,6 @@ constructor() {
     submitAuthorityError(response) {
         this.errorMessage = response.data.error;
     }
-
-
-
-
-
-
-
 
 
 
