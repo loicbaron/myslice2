@@ -4,7 +4,6 @@ from myslice import db
 from myslice.db.activity import ObjectType
 from myslice.lib import Status
 from myslice.lib.util import format_date
-from pprint import pprint
 
 def generate_RSA(bits=2048):
     '''
@@ -90,7 +89,6 @@ class User(myslicelibUser):
 
     def save(self, dbconnection, setup=None):
         if self.getAttribute('generate_keys'):
-            #print("generating new key for user %s" % self.id)
             private_key, public_key = generate_RSA()
             self.setAttribute('private_key', private_key.decode('utf-8'))
             self.setAttribute('public_key', public_key.decode('utf-8'))

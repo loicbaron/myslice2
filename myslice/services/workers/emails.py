@@ -8,8 +8,6 @@
 
 import logging
 
-from pprint import pprint
-
 import html
 from premailer import transform
 
@@ -47,7 +45,7 @@ def emails_run(qEmails):
             # Status did NOT changed
             # Comments about an event with a message
             if event.status == event.previous_status:
-                print("TODO: send specific emails with messages")
+                logger.warning("TODO: send specific emails with messages")
             recipients = set()
 
             url = s.web.url

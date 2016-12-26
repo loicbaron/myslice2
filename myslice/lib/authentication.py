@@ -4,8 +4,6 @@ from myslicelib import Setup
 from myslicelib.util import Authentication
 from myslice import myslicelibsetup
 
-from pprint import pprint
-
 logger = logging.getLogger("myslice-sync")
 
 class UserSetup(Setup):
@@ -25,7 +23,6 @@ class UserSetup(Setup):
                     break
 
             if is_delegated:
-                print("Credential Delegated")
                 # We use MySlice hrn, email, private_key and certificate
                 # We use the user's Credentials delegated to MySlice
                 hrn = myslicelibsetup.authentication.hrn
@@ -35,14 +32,8 @@ class UserSetup(Setup):
                 self._authentication = Authentication(hrn=hrn, email=email, certificate=certificate,
                                                        private_key=private_key, credentials=user.credentials)
             else:
-                print("Credential NOT Delegated")
                 # XXX We use the user's certificate and private_key until we are able to delegate credentials to MySlice
                 # If the user has no certificate and private_key, it will not work...
-                #print("myslice.lib.authentication")
-                #print("hrn=%s" % user.hrn)
-                #print("email=%s" % user.email)
-                #print("cert=%s" % user.certificate)
-                #print("pkey=%s" % user.private_key)
                 self._authentication = Authentication(hrn=user.hrn, email=user.email, certificate=user.certificate, private_key=user.private_key, credentials=user.credentials)
 
         except Exception as e:

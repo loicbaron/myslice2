@@ -1,7 +1,6 @@
 import tornado.web
 import json
 import time
-from pprint import pprint
 
 class OAuth2Handler(tornado.web.RequestHandler):
 
@@ -11,10 +10,8 @@ class OAuth2Handler(tornado.web.RequestHandler):
 
     def post(self):
         request = self.request
-        pprint(request)
         request.post_param = lambda key: json.loads(request.body.decode())[key]
         response = self.controller.dispatch(request, environ={})
-        pprint(response)
         for name, value in list(response.headers.items()):
             self.set_header(name, value)
 

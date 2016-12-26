@@ -33,7 +33,6 @@ def run():
     signal.signal(signal.SIGHUP, receive_signal)
 
     logger.info("Service leases starting")
-    print("Service Leases starts")
 
     # db connection is shared between threads
     qLeases = Queue()

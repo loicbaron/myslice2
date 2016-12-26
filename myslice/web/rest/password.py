@@ -1,4 +1,5 @@
 import json
+import logging
 from email.utils import parseaddr
 import uuid
 
@@ -12,6 +13,8 @@ from myslice.web.rest import Api
 from myslice.web.controllers.login import check_password, crypt_password
 
 from tornado import gen, escape
+
+logger = logging.getLogger('myslice.rest.password')
 
 class PasswordHandler(Api):
 
@@ -68,7 +71,6 @@ class PasswordHandler(Api):
         #        "generate_keys": False
         #    }
         #})
-        #print(event)
         #yield dispatch(self.dbconnection, event)
 
         self.write(json.dumps(
@@ -147,7 +149,6 @@ class PasswordHandler(Api):
                     return
 
                 #user = User(user)
-                #print(user.password)
                 # Crypt password
                 new_password = crypt_password(data['password'])
                 event.data['password'] = new_password

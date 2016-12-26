@@ -2,8 +2,6 @@
 import logging
 import pika
 
-from pprint import pprint
-
 import rethinkdb as r
 import myslice.db as db
 from myslice import settings as s
@@ -16,7 +14,6 @@ dbconnection = db.connect()
 
 def start(queue_name):
     logger.info("finterop start listening session %s" % queue_name) 
-    print("start listening to %s" % queue_name)
     try:
         connection = pika.BlockingConnection(pika.ConnectionParameters(
                    'localhost'))
@@ -31,13 +28,6 @@ def start(queue_name):
         traceback.print_exc()
 
 def callback(ch, method, properties, body):
-    print("ch = ")
-    print(vars(ch))
-    print("method = ")
-    print(vars(method))
-    print("properties = ")
-    print(vars(properties))
-    print(" [x] Received %r" % body)
     logger.info('Received %r' % body)
 
     # XXX For performance
@@ -56,7 +46,6 @@ def stop(queue_name):
         channel = connection.channel()
         channel.basic_cancel(consumer_tag=queue_name)
         connection.close
-        print(" [x] Stopped listening %r" % queue_name)
         logger.info("Stopped %r" % queue_name)
     except Exception as e:
         import traceback

@@ -1,9 +1,8 @@
 import json
+import logging
 
 import rethinkdb as r
 from tornado import gen, escape
-
-from pprint import pprint
 
 from myslice.web.rest import Api
 from myslice.lib.util import myJSONEncoder
@@ -15,6 +14,7 @@ from myslice.db.activity import Event, EventStatus, EventAction, ObjectType
     https://github.com/WhiteHouse/api-standards#responses
 '''
 
+logger = logging.getLogger('myslice.rest.activity')
 
 class ActivityHandler(Api):
 
@@ -143,20 +143,18 @@ class ActivityHandler(Api):
 
         # NOTE: checks are done by the service, here we only dispatch the event
 
-        #print(escape.json_decode(self.request.body))
         try:
             data = escape.json_decode(self.request.body)['event']
         except json.decoder.JSONDecodeError as e:
-            pprint(self.request.body)
-            import traceback
-            traceback.print_exc()
+            logger.error(self.request.body)
+            logger.exception("malformed request")
             self.set_status(400)
             self.finish(json.dumps({"return": {"status": "error", "messages": "malformed request"}}))
             
         try:
             event = Event(data)
         except Exception as e:
-            pprint(self.request.body)
+            logger.exception("error in post activity")
             import traceback
             traceback.print_exc()
             self.set_status(500)
@@ -173,7 +171,6 @@ class ActivityHandler(Api):
                 while (yield feed.fetch_next()):
                     item = yield feed.next()
                     # items are piling up...
-                    #print(item)
                     ev = Event(item['new_val'])
                     if ev.id == event_id:
                         if ev.isError() or ev.isWarning():
@@ -190,12 +187,11 @@ class ActivityHandler(Api):
                             self.finish(json.dumps({"return": {"status":ev.status,"messages":ev}}, cls=myJSONEncoder))
 
             except Exception as e:
-                pprint(self.request.body)
+                logger.exception("error in post activity")
                 import traceback
                 traceback.print_exc()
                 self.set_status(500)
                 #yield feed.close()
-                pprint(e)
                 self.finish(json.dumps({"return": {"status":EventStatus.ERROR,"messages":e}}, cls=myJSONEncoder))
 
     @gen.coroutine

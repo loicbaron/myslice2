@@ -1,4 +1,5 @@
 #!/usr/bin/env python3.5
+import logging
 import pika
 import signal
 import threading
@@ -6,11 +7,13 @@ import time
 
 from multiprocessing import Process
 
+logger = logging.getLogger('myslice.service.finterop.fakeinterop')
+
 class FakeInterop():
 
     def __init__(self, queue_name='hello'):
         self._alive = True 
-        print("Initialize Queue %s" % queue_name)
+        logger.info("Initialize Queue %s" % queue_name)
         self.queue = queue_name
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(
                    'localhost'))
@@ -21,7 +24,7 @@ class FakeInterop():
         self.channel.basic_publish(exchange='',
                               routing_key=self.queue,
                               body=msg)
-        print(" [x] Sent %r" % msg)
+        logger.debug(" [x] Sent %r" % msg)
     
     def fake(self, msg='Hello World!'):
         try:
@@ -48,4 +51,4 @@ class FakeInteropConsumer():
         self.channel.start_consuming()
     
     def callback(self, ch, method, properties, body):
-        print(" [x] Received %r" % body)
+        logger.debug(" [x] Received %r" % body)

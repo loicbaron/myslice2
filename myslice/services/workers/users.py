@@ -5,7 +5,6 @@
 #
 #   (c) 2016 Ciro Scognamiglio <ciro.scognamiglio@lip6.fr>
 ##
-from pprint import pprint
 import logging
 import time
 import myslice.db as db
@@ -128,9 +127,7 @@ def syncUsers(lock, email):
         logger.info("Worker users starting synchronization")
 
         if email:
-            print("get user")
             users = q(User).filter('email', email).get()
-            pprint(users)
         else:
             users = q(User).get()
         users = update_credentials(users)

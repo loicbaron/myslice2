@@ -1,14 +1,17 @@
-from passlib.hash import md5_crypt, sha256_crypt
+import crypt
 import json
+import logging
+from passlib.hash import md5_crypt, sha256_crypt
 from email.utils import parseaddr
 from hmac import compare_digest as compare_hash
-import crypt
 from tornado.web import MissingArgumentError
 from tornado import gen
 from rethinkdb import r
 
 from myslice.lib.util import myJSONEncoder
 from myslice.web.controllers import BaseController
+
+logger = logging.getLogger("myslice.web.controller.login")
 
 class Index(BaseController):
 
@@ -107,7 +110,7 @@ def check_password(plain_password, encrypted_password):
         if md5_crypt.verify(plain_password, encrypted_password):
             return True
     except ValueError:
-        print("this is not an md5 legacy password")
+        logger.info("this is not an md5 legacy password")
 
     try:
         if sha256_crypt.verify(plain_password, encrypted_password):

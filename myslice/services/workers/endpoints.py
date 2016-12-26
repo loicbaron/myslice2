@@ -26,7 +26,7 @@ def run():
     MySliceLib Query Testbeds
     """
     testbeds = q(Testbed).get()
-    print(testbeds.dict())
+    logger.info(testbeds.dict())
 
     # while True:
     #

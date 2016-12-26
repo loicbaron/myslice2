@@ -9,7 +9,6 @@
 
 import logging
 import time
-from pprint import pprint
 
 import myslice.db as db
 from myslice.lib import Status
@@ -62,27 +61,17 @@ def events_run(lock, qLeasesEvents):
                     for val in event.data['resources']:
                         r = db.get(dbconnection, table='resources', id=val)
                         # Add resource only if it exists in DB
-                        print("Resource r")
-                        pprint(r)
-                        print(type(r))
                         if r is not None:
                             r = Resource(r)
-                            print("add resource r")
                             sli.addResource(r)
                         else:
-                            print("-"*10)
-                            print("R do not exist")
                             r = Resource({'id':val})
                             lease.removeResource(r)
-                            pprint(lease)
-                            print("-"*10)
 
                     if len(lease.resources) > 0:
                         sli.addLease(lease)
                     else:
                         raise Exception("Invalid resources")
-                    print("workers lease slice = ")
-                    pprint(sli)
                     isSuccess = sli.save(dbconnection, user_setup)
 
                 if event.deletingObject(): 
@@ -141,28 +130,22 @@ def sync(lock):
     dbconnection = connect()
 
     logger = logging.getLogger('myslice.leases')
-    print ("Sync leases")
     while True:
         logger.info("syncing Leases")
         try:
-            print("Query Lease")
+            logger.info("Query Lease")
             ll = q(Lease).get()
-            print("End Query")
+            logger.info("End Query")
 
             # syncs leases configured with the db
             db.syncLeases(ll)
 
             for l in ll:
                 if hasattr(l, 'slice_id'):
-                    print("Synchronize slice %s" % l.slice_id)
+                    logger.info("Synchronize slice %s" % l.slice_id)
                     logger.info("Synchronize slice %s" % l.slice_id)
                     # if the slice is part of the portal
-                    print("db get slices")
-                    tmp = db.get(dbconnection, table='slices', id=l.slice_id)
-                    print(tmp)
                     if db.get(dbconnection, table='slices', id=l.slice_id):
-                        print("it should sync")
-                        pprint(l)
                         syncSlices(l.slice_id)
 
         except Exception as e:

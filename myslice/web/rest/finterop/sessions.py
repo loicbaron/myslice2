@@ -1,7 +1,6 @@
 import json
 import logging
 import threading
-from pprint import pprint
 from multiprocessing import Process
 
 import rethinkdb as r
@@ -81,9 +80,7 @@ class SessionsHandler(Api):
 
         if id and p == 'start':
             # TODO: Check the status of the session in DB
-            print(self.threads)
             if id in self.threads:
-                print('this session has alredy started')
                 self.userError('this session has already started')
                 return
             else:
@@ -101,16 +98,13 @@ class SessionsHandler(Api):
                 yield self.startFakeInterop(session_id, id)
 
                 # listen to the session
-                print('Listen to the session %s' % session_id)
+                logger.info('Listen to the session %s' % session_id)
                 yield self.listenSession(session_id, id)
 
         elif id and p == 'stop':
             # TODO: Check the status of the session in DB
-            print(self.threads)
             # Get session in DB
             data = yield self.getSession(id)
-            print("DATA")
-            pprint(data)
             if data:
                 data['status']='stopped'
                 data['end_date']=format_date()
@@ -127,11 +121,10 @@ class SessionsHandler(Api):
                 for t in self.threads[id]:
                     t.terminate()
                 del self.threads[id]
-                print('Stop listening to the session')
+                logger.info('Stop listening to the session')
                 stopSession(id)
 
             else:
-                print('this session is not running')
                 self.userError('this session is not running')
                 return
         else:

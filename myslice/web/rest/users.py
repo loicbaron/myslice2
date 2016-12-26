@@ -1,9 +1,8 @@
 import crypt
 import json
 import jwt
+import logging
 import re
-
-from pprint import pprint
 
 from hmac import compare_digest as compare_hash
 from email.utils import parseaddr
@@ -17,6 +16,8 @@ from myslice.web.rest import Api
 from myslice.web.controllers.login import check_password, crypt_password
 
 from tornado import gen, escape
+
+logger = logging.getLogger('myslice.rest.users')
 
 class LoginHandler(Api):
 
@@ -101,7 +102,6 @@ class LoginHandler(Api):
         #     return
         # else:
         #     result = yield dispatch(self.dbconnection, event)
-        #     print(result)
         #     self.write(json.dumps(
         #         {
         #             "result": "success",
@@ -405,7 +405,6 @@ class UsersHandler(Api):
             self.userError("this user %s does NOT exist" % id)
             return
         # If password changed, encrypt the new one
-        print(data)
         if "password" in data and user["password"] != crypt_password(data["password"]):
             data["password"] = crypt_password(data["password"])
 

@@ -10,8 +10,6 @@ import json
 import logging
 import time
 
-from pprint import pprint
-
 import myslice.db as db
 from myslice.lib import Status
 from myslice.lib.util import format_date
@@ -115,9 +113,9 @@ def events_run(lock, qSliceEvents):
                     # Calls toward Registry
                     # If an AM sends an Error it is not blocking
                     if event.creatingObject() or event.updatingObject() or event.deletingObject():
+                        logger.debug("DEBUG services worker slices")
                         for err in e.stack:
-                            print("DEBUG services worker slices")
-                            pprint(err)
+                            logger.debug(err)
                             if err['type'] == 'Reg':
                                 event.setError()
                                 break
@@ -130,8 +128,9 @@ def events_run(lock, qSliceEvents):
                     # if One AM succeeded -> Warning
                     else:
                         # XXX TO BE REFINED
-                        print("DEBUG services worker slices")
-                        pprint(e.stack)
+                        logger.debug("DEBUG services worker slices")
+                        for err in e.stack:
+                            logger.debug(err)
                         event.setWarning()
                         #event.setError()
 
@@ -194,7 +193,7 @@ def syncSlices(id=None):
                     traceback.print_exc()
                     logger.error("Problem with slice %s" % slice.id)
             else:
-                print("slice %s has no users" % slice.hrn)
+                logger.info("slice %s has no users" % slice.hrn)
 
         # update local slice table
         if not id:
