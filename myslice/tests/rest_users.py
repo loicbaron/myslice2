@@ -8,26 +8,16 @@ import unittest
 
 from pprint import pprint
 
+from myslice.tests import Tests
 from myslice.tests.config import s, authority
 
-class TestUsers(unittest.TestCase):
+class TestUsers(Tests):
 
     created_user = None
 
     def setUp(self):
         self.timeout = 10
         self.cookies = s['cookies']
-
-    def checkEvent(self, event):
-        status = "INIT"
-        res = None
-        while(status not in ["PENDING","SUCCESS","ERROR","WARNING","APPROVED","DENIED"]):
-            time.sleep(2)
-            rActivity = requests.get('http://localhost:8111/api/v1/activity/'+event, cookies=self.cookies)
-            resActivity = json.loads(rActivity.text)
-            res = resActivity['result'][0]
-            status = res['status']
-        return res
 
     def test_0_getNoAuth(self):
         r = requests.get('http://localhost:8111/api/v1/users')

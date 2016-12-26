@@ -22,7 +22,10 @@ class TestLogin(unittest.TestCase):
 
     def test_1_cookies(self):
         payload = {'email': s['email'], 'password': s['password']}
-        r = requests.post("http://localhost:8111/api/v1/login", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
+        r = requests.post("http://localhost:8111/api/v1/login",
+                          headers={str('Content-Type'):'application/json'},
+                          data=json.dumps(payload),
+                          timeout=self.timeout)
         self.assertEqual(r.status_code, 200)
         self.assertTrue(hasattr(r, 'cookies'))
         self.assertIsNotNone(r.cookies)
