@@ -63,12 +63,10 @@ def events_run(lock, qProjectEvents):
                         proj.id = event.object.id
 
                         # XXX CASES TO BE CHECKED
-                        if u.id in proj.pi_users:
-                            isSuccess = proj.save(dbconnection, user_setup)
-                        else:
+                        if u.id not in proj.pi_users:
                             pi = User(db.get(dbconnection, table='users', id=event.user))
                             proj.addPi(pi)
-                            isSuccess = proj.save(dbconnection)
+                        isSuccess = proj.save(dbconnection, user_setup)
 
                     if event.deletingObject():
                         logger.info("deleting the object project {}".format(event.object.id)) 

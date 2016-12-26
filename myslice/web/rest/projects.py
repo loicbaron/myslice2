@@ -143,6 +143,18 @@ class ProjectsHandler(Api):
             self.userError("not authenticated")
             return
 
+        if data.get('authority', None) is None:
+            self.userError("authority must be specified")
+            return
+
+        if data.get('name', None) is None:
+            self.userError("Project name must be specified")
+            return
+
+        if data.get('description', None) is None:
+            self.userError("Project description must be specified")
+            return
+
         try:
             event = Event({
                 'action': EventAction.CREATE,
@@ -207,7 +219,7 @@ class ProjectsHandler(Api):
             project = yield cursor.next()
 
         if not project:
-            self.userError("problem with db")
+            self.userError("project not found, problem with db")
             return
 
         # handle authority as dict
@@ -234,7 +246,7 @@ class ProjectsHandler(Api):
 
         for e in events:
             result = yield dispatch(self.dbconnection, e)
-            response.append(result['generated_keys'])
+            response = response + result['generated_keys']
 
         ##
         # slices

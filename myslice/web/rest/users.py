@@ -304,19 +304,20 @@ class UsersHandler(Api):
             self.userError("Malformed request", e)
             return
 
-        if not data['authority']:
-            self.userError("Authority must be specified")
+        if data.get('authority', None) is None:
+            self.userError("authority must be specified")
             return
 
-        if not data['first_name']:
-            self.userError("Firstname must be specified")
-            return
-        if not data['last_name']:
-            self.userError("Lastname must be specified")
+        if data.get('first_name', None) is None:
+            self.userError("first_name must be specified")
             return
 
-        if not data['email']:
-            self.userError("Email must be specified")
+        if data.get('last_name', None) is None:
+            self.userError("last_name must be specified")
+            return
+
+        if data.get('email', None) is None:
+            self.userError("email must be specified")
             return
 
         pattern = "^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$"
