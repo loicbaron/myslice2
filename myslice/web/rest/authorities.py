@@ -1,4 +1,5 @@
 import json
+import re
 
 from pprint import pprint
 
@@ -9,6 +10,8 @@ from myslice.web.rest import Api
 
 from myslice.db.activity import Event, EventAction, ObjectType
 from myslice.db import dispatch
+
+from myslice.web.controllers.login import crypt_password
 from tornado import gen, escape
 
 class AuthoritiesHandler(Api):
@@ -172,13 +175,59 @@ class AuthoritiesHandler(Api):
             self.userError("Malformed request", e)
             return
 
-        if not data['name']:
+        if data.get('name', None) is None:
             self.userError("Authority name must be specified")
             return
 
-        if not data['shortname']:
+        if data.get('shortname', None) is None:
             self.userError("Authority shortname must be specified")
             return
+
+        pattern = "^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$"
+        # if new users are specified to be added to the authority
+        if len(data.get('users', [])) > 0:
+            for u in data['users']:
+                if not isinstance(u, dict):
+                    self.userError("New user properties under a new authority must be sent as dict")
+                    return
+                if u.get('first_name', None) is None:
+                    self.userError("User first_name must be specified")
+                    return
+                if u.get('last_name', None) is None:
+                    self.userError("User last_name must be specified")
+                    return
+                if u.get('password', None) is None:
+                    self.userError("User password must be specified")
+                    return
+                if len(u['password'])<8:
+                    self.userError("Password must be at least 8 characters")
+                    return
+                # password must be encrypted before storing into DB
+                u['password'] = crypt_password(u['password'])
+                if u.get('email', None) is None:
+                    self.userError("User email must be specified")
+                    return
+                if not re.match(pattern, u['email']):
+                    self.userError("Wrong Email address")
+                    return
+                if u.get('terms', False) is False:
+                    self.userError("User must accept terms and conditions")
+                    return
+
+        # if pi_users are specified to manage the authority
+        if len(data.get('pi_users', [])) > 0:
+            for u in data['pi_users']:
+                # if pi_user is a New User we need at least his/her email
+                if isinstance(u, dict):
+                    if u.get('email', None) is None:
+                        self.userError("email of a new pi_user must be specified")
+                        return
+                    if not re.match(pattern, u['email']):
+                        self.userError("Wrong Email address")
+                        return
+                    if not any([user['email']==u['email'] for user in data['users']]):
+                        self.userError("email %s of pi_user is not among new users" % u['email'])
+                        return
 
         if not self.get_current_user():
             # authority registration for new user
