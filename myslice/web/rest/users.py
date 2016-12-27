@@ -325,7 +325,7 @@ class UsersHandler(Api):
             self.userError("Wrong Email address")
             return
 
-        if not data['password']:
+        if data.get('password', None) is None:
             self.userError("Password must be specified")
             return
 
@@ -336,7 +336,7 @@ class UsersHandler(Api):
         # password must be encrypted before storing into DB
         data['password'] = crypt_password(data['password'])
 
-        if not data['terms']:
+        if data.get('terms', False) is False:
             self.userError("Please read and accept the terms and conditions.")
             return
 
