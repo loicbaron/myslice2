@@ -73,6 +73,7 @@ class Authority(myslicelibAuthority):
                         raise Warning("user has not been created")
 
         # Grant or Revoke PI Rights
+        current['pi_users'] = current.get('pi_users', [])
         pi_users = current['pi_users'] + self.getAttribute('pi_users') + new_pi_users
         modified = False
         for u in pi_users:
