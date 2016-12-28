@@ -13,11 +13,15 @@ class Tests(unittest.TestCase):
         self.timeout = 10
         self.cookies = s['cookies']
 
-    def checkEvent(self, event):
+    def checkEvent(self, event, initial_status=None):
         status = "INIT"
         res = None
         i = 0
-        while(i < 30 and status not in ["PENDING","SUCCESS","ERROR","WARNING","APPROVED","DENIED"]):
+        final_status = ["PENDING","SUCCESS","ERROR","WARNING","DENIED"]
+        if initial_status:
+            final_status = list(set(final_status) - {initial_status})
+
+        while(i < 30 and status not in final_status):
             time.sleep(2)
             i = i + 1
             rActivity = requests.get('http://localhost:8111/api/v1/activity/'+event, cookies=self.cookies)
