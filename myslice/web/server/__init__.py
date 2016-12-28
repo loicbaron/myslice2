@@ -70,6 +70,8 @@ class Application(web.Application):
     urn_regex = "urn:[a-z0-9][a-z0-9-]{0,31}:[a-zA-Z0-9()+,\-.:=@;$_!*'%?#]+"
     uuid_regex = "[a-fA-F\d]{8}-[a-fA-F\d]{4}-[a-fA-F\d]{4}-[a-fA-F\d]{4}-[a-fA-F\d]{12}"
     hrn_regex = "[a-zA-Z0-9\-\.\_]+"
+    #email_regex = '^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$'
+    email_regex = "[^@]+@[^@]+\.[^@]+"
 
     threads = {}
 
@@ -177,6 +179,7 @@ class Application(web.Application):
             web.url(r'/api/v1/testbeds/?(' + self.urn_regex + ')?/?(leases)?$', TestbedsHandler),
             # users
             web.url(r'/api/v1/users$', UsersHandler),
+            web.url(r'/api/v1/users/(' + self.email_regex +')$', UsersHandler),
             web.url(r'/api/v1/users/?(' + self.urn_regex + ')?/?(authorities|projects|slices)?$', UsersHandler),
             web.url(r'/api/v1/users/?(authorities|projects|slices)?$', UsersHandler),
             # authorities
