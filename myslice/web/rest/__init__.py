@@ -100,6 +100,9 @@ class Api(cors.CorsMixin, web.RequestHandler):
     def isUrn(self, urn):
         return re.match(self.application.urn_regex, urn)
 
+    def isEmail(self, email):
+        return re.match(self.application.email_regex, email)
+
     def isHrn(self, hrn):
         return re.match(self.application.hrn_regex, hrn)
 
@@ -110,3 +113,55 @@ class Api(cors.CorsMixin, web.RequestHandler):
     def serverError(self, message, debug = None):
         self.set_status(500)
         self.finish({"error": message, "debug": debug})
+
+    def add_pi_users(self, data, object, object_type):
+        events = []
+        pi_users = []
+        # check if the users in the request are in the object
+        for data_pi in data['pi_users']:
+            if data_pi not in object['pi_users']:
+                pi_users.append(data_pi)
+        if len(pi_users)>0:
+            # create event add user to object pis
+            try:
+                event = Event({
+                    'action': EventAction.ADD,
+                    'user': self.current_user['id'],
+                    'object': {'type': object_type, 'id': object['id']},
+                    'data': {'type': DataType.PI, 'values': pi_users}
+                })
+            except Exception as e:
+                # TODO: we should log here
+                # log.error("Can't create request....")
+                pass
+            else:
+                events.append(event)
+
+        return events
+
+
+    def remove_pi_users(self, data, object, object_type):
+        events = []
+        pi_users = []
+        # check if the users in the object are int the delete request
+        for object_pi in object['pi_users']:
+            if object_pi not in data['pi_users']:
+                pi_users.append(object_pi)
+
+        if len(pi_users)>0:
+            # dispatch event remove pi from object
+            try:
+                event = Event({
+                    'action': EventAction.REMOVE,
+                    'user': self.current_user['id'],
+                    'object': { 'type': object_type, 'id': object['id'] },
+                    'data': { 'type': DataType.PI, 'values': pi_users }
+                })
+            except Exception as e:
+                # TODO: we should log here
+                # log.error("Can't create request....")
+                pass
+            else:
+                events.append(event)
+
+        return events

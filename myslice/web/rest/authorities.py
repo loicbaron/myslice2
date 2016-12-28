@@ -8,7 +8,7 @@ import rethinkdb as r
 from myslice.lib.util import myJSONEncoder
 from myslice.web.rest import Api
 
-from myslice.db.activity import Event, EventAction, ObjectType
+from myslice.db.activity import Event, EventAction, ObjectType, DataType
 from myslice.db import dispatch
 
 from myslice.web.controllers.login import crypt_password
@@ -56,13 +56,25 @@ class AuthoritiesHandler(Api):
                 self.userError('permission denied')
                 return
 
+            try:
+                # Check if the user has the right to GET an authority, PI of an upper authority
+                a = yield r.table('authorities').get(id).run(self.dbconnection)
+                if not a:
+                    self.userError("this authority %s does not exist" % id)
+                    return
+                root_auth = yield r.table('authorities').get(a['authority']).run(self.dbconnection)
+                if self.current_user['id'] not in a['pi_users'] and self.current_user['id'] not in root_auth['pi_users']:
+                    self.userError("your user has no rights on authority: %s" % id)
+                    return
+            except Exception:
+                import traceback
+                traceback.print_exc()
+                self.userError("not authenticated")
+                return
+
             cursor = yield r.table('authorities') \
                             .pluck(self.fields['authorities']) \
                             .filter({'id': id}) \
-                            .filter(lambda authority:
-                                           authority["pi_users"].contains(current_user['id'])
-                                           or
-                                           authority["users"].contains(current_user['id'])) \
                             .run(self.dbconnection)
             while (yield cursor.fetch_next()):
                 authority = yield cursor.next()
@@ -110,6 +122,22 @@ class AuthoritiesHandler(Api):
 
         # GET /authorities/<id>/(users|projects)
         elif id and self.isUrn(id) and o in ['users', 'projects']:
+            try:
+                # Check if the user has the right to GET an authority, PI of an upper authority
+                a = yield r.table('authorities').get(id).run(self.dbconnection)
+                if not a:
+                    self.userError("this authority %s does not exist" % id)
+                    return
+                root_auth = yield r.table('authorities').get(a['authority']).run(self.dbconnection)
+                if self.current_user['id'] not in a['pi_users'] and self.current_user['id'] not in root_auth['pi_users']:
+                    self.userError("your user has no rights on authority: %s" % id)
+                    return
+            except Exception:
+                import traceback
+                traceback.print_exc()
+                self.userError("not authenticated")
+                return
+
             if o=='users':
                 cursor = yield r.table(o) \
                             .pluck(self.fields[o]) \
@@ -175,6 +203,10 @@ class AuthoritiesHandler(Api):
             self.userError("Malformed request", e)
             return
 
+        if data.get('authority', None) is None:
+            self.userError("authority must be specified")
+            return
+
         if data.get('name', None) is None:
             self.userError("Authority name must be specified")
             return
@@ -183,7 +215,6 @@ class AuthoritiesHandler(Api):
             self.userError("Authority shortname must be specified")
             return
 
-        pattern = "^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$"
         # if new users are specified to be added to the authority
         if len(data.get('users', [])) > 0:
             for u in data['users']:
@@ -207,7 +238,7 @@ class AuthoritiesHandler(Api):
                 if u.get('email', None) is None:
                     self.userError("User email must be specified")
                     return
-                if not re.match(pattern, u['email']):
+                if not self.isEmail(u['email']):
                     self.userError("Wrong Email address")
                     return
                 if u.get('terms', False) is False:
@@ -222,7 +253,7 @@ class AuthoritiesHandler(Api):
                     if u.get('email', None) is None:
                         self.userError("email of a new pi_user must be specified")
                         return
-                    if not re.match(pattern, u['email']):
+                    if not self.isEmail(u['email']):
                         self.userError("Wrong Email address")
                         return
                     if not any([user['email']==u['email'] for user in data['users']]):
@@ -270,7 +301,10 @@ class AuthoritiesHandler(Api):
         try:
             # Check if the user has the right to Update an authority, PI of an upper authority
             a = yield r.table('authorities').get(id).run(self.dbconnection)
-            root_auth = yield r.table('authorities').get(a.authority).run(self.dbconnection)
+            if not a:
+                self.userError("this authority %s does not exist" % id)
+                return
+            root_auth = yield r.table('authorities').get(a['authority']).run(self.dbconnection)
             # TBD: admin or pi?
             #if self.current_user['id'] not in a['pi_users'] and self.current_user['id'] not in root_auth['pi_users']:
             # only root_auth admin at the moment
@@ -281,6 +315,7 @@ class AuthoritiesHandler(Api):
             self.userError("not authenticated ")
             return
 
+        events = []
         response = []
         current_user = self.get_current_user()
 
@@ -340,63 +375,21 @@ class AuthoritiesHandler(Api):
         # handle pi_user as dict
         if all(isinstance(n, dict) for n in data['pi_users']):
             data['pi_users'] = [x['id'] for x in data['pi_users']]
-        ##
-        # pi_users
-        # authority ADD pis
-        for auth_pi in data['pi_users']:
-            # new pi
-            if auth_pi not in authority['pi_users']:
-                # dispatch event add pi to project
-                try:
-                    event = Event({
-                        'action': EventAction.ADD,
-                        'user': current_user['id'],
-                        'object': {
-                            'type': ObjectType.AUTHORITY,
-                            'id': id,
-                        },
-                        'data': {
-                            'type' : DataType.PI,
-                            'values' : auth_pi
-                        }
-                    })
-                except AttributeError as e:
-                    self.userError("Can't create request", e)
-                    return
-                except Exception as e:
-                    self.userError("Can't create request", e)
-                    return
-                else:
-                    result = yield dispatch(self.dbconnection, event)
-                    response = response + result["generated_keys"]
 
-        ##
-        # authority REMOVE pis
-        for auth_pi in authority['pi_users']:
-            if auth_pi not in data['pi_users']:
-                # dispatch event remove pi from authority
-                try:
-                    event = Event({
-                        'action': EventAction.REMOVE,
-                        'user': self.current_user['id'],
-                        'object': {
-                            'type': ObjectType.AUTHORITY,
-                            'id': id,
-                        },
-                        'data': {
-                            'type': DataType.PI,
-                            'values': auth_pi
-                        }
-                    })
-                except AttributeError as e:
-                    self.userError("Can't create request", e)
-                    return
-                except Exception as e:
-                    self.userError("Can't create request", e)
-                    return
-                else:
-                    result = yield dispatch(self.dbconnection, event)
-                    response = response + result["generated_keys"]
+        e = self.update_authority(data, authority)
+        if e:
+            events.append(e)
+
+        # adding pi users
+        events += self.add_pi_users(data, authority, ObjectType.AUTHORITY)
+
+        # removing pi users
+        events += self.remove_pi_users(data, authority, ObjectType.AUTHORITY)
+
+        for e in events:
+            result = yield dispatch(self.dbconnection, e)
+            response = response + result['generated_keys']
+
         ##
         # projects
         # This is handled by the POST /projects and DELETE /projects/<id> calls
@@ -413,6 +406,28 @@ class AuthoritiesHandler(Api):
                 "debug": None
              }, cls=myJSONEncoder))
 
+    def update_authority(self, data, project):
+        # update authority data only if it has changed
+        # TODO: check what we can change
+        return False
+        # Update project properties
+        # try:
+        #     event = Event({
+        #         'action': EventAction.UPDATE,
+        #         'user': current_user['id'],
+        #         'object': {
+        #             'type': ObjectType.PROJECT,
+        #             'id': project['id']
+        #         },
+        #         'data': data
+        #     })
+        # except Exception as e:
+        #     self.userError("Can't create request", e.message)
+        #     return
+        # else:
+        #     result = yield dispatch(self.dbconnection, event)
+        #     response = response + result["generated_keys"]
+
     @gen.coroutine
     def delete(self, id, o=None):
         """
@@ -422,12 +437,17 @@ class AuthoritiesHandler(Api):
         try:
             # Check if the user has the right to delete an authority, PI of an upper authority
             a = yield r.table('authorities').get(id).run(self.dbconnection)
-            root_auth = yield r.table('authorities').get(a.authority).run(self.dbconnection)
+            if not a:
+                self.userError("this authority %s does not exist" % id)
+                return
+            root_auth = yield r.table('authorities').get(a['authority']).run(self.dbconnection)
             if self.current_user['id'] not in a['pi_users'] and self.current_user['id'] not in root_auth['pi_users']:
                 self.userError("your user has no rights on authority: %s" % id)
                 return
         except Exception:
-            self.userError("not authenticated ")
+            import traceback
+            traceback.print_exc()
+            self.userError("not authenticated")
             return
         try:
             event = Event({
