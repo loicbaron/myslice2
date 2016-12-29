@@ -25,13 +25,14 @@ class Commons {
     }
     static searchText(el, value){
         var k;
+        value = value.toLowerCase();
         for(k in el){
             if(Array.isArray(el[k]) || (typeof el[k] === 'object')){
                 if(this.searchText(el[k], value)){
                     return true;
                 }
             }else{
-                if(el[k]!=null && el[k].toString().indexOf(value)>-1){
+                if(el[k]!=null && el[k].toString().toLowerCase().indexOf(value)>-1){
                     return true;
                 }
             }
