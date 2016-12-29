@@ -2,6 +2,8 @@ import alt from '../../alt';
 import actions from '../../actions/dialogs/SelectResource';
 import source from '../../sources/dialogs/SelectResource';
 
+import common from '../../utils/Commons';
+
 class SelectResourceDialog {
 
     constructor() {
@@ -22,10 +24,6 @@ class SelectResourceDialog {
         this.show_selected = false;
 
         this.errorMessage = null;
-
-
-
-
 
         // the list of resources
         this.resources = [];
@@ -59,8 +57,7 @@ class SelectResourceDialog {
             showSelected: actions.SHOW_SELECTED,
             showAll: actions.SHOW_ALL,
             filterResources: actions.FILTER_RESOURCES,
-
-
+            filterEvent: actions.FILTER_EVENT,
 
             updateTestbed: actions.UPDATE_TESTBED,
 
@@ -204,17 +201,19 @@ class SelectResourceDialog {
 
         }.bind(this));
 
-
     }
-
+    filterEvent(value){
+        if(value){
+            this.filtered = this.resources.filter(function(el) {
+                return common.searchText(el, value);
+            });
+        }else{
+            this.filtered = [];
+        }
+    }
     updateTestbed(testbed) {
         this.testbed = testbed;
     }
-
-
-
-
-
 
 
     updateStartDate(start_date) {

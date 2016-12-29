@@ -13,11 +13,8 @@ class SelectResourceDialog {
             'showSelected',
             'showAll',
             'filterResources',
-
-
+            'filterEvent',
             'updateTestbed',
-
-
             'updateStartDate',
             'updateType',
             'updateFilter',

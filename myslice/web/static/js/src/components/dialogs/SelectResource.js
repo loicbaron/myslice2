@@ -87,21 +87,6 @@ class SelectResourceDialog extends React.Component {
         actions.filterResources(filter);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     handleSubmit(event) {
 
         // prevent the browser's default action of submitting the form
@@ -123,7 +108,9 @@ class SelectResourceDialog extends React.Component {
         actions.updateFilter(value);
     }
 
-
+    filterEvent(event) {
+        actions.filterEvent(event.target.value);
+    }
 
     handleStartDateChange(e) {
 
@@ -141,8 +128,6 @@ class SelectResourceDialog extends React.Component {
         actions.updateFilter(event.target.value);
 
     }
-
-
 
     handleChangeDuration(event) {
         this.setState({duration: event.target.value});
@@ -194,11 +179,7 @@ class SelectResourceDialog extends React.Component {
             return;
         }
 
-
-
         actions.submitReservation();
-
-
     }
 
     render() {
@@ -218,12 +199,15 @@ class SelectResourceDialog extends React.Component {
                   return (<option key={res.id} value={res.location.city} >{res.location.city}</option>);
                  }
          });
-         var reservation= null;
 
-
+         var reservation = null;
+         var filterInput = null;
 
          switch(this.props.testbed.name) {
             case 'FIT IoT-Lab':
+                filterInput = <div>
+                    <IotFilter handleChange={this.filterResources} />
+                </div>
                 reservation =
 <div className="container">
 <div className="row">
@@ -259,29 +243,27 @@ class SelectResourceDialog extends React.Component {
     <div className="row">
   <div className="col-sm-3">Start date: <input type="date" placeholder="yyyy-mm-dd " value={this.state.start_date} onChange={this.handleStartDateChange.bind(this)} /></div>
   <div className="col-sm-3"> Time:  <input type="time" placeholder="hh:mm" value={this.state.time} onChange={this.handleTimeChange.bind(this)}/></div>
-  <div className="col-sm-2">Duration:<select value={this.state.duration} onChange={this.handleChangeDuration.bind(this)}>
-                                                              <option value="10 min">10 min</option>
-                                                              <option value="15 min">15 min </option>
-                                                              <option value="30 min ">30 min</option>
-                                                              <option value="1 h">1 h</option>
-                                                              <option value="2 h">2 h</option>
-                                                              <option value="4 h">4 h</option>
-                                                              <option value="8 h">8 h</option>
-                                                              <option value="24 h">24 h</option>
-                                                          </select>
+  <div className="col-sm-2">Duration:
+    <select value={this.state.duration} onChange={this.handleChangeDuration.bind(this)}>
+        <option value="10 min">10 min</option>
+        <option value="15 min">15 min </option>
+        <option value="30 min ">30 min</option>
+        <option value="1 h">1 h</option>
+        <option value="2 h">2 h</option>
+        <option value="4 h">4 h</option>
+        <option value="8 h">8 h</option>
+        <option value="24 h">24 h</option>
+    </select>
   </div>
-
   </div>
-
-
-
-
-
 </div>
-
-
-
-
+                break;
+            default:
+                filterInput = <input
+                        type="text"
+                        onChange={this.filterEvent}
+                        placeholder="Filter"
+                        />
                 break;
         }
 
@@ -300,7 +282,7 @@ class SelectResourceDialog extends React.Component {
                     <Title title="Add Resources" />
                 </DialogHeader>
                 <DialogBar>
-                    <IotFilter handleChange={this.filterResources} />
+                    {filterInput}
                 </DialogBar>
                 <DialogBody>
 
