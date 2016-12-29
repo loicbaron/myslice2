@@ -36,7 +36,7 @@ class AuthoritiesStore {
         }
     }
     errorAuthorities(errorMessage) {
-        console.log(errorMessage);
+        console.log(errorMessage );
     } 
 
 }
