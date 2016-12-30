@@ -121,6 +121,9 @@ class UsersHandler(Api):
             - GET /users/<id>
                 (auth) User with <id>
 
+            - GET /users/<email>
+                (auth) User with <email>
+
             - GET /users/(projects|slices|authorities)
                 (auth) Projects/Slices/Authorities list of the authenticated user
 
@@ -168,15 +171,19 @@ class UsersHandler(Api):
                 response.append(users)
 
 
-        # GET /users/<id>
-        elif not o and id and self.isUrn(id):
+        # GET /users/<id> or /users/<email>
+        elif not o and id:
+            if self.isUrn(id):
+                f = {'id':id}
+            elif self.isEmail(id):
+                f = {'email':id}
             if not current_user:
                 self.userError('permission denied')
                 return
 
             cursor = yield r.table('users') \
                 .pluck(self.fields['users']) \
-                .filter({'id': id}) \
+                .filter(f) \
                 .merge(lambda user: {
                     'authority': r.table('authorities').get(user['authority']) \
                                                        .pluck(self.fields_short['authorities']) \
@@ -320,8 +327,7 @@ class UsersHandler(Api):
             self.userError("email must be specified")
             return
 
-        pattern = "^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$"
-        if not re.match(pattern, data['email']):
+        if not self.isEmail(data['email']):
             self.userError("Wrong Email address")
             return
 

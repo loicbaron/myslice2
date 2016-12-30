@@ -2,6 +2,8 @@ import alt from '../alt';
 import actions from '../actions/ActivityActions';
 import source from '../sources/ActivitySource';
 
+import common from '../utils/Commons';
+
 class ActivityStore {
 
     constructor() {
@@ -94,30 +96,15 @@ class ActivityStore {
     }
 
     filterEvent(value){
-        var self = this;
         if(value){
             this.filtered = this.activity.filter(function(el) {
-                return self.searchText(el, value);
+                return common.searchText(el, value);
             });
         }else{
             this.filtered = [];
         }
     }
-    searchText(el, value){
-        var k;
-        for(k in el){
-            if(Array.isArray(el[k]) || (typeof el[k] === 'object')){
-                if(this.searchText(el[k], value)){
-                    return true;
-                }
-            }else{
-                if(el[k]!=null && el[k].toString().indexOf(value)>-1){
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+
 }
 
 

@@ -13,11 +13,9 @@ class SelectResourceDialog {
             'showSelected',
             'showAll',
             'filterResources',
-
-
+            'filterEvent',
             'updateTestbed',
-
-
+            'initLease',
             'updateStartDate',
             'updateType',
             'updateFilter',
