@@ -239,10 +239,10 @@ class ProjectsHandler(Api):
             events.append(e)
 
         # adding pi users
-        events += self.add_pi_users(data, project)
+        events += self.add_pi_users(data, project, ObjectType.PROJECT)
 
         # removing pi users
-        events += self.remove_pi_users(data, project)
+        events += self.remove_pi_users(data, project, ObjectType.PROJECT)
 
         for e in events:
             result = yield dispatch(self.dbconnection, e)
@@ -327,54 +327,4 @@ class ProjectsHandler(Api):
         #     result = yield dispatch(self.dbconnection, event)
         #     response = response + result["generated_keys"]
 
-    def add_pi_users(self, data, project):
-        events = []
-        pi_users = []
-        # check if the users in the request are in the project
-        for data_pi in data['pi_users']:
-            if data_pi not in project['pi_users']:
-                pi_users.append(data_pi)
-        if len(pi_users)>0:
-            # create event add user to project pis
-            try:
-                event = Event({
-                    'action': EventAction.ADD,
-                    'user': self.current_user['id'],
-                    'object': {'type': ObjectType.PROJECT, 'id': project['id']},
-                    'data': {'type': DataType.PI, 'values': pi_users}
-                })
-            except Exception as e:
-                # TODO: we should log here
-                # log.error("Can't create request....")
-                pass
-            else:
-                events.append(event)
 
-        return events
-
-
-    def remove_pi_users(self, data, project):
-        events = []
-        pi_users = []
-        # check if the users in the project are int the delete request
-        for project_pi in project['pi_users']:
-            if project_pi not in data['pi_users']:
-                pi_users.append(project_pi)
-
-        if len(pi_users)>0:
-            # dispatch event remove pi from project
-            try:
-                event = Event({
-                    'action': EventAction.REMOVE,
-                    'user': self.current_user['id'],
-                    'object': { 'type': ObjectType.PROJECT, 'id': project['id'] },
-                    'data': { 'type': DataType.PI, 'values': pi_users }
-                })
-            except Exception as e:
-                # TODO: we should log here
-                # log.error("Can't create request....")
-                pass
-            else:
-                events.append(event)
-
-        return events

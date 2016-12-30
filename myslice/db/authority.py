@@ -120,13 +120,12 @@ class Authority(myslicelibAuthority):
 
         db.delete(dbconnection, 'authorities', self.id)
 
+        for u in current['users']:
+            db.delete(dbconnection, 'users', u)
         for u in current['pi_users']:
             user = q(User).id(u).get().first()
-            user = user.merge(dbconnection)
-            db.users(dbconnection, user.dict())
-        for u in current['users']:
-            user = q(User).id(u).get().first()
-            user = user.merge(dbconnection)
-            db.users(dbconnection, user.dict())
+            if user:
+                user = user.merge(dbconnection)
+                db.users(dbconnection, user.dict())
 
         return True

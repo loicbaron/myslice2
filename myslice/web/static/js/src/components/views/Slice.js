@@ -53,8 +53,8 @@ class SliceView extends React.Component {
     /*
         Once user select some resources and apply this wil be called.
      */
-    addResources(resources) {
-        actions.saveSlice({resources: resources})
+    addResources(resources, lease={}) {
+        actions.saveSlice({'resources': resources, 'lease': lease})
     }
     
     render() {

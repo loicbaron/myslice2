@@ -64,7 +64,7 @@ class User(myslicelibUser):
             return True
 
         for auth in self.getPiAuthorities(attribute=True):
-            ev_auth = event.data.get('authority', [])
+            ev_auth = event.data.get('authority', event.object.id)
             if ev_auth:
                 if auth == ev_auth:
                     return True
