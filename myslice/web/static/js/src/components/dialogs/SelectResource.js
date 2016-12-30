@@ -20,8 +20,6 @@ class SelectResourceDialog extends React.Component {
         this.state = store.getState();
         this.onChange = this.onChange.bind(this);
         this.handleChange = this.handleChange.bind(this);
-        //this.handleChangeDuration = this.handleChangeDuration.bind(this);
-        //this.handleStartDateChange = this.handleStartDateChange.bind(this);
         this.apply = this.apply.bind(this);
         this.cancel = this.cancel.bind(this);
     }
@@ -29,6 +27,8 @@ class SelectResourceDialog extends React.Component {
     componentDidMount() {
         store.listen(this.onChange);
         actions.fetchResources(this.props.testbed);
+        actions.initLease();
+        console.log(this.state.lease);
     }
 
     componentWillUnmount() {
@@ -78,7 +78,7 @@ class SelectResourceDialog extends React.Component {
     }
 
     apply() {
-        this.props.apply(this.state.selected);
+        this.props.apply(this.state.selected, this.state.lease);
         this.clearSelection();
         this.props.cancel();
     }
@@ -87,16 +87,6 @@ class SelectResourceDialog extends React.Component {
         actions.filterResources(filter);
     }
 
-    handleSubmit(event) {
-
-        // prevent the browser's default action of submitting the form
-        event.preventDefault();
-        //console.log(this.state.value);
-        //console.log(this.state.type);
-        var tofilter= this.state.type.concat("(.*)".concat(this.state.value));
-        console.log(tofilter);
-        actions.updateFilter(tofilter);
-    }
     handleFilter(value) {
         //var f = {'email':value,'shortname':value}
         //actions.updateFilteredUsers();
@@ -118,27 +108,21 @@ class SelectResourceDialog extends React.Component {
 
     }
     handleTimeChange(e) {
+       console.log(e.target.value);
        actions.updateTime(e.target.value);
     }
 
 // Filter by site
     handleChange(event) {
-
         this.setState({value: event.target.value});
         actions.updateFilter(event.target.value);
-
     }
 
     handleChangeDuration(event) {
-        this.setState({duration: event.target.value});
-
-
+        actions.updateDuration(event.target.value);
     }
      handleChangeType(event) {
-          //actions.updateType(event.target.value);
-
-
-           //
+         //actions.updateType(event.target.value);
          event.preventDefault()
          var el = event.target.textContent
 
@@ -146,50 +130,7 @@ class SelectResourceDialog extends React.Component {
          actions.updateFilter(el);
     }
 
-    //Reserve Resources
-
-    applyChanges() {
-  // Data needed for POST /lease
-
-       //Convert the start date+duration on timestamp
-
-        var datum = Date.parse(this.state.start_date.concat(" ".concat(this.state.time)));
-        var timeStamp = datum/1000;
-        this.state.start_date= timeStamp;
-         console.log(this.state.start_date);
-
-        // Gather the Selected Resources Id in "selectedIdList"
-
-        this.state.selected.map(function(res) {
-            this.state.selectedIdList.push(res.id);}.bind(this));
-        console.log(this.state.selectedIdList);
-
-        //Convert the duration on seconds
-        var time=this.state.duration;
-        var nu=time.split(' ');
-        this.state.duration= nu[0]*60;
-        var flag = false;
-        var msg = '';
-        if(!this.state.duration){
-            msg += ' Duration is required \n';
-            flag = true;
-        }
-        if(flag){
-            alert(msg);
-            return;
-        }
-
-        actions.submitReservation();
-    }
-
     render() {
-        console.log(this.state.selected);
-        // if(Object.keys(this.state.filter).length>0){
-        //     var usersList = <UsersList users={this.state.filteredUsers} addUser={this.props.addUser} />
-        // }else{
-        //     var usersList = <UsersList users={this.state.users} addUser={this.props.addUser} />
-        // }
-
         var dis=[];
         //var selectedOption = this.props.selected;
          const optionLocation = this.state.all_resources.map(function(res) {
@@ -209,6 +150,28 @@ class SelectResourceDialog extends React.Component {
                     <IotFilter handleChange={this.filterResources} />
                 </div>
                 reservation =
+                <div className="container">
+                    <div className="row">
+                      <div className="col-sm-4">
+                        Start date: <input type="date" placeholder="yyyy-mm-dd " value={this.state.start_date} onChange={this.handleStartDateChange.bind(this)} />
+                        &nbsp;<input type="time" placeholder="hh:mm" value={this.state.time} onChange={this.handleTimeChange.bind(this)}/>
+                      </div>
+                      <div className="col-sm-2">Duration:&nbsp; 
+                        <select value={this.state.duration} onChange={this.handleChangeDuration.bind(this)}>
+                            <option value="10 min">10 min</option>
+                            <option value="15 min">15 min </option>
+                            <option value="30 min ">30 min</option>
+                            <option value="60 min">1 h</option>
+                            <option value="120 min">2 h</option>
+                            <option value="240 min">4 h</option>
+                            <option value="480 min">8 h</option>
+                            <option value="1440 min">24 h</option>
+                        </select>
+                      </div>
+                    </div>
+                </div>
+
+                var info =
 <div className="container">
 <div className="row">
   <div className="col-sm-2">Site : <select  value={this.state.value} onChange={this.handleChange} >
@@ -240,22 +203,6 @@ class SelectResourceDialog extends React.Component {
       </div>
     </div>
 </div>
-    <div className="row">
-  <div className="col-sm-3">Start date: <input type="date" placeholder="yyyy-mm-dd " value={this.state.start_date} onChange={this.handleStartDateChange.bind(this)} /></div>
-  <div className="col-sm-3"> Time:  <input type="time" placeholder="hh:mm" value={this.state.time} onChange={this.handleTimeChange.bind(this)}/></div>
-  <div className="col-sm-2">Duration:
-    <select value={this.state.duration} onChange={this.handleChangeDuration.bind(this)}>
-        <option value="10 min">10 min</option>
-        <option value="15 min">15 min </option>
-        <option value="30 min ">30 min</option>
-        <option value="1 h">1 h</option>
-        <option value="2 h">2 h</option>
-        <option value="4 h">4 h</option>
-        <option value="8 h">8 h</option>
-        <option value="24 h">24 h</option>
-    </select>
-  </div>
-  </div>
 </div>
                 break;
             default:
@@ -285,13 +232,14 @@ class SelectResourceDialog extends React.Component {
                     {filterInput}
                 </DialogBar>
                 <DialogBody>
-
                     <ResourceList resources={resources}
                                   selected={this.state.selected}
                                   handleSelect={this.selectResource}
                     />
-
                 </DialogBody>
+                <DialogBar>
+                    {reservation}
+                </DialogBar>
                 <DialogFooter>
                     {this.renderSelectedStatus()}
                     <div>

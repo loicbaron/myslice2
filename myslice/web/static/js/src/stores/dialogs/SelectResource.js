@@ -20,6 +20,9 @@ class SelectResourceDialog {
         // current testbed
         this.testbed = null;
 
+        // Lease
+        this.lease = {};
+
         // if true shows selected
         this.show_selected = false;
 
@@ -27,6 +30,8 @@ class SelectResourceDialog {
 
         // the list of resources
         this.resources = [];
+        this.lease['resources'] = [];
+
         this.all_resources = [];
         // the list of selected resources
         this.selected = [];
@@ -34,12 +39,17 @@ class SelectResourceDialog {
         // The type of the nodes
         this.type ='';
         this.time ='';
+
         // initialise the start date
         var d = new Date();
         var df = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
-        this.start_date=df;
+        this.start_date = df;
+        this.updateStartDate(df);
+
         //initialise the duration
-        this.duration='';
+        this.duration='10 min';
+        this.updateDuration(this.duration);
+
         //intialise the filter
         this.filter = null;
         this.filterResource = this.filterResource.bind(this);
@@ -60,7 +70,7 @@ class SelectResourceDialog {
             filterEvent: actions.FILTER_EVENT,
 
             updateTestbed: actions.UPDATE_TESTBED,
-
+            initLease: actions.INIT_LEASE,
             updateStartDate: actions.UPDATE_START_DATE,
             updateTime: actions.UPDATE_TIME,
             updateType: actions.UPDATE_TYPE,
@@ -68,11 +78,9 @@ class SelectResourceDialog {
             SuccessReservation : actions.SUCCESS_RESERVATION,
             ErrorReservation : actions.ERROR_RESERVATION,
 
-
         });
 
         this.registerAsync(source);
-
     }
 
     fetchResources(testbed = null) {
@@ -81,7 +89,7 @@ class SelectResourceDialog {
         this.filtered = [];
 
         if (testbed) {
-            this.testbed = testbed;
+            this.updateTestbed(testbed);
         }
 
         if (!this.getInstance().isLoading()) {
@@ -90,7 +98,20 @@ class SelectResourceDialog {
 
 
     }
+    initLease(){
+        this.lease = {};
+        this.lease['resources'] = [];
 
+        // initialise the start date
+        var d = new Date();
+        var df = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
+        this.start_date = df;
+        this.updateStartDate(df);
+
+        //initialise the duration
+        this.duration='10 min';
+        this.updateDuration(this.duration);
+    }
     updateResources(resources) {
         if (resources.hasOwnProperty('data')) {
             this.resources = resources.data.result;
@@ -105,14 +126,16 @@ class SelectResourceDialog {
         console.log(errorMessage);
     }
 
-
     selectResource(resource) {
+        // Is this resource already selected?
         let resourceId = this.selected.some(function(el) {
             return el.id === resource.id;
         });
 
+        // If not add it to selected
         if (!resourceId) {
             this.selected.push(resource);
+        // Else remove it from selected
         } else {
             this.selected = this.selected.filter(function(el) {
                 return el.id !== resource.id;
@@ -122,10 +145,18 @@ class SelectResourceDialog {
         if (this.selected.length == 0) {
             this.showAll();
         }
+
+        // Gather the Selected Resources Id in Lease
+        var resources = Array();
+        this.selected.map(function(res) {
+            resources.push(res.id);
+        }.bind(this));
+        this.lease['resources'] = resources;
     }
 
     clearSelection() {
         this.selected = [];
+        this.lease = {};
         this.showAll();
     }
 
@@ -213,15 +244,40 @@ class SelectResourceDialog {
     }
     updateTestbed(testbed) {
         this.testbed = testbed;
+        this.lease['testbed'] = testbed.id;
     }
-
 
     updateStartDate(start_date) {
         this.start_date = start_date;
+        if(!this.time){
+            this.setTimeNow();
+        }
+        console.log(start_date);
+        //Convert start_date to timestamp
+        var t = " ".concat(this.time);
+        var datum = Date.parse(this.start_date.concat(t));
+        this.lease['start_date'] = datum/1000;
+    }
+    setTimeNow(){
+        var d = new Date();
+        var h = (d.getHours()<10?'0':'') + d.getHours();
+        var m = (d.getMinutes()<10?'0':'') + d.getMinutes();
+        this.updateTime(h+":"+m);
     }
     updateTime(time) {
         this.time = time;
+        var t = " ".concat(time);
+        //Convert start_date to timestamp
+        var datum = Date.parse(this.start_date.concat(t));
+        this.lease['start_date'] = datum/1000;
     }
+    updateDuration(duration){
+        this.duration = duration;
+        //Convert the duration to seconds
+        var nu = duration.split(' ');
+        this.lease['duration'] = nu[0]*60;
+    }
+
     updateType(type) {
         this.type = type;
     }
