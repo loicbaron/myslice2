@@ -123,7 +123,7 @@ class SliceView {
         if(save.hasOwnProperty('lease') && Object.keys(save['lease']).length>0){
             save.lease['slice_id'] = this.slice.id;
             this.saving.leases.push(save.lease); 
-            this.getInstance().saveLease();
+            this.getInstance().saveLeases();
         }else{
             this.getInstance().saveSlice();
         }
