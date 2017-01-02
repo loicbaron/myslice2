@@ -6,6 +6,7 @@ import { Element } from '../base/Element';
 import ElementTitle from '../base/ElementTitle';
 import ElementId from '../base/ElementId';
 import DateTime from '../base/DateTime';
+import { Icon } from '../base/Icon';
 
 const ResourceElement = ({resource, isSelected, handleSelect}) => {
 
@@ -90,4 +91,35 @@ ResourceList.propTypes = {
 ResourceList.defaultProps = {
 };
 
-export { ResourceElement, ResourceList };
+const ResourcesSummary = ({resources}) => {
+    let resourcesList = <ul><li>No resources found</li></ul>;
+
+    if (resources.length > 0) {
+        resourcesList = <ul>
+            {
+                resources.map((resource) =>
+                    <li key={resource.id}>
+                        {resource.hostname}
+                        <span>{resource.id}</span>
+                    </li>
+                )
+            }
+        </ul>;
+    }
+
+    return <div className="summaryList">
+        <div className="elementIcon summaryIcon resource">
+            <Icon name="resource" size="2x"/>
+        </div>
+        {resourcesList}
+    </div>;
+};
+
+ResourcesSummary.propTypes = {
+    resources: React.PropTypes.array.isRequired
+};
+
+ResourcesSummary.defaultProps = {
+};
+
+export { ResourceElement, ResourceList, ResourcesSummary };
