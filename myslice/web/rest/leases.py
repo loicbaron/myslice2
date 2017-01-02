@@ -87,6 +87,8 @@ class LeasesHandler(Api):
         """
         POST /leases
         { testbed: string, slice_id: string, start_time: int, end_time: int, duration: int }
+        or list of leases
+        [{ testbed: string, slice_id: string, start_time: int, end_time: int, duration: int }]
         :return:
         """
 
@@ -100,12 +102,36 @@ class LeasesHandler(Api):
             self.userError("malformed request", e.msg)
             return
 
+        results = []
+        try:
+            if isinstance(data, list):
+                for l in data:
+                    r = yield self.processLease(l)
+                    results = results + r 
+            else:
+                r = yield self.processLease(data)
+                results = results + r 
+
+        except Exception as e:
+            self.userError(e)
+
+        self.write(json.dumps(
+            {
+                "result": "success",
+                "events": results,
+                "error": None,
+                "debug": None,
+            }, cls=myJSONEncoder))  
+
+    @gen.coroutine
+    def processLease(self, data):
+        from pprint import pprint
+        pprint(data)
         # start_time can not be in the past
         # but can be 0 for ASAP mode
         if 'start_time' in data and data['start_time'] != 0 and data['start_time'] < int(time.time()):
-            self.userError("start_time can not be in the past")
-            return
-
+            #logger.info("start_time can not be in the past, changing start_time to Now")
+            data['start_time'] = int(time.time())
 
         # XXX Just to debug
         if not 'start_time' in data:
@@ -118,23 +144,19 @@ class LeasesHandler(Api):
                 data['end_time'] = data['start_time'] + data['duration']
             elif 'duration' not in data and 'end_time' in data:
                 data['duration'] = data['end_time'] - data['start_time']
-            else:
-                self.userError('you must specify either duration or end_time')
-                return
+            if 'duration' not in data and 'end_time' not in data:
+                raise Exception('you must specify either duration or end_time')
         # ASAP reservation
         else:
             if 'duration' not in data:
-                self.userError("duration must be specified for ASAP reservation")
-                return
+                raise Exception("duration must be specified for ASAP reservation")
 
         try:
             u = yield r.table('users').get(self.current_user['id']).run(self.dbconnection)
             if data['slice_id'] not in u['slices']:
-                self.userError("your user is not a member of this slice: %s" % data['slice_id'])
-                return
+                raise Exception("your user is not a member of this slice: %s" % data['slice_id'])
         except Exception:
-            self.userError("not authenticated")
-            return
+            raise Exception("not authenticated")
 
         try:
             event = Event({
@@ -147,22 +169,13 @@ class LeasesHandler(Api):
                 'data': data
             })
         except AttributeError as e:
-            self.userError("Can't create request", e)
-            return
+            raise Exception("Can't create request", e)
         except Exception as e:
-            self.userError("Can't create request", e)
-            return
+            raise Exception("Can't create request", e)
         else:
             result = yield dispatch(self.dbconnection, event)
 
-            self.write(json.dumps(
-                {
-                    "result": "success",
-                    "events": result['generated_keys'],
-                    "error": None,
-                    "debug": None,
-                }, cls=myJSONEncoder))
-
+        return result['generated_keys']
 
     @gen.coroutine
     def delete(self, id, o=None):
