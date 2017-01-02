@@ -22,6 +22,8 @@ class Slice(myslicelibSlice):
     def __init__(self, data = {}):
         data = data if data is not None else {}
         data['hasLeases'] = False
+        if 'leases' in data and len(data['leases'])>0:
+            data['hasLeases'] = True
         data['removedLeases'] = []
         super(Slice, self).__init__(data)
 
