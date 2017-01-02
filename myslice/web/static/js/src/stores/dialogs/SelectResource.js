@@ -260,7 +260,7 @@ class SelectResourceDialog {
         //Convert start_date to timestamp
         var t = " ".concat(this.time);
         var datum = Date.parse(this.start_date.concat(t));
-        this.lease['start_date'] = datum/1000;
+        this.lease['start_time'] = datum/1000;
     }
     setTimeNow(){
         var d = new Date();
@@ -273,7 +273,7 @@ class SelectResourceDialog {
         var t = " ".concat(time);
         //Convert start_date to timestamp
         var datum = Date.parse(this.start_date.concat(t));
-        this.lease['start_date'] = datum/1000;
+        this.lease['start_time'] = datum/1000;
     }
     updateDuration(duration){
         this.duration = duration;
