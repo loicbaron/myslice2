@@ -42,7 +42,10 @@ class SelectResourceDialog {
 
         // initialise the start date
         var d = new Date();
-        var df = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
+        var m = d.getMonth()+1;
+        var month = (m<10?'0':'') + m;
+        var day = (d.getDate()<10?'0':'') + d.getDate();
+        var df = d.getFullYear()+"-"+month+"-"+day;
         this.start_date = df;
         this.updateStartDate(df);
 
@@ -104,8 +107,10 @@ class SelectResourceDialog {
 
         // initialise the start date
         var d = new Date();
-        var df = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
-        this.start_date = df;
+        var m = d.getMonth()+1;
+        var month = (m<10?'0':'') + m;
+        var day = (d.getDate()<10?'0':'') + d.getDate();
+        var df = d.getFullYear()+"-"+month+"-"+day;
         this.updateStartDate(df);
 
         //initialise the duration
@@ -252,11 +257,10 @@ class SelectResourceDialog {
         if(!this.time){
             this.setTimeNow();
         }
-        console.log(start_date);
         //Convert start_date to timestamp
         var t = " ".concat(this.time);
         var datum = Date.parse(this.start_date.concat(t));
-        this.lease['start_date'] = datum/1000;
+        this.lease['start_time'] = datum/1000;
     }
     setTimeNow(){
         var d = new Date();
@@ -269,7 +273,7 @@ class SelectResourceDialog {
         var t = " ".concat(time);
         //Convert start_date to timestamp
         var datum = Date.parse(this.start_date.concat(t));
-        this.lease['start_date'] = datum/1000;
+        this.lease['start_time'] = datum/1000;
     }
     updateDuration(duration){
         this.duration = duration;

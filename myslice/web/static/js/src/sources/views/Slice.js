@@ -111,10 +111,10 @@ const SliceView = () => {
             }
         },
 
-        saveLease: {
+        saveLeases: {
 
             remote(state) {
-                return axios.post('/api/v1/leases', state.saving);
+                return axios.post('/api/v1/leases', state.saving.leases);
             },
 
             // here we setup some actions to handle our response

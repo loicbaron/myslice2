@@ -5,8 +5,8 @@ import actions from '../../actions/views/Slice';
 
 import View from '../base/View';
 import { Panel, PanelHeader, PanelBody } from '../base/Panel';
-import { UsersSectionSimple } from '../sections/User';
-import { ResourcesSection } from '../sections/Resource';
+import { UsersSummary } from '../objects/User';
+import { ResourcesSummary } from '../objects/Resource';
 import Title from '../base/Title';
 import Text from '../base/Text';
 import DateTime from '../base/DateTime';
@@ -100,8 +100,8 @@ class SliceView extends React.Component {
                             <DateTime label="Created" timestamp={this.state.slice.created} />
                             <DateTime label="Last updated" timestamp={this.state.slice.updated} />
                         </div>
-                        <ResourcesSection resources={this.state.slice.resources} />
-                        <UsersSectionSimple users={this.state.slice.users} />
+                        <ResourcesSummary resources={this.state.slice.resources} />
+                        <UsersSummary users={this.state.slice.users} />
                     </PanelBody>
                 </Panel>
                 <Panel>
