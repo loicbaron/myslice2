@@ -5,7 +5,7 @@ import time
 
 from multiprocessing import Process
 from myslice.services.finterop.fakeinterop import FakeInterop, FakeInteropConsumer
-
+from myslice.services.finterop.resourceRepo import ResourceRepo
 def receive_signal(signum, stack):
     print('Received signal %s', signum)
     raise SystemExit('Exiting')
@@ -20,6 +20,11 @@ if __name__ == '__main__':
         # start publisher
         fi = FakeInterop('hello')
         publisher_process = Process(target=fi.fake, args=('Hello World!',))
+        publisher_process.start()
+
+        # start publisher URR
+        RR = ResourceRepo('hello')
+        publisher_process = Process(target=RR.publish(), args=('Inserting',))
         publisher_process.start()
 
         # start consumer
