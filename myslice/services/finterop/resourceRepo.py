@@ -6,11 +6,11 @@ import config as cfg
 
 # Connect to RabbitMQ and create channel
 
-credentials = pika.PlainCredentials('f-interop', 'Cowabunga')
-parameters = pika.ConnectionParameters('f-interop.rennes.inria.fr',
-                                       5672,
-                                       '/',
-                                       credentials)
+credentials = pika.PlainCredentials(username=cfg.USERNAME, password=cfg.PASSWORD)
+parameters = pika.ConnectionParameters(host=cfg.RABBIT_HOST,
+                                       port=5672,
+                                       virtual_host=cfg.VHOST,
+                                       credentials=credentials)
 connection = pika.BlockingConnection(parameters)
 channel = connection.channel()
 
