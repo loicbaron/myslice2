@@ -612,7 +612,7 @@ class Event(Dict):
         Set the event request to pending
         :return:
         '''
-        if not (self.isNew() or self.isConfirm()):
+        if not self.isNew() and not self.isConfirm():
             raise Exception('Event must be in state NEW or CONFIRM before PENDING')
 
         self.status = EventStatus.PENDING
