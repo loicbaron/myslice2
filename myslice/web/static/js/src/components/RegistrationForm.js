@@ -56,8 +56,7 @@ class RegistrationForm extends React.Component {
         if (this.state.success) {
             return (
                 <div className="col-sm-6 col-sm-offset-3">
-                    Your request has been sent to a manager.<br/>
-                    You will receive an email as soon as your account will be validated.
+
                 </div>
             );
         } else {
@@ -88,7 +87,7 @@ class RegistrationForm extends React.Component {
                         <div className="col-md-3">
                                 <i className="fa fa-university" aria-hidden="true"></i>
                         </div>
-                        <div className="col-sm-9">
+                        <div className="col-sm-7">
                             <AuthoritiesSelect handleChange={this.updateAuthority}/>
                             <a href="/addOrganization">Add organization</a>
                         </div>
