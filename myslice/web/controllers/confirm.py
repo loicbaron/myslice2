@@ -3,6 +3,7 @@ from tornado import gen, escape
 import rethinkdb as r
 from myslice.web.controllers import BaseController
 from myslice.db.activity import Event
+from myslice.db import dispatch
 
 class Index(BaseController):
 
@@ -18,6 +19,8 @@ class Index(BaseController):
             msg = "Your email is confirmed. "
             msg += "A request has been sent to a manager. "
             msg += "You will be informed as soon as your account will be validated."
+            # dispatch the updated event
+            dispatch(self.application.dbconnection, event)
         except Exception as e:
             import traceback
             traceback.print_exc()
