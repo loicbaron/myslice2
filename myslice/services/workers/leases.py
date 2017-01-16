@@ -16,6 +16,7 @@ from myslice.lib.util import format_date
 
 from myslice.lib.authentication import UserSetup
 from myslice import myslicelibsetup
+from myslice.services.workers.slices import syncSlices
 
 from myslice.db.activity import Event, ObjectType
 from myslice.db import changes, connect
