@@ -112,7 +112,8 @@ class SliceView {
 
     saveSlice(save) {
         this.saving = this.slice;
-
+        console.log("save = ");
+        console.log(save);
         if (save.hasOwnProperty('resources')) {
             save.resources.map(r => {
                 if (!this.saving.resources.includes(r.id)) {
@@ -123,11 +124,11 @@ class SliceView {
         if(save.hasOwnProperty('lease') && Object.keys(save['lease']).length>0){
             save.lease['slice_id'] = this.slice.id;
             this.saving.leases.push(save.lease); 
+            console.log(this.saving);
             this.getInstance().saveLeases();
         }else{
             this.getInstance().saveSlice();
         }
-        //console.log(saving);
     }
 
     saveSliceSuccess(x) {

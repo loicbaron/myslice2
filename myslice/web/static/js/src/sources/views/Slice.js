@@ -98,6 +98,8 @@ const SliceView = () => {
         saveSlice: {
 
             remote(state) {
+                console.log("saveSlice");
+                console.log(state.saving);
                 return axios.put('/api/v1/slices/' + state.hrn, state.saving);
             },
 
@@ -114,6 +116,8 @@ const SliceView = () => {
         saveLeases: {
 
             remote(state) {
+                console.log("saveLeases");
+                console.log(state.saving);
                 return axios.post('/api/v1/leases', state.saving.leases);
             },
 
