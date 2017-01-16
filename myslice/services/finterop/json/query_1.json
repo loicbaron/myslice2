@@ -1,0 +1,9 @@
+{
+  "_type": "resource_repository.get_resource",
+  "query": {
+    "location":
+    {
+      "country": "CH"
+    }
+  }
+}

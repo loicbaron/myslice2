@@ -30,6 +30,7 @@ from myslice.web.rest.leases import LeasesHandler
 from myslice.web.rest.password import PasswordHandler
 
 from myslice.web.rest.finterop.sessions import SessionsHandler as FinteropSessionsHandler
+from myslice.web.rest.finterop.resource import ResourceRepoHandler
 
 from myslice.web.rest.activity import ActivityHandler
 from myslice.web.rest.confirm import ConfirmHandler
@@ -199,6 +200,7 @@ class Application(web.Application):
             web.url(r'/api/v1/finterop/sessions/?(' + self.urn_regex + ')?/?(start|stop)?$', FinteropSessionsHandler),
             web.url(r'/api/v1/finterop/sessions/?(' + self.hrn_regex + ')?/?(start|stop)?$', FinteropSessionsHandler),
             web.url(r'/api/v1/finterop/sessions/?([a-zA-Z0-9]+)?/?(start|stop)?$', FinteropSessionsHandler),
+            web.url(r'/api/v1/finterop/sessions/?([a-zA-Z0-9]+)?/resources$', ResourceRepoHandler),
 
         ]
 

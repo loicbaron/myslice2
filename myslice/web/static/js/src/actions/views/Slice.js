@@ -18,7 +18,8 @@ class SliceView {
 
             'selectResourceDialog',
             'selectUserDialog',
-            'closeDialog'
+            'closeDialog',
+            'deleteSlice'
         );
     }
 

@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios'
 
 /*
-A Component turns authoirty URN into authoirty name
+A Component turns authority URN into authoirty name
 */
 
 export default class AuthorityName extends React.Component {

@@ -107,7 +107,7 @@ def emails_run(qEmails):
             else:
                 if event.isPending():
 
-                    # Find the authoirty of the event object
+                    # Find the authority of the event object
                     # Then according the authority, put the pi_emails in pis_email
                     try:
                         authority_id = event.data['authority']
