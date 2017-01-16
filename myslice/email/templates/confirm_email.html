@@ -1,0 +1,24 @@
+{% extends "body.html" %}
+{% block content %}
+<table class="row"><tbody><tr> <!-- Email Content -->
+  <th class="small-12 large-12 columns first last">
+    <table class =""><tr>
+      <th>
+
+		<p>You registered at {{theme}}.</p>
+		
+		<p>Follow this link to change confirm your email:</p>
+		
+		{% include button.html %}
+		
+		<p>If you believe that you have received this message in error, or if you have any questions, kindly contact support@{{theme}}.eu.</p>
+		
+		<p>Yours sincerely,</p>
+		<p>The OneLab team</p>
+
+      </th>
+        <th class="expander"></th>
+      </tr></table>
+    </th></tr></tbody>
+  </table>
+{% end %}

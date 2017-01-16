@@ -32,6 +32,7 @@ from myslice.web.rest.password import PasswordHandler
 from myslice.web.rest.finterop.sessions import SessionsHandler as FinteropSessionsHandler
 
 from myslice.web.rest.activity import ActivityHandler
+from myslice.web.rest.confirm import ConfirmHandler
 
 ##
 # WebSocket handler
@@ -39,7 +40,7 @@ from myslice.web.websocket import WebsocketsHandler
 
 ##
 # Web controllers
-from myslice.web.controllers import login, logout, password, registration, home, activity, projects, slices, users, status, addOrganization
+from myslice.web.controllers import addOrganization, activity, confirm, home, login, logout, password, projects, registration, slices, status, users
 from myslice.web.controllers import test
 
 logging.basicConfig(level=logging.DEBUG)
@@ -141,6 +142,7 @@ class Application(web.Application):
             web.url(r'/users', users.Users),
             web.url(r'/users/?(' + self.urn_regex + ')', users.Users),
             web.url(r'/activity', activity.Index),
+            web.url(r'/confirm/(' + self.uuid_regex + ')?', confirm.Index),
             web.url(r'/status', status.Index),
             web.url(r'/static/(.*)', web.StaticFileHandler, {'path': self.static}),
             web.url(r'/test', test.Index),
@@ -156,6 +158,7 @@ class Application(web.Application):
 
             web.url(r'/api/v1/activity?([A-Za-z0-9-]+)?', ActivityHandler),
             web.url(r'/api/v1/activity/(' + self.uuid_regex + ')?', ActivityHandler),
+            web.url(r'/api/v1/confirm/(' + self.uuid_regex + ')?', ConfirmHandler),
 
             web.url(r'/api/v1/requests?([A-Za-z0-9-]+)?', RequestsHandler),
             web.url(r'/api/v1/requests/(' + self.uuid_regex + ')?', RequestsHandler),

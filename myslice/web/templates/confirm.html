@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block title %}- Confirmation{% end %}
+{% block head %}
+{% end %}
+{% block body %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-4 col-sm-offset-3 logo-image">
+            <a href="/"><img class="img-responsive" src="/static/images/onelab-big.png" alt="OneLab - Future Internet Testbeds" /></a>
+        </div>
+        <div class="col-sm-3 logo-title">
+            <h1>Email confirmation</h1>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 20px;">
+        <div class="col-sm-6 col-sm-offset-3" id="message">
+            {{ message }}
+        </div>
+    </div>
+
+</div>
+{% end %}
