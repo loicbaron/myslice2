@@ -1,4 +1,5 @@
 import json
+import logging
 import time
 
 import rethinkdb as r
@@ -9,6 +10,9 @@ from myslice.lib.util import myJSONEncoder
 import re
 from myslice.db.activity import Event, EventAction, ObjectType
 from myslice.db import dispatch
+
+logger = logging.getLogger('myslice.rest.leases')
+
 class LeasesHandler(Api):
 
     @gen.coroutine
@@ -22,6 +26,10 @@ class LeasesHandler(Api):
 
         :return:
         """
+        if not self.get_current_user():
+            self.userError('permission denied user not logged in')
+            return
+
         leases = []
 
         # [?timestamp_start=<XXX>&timestamp_end=<XXX>]
@@ -92,6 +100,10 @@ class LeasesHandler(Api):
         :return:
         """
 
+        if not self.get_current_user():
+            self.userError('permission denied user not logged in')
+            return
+
         if not self.request.body:
             self.userError("empty request")
             return
@@ -125,8 +137,8 @@ class LeasesHandler(Api):
 
     @gen.coroutine
     def processLease(self, data):
-        from pprint import pprint
-        pprint(data)
+        logger.info("processing lease:")
+        logger.info(data)
         # start_time can not be in the past
         # but can be 0 for ASAP mode
         if 'start_time' in data and data['start_time'] != 0 and data['start_time'] < int(time.time()):
@@ -152,7 +164,7 @@ class LeasesHandler(Api):
                 raise Exception("duration must be specified for ASAP reservation")
 
         try:
-            u = yield r.table('users').get(self.current_user['id']).run(self.dbconnection)
+            u = yield r.table('users').get(self.get_current_user()['id']).run(self.dbconnection)
             if data['slice_id'] not in u['slices']:
                 raise Exception("your user is not a member of this slice: %s" % data['slice_id'])
         except Exception:
@@ -161,7 +173,7 @@ class LeasesHandler(Api):
         try:
             event = Event({
                 'action': EventAction.CREATE,
-                'user': self.current_user['id'],
+                'user': self.get_current_user()['id'],
                 'object': {
                     'type': ObjectType.LEASE,
                     'id': None,
@@ -183,9 +195,12 @@ class LeasesHandler(Api):
         DELETE /leases/<id>
         :return:
         """
+        if not self.get_current_user():
+            self.userError('permission denied user not logged in')
+            return
         # Check if the user is a member of the slice
         try:
-            u = yield r.table('users').get(self.current_user['id']).run(self.dbconnection)
+            u = yield r.table('users').get(self.get_current_user()['id']).run(self.dbconnection)
             p = yield r.table('leases').get(id).run(self.dbconnection)
             if p['slice_id'] not in u['slices']:
                 self.userError("your user is not a member of this slice: %s" % p['slice_id'])
@@ -196,7 +211,7 @@ class LeasesHandler(Api):
         try:
             event = Event({
                 'action': EventAction.DELETE,
-                'user': self.current_user['id'],
+                'user': self.get_current_user()['id'],
                 'object': {
                     'type': ObjectType.LEASE,
                     'id': id,

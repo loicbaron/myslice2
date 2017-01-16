@@ -29,7 +29,6 @@ class SlicesHandler(Api):
 
         slice = None
         response = []
-        current_user = self.get_current_user()
 
         ##
         # if id (hrn|urn) is set we get the slice with id <urn|hrn>
@@ -93,9 +92,8 @@ class SlicesHandler(Api):
         # returns slice with <hrn|urn>
         #
         elif not o and id:
-
-            if not current_user:
-                self.userError('permission denied')
+            if not self.get_current_user():
+                self.userError('permission denied user not logged in')
                 return
 
             response.append(slice)
@@ -148,6 +146,9 @@ class SlicesHandler(Api):
         { shortname: string, project: string }
         :return:
         """
+        if not self.get_current_user():
+            self.userError('permission denied user not logged in')
+            return
 
         if not self.request.body:
             self.userError("empty request")
@@ -161,7 +162,7 @@ class SlicesHandler(Api):
 
         try:
             # Check if the user has the right to create a slice under this project
-            u = yield r.table('users').get(self.current_user['id']).run(self.dbconnection)
+            u = yield r.table('users').get(self.get_current_user()['id']).run(self.dbconnection)
             if data['project'] in u['pi_authorities']:
                 data['authority'] = data['project']
             else:
@@ -173,7 +174,7 @@ class SlicesHandler(Api):
         try:
             event = Event({
                 'action': EventAction.CREATE,
-                'user': self.current_user['id'],
+                'user': self.get_current_user()['id'],
                 'object': {
                     'type': ObjectType.SLICE,
                     'id': None,
@@ -206,10 +207,9 @@ class SlicesHandler(Api):
 
         events = []
         response = []
-        current_user = self.get_current_user()
 
-        if not current_user:
-            self.userError('not authenticated ')
+        if not self.get_current_user():
+            self.userError('permission denied user not logged in')
             return
 
         if not self.request.body:
@@ -289,11 +289,14 @@ class SlicesHandler(Api):
         DELETE /slices/<id>
         :return:
         """
+        if not self.get_current_user():
+            self.userError('permission denied user not logged in')
+            return
         try:
             # Check if the user has the right to delete a slice
             s = yield r.table('slices').get(id).run(self.dbconnection)
-            u = yield r.table('users').get(self.current_user['id']).run(self.dbconnection)
-            if not self.current_user['id'] in s['users'] and s['authority'] not in u['pi_authorities']:
+            u = yield r.table('users').get(self.get_current_user()['id']).run(self.dbconnection)
+            if not self.get_current_user()['id'] in s['users'] and s['authority'] not in u['pi_authorities']:
                 self.userError("your user has no rights on slice: %s" % id)
                 return
         except Exception:
@@ -303,7 +306,7 @@ class SlicesHandler(Api):
         try:
             event = Event({
                 'action': EventAction.DELETE,
-                'user': self.current_user['id'],
+                'user': self.get_current_user()['id'],
                 'object': {
                     'type': ObjectType.SLICE,
                     'id': id,
@@ -340,7 +343,7 @@ class SlicesHandler(Api):
                 try:
                     event = Event({
                         'action': EventAction.ADD,
-                        'user': self.current_user['id'],
+                        'user': self.get_current_user()['id'],
                         'object': { 'type': ObjectType.SLICE, 'id': slice['id'] },
                         'data': { 'type': DataType.USER, 'values': data_user }
                     })
@@ -366,7 +369,7 @@ class SlicesHandler(Api):
                 try:
                     event = Event({
                         'action': EventAction.REMOVE,
-                        'user': self.current_user['id'],
+                        'user': self.get_current_user()['id'],
                         'object': { 'type': ObjectType.SLICE, 'id': slice['id'] },
                         'data': { 'type': DataType.USER, 'values': user }
                     })
@@ -398,7 +401,7 @@ class SlicesHandler(Api):
         try:
             event = Event({
                 'action': EventAction.ADD,
-                'user': self.current_user['id'],
+                'user': self.get_current_user()['id'],
                 'object': { 'type': ObjectType.SLICE, 'id': slice['id'] },
                 'data': { 'type': DataType.RESOURCE, 'values': resources }
             })
@@ -427,7 +430,7 @@ class SlicesHandler(Api):
         try:
             event = Event({
                 'action': EventAction.REMOVE,
-                'user': self.current_user['id'],
+                'user': self.get_current_user()['id'],
                 'object': { 'type': ObjectType.SLICE, 'id': slice['id'] },
                 'data': { 'type': DataType.RESOURCE, 'values': resources }
             })
