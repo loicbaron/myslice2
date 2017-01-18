@@ -38,9 +38,11 @@ def run(q):
                 # Check if the event.object.id already exists or not
                 # if it exists -> add a numer to the id & hrn to make it unique
 
+                if event.object.type == ObjectType.PASSWORD:
+                    event.setPending()
                 # Register a new object for a new user
                 # id should be generated into the web to avoid duplicates
-                if event.user is None and event.creatingObject():
+                elif event.user is None and event.creatingObject():
                     # The user must confirm his/her email
                     print("Event Type: %s" % type(event))
                     event.setConfirm()
