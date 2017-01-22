@@ -111,7 +111,7 @@ input[type=email]:focus {
 }
 
 textarea {
-	width: 100%;
+    width: 100%;
     margin-top: 10px;
 }
 
@@ -548,7 +548,7 @@ div.registrationForm {
     top:15px;
     left:-20px;
     text-align:center;
-    line-height:46px;
+    line-height:48px;
     width: 40px;
     height: 40px;
     -moz-border-radius: 20px;
@@ -580,28 +580,28 @@ div.registrationForm {
 .elementBox.selected.project {
 }
 .elementIcon.slice {
-    line-height:50px;
+    line-height:46px;
     color:#281E52;
     background-color:#EAD1DC;
 }
 .elementBox.selected.slice {
 }
 .elementIcon.resource {
-    line-height:50px;
+    line-height:46px;
     color:#281E52;
     background-color:#D9EAD3;
 }
 .elementBox.selected.resource {
 }
 .elementIcon.testbed {
-    line-height:50px;
+    line-height:44px;
     color:#281E52;
     background-color:#D9EAD3;
 }
 .elementBox.selected.testbed {
 }
 .elementIcon.registry {
-    line-height:50px;
+    line-height:44px;
     color:#281E52;
     background-color:#D9EAD3;
 }
@@ -738,7 +738,7 @@ ul.labelOptions li:hover.add {
 }
 
 .technologyTestbeds {
-    border-left:1px solid #DCDCF8;
+    border-left:2pt solid #D9EAD3;
     padding-top:25px;
     padding-bottom:50px;
     padding-left:50px;
@@ -774,7 +774,22 @@ ul.labelOptions li:hover.add {
     list-style:none;
     margin:50px 0 0 50px;
     padding:0;
-    border-top:1px solid #150947;
+    border-top:2pt solid #4A4ABA;
+}
+.summaryList.user ul {
+    border-top:2pt solid #CFE2F3;
+}
+.summaryList.slice ul {
+    border-top:2pt solid #EAD1DC;
+}
+.summaryList.project ul {
+    border-top:2pt solid #D9D2E9;
+}
+.summaryList.authority ul {
+    border-top:2pt solid #D0E0E3;
+}
+.summaryList.resource ul {
+    border-top:2pt solid #D9EAD3;
 }
 .summaryList li {
     padding:15px 0 0 0;
