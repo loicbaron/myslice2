@@ -38,10 +38,14 @@ def run(q):
                 # Check if the event.object.id already exists or not
                 # if it exists -> add a numer to the id & hrn to make it unique
 
+                if event.object.type == ObjectType.PASSWORD:
+                    event.setPending()
                 # Register a new object for a new user
                 # id should be generated into the web to avoid duplicates
-                if event.user is None and event.creatingObject():
-                    event.setPending()
+                elif event.user is None and event.creatingObject():
+                    # The user must confirm his/her email
+                    print("Event Type: %s" % type(event))
+                    event.setConfirm()
                 else:
                     db_user = db.get(dbconnection, table='users', id=event.user)
                     if db_user:
@@ -57,8 +61,8 @@ def run(q):
                         # raising an Exception here, blocks the REST API
                         #raise Exception("User %s not found" % event.user)
             except Exception as e:
-                #import traceback
-                #traceback.print_exc()
+                import traceback
+                traceback.print_exc()
                 event.setError()
                 event.logError(str(e))
                 logger.error("Unable to fetch the user from db {}".format(e))

@@ -44,6 +44,7 @@ class EventStatus(Enum):
     # NEW created event, this will be processed
     NEW = "NEW"
     # If the event needs an external interaction
+    CONFIRM = "CONFIRM"
     PENDING = "PENDING"
     DENIED = "DENIED"
     APPROVED = "APPROVED"
@@ -586,6 +587,23 @@ class Event(Dict):
 
         self.status = EventStatus.WARNING
 
+    def isConfirm(self):
+        return self._checkStatus(EventStatus.CONFIRM)
+
+    def setConfirm(self):
+        '''
+        Set the event request to confirm
+        used when a user needs to confirm his/her email address
+        :return:
+        '''
+        if not self.isNew():
+            raise Exception('Event must be in state NEW before CONFIRM')
+
+        self.status = EventStatus.CONFIRM
+
+        # notify user by default
+        self.notify = True
+
     def isPending(self):
         return self._checkStatus(EventStatus.PENDING)
 
@@ -594,8 +612,8 @@ class Event(Dict):
         Set the event request to pending
         :return:
         '''
-        if not self.isNew():
-            raise Exception('Event must be in state NEW before PENDING')
+        if not self.isNew() and not self.isConfirm():
+            raise Exception('Event must be in state NEW or CONFIRM before PENDING')
 
         self.status = EventStatus.PENDING
 

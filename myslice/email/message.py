@@ -111,6 +111,8 @@ def build_subject_and_template( action,
         subject = 'REQUEST {} DENIED'.format(entity.upper())
     if action == 'password':
         subject = 'RESET PASSWORD'
+    if action == 'confirm':
+        subject = 'Confirm your email'
 
     loader = template.Loader(path)
     filename = action + '_email.html'

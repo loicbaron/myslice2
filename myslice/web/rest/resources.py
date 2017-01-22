@@ -161,6 +161,21 @@ class ResourcesHandler(Api):
 
         :return:
         """
+        current_user = self.get_current_user()
+        if not current_user:
+            self.userError("not authenticated")
+            return
+
+        if not self.request.body:
+            self.userError("empty request")
+            return
+
+        try:
+            data = escape.json_decode(self.request.body)
+        except json.decoder.JSONDecodeError as e:
+            self.userError("malformed request", e.msg)
+            return
+        data["authority"] = self.get_current_user()['id']
 
     pass
     #TODO

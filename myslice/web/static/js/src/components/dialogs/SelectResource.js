@@ -78,11 +78,8 @@ class SelectResourceDialog extends React.Component {
     }
 
     apply() {
-        if(this.props.testbed.name in ["FIT IoT-Lab", "FIT WiFi UPMC "]){
+        console.log(this.props.testbed.name);
         this.props.apply(this.state.selected, this.state.lease);
-        }else{
-        this.props.apply(this.state.selected);
-        }
         this.clearSelection();
         this.props.cancel();
     }

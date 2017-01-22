@@ -165,6 +165,3 @@ class PasswordHandler(Api):
                     "error": None,
                     "debug": None
                  }, cls=myJSONEncoder))
-
-
-

@@ -12,7 +12,7 @@ import threading
 from queue import Queue
 from myslice.db import connect, changes, events
 from myslice.db.activity import Event
-from myslice.services.workers.emails import emails_run as manageEmails
+from myslice.services.workers.emails import emails_run as manageEmails, confirmEmails
 
 logger = logging.getLogger('myslice.service.activity')
 
@@ -39,6 +39,14 @@ def run():
         threads.append(t)
         t.start()
 
+    qConfirmEmails = Queue()
+
+    threads = []
+    for y in range(1):
+        t = threading.Thread(target=confirmEmails, args=(qConfirmEmails,))
+        t.daemon = True
+        threads.append(t)
+        t.start()
     dbconnection = connect()
 
     ##
@@ -59,14 +67,25 @@ def run():
             if event.notify:
                 qEmails.put(event)
 
+    new_confirmations = events(dbconnection, status="CONFIRM")
+    for ev in new_confirmations:
+        try:
+            event = Event(ev)
+        except Exception as e:
+            logger.error("Problem with event: {}".format(e))
+        else:
+            qConfirmEmails.put(event)
+
     for activity in feed:
         try:
             event = Event(activity['new_val'])
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
         else:
+            if event.isConfirm():
+                qConfirmEmails.put(event)
 
-            if event.isPending() and event.notify:
+            elif event.isPending() and event.notify:
                 qEmails.put(event)
 
             elif event.isDenied() and event.notify:

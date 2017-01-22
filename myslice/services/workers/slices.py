@@ -82,12 +82,16 @@ def events_run(lock, qSliceEvents):
 
                         if event.data.type == DataType.USER:
                             for val in event.data.values:
+                                if isinstance(val, dict):
+                                    val = val['id']
                                 u = User(db.get(dbconnection, table='users', id=val))
                                 sli.addUser(u)
                             isSuccess = sli.save(dbconnection, user_setup)
 
                         if event.data['type'] == DataType.RESOURCE:
                             for val in event.data.values:
+                                if isinstance(val, dict):
+                                    val = val['id']
                                 r = Resource(db.get(dbconnection, table='resources', id=val))
                                 sli.addResource(r)
                             isSuccess = sli.save(dbconnection, user_setup)
@@ -98,12 +102,16 @@ def events_run(lock, qSliceEvents):
 
                         if event.data.type == DataType.USER:
                             for val in event.data['values']:
+                                if isinstance(val, dict):
+                                    val = val['id']
                                 u = User(db.get(dbconnection, table='users', id=val))
                                 sli.removeUser(u)
                             isSuccess = sli.save(dbconnection, user_setup)
 
                         if event.data.type == DataType.RESOURCE:
                             for val in event.data.values:
+                                if isinstance(val, dict):
+                                    val = val['id']
                                 r = Resource(db.get(dbconnection, table='resources', id=val))
                                 sli.removeResource(r)
                             isSuccess = sli.save(dbconnection, user_setup)
