@@ -120,11 +120,11 @@ class SliceView {
                 }
             });
         }
-        if(save.hasOwnProperty('lease') && Object.keys(save['lease']).length>0){
+        if (save.hasOwnProperty('lease') && Object.keys(save['lease']).length > 0) {
             save.lease['slice_id'] = this.slice.id;
             this.saving.leases.push(save.lease); 
             this.getInstance().saveLeases();
-        }else{
+        } else {
             this.getInstance().saveSlice();
         }
         //console.log(saving);
