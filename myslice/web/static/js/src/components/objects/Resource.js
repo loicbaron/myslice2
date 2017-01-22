@@ -12,7 +12,6 @@ const ResourceElement = ({resource, isSelected, handleSelect}) => {
 
     var label = resource.hostname || resource.shortname;
 
-    var button = '';
     var status;
     if (resource.available == 'true') {
         status = 'online';
@@ -26,14 +25,13 @@ const ResourceElement = ({resource, isSelected, handleSelect}) => {
         // let flag = 'flag-icon flag-icon-' + countries.getCode(resource.location.country);
         // location = <div>Location: <span class={flag}></span> {resource.location.country}</div>;
     }
+
     return (
          <Element type="resource"
                   element={resource}
                   isSelected={isSelected}
                   handleSelect={handleSelect}
                   status={status}
-                  icon="resource"
-                  iconSelected="check"
          >
 
              <ElementTitle label={resource.name} detail={resource.type} />
@@ -54,18 +52,23 @@ const ResourceList = ({resources, selected, handleSelect, options}) => {
 
     let iconSelected = "check";
 
-    if ((selected) && (selected instanceof Object)) {
-        selected = [selected];
-        iconSelected = "arrow";
+    if (selected) {
+        if (selected instanceof Array) {
+            iconSelected = "check";
+        } else {
+            selected = [selected];
+        }
     }
-    if(resources.length==0){
+
+    if (resources.length == 0) {
         return (
             <div>No Resources</div>
         );
     }
+
     return (<List>
         {
-            resources.map(function (resource) {
+            resources.map(function(resource) {
                 let isSelected = false;
                 if (selected) {
                     isSelected = selected.some(function (el) {
@@ -107,7 +110,7 @@ const ResourcesSummary = ({resources}) => {
         </ul>;
     }
 
-    return <div className="summaryList">
+    return <div className="summaryList resource">
         <div className="elementIcon summaryIcon resource">
             <Icon name="resource" size="2x"/>
         </div>
