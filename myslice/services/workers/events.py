@@ -42,7 +42,7 @@ def run(q):
                     event.setPending()
                 # Register a new object for a new user
                 # id should be generated into the web to avoid duplicates
-                elif event.user is None and event.creatingObject():
+                elif event.object.type == ObjectType.USER and event.user is None and event.creatingObject():
                     # The user must confirm his/her email
                     print("Event Type: %s" % type(event))
                     event.setConfirm()
