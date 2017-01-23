@@ -1,6 +1,6 @@
 import axios from 'axios';
-import actions from '../actions/ProjectsActions';
-import formactions from '../actions/ProjectsFormActions';
+import actions from '../../actions/views/Projects';
+import formactions from '../../actions/ProjectsFormActions';
 
 const ProjectsSource = () => {
     return {

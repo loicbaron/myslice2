@@ -1,26 +1,27 @@
 import React from 'react';
 
-import store from '../stores/ProjectsStore';
-import actions from '../actions/ProjectsActions';
+import store from '../../stores/views/Projects';
+import actions from '../../actions/views/Projects';
 
-import View from './base/View';
-import { DialogConfirm, DialogPanel, Dialog, DialogBody, DialogHeader, DialogFooter } from './base/Dialog';
-import { Panel, PanelHeader, PanelBody } from './base/Panel';
-import Title from './base/Title';
-import Button from './base/Button';
+import { View, ViewHeader, ViewBody, Panel } from '../base/View';
+import { DialogConfirm, DialogPanel, Dialog, DialogBody, DialogHeader, DialogFooter } from '../base/Dialog';
+import Title from '../base/Title';
+import Button from '../base/Button';
 
-import ProjectsForm from './ProjectsForm';
-import { ProjectList } from './objects/Project';
+import ProjectsForm from '../ProjectsForm';
+import { ProjectList } from '../objects/Project';
 
-import RequestsList from './RequestsList';
+import RequestsList from '../RequestsList';
 
-import { UsersSection } from './sections/User';
-import { SlicesSection } from './sections/Slice';
-import DateTime from './base/DateTime';
+import { UsersSection } from '../sections/User';
+import { SlicesSection } from '../sections/Slice';
+import DateTime from '../base/DateTime';
 
-import SlicesForm from './SlicesForm';
+import SlicesForm from '../SlicesForm';
 
-import UsersDialog from './dialogs/SelectUser';
+import UsersDialog from '../dialogs/SelectUser';
+
+import { live } from '../../live';
 
 class ProjectsView extends React.Component {
 
@@ -39,6 +40,8 @@ class ProjectsView extends React.Component {
     componentDidMount() {
         store.listen(this.onChange);
         this.fetchProjects();
+
+        let l = new live();
     }
 
     componentWillUnmount() {
@@ -114,6 +117,14 @@ class ProjectsView extends React.Component {
     deleteSlice(slice) {
         actions.deleteSlice(slice);
         actions.closeDialog();
+    }
+
+    renderProjectTitle() {
+        if (this.state.current.project) {
+            return this.state.current.project.name || this.state.current.project.shortname;
+        }
+
+        return null;
     }
 
     render() {
@@ -206,10 +217,10 @@ class ProjectsView extends React.Component {
         ];
 
         if (this.state.current.project) {
+
             let project = this.state.current.project;
             let users = this.state.current.users;
             let slices = this.state.current.slices;
-            let title = project.name || project.shortname;
 
             /*
              *  Define options for sections USER
@@ -253,13 +264,7 @@ class ProjectsView extends React.Component {
                 }
             ];
 
-            panelRight =
-                <Panel>
-                    <PanelHeader>
-                        <Title title={title} subtitle={project.shortname} />
-                    </PanelHeader>
-                    <PanelBody>
-                        <div>
+            panelRight = <div>
                             {project.id}
                             <p>
                                 <a href={project.url} target="_blank">{project.url}</a>
@@ -277,19 +282,22 @@ class ProjectsView extends React.Component {
                                           sectionOptions={userSectionOptions}
                                           listOptions={userListOptions}
                             />
-                        </div>
-                    </PanelBody>
-                </Panel>;
+                        </div>;
         }
         var filters = [{'label':'Project', 'name':'object', 'value':'project'}];
+
         return (
             <View notification={this.state.notification}>
-                <Panel>
-                    <PanelHeader>
-                        <Title title="Projects " />
-                        <Button label="Request Project" icon="plus" handleClick={this.showForm} />
-                    </PanelHeader>
-                    <PanelBody>
+                <ViewHeader>
+                    <Title
+                        title="Projects"
+                        subtitle={this.renderProjectTitle()}
+                        separator="/"
+                    />
+                    <Button label="Request Project" icon="plus" handleClick={this.showForm} />
+                </ViewHeader>
+                <ViewBody>
+                    <Panel>
                         <ProjectList projects={this.state.projects}
                                      selected={this.state.current.project}
                                      handleSelect={this.setCurrentProject}
@@ -297,10 +305,12 @@ class ProjectsView extends React.Component {
                         />
                         <Title title="Pending " />
                         <RequestsList displayFilters={false} filters={filters} />
-                    </PanelBody>
-                    {dialog}
-                </Panel>
-                {panelRight}
+                    </Panel>
+                    <Panel>
+                        {panelRight}
+                    </Panel>
+                </ViewBody>
+                {dialog}
             </View>
         );
     }

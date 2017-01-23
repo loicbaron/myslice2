@@ -1,8 +1,8 @@
-import alt from '../alt';
-import actions from '../actions/ProjectsActions';
-import source from '../sources/ProjectsSource';
+import alt from '../../alt';
+import actions from '../../actions/views/Projects';
+import source from '../../sources/views/Projects';
 
-import common from '../utils/Commons';
+import common from '../../utils/Commons';
 
 class ProjectsStore {
 
