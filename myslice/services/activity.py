@@ -60,7 +60,8 @@ def run():
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
         else:
-            qEvents.put(event)
+            if event.status != event.previous_status:
+                qEvents.put(event)
 
     for activity in feed:
         try:
