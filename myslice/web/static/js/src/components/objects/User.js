@@ -79,7 +79,7 @@ const UserList = ({users, selected, handleSelect, options}) => {
 
                 let isSelected = false;
                 if (selected) {
-                     isSelected = selected.some(function (el) {
+                    isSelected = selected.some(function (el) {
                         return el.id === user.id;
                     });
                 }
@@ -190,7 +190,7 @@ const UsersSummary = ({users}) => {
             }
         </ul>;
     }
-    return <div className="summaryList">
+    return <div className="summaryList user">
         <div className="elementIcon summaryIcon user">
             <Icon name="user" size="2x"/>
         </div>
