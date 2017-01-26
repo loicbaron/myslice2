@@ -129,10 +129,52 @@ const ViewBody = ({children}) => {
 const Panel = ({children}) =>
     <div className="container-fluid">
         <div className="row">
-            <div className="col-md-12">
+            <div className="col-sm-12">
                 {children}
             </div>
         </div>
     </div>;
 
-export { View, ViewHeader, ViewBody, Panel };
+const PanelMenu = ({children}) =>
+    <ul>{children}</ul>;
+
+class PanelMenuEntry extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            'selected': false
+        };
+        this.handleSelect = this.handleSelect.bind(this)
+    }
+
+    handleSelect() {
+        let name = this.props.name;
+        this.props.handleSelect(name);
+    }
+
+    render() {
+
+        let icon = this.props.icon || 'dot-circle-o';
+        let iconClass = 'fa fa-' + icon + ' fa-lg';
+        let entryClass = '';
+
+        return (
+            <li>
+                <span>
+                    <i className={iconClass}></i>
+                    <a className={entryClass} onClick={this.handleSelect}>{this.props.children}</a>
+                </span>
+            </li>
+        );
+    }
+
+}
+
+PanelMenuEntry.propTypes = {
+    name: React.PropTypes.string.isRequired,
+    icon: React.PropTypes.string,
+    handleSelect: React.PropTypes.func.isRequired,
+};
+
+export { View, ViewHeader, ViewBody, Panel, PanelMenu, PanelMenuEntry };
