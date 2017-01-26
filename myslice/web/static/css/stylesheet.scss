@@ -1,7 +1,14 @@
 $color-default:#2C2C2C;
 $color-background:#FBFBFB;
+$color-overlay:rgba(50, 50, 50, 0.95);
 $color-icon:#281E52;
 
+$color-onelab-blue:#20214F;
+$color-onelab-violet:#6C4675;
+
+//$color-onelab-blue-light:#4347a5;
+//$color-onelab-blue-light:#C9DFE3;
+$color-onelab-blue-light:#DBE6EC;
 $color-authority:#D0E0E3;
 $color-user:#CFE2F3;
 $color-project:#D9D2E9;
@@ -33,49 +40,6 @@ body.login {
     background-color:white;
 }
 
-header {
-    position:absolute;
-    top:0;
-    left:0;
-    right:0;
-    z-index:100;
-    background-color:#FFFFFF;
-}
-
-header .logo {
-    padding-top:15px;
-    padding-bottom:15px;
-}
-header .logo-image {
-    float:left;
-    padding-right:25px;
-}
-header .logo-image img {
-    height:60px;
-}
-header .logo-title {
-    float:left;
-    height:60px;
-    padding:15px 0 15px 25px;
-    border-left:1pt solid #2C2C2C;
-
-}
-header .logo-title h1 {
-    margin:0;
-    padding:0;
-}
-
-header .menu {
-    font-size:10pt;
-    font-weight:100;
-    text-align:right;
-    margin:0;
-    padding:35px 0;
-}
-header .menu li {
-    margin-left:15px;
-}
-
 
 a {
     color:#2C2C2C;
@@ -92,6 +56,12 @@ h2 {
     font-size:32pt;
     font-weight:100;
     margin:0;
+}
+h2 .subtitle {
+  margin-left:18px;
+}
+h2 .separator {
+  margin-left:20px;
 }
 h3 {
     font-weight:400;
@@ -255,11 +225,37 @@ div.registrationForm {
   NAVBAR
  */
 
+header {
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  z-index:100;
+  background-color:$color-onelab-blue;
+}
+header .logo {
+}
+header .logo-image {
+  padding:8px 0 5px 0;
+  width:85%;
+}
+
+header .menu {
+    font-size:10pt;
+    font-weight:100;
+    text-align:right;
+    margin:0;
+    padding:35px 0;
+}
+header .menu li {
+    margin-left:15px;
+}
+
 .navbar-default {
     font-weight:100;
     border:0;
     margin:0;
-    background-color: #150947;
+    background-color: $color-onelab-blue;
     border-radius:0;
 }
 .navbar-default .navbar-nav {
@@ -272,14 +268,13 @@ div.registrationForm {
 .navbar-default .navbar-text {
 }
 .navbar-default .navbar-nav > li {
-    height:50px;
 }
 .navbar-default .navbar-nav > li > div {
-    border-top:4px solid #150947;
-    border-bottom:4px solid #150947;
-    margin:0 15px 0 0;
-    padding:12px 12px 10px 12px;
-    cursor:pointer;
+  border-top:4px solid $color-onelab-blue;
+  border-bottom:4px solid $color-onelab-blue;
+  margin:0 15px 0 0;
+  padding:12px 12px 10px 12px;
+  cursor:pointer;
 }
 .navbar-default .navbar-nav > li > div > div > a {
     color:white;
@@ -294,20 +289,21 @@ div.registrationForm {
 
 .navbar-default .navbar-nav > li > div:hover,
 .navbar-default .navbar-nav > li > div:focus {
-    color:white;
-    border-bottom:4px solid $color-background;
+    color:$color-default;
+    border-bottom:4px solid $color-onelab-blue-light;
 }
 
 .navbar-default .navbar-nav > .active > div,
 .navbar-default .navbar-nav > .active > div:hover,
 .navbar-default .navbar-nav > .active > div:focus {
-    border-top:4px solid $color-background;
-    border-bottom:4px solid $color-background;
-    background-color: $color-background;
+  border-top:4px solid $color-onelab-blue-light;
+  border-bottom:4px solid $color-onelab-blue-light;
+  background-color: $color-onelab-blue-light;
+  color:$color-default;
 }
 .navbar-default .navbar-nav > .active > div > div > a {
-    font-weight:400;
-    color: #2C2C2C;
+  font-weight:400;
+  color:$color-default;
 }
 .navbar-default .navbar-nav > .open > a,
 .navbar-default .navbar-nav > .open > a:hover,
@@ -325,7 +321,7 @@ div.registrationForm {
 
 }
 .navbar-default .navbar-form {
-    background-color: #150947;
+    background-color: $color-onelab-blue;
 }
 .navbar-default .navbar-link {
     color:red;
@@ -351,6 +347,124 @@ div.registrationForm {
   .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
   }
 }
+
+/*
+  VIEWS
+*/
+.view {
+
+}
+.view-header {
+  position:absolute;
+  top:50px;
+  width:100vw;
+  padding:15px 0 18px 0;
+  background-color:$color-onelab-blue-light;
+  color:$color-default;
+}
+.view-body {
+  position:absolute;
+  top:130px;
+  width:100vw;
+}
+.view-left {
+  position:absolute;
+  top:0;
+  left:0;
+  width:50%;
+  height:80vh;
+  overflow-y:auto;
+}
+.view-right {
+  position:absolute;
+  top:0;
+  right:0;
+  width:50%;
+  height:80vh;
+  overflow-y:auto;
+}
+/*
+    PANELS
+*/
+.panel {
+  border:1px solid red;
+  width:100%;
+}
+
+.p-body {
+    top:220px;
+    bottom:10px;
+    padding:0 15px;
+    width:50%;
+
+    z-index:90;
+    background-color:$color-background;
+}
+.p-left .p-header {
+    left:0;
+}
+.p-left .p-body {
+    left:0;
+}
+.p-right .p-header {
+    right:0;
+
+}
+.p-right .p-body {
+    right:0;
+    background-color:$color-background;
+}
+
+.p-center .p-header {
+    text-align:center;
+}
+.p-center .p-body {
+    text-align:center;
+}
+
+.p-header h2 {
+    padding:0;
+    margin:0;
+}
+.p-header h2 span {
+    color:gray;
+    font-size:10pt;
+}
+
+.p-header-right {
+    text-align:right;
+}
+.p-header-right button {
+    margin:18px 0 0 0;
+}
+
+/*
+    Panel Menu
+*/
+.p-menu {
+}
+.p-menu ul {
+    margin:245px 0 0 50%;
+    padding:0;
+    list-style:none;
+    border-right:1px solid #DCDCF8;
+}
+.p-menu li {
+    font-weight:300;
+    font-size:12pt;
+    margin-bottom:15px;
+
+}
+.p-menu li a:hover {
+    cursor:pointer;
+    border-bottom:2pt solid #150947;
+}
+.p-menu li i {
+    text-align:center;
+    width:32px;
+    margin-right:8px;
+}
+
 
 /*
     SLICES MENU
@@ -428,93 +542,6 @@ div.registrationForm {
 .slices-menu li h5:hover {
     color:#6a52d0;
 }
-/*
-    PANELS
-*/
-.p-header {
-    position:fixed;
-    top:140px;
-    width:50%;
-    margin:0;
-    padding:15px 15px;
-    z-index:91;
-}
-.p-body {
-    position:fixed;
-    top:220px;
-    bottom:10px;
-    padding:0 15px;
-    width:50%;
-    overflow-y:auto;
-    z-index:90;
-    background-color:$color-background;
-}
-.p-left .p-header {
-    left:0;
-    background-color:$color-background;
-}
-.p-left .p-body {
-    left:0;
-}
-.p-right .p-header {
-    right:0;
-    background-color:$color-background;
-
-}
-.p-right .p-body {
-    right:0;
-    background-color:$color-background;
-}
-
-.p-center .p-header {
-    text-align:center;
-}
-.p-center .p-body {
-    text-align:center;
-}
-
-.p-header h2 {
-    padding:0;
-    margin:0;
-}
-.p-header h2 span {
-    color:gray;
-    font-size:10pt;
-}
-
-.p-header-right {
-    text-align:right;
-}
-.p-header-right button {
-    margin:18px 0 0 0;
-}
-
-/*
-    Panel Menu
-*/
-.p-menu {
-}
-.p-menu ul {
-    margin:245px 0 0 50%;
-    padding:0;
-    list-style:none;
-    border-right:1px solid #DCDCF8;
-}
-.p-menu li {
-    font-weight:300;
-    font-size:12pt;
-    margin-bottom:15px;
-
-}
-.p-menu li a:hover {
-    cursor:pointer;
-    border-bottom:2pt solid #150947;
-}
-.p-menu li i {
-    text-align:center;
-    width:32px;
-    margin-right:8px;
-}
 
 /*
     Dialog
@@ -527,7 +554,7 @@ div.registrationForm {
     bottom:0;
     height:100%;
     z-index:999;
-    background-color:rgba(50, 50, 50, 0.95);
+    background-color:$color-overlay;
 }
 .dialogClose {
     position: fixed;
@@ -545,7 +572,7 @@ div.registrationForm {
     width:100%;
     height:100vh;
     padding:25px 50px 25px 50px;
-    background-color:#F6F6F6;
+    background-color:$color-background;
 }
 .dialog .d-panel .d-header {
     padding-bottom:25px;
@@ -843,24 +870,24 @@ ul.labelOptions li:hover.add {
 
 .technologyBox {
   background-color:white;
-  border-right:1px solid #DEDEDE;
-  border-left:1px solid #DEDEDE;
+  border-right:1px solid white;
+  border-left:1px solid white;
   border-top:1px solid #DEDEDE;
   padding:25px;
 }
 .technologyBox:first-child {
   border-radius:4px 4px 0 0;
+  border-top-color:white;
 }
 .technologyBox:last-child {
   border-radius:0 0 4px 4px;
-  border-bottom:1px solid #DEDEDE;
+  border-bottom:1px solid white;
 }
 .technologyBox .technologyLabel {
-    text-align:right;
+  text-align:right;
 }
 
 .technologyTestbeds {
-
   border-left:2pt solid $color-testbed;
   padding-top:25px;
   padding-bottom:50px;
