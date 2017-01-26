@@ -3,10 +3,8 @@ import React from 'react';
 import store from '../stores/UsersStore';
 import actions from '../actions/UsersActions';
 
-import View from './base/View';
-import { Panel, PanelHeader, PanelBody } from './base/Panel';
+import { View, ViewHeader, ViewBody, Panel } from './base/View';
 import Title from './base/Title';
-import Button from './base/Button';
 
 import UsersInfo from './UsersInfo';
 import { UserList } from './objects/User';
@@ -167,26 +165,27 @@ class UsersView extends React.Component {
                     </View>
                 );
             }
-        }else{
-            return(
+        } else {
+        }
+
+        return (
                 <View>
-                    <Panel>
-                        <PanelHeader>
-                            <Title title="Users" />
-                        </PanelHeader>
-                        <PanelBody>
+                    <ViewHeader>
+                        <Title title="Users" />
+                    </ViewHeader>
+                    <ViewBody>
+                        <Panel>
                             <div className="row">
                                 <div className="col-sm-10 col-sm-offset-1 inputForm">You don't have rights to manage users
                                 </div>
                             </div>
-                        </PanelBody>
-                    </Panel>
-                    <Panel></Panel>
+                        </Panel>
+                    </ViewBody>
                 </View>
             );
         }
 
-    }
+
 }
 
 export default UsersView;

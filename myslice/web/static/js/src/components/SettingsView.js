@@ -1,9 +1,6 @@
 import React from 'react';
 
-import View from './base/View';
-import { Panel, PanelHeader, PanelBody } from './base/Panel';
-import PanelMenu from './base/PanelMenu';
-import PanelMenuEntry from './base/PanelMenuEntry';
+import { View, ViewHeader, ViewBody, Panel, PanelMenu, PanelMenuEntry } from './base/View';
 import Title from './base/Title';
 
 import actions from '../actions/SettingsActions'
@@ -67,9 +64,20 @@ class SettingsView extends React.Component {
         actions.updateSelected(name);
     }
 
+    renderUserName() {
+        let user_name = null;
+        if (this.state.profile.first_name) {
+            user_name = this.state.profile.first_name;
+        }
+        if (this.state.profile.last_name) {
+            user_name += ' ' + this.state.profile.last_name;
+        }
+        return user_name || this.state.profile.email || '';
+    }
+
     render () {
 
-        var menuElement = (
+        let panelMenu = (
             <PanelMenu>
                 <PanelMenuEntry icon="user" name="profile" handleSelect={this.handleSelect}>
                     Profile
@@ -86,74 +94,67 @@ class SettingsView extends React.Component {
             </PanelMenu>
         );
 
-        var panel = '';
+        let panelMenuSelected = null;
+        let panel = null;
 
         switch(this.state.menuSelected) {
             default:
             case 'profile':
-                panel = (<Panel>
-                    <PanelHeader>
-                        <Title title="Profile" />
-                    </PanelHeader>
-                    <PanelBody>
-                        <SettingsProfile profile={this.state.profile}
-                                             submitProfile={this.submitProfile.bind(this)}
-                                             updateProfile={this.updateProfile.bind(this)}
-                                            />
-                        <LoadingPanel show={this.state.loading}/>
-                    </PanelBody>
-                </Panel>);
+                panel = <Panel>
+                            <SettingsProfile profile={this.state.profile}
+                                                 submitProfile={this.submitProfile.bind(this)}
+                                                 updateProfile={this.updateProfile.bind(this)}
+                                                />
+                            <LoadingPanel show={this.state.loading}/>
+                        </Panel>;
                 break;
             case 'rights':
-                panel = (<Panel>
-                    <PanelHeader>
-                        <Title title="Access rights" />
-                    </PanelHeader>
-                    <PanelBody>
-                        <SettingsRights profile={this.state.profile}
-                                             submitProfile={this.submitProfile.bind(this)}
-                                             updateProfile={this.updateProfile.bind(this)}
-                                            />
-                        <LoadingPanel show={this.state.loading}/>
-                    </PanelBody>
-                </Panel>);
+                panelMenuSelected = "Access rights";
+                panel = <Panel>
+                            <SettingsRights profile={this.state.profile}
+                                                 submitProfile={this.submitProfile.bind(this)}
+                                                 updateProfile={this.updateProfile.bind(this)}
+                                                />
+                            <LoadingPanel show={this.state.loading}/>
+                        </Panel>;
                 break;
             case 'ssh':
-                panel = (<Panel>
-                    <PanelHeader>
-                        <Title title="SSH" />
-                    </PanelHeader>
-                    <PanelBody>
-                        <SettingsSsh generateKeys={this.generateKeys.bind(this)}
-                                     public_key={this.state.profile.public_key}
-                                     private_key={this.state.profile.private_key}
-                                     />            
-                        <LoadingPanel show={this.state.loading}/>
-                    </PanelBody>
-                </Panel>);
+                panelMenuSelected = "SSH";
+                panel = <Panel>
+                            <SettingsSsh generateKeys={this.generateKeys.bind(this)}
+                                         public_key={this.state.profile.public_key}
+                                         private_key={this.state.profile.private_key}
+                                         />
+                            <LoadingPanel show={this.state.loading}/>
+                        </Panel>;
                 break;
 
             case 'password':
-                panel = (<Panel>
-                    <PanelHeader>
-                        <Title title="Reset Password" />
-                    </PanelHeader>
-                    <PanelBody>
-                        <SettingsPassword newPassword={this.updateNewpassword.bind(this)}
-                                          oldPassword={this.updateOldpassword.bind(this)}
-                                          submitPassword={this.submitPassword.bind(this)}
-                                        />            
-                        <LoadingPanel show={this.state.loading}/>
-                    </PanelBody>
-                </Panel>);
+                panelMenuSelected = "Reset Password";
+                panel = <Panel>
+                            <SettingsPassword newPassword={this.updateNewpassword.bind(this)}
+                                              oldPassword={this.updateOldpassword.bind(this)}
+                                              submitPassword={this.submitPassword.bind(this)}
+                                            />
+                            <LoadingPanel show={this.state.loading}/>
+                        </Panel>;
                 break;
 
         }
 
         return (
             <View>
-                {menuElement}
-                {panel}
+                <ViewHeader>
+                    <Title
+                        title={this.renderUserName()}
+                        subtitle={panelMenuSelected}
+                        separator="/"
+                    />
+                </ViewHeader>
+                <ViewBody>
+                    {panelMenu}
+                    {panel}
+                </ViewBody>
             </View>
             
                 

@@ -1,5 +1,5 @@
 import alt from '../alt';
-import source from '../sources/ProjectsSource';
+import source from '../sources/views/Projects';
 import actions from '../actions/ProjectsFormActions';
 
 class ProjectsFormStore {
