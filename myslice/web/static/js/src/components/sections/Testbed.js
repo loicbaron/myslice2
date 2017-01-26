@@ -31,12 +31,10 @@ const TestbedSectionPanel = ({testbeds, listOptions}) => {
         }
     });
 
-    return <Section>
-        <SectionBody>
-            <div className="row">
+    return <div>
             {
                 technologies.map((technology) => {
-                    return <div key={"testbed-section-panel-" + technology} className="col-sm-10 col-sm-offset-1 technologyBox">
+                    return <div key={"testbed-section-panel-" + technology} className="col-sm-12 technologyBox">
                         <div className="row">
                             <div className="col-sm-4 technologyLabel">
                                 <img className={"technologyIcon " + technology} src={"/static/icons/technologies/" + technology + ".svg"} />
@@ -59,9 +57,7 @@ const TestbedSectionPanel = ({testbeds, listOptions}) => {
                 })
 
             }
-            </div>
-        </SectionBody>
-    </Section>;
+    </div>;
 };
 
 TestbedSectionPanel.propTypes = {
