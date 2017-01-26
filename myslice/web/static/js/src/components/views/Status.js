@@ -54,7 +54,10 @@ class StatusView extends React.Component {
         return (
             <View>
                 <ViewHeader>
-                    <Title title="Service Status" subtitle={currentTestbedName} separator=">" />
+                    <Title title="Service Status"
+                           subtitle={currentTestbedName}
+                           separator="/"
+                    />
                 </ViewHeader>
                 <ViewBody>
                     <Panel>

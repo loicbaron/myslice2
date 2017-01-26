@@ -1,7 +1,7 @@
 /**
  * Created by amirabradai on 14/10/2016.
  */
-import alt from '../alt';
+import alt from '../../alt';
 
 class DashboardActions {
 

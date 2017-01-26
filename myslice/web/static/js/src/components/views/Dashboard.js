@@ -3,17 +3,16 @@
  */
 import React from 'react';
 
-import store from '../stores/DashboardStore';
-import actions from '../actions/DashboardActions';
+import store from '../../stores/views/Dashboard';
+import actions from '../../actions/views/Dashboard';
 
-import View from './base/View';
-import { DialogPanel, Dialog, DialogBody, DialogHeader, DialogFooter } from './base/Dialog';
-import { Panel, PanelHeader, PanelBody } from './base/Panel';
-import Title from './base/Title';
-import Button from './base/Button';
-import Text from './base/Text';
-import ProjectsForm from './ProjectsForm';
-import { ProjectList } from './objects/Project';
+import { View, ViewHeader, ViewBody, Panel } from '../base/View';
+import { DialogPanel, Dialog, DialogBody, DialogHeader, DialogFooter } from '../base/Dialog';
+import Title from '../base/Title';
+import Button from '../base/Button';
+import Text from '../base/Text';
+import ProjectsForm from '../ProjectsForm';
+import { ProjectList } from '../objects/Project';
 
 
 class DashboardView extends React.Component {
@@ -88,32 +87,42 @@ class DashboardView extends React.Component {
         return (
 
         <View>
-            <Panel>
-                <PanelHeader>
-                    <Title title="About OneLab" />
-
-                </PanelHeader>
-                <PanelBody>
-                    <Text>Through OneLab, you can easily test the software system that you have designed
-                        that you have designed to function in any
-one of the following networked communication environments: IoT networks with mobility
-and sensing capabilities; ad-hoc wireless and wireless broadband access networks; a global, public, fixed-line Internet; and Cloud and SDN networks.
-                        Our platforms offer both wireless and fixed-line emulated environments and reproducibility of experimentation.
-                    </Text>
-                </PanelBody>
-            </Panel>
-            <Panel>
-                <PanelHeader >
+            <ViewHeader>
+                <Title title="Dashboard" />
+            </ViewHeader>
+            <ViewBody>
+                <Panel>
+                    <p>
+                        Through OneLab, you can easily test the software system that you have designed
+                        that you have designed to function in any one of the following networked
+                        communication environments:
+                    </p>
+                    <ul>
+                        <li>
+                            IoT networks with mobility and sensing capabilities;
+                        </li>
+                        <li>
+                            ad-hoc wireless and wireless broadband access networks;
+                        </li>
+                        <li>
+                            a global, public, fixed-line Internet;
+                        </li>
+                        <li>
+                            and Cloud and SDN networks.
+                        </li>
+                    </ul>
+                    <p>
+                        Our platforms offer both wireless and fixed-line emulated environments and
+                        reproducibility of experimentation.
+                    </p>
+                </Panel>
+                <Panel>
                     <Title title="Projects & Slices"/>
-
-
                     <Button label="Request Project" icon="plus" handleClick={this.showForm} />
-                </PanelHeader>
-                <PanelBody>
                     {projectsList}
-                </PanelBody>
-                {dialog}
             </Panel>
+            </ViewBody>
+             {dialog}
         </View>
         );
 

@@ -1,8 +1,8 @@
-import alt from '../alt';
-import actions from '../actions/ActivityActions';
-import source from '../sources/ActivitySource';
+import alt from '../../alt';
+import actions from '../../actions/views/Activity';
+import source from '../../sources/views/Activity';
 
-import common from '../utils/Commons';
+import common from '../../utils/Commons';
 
 class ActivityStore {
 

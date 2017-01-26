@@ -2,8 +2,8 @@
  * Created by amirabradai on 17/10/2016.
  */
 import axios from 'axios';
-import actions from '../actions/DashboardActions';
-import formactions from '../actions/ProjectsFormActions';
+import actions from '../../actions/views/Dashboard';
+import formactions from '../../actions/ProjectsFormActions';
 
 const DashboardSource = () => {
     return {

@@ -1,9 +1,9 @@
 /**
  * Created by amirabradai on 14/10/2016.
  */
-import alt from '../alt';
-import actions from '../actions/DashboardActions';
-import source from '../sources/DashboardSource';
+import alt from '../../alt';
+import actions from '../../actions/views/Dashboard';
+import source from '../../sources/views/Dashboard';
 
 var removeFromArray = function(myArray, searchTerm, property=null) {
         for(var i = 0, len = myArray.length; i < len; i++) {

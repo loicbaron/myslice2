@@ -1,5 +1,5 @@
 import axios from 'axios';
-import actions from '../actions/ActivityActions';
+import actions from '../../actions/views/Activity';
 
 const ActivitySource = () => {
     return {
