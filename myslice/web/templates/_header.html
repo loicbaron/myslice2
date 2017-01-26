@@ -1,18 +1,86 @@
 <div class="container-fluid">
     <div class="row">
-        <div class="col-xs-10 col-sm-8 logo">
-            <div class="logo-image">
-                <a href="/"><img src="/static/images/onelab.png" alt="OneLab - Future Internet Testbeds" /></a>
-            </div>
-            <div class="logo-title hidden-xs">
-                <h1>PORTAL</h1>
-            </div>
+        <div class="col-xs-2 col-sm-2 logo">
+            <a href="/"><img class="logo-image" src="/static/images/onelab/onelab-white.svg" alt="OneLab - Future Internet Testbeds" /></a>
         </div>
-        <div class="col-xs-4 col-sm-4 hidden-xs">
-            <ul class="list-inline menu">
-                <li><a href="">About</a></li>
-                <li><a target="_blank" href="https://onelab.eu">Website</a></li>
-            </ul>
+        <div class="col-xs-10 col-sm-10">
+            <nav class="navbar navbar-default navbar-myslice">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse">
+
+                    <ul class="nav navbar-nav" >
+                        <li class="dropdown{% if request.path.startswith('/slices') %} active{% end %}">
+                            <div id="slicesMenu"></div>
+                        </li>
+                        <li class="{% if request.path == '/projects' %}active{% end %}">
+                            <div>
+                                <div>
+                                    <a href="/projects"><i class="fa fa-flask fa-lg"></i> Projects</a>
+                                </div>
+                            </div>
+                        </li>
+                        {% if current_user['is_root'] or current_user['is_pi'] %}
+                        <li class="{% if request.path == '/users' %}active{% end %}">
+                            <div>
+                                <div>
+                                    <a href="/users"><i class="fa fa-users fa-lg"></i> Users</a>
+                                </div>
+                            </div>
+                        </li>
+                        {% end %}
+                        <li class="{% if request.path == '/activity' %}active{% end %}">
+                            <div>
+                                <div>
+                                    <a href="/activity"><i class="fa fa-cog fa-lg"></i> Activity</a>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="{% if request.path == '/support' %}active{% end %}">
+                            <div>
+                                <div>
+                                    <a href="#"><i class="fa fa-life-ring fa-lg"></i> Support</a>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="{% if request.path == '/status' %}active{% end %}">
+                            <div>
+                                <div>
+                                    <a href="/status"><i class="fa fa-bar-chart fa-lg"></i> Status</a>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="{% if request.path == '/settings' %}active{% end %}">
+                            <div>
+                                <div>
+                                    <a href="/settings"><i class="fa fa-user fa-lg"></i> {{ current_user['email'] }}</a>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div>
+                                <div>
+                                    <a href="/logout"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+
+                </div>
+        </nav>
+
         </div>
+
     </div>
 </div>
