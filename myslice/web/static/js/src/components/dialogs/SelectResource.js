@@ -144,11 +144,19 @@ class SelectResourceDialog extends React.Component {
 
          var reservation = null;
          var filterInput = null;
-
+         var testbedLink = null;
+         console.log(this.props.testbed);
          switch(this.props.testbed.name) {
             case 'FIT IoT-Lab':
+            case 'FIT IoT-Lab Dev':
                 filterInput = <div>
                     <IotFilter handleChange={this.filterResources} />
+                </div>
+                testbedLink = 
+                <div className="container">
+                    <div className="row">
+                        <a href="https://www.iot-lab.info/hardware/" target="_blank">Technical specifications</a>
+                    </div>
                 </div>
                 reservation =
                 <div className="container">
@@ -230,6 +238,9 @@ class SelectResourceDialog extends React.Component {
                     <Title title="Add Resources" />
                 </DialogHeader>
                 <DialogBar>
+                    {reservation}
+                </DialogBar>
+                <DialogBar>
                     {filterInput}
                 </DialogBar>
                 <DialogBody>
@@ -239,7 +250,7 @@ class SelectResourceDialog extends React.Component {
                     />
                 </DialogBody>
                 <DialogBar>
-                    {reservation}
+                    {testbedLink}
                 </DialogBar>
                 <DialogFooter>
                     {this.renderSelectedStatus()}
