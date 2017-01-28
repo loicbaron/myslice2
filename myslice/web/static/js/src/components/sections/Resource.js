@@ -6,7 +6,7 @@ import { ResourceList } from '../objects/Resource';
 const ResourcesSection = ({resources, title, sectionOptions, listOptions}) =>
     <Section>
         <SectionHeader>
-            <SectionTitle title="Resources" />
+            <SectionTitle title={title} />
             <SectionOptions options={sectionOptions} />
         </SectionHeader>
         <SectionBody>
