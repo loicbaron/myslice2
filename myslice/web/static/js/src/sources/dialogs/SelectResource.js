@@ -6,7 +6,12 @@ const SelectResourceDialog = () => {
 
         fetchResources: {
             remote(state) {
-                return axios.get('/api/v1/testbeds/' + state.testbed.id + '/resources');
+                if(state.testbed.hasLeases){
+                    // /testbeds/<id>/resources[?timestamp_start=<XXX>&timestamp_end=<XXX>]
+                    return axios.get('/api/v1/testbeds/' + state.testbed.id + '/resources?timestamp_start='+state.lease['start_time']+'&timestamp_end='+state.lease['end_time']);
+                }else{
+                    return axios.get('/api/v1/testbeds/' + state.testbed.id + '/resources');
+                }
             },
 
             success: actions.updateResources,

@@ -8,7 +8,7 @@ import ElementId from '../base/ElementId';
 import DateTime from '../base/DateTime';
 import { Icon } from '../base/Icon';
 
-const ResourceElement = ({resource, isSelected, handleSelect}) => {
+const ResourceElement = ({resource, isSelected, handleSelect, options}) => {
 
     var label = resource.hostname || resource.shortname;
 
@@ -32,6 +32,7 @@ const ResourceElement = ({resource, isSelected, handleSelect}) => {
                   isSelected={isSelected}
                   handleSelect={handleSelect}
                   status={status}
+                  options={options}
          >
 
              <ElementTitle label={resource.name} detail={resource.type} />

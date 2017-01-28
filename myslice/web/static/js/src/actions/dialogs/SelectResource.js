@@ -17,6 +17,7 @@ class SelectResourceDialog {
             'updateTestbed',
             'initLease',
             'updateStartDate',
+            'updateDuration',
             'updateType',
             'updateFilter',
             'updateTime',
