@@ -12,6 +12,8 @@ class SliceView {
             'saveSliceSuccess',
             'saveSliceError',
 
+            'removeResources',
+
             'fetchTestbeds',
             'updateTestbeds',
             'errorTestbeds',
