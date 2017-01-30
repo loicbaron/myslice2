@@ -25,7 +25,27 @@ const ResourceElement = ({resource, isSelected, handleSelect, options}) => {
         // let flag = 'flag-icon flag-icon-' + countries.getCode(resource.location.country);
         // location = <div>Location: <span class={flag}></span> {resource.location.country}</div>;
     }
-
+    var services = null;
+    if (resource.services){
+        services = <div>
+        <List>
+        {
+            resource.services.map(function(service, i) {
+                if(service.hasOwnProperty('login')){
+                    return <div key={i}>
+                        <code>
+                        ssh -p {service.login.port} {service.login.username}@{service.login.hostname}
+                        </code>
+                    </div>
+                }else{
+                    console.log('service not supported');
+                    console.log(service);
+                } 
+            })
+        }
+        </List>
+        </div>
+    }
     return (
          <Element type="resource"
                   element={resource}
@@ -38,6 +58,7 @@ const ResourceElement = ({resource, isSelected, handleSelect, options}) => {
              <ElementTitle label={resource.name} detail={resource.type} />
              <ElementId id={resource.id} />
              {location}
+             {services}
          </Element>
      );
 };
