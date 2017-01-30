@@ -79,14 +79,10 @@ class UsersView extends React.Component {
             let user_title = this.state.current.user.first_name+" "+this.state.current.user.last_name;
             buttonActive = false;
             panelRight =
-                <Panel>
-                    <PanelHeader>
-                        <Title title={user_title} subtitle={this.state.current.user.hrn} />
-                    </PanelHeader>
-                    <PanelBody>
-                        <UsersInfo element={this.state.current.user} />
-                    </PanelBody>
-                </Panel>
+                <div>
+                    <Title title={user_title} />
+                    <UsersInfo element={this.state.current.user} />
+                </div>
             ;
         } else {
             buttonActive = true;
@@ -127,11 +123,11 @@ class UsersView extends React.Component {
             if(is_root){
                 return (
                     <View>
-                        <Panel>
-                            <PanelHeader>
-                                <Title title="Users" />
-                            </PanelHeader>
-                            <PanelBody>
+                        <ViewHeader>
+                            <Title title="Users" />
+                        </ViewHeader>
+                        <ViewBody>
+                            <Panel>
                                 <div className="row">
                                     <DialogBar>
                                     {selectAuthority}
@@ -143,25 +139,27 @@ class UsersView extends React.Component {
                                     </DialogBar>
                                 </div>
                                 <UserList select={true} users={users} handleSelect={this.setCurrentUser} current={this.state.current.user} />
-                            </PanelBody>
-                        </Panel>
-                        {panelRight}
+                            </Panel>
+                            <Panel>
+                                {panelRight}
+                            </Panel>
+                        </ViewBody>
                     </View>
                 );
             }else{
                 return (
                     <View>
-                        <Panel>
-                            <PanelHeader>
-                                <Title title="Users" subtitle={this.state.profile.authority.name} />
-                            </PanelHeader>
-                            <PanelBody>
-                                <div className="row">
-                                </div>
+                        <ViewHeader>
+                            <Title title="Users" subtitle={this.state.profile.authority.name} />
+                        </ViewHeader>
+                        <ViewBody>
+                            <Panel>
                                 <UserList select={true} users={users} handleSelect={this.setCurrentUser} current={this.state.current.user} />
-                            </PanelBody>
-                        </Panel>
-                        {panelRight}
+                            </Panel>
+                            <Panel>
+                                {panelRight}
+                            </Panel>
+                        </ViewBody>
                     </View>
                 );
             }
