@@ -53,9 +53,8 @@ def events_run(lock, qPasswordEvents):
                 try:
                     cursor = db.users(dbconnection, email=event.data['email'])
                     u = cursor.next()
-                    user = User(u)
-                    user.password = event.data['password']
-                    ret = user.save(dbconnection)
+                    u['password'] = event.data['password']
+                    db.users(dbconnection, u, u['id'])
                 except Exception as e:
                     logger.error("Problem updating password of user: {} - {}".format(event.object.id, e))
                     event.logError(str(e))
