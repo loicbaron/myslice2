@@ -118,8 +118,9 @@ def check_password(plain_password, encrypted_password):
         else:
             return False
     except Exception as e:
-        import traceback
-        traceback.print_exc()
+        logger.error(e)
+        #import traceback
+        #traceback.print_exc()
         return False
     # ##
     # # legacy method used to store passwords
