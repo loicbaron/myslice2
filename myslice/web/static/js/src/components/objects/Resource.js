@@ -94,11 +94,11 @@ ResourceList.propTypes = {
 ResourceList.defaultProps = {
 };
 
-const ResourcesSummary = ({resources}) => {
-    let resourcesList = <ul><li>No resources found</li></ul>;
+const ResourceSummary = ({resources}) => {
+    let resourceList = <ul><li>No resources found</li></ul>;
 
     if (resources.length > 0) {
-        resourcesList = <ul>
+        resourceList = <ul>
             {
                 resources.map((resource) =>
                     <li key={resource.id}>
@@ -114,15 +114,15 @@ const ResourcesSummary = ({resources}) => {
         <div className="elementIcon summaryIcon resource">
             <Icon name="resource" size="2x"/>
         </div>
-        {resourcesList}
+        {resourceList}
     </div>;
 };
 
-ResourcesSummary.propTypes = {
+ResourceSummary.propTypes = {
     resources: React.PropTypes.array.isRequired
 };
 
-ResourcesSummary.defaultProps = {
+ResourceSummary.defaultProps = {
 };
 
-export { ResourceElement, ResourceList, ResourcesSummary };
+export { ResourceElement, ResourceList, ResourceSummary };

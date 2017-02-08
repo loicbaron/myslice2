@@ -175,11 +175,11 @@ UserList.propTypes = {
 UserList.defaultProps = {
 };
 
-const UsersSummary = ({users}) => {
-    let usersList = <ul><li>No users found</li></ul>;
+const UserSummary = ({users}) => {
+    let userList = <ul><li>No users found</li></ul>;
 
     if (users.length > 0) {
-        usersList = <ul>
+        userList = <ul>
             {
                 users.map((user) =>
                     <li key={user.id}>
@@ -192,17 +192,17 @@ const UsersSummary = ({users}) => {
     }
     return <div className="summaryList user">
         <div className="elementIcon summaryIcon user">
-            <Icon name="user" size="2x"/>
+            <Icon name="user" circle={true} />
         </div>
-        {usersList}
+        {userList}
     </div>;
 };
 
-UsersSummary.propTypes = {
+UserSummary.propTypes = {
     users: React.PropTypes.array.isRequired
 };
 
-UsersSummary.defaultProps = {
+UserSummary.defaultProps = {
 };
 
-export { UserElement, UserElementSimple, UserList, UserListSimple, UserElementAvatar, UsersSummary };
+export { UserElement, UserElementSimple, UserList, UserListSimple, UserElementAvatar, UserSummary };
