@@ -284,9 +284,8 @@ header .menu li {
 /*
     PANELS
 */
-.panel {
-  border: 1px solid red;
-  width: 100%; }
+.view-panel {
+  padding: 25px 0; }
 
 .p-body {
   top: 220px;
@@ -992,48 +991,5 @@ ul.labelOptions li:hover.add {
     position: static;
     width: 100%;
     padding: 0; } }
-/*
-    Pills
-*/
-#Type .tab-content {
-  color: white;
-  background-color: #428bca;
-  padding: 5px 15px; }
-
-#Type .nav-pills > li > a {
-  border-radius: 0; }
-
-.panel.with-nav-tabs .panel-heading {
-  padding: 5px 5px 0 5px; }
-
-.panel.with-nav-tabs .nav-tabs {
-  border-bottom: none; }
-
-.panel.with-nav-tabs .nav-justified {
-  margin-bottom: -1px; }
-
-/********************************************************************/
-/*** PANEL DEFAULT ***/
-.with-nav-tabs.panel-default .nav-tabs > li > a,
-.with-nav-tabs.panel-default .nav-tabs > li > a:hover,
-.with-nav-tabs.panel-default .nav-tabs > li > a:focus {
-  color: #777; }
-
-.with-nav-tabs.panel-default .nav-tabs > .open > a,
-.with-nav-tabs.panel-default .nav-tabs > .open > a:hover,
-.with-nav-tabs.panel-default .nav-tabs > .open > a:focus,
-.with-nav-tabs.panel-default .nav-tabs > li > a:hover,
-.with-nav-tabs.panel-default .nav-tabs > li > a:focus {
-  color: #777;
-  background-color: #ddd;
-  border-color: transparent; }
-
-.with-nav-tabs.panel-default .nav-tabs > li.active > a,
-.with-nav-tabs.panel-default .nav-tabs > li.active > a:hover,
-.with-nav-tabs.panel-default .nav-tabs > li.active > a:focus {
-  color: #555;
-  background-color: #fff;
-  border-color: #ddd;
-  border-bottom-color: transparent; }
 
 /*# sourceMappingURL=stylesheet.css.map */

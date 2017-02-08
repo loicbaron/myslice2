@@ -133,7 +133,9 @@ const Panel = ({children, single}) => {
             <div className="container-fluid">
                 <div className="row">
                     <div className="col-sm-6 col-sm-offset-3">
-                        {children}
+                        <div className="view-panel">
+                            {children}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -143,7 +145,9 @@ const Panel = ({children, single}) => {
             <div className="container-fluid">
                 <div className="row">
                     <div className="col-sm-12">
-                        {children}
+                        <div className="view-panel">
+                            {children}
+                        </div>
                     </div>
                 </div>
             </div>
