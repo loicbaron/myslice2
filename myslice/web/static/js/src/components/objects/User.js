@@ -184,7 +184,7 @@ const UserSummary = ({users}) => {
                 users.map((user) =>
                     <li key={user.id}>
                         {[user.first_name, user.last_name].join(' ')}
-                        <span>{user.email}</span>
+                        &nbsp;-&nbsp;<span>{user.email}</span>
                     </li>
                 )
             }

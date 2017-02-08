@@ -361,7 +361,8 @@ class UsersHandler(Api):
                     'type': ObjectType.USER,
                     'id': None
                 },
-                'data': data
+                'data': data,
+                'notify': True,
             })
         except Exception as e:
             self.userError("Can't create request", e.message)

@@ -10,6 +10,7 @@ import Title from '../base/Title';
 import Text from '../base/Text';
 import DateTime from '../base/DateTime';
 
+import { ResourcesSection } from '../sections/Resource';
 import { TestbedSectionPanel } from '../sections/Testbed';
 import { ResourceList } from '../objects/Resource';
 
@@ -52,8 +53,16 @@ class SliceView extends React.Component {
     /*
         Once user select some resources and apply this wil be called.
      */
-    addResources(resources, lease={}) {
-        actions.saveSlice({'resources': resources, 'lease': lease})
+    addResources(resources, leases=[]) {
+        actions.saveSlice({'resources': resources, 'leases': leases})
+    }
+    removeResources(resources, leases=[]) {
+        if(!Array.isArray(resources)){
+            resources = Array(resources);
+        }
+        console.log(resources);
+        actions.removeResources({'resources': resources, 'leases': leases})
+        //actions.saveSlice({remove_resource: resource});
     }
 
     renderSliceTitle() {
@@ -62,9 +71,10 @@ class SliceView extends React.Component {
     renderSliceProjectTitle() {
         if (this.state.slice.project) {
             return this.state.slice.project.name || this.state.slice.project.shortname
+        }else{
+            return "";
         }
     }
-    
     render() {
         let dialog = null;
 
@@ -94,6 +104,15 @@ class SliceView extends React.Component {
             }
         ];
         console.log(this.state.slice);
+        /*
+         *  Define options for ResourcesSummary
+         * */
+        let resourcesOptions = [
+            {
+                'label' : 'remove',
+                'callback' : this.removeResources
+            }
+        ];
 
         return (<View>
             <ViewHeader>
@@ -116,10 +135,6 @@ class SliceView extends React.Component {
                     <UserSummary users={this.state.slice.users} />
                 </Panel>
                 <Panel>
-                    <Text>
-                        Please select the resources to reserve by choosing a Testbed (text to change)
-                    </Text>
-                    <br />
                     <TestbedSectionPanel testbeds={this.state.testbeds} listOptions={testbedListOptions} />
                 </Panel>
             </ViewBody>

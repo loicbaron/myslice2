@@ -1,3 +1,4 @@
+import logging
 import uuid
 import requests
 from tornado import web
@@ -7,6 +8,8 @@ from myslice import settings as s
 from myslice.db import dispatch, changes
 from myslice.db.activity import Event
 from myslice.web.controllers import BaseController
+
+logger = logging.getLogger("myslice.web.controller.password")
 
 class Index(BaseController):
 
@@ -40,8 +43,10 @@ class Index(BaseController):
             except Exception as e:
                 #import traceback
                 #traceback.print_exc()
+                logger.error(e)
                 msg = "This link is not valid, please generate a new one."
                 self.render(self.application.templates + "/password_forgot.html", message=msg)
+                return
 
         self.render(self.application.templates + "/password.html", message=msg, new_hashing=new_hashing)
 
@@ -68,8 +73,9 @@ class Forgot(BaseController):
             url = url+"/api/v1/password"
             r = requests.put(url, data=payload, headers=headers)
         except Exception as e:
-            import traceback
-            traceback.print_exc()
+            logger.error(e)
+            #import traceback
+            #traceback.print_exc()
             self.render(self.application.templates + "/password_forgot.html", message="Something went wrong...")
             return
 

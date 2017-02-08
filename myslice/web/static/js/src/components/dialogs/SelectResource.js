@@ -11,6 +11,7 @@ import Button from '../base/Button';
 import InputText from '../InputText'
 
 import IotFilter from '../filters/iot';
+import FilterLeases from '../filters/leases';
 import { ResourceList } from '../objects/Resource';
 
 class SelectResourceDialog extends React.Component {
@@ -22,6 +23,7 @@ class SelectResourceDialog extends React.Component {
         this.handleChange = this.handleChange.bind(this);
         this.apply = this.apply.bind(this);
         this.cancel = this.cancel.bind(this);
+        this.refreshResources = this.refreshResources.bind(this);
     }
 
     componentDidMount() {
@@ -87,7 +89,6 @@ class SelectResourceDialog extends React.Component {
     filterResources(filter) {
         actions.filterResources(filter);
     }
-
     handleFilter(value) {
         //var f = {'email':value,'shortname':value}
         //actions.updateFilteredUsers();
@@ -103,15 +104,6 @@ class SelectResourceDialog extends React.Component {
         actions.filterEvent(event.target.value);
     }
 
-    handleStartDateChange(e) {
-
-       actions.updateStartDate(e.target.value);
-
-    }
-    handleTimeChange(e) {
-       console.log(e.target.value);
-       actions.updateTime(e.target.value);
-    }
 
 // Filter by site
     handleChange(event) {
@@ -119,10 +111,7 @@ class SelectResourceDialog extends React.Component {
         actions.updateFilter(event.target.value);
     }
 
-    handleChangeDuration(event) {
-        actions.updateDuration(event.target.value);
-    }
-     handleChangeType(event) {
+    handleChangeType(event) {
          //actions.updateType(event.target.value);
          event.preventDefault()
          var el = event.target.textContent
@@ -130,7 +119,9 @@ class SelectResourceDialog extends React.Component {
          console.log(el)
          actions.updateFilter(el);
     }
-
+    refreshResources(){
+        actions.fetchResources(this.props.testbed);
+    }
     render() {
         var dis=[];
         //var selectedOption = this.props.selected;
@@ -144,31 +135,21 @@ class SelectResourceDialog extends React.Component {
 
          var reservation = null;
          var filterInput = null;
-
+         var testbedLink = null;
+         console.log(this.props.testbed);
+         if(this.props.testbed.hasOwnProperty('hasLeases') && this.props.testbed.hasLeases == true){
+            reservation = <FilterLeases testbed={this.props.testbed} handleChange={this.refreshResources} />;
+         }
          switch(this.props.testbed.name) {
             case 'FIT IoT-Lab':
+            case 'FIT IoT-Lab Dev':
                 filterInput = <div>
                     <IotFilter handleChange={this.filterResources} />
                 </div>
-                reservation =
+                testbedLink = 
                 <div className="container">
                     <div className="row">
-                      <div className="col-sm-4">
-                        Start date: <input type="date" placeholder="yyyy-mm-dd " value={this.state.start_date} onChange={this.handleStartDateChange.bind(this)} />
-                        &nbsp;<input type="time" placeholder="hh:mm" value={this.state.time} onChange={this.handleTimeChange.bind(this)}/>
-                      </div>
-                      <div className="col-sm-2">Duration:&nbsp; 
-                        <select value={this.state.duration} onChange={this.handleChangeDuration.bind(this)}>
-                            <option value="10 min">10 min</option>
-                            <option value="15 min">15 min </option>
-                            <option value="30 min ">30 min</option>
-                            <option value="60 min">1 h</option>
-                            <option value="120 min">2 h</option>
-                            <option value="240 min">4 h</option>
-                            <option value="480 min">8 h</option>
-                            <option value="1440 min">24 h</option>
-                        </select>
-                      </div>
+                        <a href="https://www.iot-lab.info/hardware/" target="_blank">Technical specifications</a>
                     </div>
                 </div>
 
@@ -230,6 +211,9 @@ class SelectResourceDialog extends React.Component {
                     <Title title="Add Resources" />
                 </DialogHeader>
                 <DialogBar>
+                    {reservation}
+                </DialogBar>
+                <DialogBar>
                     {filterInput}
                 </DialogBar>
                 <DialogBody>
@@ -239,7 +223,7 @@ class SelectResourceDialog extends React.Component {
                     />
                 </DialogBody>
                 <DialogBar>
-                    {reservation}
+                    {testbedLink}
                 </DialogBar>
                 <DialogFooter>
                     {this.renderSelectedStatus()}

@@ -74,7 +74,8 @@ def run():
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
         else:
-            qConfirmEmails.put(event)
+            if event.notify:
+                qConfirmEmails.put(event)
 
     for activity in feed:
         try:
@@ -82,7 +83,7 @@ def run():
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
         else:
-            if event.isConfirm():
+            if event.isConfirm() and event.notify:
                 qConfirmEmails.put(event)
 
             elif event.isPending() and event.notify:

@@ -8,7 +8,7 @@ class SelectResourceDialog {
 
     constructor() {
 
-        // Resource List as retrieved from the API
+        // Resources List as retrieved from the API
         this.resources = [];
 
         // Filtered users
@@ -29,7 +29,6 @@ class SelectResourceDialog {
         this.errorMessage = null;
 
         // the list of resources
-        this.resources = [];
         this.lease['resources'] = [];
 
         this.all_resources = [];
@@ -75,6 +74,7 @@ class SelectResourceDialog {
             updateTestbed: actions.UPDATE_TESTBED,
             initLease: actions.INIT_LEASE,
             updateStartDate: actions.UPDATE_START_DATE,
+            updateDuration: actions.UPDATE_DURATION,
             updateTime: actions.UPDATE_TIME,
             updateType: actions.UPDATE_TYPE,
             updateFilter : actions.UPDATE_FILTER,
@@ -87,7 +87,6 @@ class SelectResourceDialog {
     }
 
     fetchResources(testbed = null) {
-
         this.resources = [];
         this.filtered = [];
 
@@ -98,8 +97,6 @@ class SelectResourceDialog {
         if (!this.getInstance().isLoading()) {
             this.getInstance().fetchResources();
         }
-
-
     }
     initLease(){
         this.lease = {};
@@ -128,6 +125,17 @@ class SelectResourceDialog {
     }
 
     errorResources(errorMessage) {
+        console.log(errorMessage);
+    }
+
+    updateLeases(leases) {
+        if (leases.hasOwnProperty('data')) {
+            this.leases = leases.data.result;
+        } else {
+            this.leases = leases;
+        }
+    }
+    errorLeases(errorMessage) {
         console.log(errorMessage);
     }
 
@@ -238,6 +246,7 @@ class SelectResourceDialog {
         }.bind(this));
 
     }
+
     filterEvent(value){
         if(value){
             this.filtered = this.resources.filter(function(el) {
@@ -261,6 +270,10 @@ class SelectResourceDialog {
         var t = " ".concat(this.time);
         var datum = Date.parse(this.start_date.concat(t));
         this.lease['start_time'] = datum/1000;
+        if(this.lease.hasOwnProperty('duration')){
+            this.lease['end_time'] = this.lease['start_time'] + this.lease['duration'];
+            //this.fetchResources();
+        }
     }
     setTimeNow(){
         var d = new Date();
@@ -274,12 +287,20 @@ class SelectResourceDialog {
         //Convert start_date to timestamp
         var datum = Date.parse(this.start_date.concat(t));
         this.lease['start_time'] = datum/1000;
+        if(this.lease.hasOwnProperty('duration')){
+            this.lease['end_time'] = this.lease['start_time'] + this.lease['duration'];
+            //this.fetchResources();
+        }
     }
     updateDuration(duration){
         this.duration = duration;
         //Convert the duration to seconds
         var nu = duration.split(' ');
         this.lease['duration'] = nu[0]*60;
+        if(this.lease.hasOwnProperty('start_time')){
+            this.lease['end_time'] = this.lease['start_time'] + this.lease['duration'];
+            //this.fetchResources();
+        }
     }
 
     updateType(type) {

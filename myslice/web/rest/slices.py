@@ -253,19 +253,24 @@ class SlicesHandler(Api):
         if all(isinstance(n, dict) for n in data['users']):
             data['users'] = [x['id'] for x in data['users']]
 
-        # adding users
-        events += self.add_users(data, slice)
+        ## adding users
+        #events += self.add_users(data, slice)
 
-        # removing users
-        events += self.remove_users(data, slice)
+        ## removing users
+        #events += self.remove_users(data, slice)
 
-        # adding resources
-        e = self.add_resources(data, slice)
-        if e:
-            events.append(e)
+        ## adding resources
+        #e = self.add_resources(data, slice)
+        #if e:
+        #    events.append(e)
 
-        # removing resources
-        e = self.remove_resources(data, slice)
+        ## removing resources
+        #e = self.remove_resources(data, slice)
+        #if e:
+        #    events.append(e)
+
+        # update slice
+        e = self.update_slice(data, slice)
         if e:
             events.append(e)
 
@@ -437,6 +442,29 @@ class SlicesHandler(Api):
         except Exception as e:
             # TODO: we should log here
             # log.error("Can't create request....")
+            return False
+        else:
+            return event
+
+    def update_slice(self, data, slice):
+        # update slice data only if it has changed
+        # TODO: check what we can change
+
+        # Update slice properties
+        try:
+            event = Event({
+                'action': EventAction.UPDATE,
+                'user': self.get_current_user()['id'],
+                'object': {
+                    'type': ObjectType.SLICE,
+                    'id': slice['id']
+                },
+                'data': data
+            })
+        except Exception as e:
+            # TODO: we should log here
+            log.error("Can't create event")
+            log.errpr(e)
             return False
         else:
             return event
