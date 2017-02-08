@@ -554,15 +554,10 @@ header .menu li {
 
 .elementIcon {
   position: absolute;
-  top: 15px;
-  left: -20px;
-  text-align: center;
-  line-height: 48px;
-  width: 40px;
-  height: 40px;
-  -moz-border-radius: 20px;
-  -webkit-border-radius: 20px;
-  border-radius: 20px;
+  top: 5px;
+  left: -30px; }
+
+.elementIcon i.fa-inverse {
   color: #281E52; }
 
 .elementListSimple .elementIcon {
@@ -572,29 +567,25 @@ header .menu li {
   margin-top: -12px; }
 
 .elementIcon.authority {
-  background-color: #D0E0E3; }
+  color: #D0E0E3; }
 
 .elementIcon.user {
-  background-color: #CFE2F3; }
+  color: #CFE2F3; }
 
 .elementIcon.project {
-  background-color: #D9D2E9; }
+  color: #D9D2E9; }
 
 .elementIcon.slice {
-  line-height: 46px;
-  background-color: #EAD1DC; }
+  color: #EAD1DC; }
 
 .elementIcon.resource {
-  line-height: 46px;
-  background-color: #D9EAD3; }
+  color: #D9EAD3; }
 
 .elementIcon.testbed {
-  line-height: 44px;
-  background-color: #D9EAD3; }
+  color: #D9EAD3; }
 
 .elementIcon.registry {
-  line-height: 44px;
-  background-color: #D9EAD3; }
+  color: #D9EAD3; }
 
 .elementTitle {
   font-size: 14pt;
@@ -617,9 +608,21 @@ header .menu li {
 .elementLabel:hover a {
   color: #6a52d0; }
 
-.elementDetail {
+.elementDetails {
+  margin-top: 15px; }
+
+.elementDetailsText {
+  font-size: 9pt;
+  font-style: italic;
+  color: gray; }
+
+.elementDetailsLink:hover .more, .elementDetailsLink:hover .less {
+  text-decoration: underline; }
+
+.elementDetailsLink .more, .elementDetailsLink .less {
   font-size: 10pt;
-  padding: 15px 0 0 0; }
+  color: darkslategray;
+  margin: 0 8px 0 5px; }
 
 .elementDate {
   font-size: 9pt; }
@@ -634,20 +637,22 @@ header .menu li {
   top: 15px;
   right: 15px; }
 
-.elementBox:hover .elementOption {
+.elementBox:hover > .elementOptions li.elementOption {
   display: block; }
 
 .elementOption {
   display: none;
+  float: left;
   font-size: 9pt;
-  margin-bottom: 10px;
+  list-style: none;
+  margin-right: 10px;
   cursor: pointer; }
 
 .elementOption:hover {
   text-decoration: underline; }
 
 .elementOption i {
-  margin-right: 5px; }
+  margin-right: 4px; }
 
 .elementOption.delete, .elementOption.remove {
   color: red; }
@@ -695,7 +700,8 @@ ul.labelOptions li:hover.add {
 
 .elementStatus {
   font-size: 9pt;
-  margin-bottom: 10px; }
+  float: left;
+  list-style: none; }
 
 .elementStatus .new {
   color: #8E7CC3; }
@@ -763,32 +769,41 @@ ul.labelOptions li:hover.add {
 
 .summaryList .summaryIcon {
   position: absolute;
-  top: -20px;
+  top: -16px;
   left: 0; }
 
-.summaryList ul {
+.summaryList > ul {
   list-style: none;
-  margin: 50px 0 0 50px;
+  margin: 50px 0 0 45px;
   padding: 0;
   border-top: 2pt solid #2C2C2C; }
 
-.summaryList.authority ul {
+.summaryList.authority > ul {
   border-top: 2pt solid #D0E0E3; }
 
-.summaryList.user ul {
+.summaryList.user > ul {
   border-top: 2pt solid #CFE2F3; }
 
-.summaryList.project ul {
+.summaryList.project > ul {
   border-top: 2pt solid #D9D2E9; }
 
-.summaryList.slice ul {
+.summaryList.slice > ul {
   border-top: 2pt solid #EAD1DC; }
 
-.summaryList.resource ul {
+.summaryList.resource > ul {
   border-top: 2pt solid #D9EAD3; }
 
-.summaryList li {
-  padding: 15px 0 0 0; }
+.summaryList > ul > li {
+  position: relative;
+  margin: 10px 0 0 0; }
+
+.summaryList > ul > li:hover .elementOption {
+  display: block; }
+
+.summaryList > ul > li > ul {
+  position: absolute;
+  top: 0;
+  right: 0; }
 
 /*
     LOG
