@@ -144,14 +144,13 @@ def sync(lock):
             for l in ll:
                 if hasattr(l, 'slice_id'):
                     logger.info("Synchronize slice %s" % l.slice_id)
-                    logger.info("Synchronize slice %s" % l.slice_id)
                     # if the slice is part of the portal
                     if db.get(dbconnection, table='slices', id=l.slice_id):
                         syncSlices(l.slice_id)
 
         except Exception as e:
-            import traceback
-            traceback.print_exc()
+            #import traceback
+            #traceback.print_exc()
             logger.exception("Service does not seem to be available")
             logger.exception(str(e))
 
