@@ -12,13 +12,7 @@ import ProjectsForm from '../ProjectsForm';
 import { ProjectList } from '../objects/Project';
 
 import RequestsList from '../RequestsList';
-
-import { UsersSection } from '../sections/User';
-import { SlicesSection } from '../sections/Slice';
-import DateTime from '../base/DateTime';
-
 import SlicesForm from '../SlicesForm';
-
 import UsersDialog from '../dialogs/SelectUser';
 
 import { live } from '../../live';
@@ -128,7 +122,6 @@ class ProjectsView extends React.Component {
     }
 
     render() {
-        let panelRight = null;
         let dialog = null;
 
         if (this.state.errorMessage) {
@@ -207,107 +200,61 @@ class ProjectsView extends React.Component {
         }
 
         /*
-         *  Define options for list element SLICE
+         *  Define options for project element
          * */
-        let projectListOptions = [
-            {
-                'label' : 'delete',
-                'callback' : this.deleteProjectConfirm
-            }
-        ];
+        let projectOptions = [
+                        {
+                            label : 'add user',
+                            icon : 'add',
+                            callback : this.selectUserDialog
+                        },
+                        {
+                            label : 'create slice',
+                            icon : 'create',
+                            callback : this.createSliceDialog
+                        },
+                        {
+                            label : 'delete',
+                            icon: 'delete',
+                            callback : this.deleteProjectConfirm
+                        }
+            ];
 
-        if (this.state.current.project) {
-
-            let project = this.state.current.project;
-            let users = this.state.current.users;
-            let slices = this.state.current.slices;
-
-            /*
-             *  Define options for sections USER
-             * */
-            let userSectionOptions = [
+        /*
+         * Options for the components displayed in the details
+         */
+        let userOptions = [
                 {
-                    'label' : 'Add User',
-                    'icon' : 'add',
-                    'callback' : this.selectUserDialog
+                    label : 'remove',
+                    icon : 'remove',
+                    callback : this.removeUserConfirm
+                }
+            ];
+        let sliceOptions = [
+                {
+                    label : 'delete',
+                    icon: 'delete',
+                    callback : this.deleteSliceConfirm
                 }
             ];
 
-            /*
-             *  Define options for list element USER
-             * */
-            let userListOptions = [
-                {
-                    'label' : 'remove',
-                    'callback' : this.removeUserConfirm
-                }
-            ];
-
-            /*
-             *  Define options for sections SLICE
-             * */
-            let sliceSectionOptions = [
-                {
-                    'label' : 'Create Slice',
-                    'icon' : 'create',
-                    'callback' : this.createSliceDialog
-                }
-            ];
-
-            /*
-             *  Define options for list element SLICE
-             * */
-            let sliceListOptions = [
-                {
-                    'label' : 'delete',
-                    'callback' : this.deleteSliceConfirm
-                }
-            ];
-
-            panelRight = <div>
-                            {project.id}
-                            <p>
-                                <a href={project.url} target="_blank">{project.url}</a>
-                            </p>
-                            <p>
-                                {project.description}
-                            </p>
-                            <DateTime label="Start" timestamp={project.start_date} />
-                            <DateTime label="End" timestamp={project.end_date} />
-                            <SlicesSection slices={slices}
-                                           sectionOptions={sliceSectionOptions}
-                                           listOptions={sliceListOptions}
-                            />
-                            <UsersSection users={users}
-                                          sectionOptions={userSectionOptions}
-                                          listOptions={userListOptions}
-                            />
-                        </div>;
-        }
         var filters = [{'label':'Project', 'name':'object', 'value':'project'}];
 
         return (
             <View notification={this.state.notification}>
                 <ViewHeader>
-                    <Title
-                        title="Projects"
-                        subtitle={this.renderProjectTitle()}
-                        separator="/"
-                    />
+                    <Title title="Projects" />
                     <Button label="Request Project" icon="plus" handleClick={this.showForm} />
                 </ViewHeader>
                 <ViewBody>
-                    <Panel>
+                    <Panel single={true}>
                         <ProjectList projects={this.state.projects}
-                                     selected={this.state.current.project}
-                                     handleSelect={this.setCurrentProject}
-                                     options={projectListOptions}
+                                     options={projectOptions}
+                                     userOptions={userOptions}
+                                     sliceOptions={sliceOptions}
                         />
                         <Title title="Pending " />
                         <RequestsList displayFilters={false} filters={filters} />
-                    </Panel>
-                    <Panel>
-                        {panelRight}
                     </Panel>
                 </ViewBody>
                 {dialog}

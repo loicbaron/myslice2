@@ -4,11 +4,10 @@ import store from '../../stores/views/Slice';
 import actions from '../../actions/views/Slice';
 
 import { View, ViewHeader, ViewBody, Panel  } from '../base/View';
-import { UsersSummary } from '../objects/User';
-import { ResourcesSummary } from '../objects/Resource';
+import { ElementSummary } from '../base/Element';
 import Title from '../base/Title';
 import Text from '../base/Text';
-import DateTime from '../base/DateTime';
+import { DateTime } from '../base/DateTime';
 
 import { ResourcesSection } from '../sections/Resource';
 import { TestbedSectionPanel } from '../sections/Testbed';
@@ -131,8 +130,8 @@ class SliceView extends React.Component {
                         <DateTime label="Created" timestamp={this.state.slice.created} />
                         <DateTime label="Last updated" timestamp={this.state.slice.updated} />
                     </div>
-                    <ResourcesSection resources={this.state.slice.resources} listOptions={resourcesOptions} />
-                    <UsersSummary users={this.state.slice.users} />
+                    <ElementSummary elements={this.state.slice.resources} type="resource"  />
+                    <ElementSummary elements={this.state.slice.users} type="user"  />
                 </Panel>
                 <Panel>
                     <TestbedSectionPanel testbeds={this.state.testbeds} listOptions={testbedListOptions} />

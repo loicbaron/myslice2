@@ -1,13 +1,13 @@
 import React from 'react';
 
-const Icon = ({name, size}) => {
+const Icon = ({name, size, circle}) => {
     let icon;
 
     if (name) {
         icon = name.toLowerCase()
     }
 
-    let iconClass = 'fa fa-lg fa-';
+    let iconClass = 'fa fa-';
 
     switch(icon) {
         case 'approved':
@@ -80,21 +80,45 @@ const Icon = ({name, size}) => {
 
     iconClass += ' ' + icon + ' fa-fw';
 
+    let sizeClass = null;
     if (typeof size !== undefined) {
         switch(size) {
+            default:
             case 'lg':
-                iconClass += ' fa-lg';
+                sizeClass = 'fa-lg';
                 break;
             case '2x':
-                iconClass += ' fa-2x';
+                sizeClass = 'fa-2x';
                 break;
             case '3x':
-                iconClass += ' fa-3x';
+                sizeClass = 'fa-3x';
                 break;
         }
     }
 
-    return <i className={iconClass} />;
+    if (circle) {
+        return (
+            <span className={"fa-stack " + sizeClass}>
+                  <i className="fa fa-circle fa-stack-2x" />
+                  <i className={iconClass + " fa-stack-1x fa-inverse"} />
+            </span>
+        );
+    } else {
+        return <i className={iconClass} />;
+    }
+
+
+};
+
+Icon.propTypes = {
+    name: React.PropTypes.string,
+    size: React.PropTypes.string,
+    circle: React.PropTypes.bool
+};
+
+Icon.defaultProps = {
+    size: 'lg',
+    circle: false
 };
 
 export { Icon };
