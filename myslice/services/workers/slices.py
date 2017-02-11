@@ -195,11 +195,13 @@ def syncSlices(id=None):
                     #if (hasattr(u,'private_key') and u.private_key is not None and len(u.private_key)>0) or (hasattr(u,'credentials') and len(u.credentials)>0):
                     if u.private_key or (hasattr(u,'credentials') and len(u.credentials)>0):
                         user_setup = UserSetup(u,myslicelibsetup.endpoints)
-                        s = q(Slice, user_setup).id(slice.id).get()
+                        s = q(Slice, user_setup).id(slice.id).get().first()
+                        db.slices(dbconnection, s.dict(), slice.id)
                 except Exception as e:
-                    import traceback
-                    traceback.print_exc()
+                    #import traceback
+                    #traceback.print_exc()
                     logger.error("Problem with slice %s" % slice.id)
+                    logger.exception(str(e))
             else:
                 logger.info("slice %s has no users" % slice.hrn)
 
@@ -224,5 +226,6 @@ def syncSlices(id=None):
                 logger.warning("Query slices is empty, check myslicelib and the connection with SFA Registry")
 
     except Exception as e:
-        import traceback
-        traceback.print_exc()
+        #import traceback
+        #traceback.print_exc()
+        logger.exception(str(e))
