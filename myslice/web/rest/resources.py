@@ -1,13 +1,13 @@
 import json
-
+import logging
 import rethinkdb as r
 
 from myslice.lib.util import myJSONEncoder
 from myslice.web.rest import Api
 
-
-
 from tornado import gen, escape
+
+logger = logging.getLogger('myslice.web.rest.testbeds')
 
 class ResourcesHandler(Api):
 
@@ -53,58 +53,69 @@ class ResourcesHandler(Api):
         # GET /resources?timestamp_start=<XXX>&timestamp_end=<XXX>
         elif not id and not o:
 
-            # Resources NOT in Leases
-            cursor = yield r.table('resources') \
-                .filter({'available':'true'}) \
-                .filter( lambda resource: 
-                    r.table("leases").map(lambda l: 
+            nb_leases = yield r.table("leases").count().run(self.dbconnection)
+            if nb_leases > 0:
+                # Resources NOT in Leases
+                cursor = yield r.table('resources') \
+                    .filter({'available':'true'}) \
+                    .filter( lambda resource:
+                        r.table("leases").map(lambda l:
+                            l['resources'].coerce_to('array')
+                        ).reduce(lambda left, right:
+                            left.set_union(right)
+                        ).contains(resource['id']).not_() \
+                    ).run(self.dbconnection)
+                while (yield cursor.fetch_next()):
+                    item = yield cursor.next()
+                    response.append(item)
+
+                if ts and te:
+                    # List of Resources ids in Leases but not in the given time range
+                    in_leases = yield r.table("leases").filter(lambda l:
+                        r.or_(l['start_time'].gt(int(te)),l['end_time'].lt(int(ts)))
+                    ).map(lambda l:
                         l['resources'].coerce_to('array')
                     ).reduce(lambda left, right:
                         left.set_union(right)
-                    ).contains(resource['id']).not_() \
-                ).run(self.dbconnection)
-            while (yield cursor.fetch_next()):
-                item = yield cursor.next()
-                response.append(item)
+                    ).map(lambda x:
+                        r.table('resources').get(x) \
+                    ).run(self.dbconnection)
+                    logger.debug(in_leases)
+                    response = response + in_leases
 
-            if ts and te:
-                # List of Resources ids in Leases but not in the given time range
-                in_leases = yield r.table("leases").filter(lambda l:
-                    r.or_(l['start_time'].gt(int(te)),l['end_time'].lt(int(ts)))
-                ).map(lambda l: 
-                    l['resources'].coerce_to('array')
-                ).reduce(lambda left, right:
-                    left.set_union(right)
-                ).map(lambda x: 
-                    r.table('resources').get(x) \
-                ).run(self.dbconnection)
-                response = response + in_leases
+                if ts and not te:
+                    # List of Resources ids in Leases but not in the given time range
+                    in_leases = yield r.table("leases").filter(lambda l:
+                        l['end_time'].lt(int(ts))
+                    ).map(lambda l:
+                        l['resources'].coerce_to('array')
+                    ).reduce(lambda left, right:
+                        left.set_union(right)
+                    ).map(lambda x:
+                        r.table('resources').get(x) \
+                    ).run(self.dbconnection)
+                    response = response + in_leases
 
-            if ts and not te:
-                # List of Resources ids in Leases but not in the given time range
-                in_leases = yield r.table("leases").filter(lambda l:
-                    l['end_time'].lt(int(ts))
-                ).map(lambda l: 
-                    l['resources'].coerce_to('array')
-                ).reduce(lambda left, right:
-                    left.set_union(right)
-                ).map(lambda x: 
-                    r.table('resources').get(x) \
-                ).run(self.dbconnection)
-                response = response + in_leases
-
-            if not ts and te:
-                # List of Resources ids in Leases but not in the given time range
-                in_leases = yield r.table("leases").filter(lambda l:
-                    l['start_time'].gt(int(te))
-                ).map(lambda l: 
-                    l['resources'].coerce_to('array')
-                ).reduce(lambda left, right:
-                    left.set_union(right)
-                ).map(lambda x: 
-                    r.table('resources').get(x) \
-                ).run(self.dbconnection)
-                response = response + in_leases
+                if not ts and te:
+                    # List of Resources ids in Leases but not in the given time range
+                    in_leases = yield r.table("leases").filter(lambda l:
+                        l['start_time'].gt(int(te))
+                    ).map(lambda l:
+                        l['resources'].coerce_to('array')
+                    ).reduce(lambda left, right:
+                        left.set_union(right)
+                    ).map(lambda x:
+                        r.table('resources').get(x) \
+                    ).run(self.dbconnection)
+                    response = response + in_leases
+            else:
+                # All available Resources (No Leases in DB)
+                cursor = yield r.table('resources') \
+                    .filter({'available':'true'}) \
+                    .run(self.dbconnection)
+                while (yield cursor.fetch_next()):
+                    item = yield cursor.next()
+                    response.append(item)
 
         # GET /resources/<id>
         elif not o and id and self.isUrn(id):
