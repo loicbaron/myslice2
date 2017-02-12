@@ -11,3 +11,4 @@ r = requests.post("http://localhost:8111/api/v1/login", headers={str('Content-Ty
 s['cookies'] = r.cookies
 
 authority = "urn:publicid:IDN+onelab:upmc+authority+sa"
+rootAuthority = "urn:publicid:IDN+onelab+authority+sa"
