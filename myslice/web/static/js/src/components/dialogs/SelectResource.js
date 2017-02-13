@@ -81,7 +81,7 @@ class SelectResourceDialog extends React.Component {
 
     apply() {
         console.log(this.props.testbed.name);
-        this.props.apply(this.state.selected, this.state.lease);
+        this.props.apply(this.state.selected, [this.state.lease]);
         this.clearSelection();
         this.props.cancel();
     }
@@ -119,7 +119,20 @@ class SelectResourceDialog extends React.Component {
          console.log(el)
          actions.updateFilter(el);
     }
-    refreshResources(){
+    refreshResources(filter){
+        if(Object.keys(filter).includes('start_date')){
+            console.log('start_date');
+            actions.updateStartDate(filter['start_date']);
+        }
+        if(Object.keys(filter).includes('start_time')){
+            console.log('start_time');
+            actions.updateTime(filter['start_time']);
+        }
+        if(Object.keys(filter).includes('duration')){
+            console.log('start_duration');
+            actions.updateDuration(filter['duration']);
+        }
+
         actions.fetchResources(this.props.testbed);
     }
     render() {
