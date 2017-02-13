@@ -14,6 +14,7 @@ from myslice.db.activity import Event, EventAction, ObjectType, DataType
 from myslice.db import dispatch
 from myslice.web.rest import Api
 from myslice.web.controllers.login import check_password, crypt_password
+from myslice import settings as s
 
 from tornado import gen, escape
 
@@ -749,17 +750,17 @@ class ProfileHandler(Api):
                 
                 else:
                     self.userError("updated failed", result['new_val'])
+                    return
 
 class UserTokenHandler(Api):
-    """
-    GET /usertoken
-
-    :return:
-    """
 
     @gen.coroutine
     def get(self):
+        """
+        GET /usertoken
 
+        :return:
+        """
         admin = self.isAdmin()
 
         try:
@@ -788,7 +789,23 @@ class UserTokenHandler(Api):
         except Exception as e:
             self.serverError("token encryption failed", e)
             return
-        
         self.finish(token)
 
+    @gen.coroutine
+    def post(self):
+        """
+        POST /usertoken
 
+        :return:
+        user
+        """
+        secret = self.application.settings['token_secret'] # used in websockets
+        encrypted_string = self.request.body
+        try:
+            user = jwt.decode(encrypted_string, secret, algorithms=['HS256'])
+        except Exception as e:
+            logger.error('Token Decrption error %s' % e)
+            self.userError('Token Decrption error')
+            return
+
+        self.finish(json.dumps(user, cls=myJSONEncoder))
