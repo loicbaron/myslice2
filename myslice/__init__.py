@@ -100,6 +100,8 @@ class settings(object):
     class web(object):
         url = 'http://dev.myslice.info'
         port = '8111'
+        cookie_secret="x&7G1d2!5MhG9SWkXu"
+        token_secret = 'u636vbJV6Ph[EJB;Q'
 
 ## override with configuration file
 #parser = SafeConfigParser()

@@ -1,11 +1,10 @@
 import jwt
 import logging, json
 
-from pprint import pprint
-
 from tornado import gen
 from sockjs.tornado import SockJSConnection
 from myslice.lib.util import myJSONEncoder
+from myslice import settings as s
 
 ##
 # Setup ZMQ with tornado event loop support
@@ -88,8 +87,10 @@ class WebsocketsHandler(SockJSConnection):
                 return
 
             try:
-                self.auth_user = jwt.decode( encrypted_string, 'u636vbJV6Ph[EJB;Q', algorithms=['HS256'])
+                secret = s.web.token_secret # used in websockets
+                self.auth_user = jwt.decode(encrypted_string, secret, algorithms=['HS256'])
             except Exception as e:
+
                 logger.error('Token Decrption errors %s' % e)
                 self.send(
                         json.dumps({
@@ -105,7 +106,7 @@ class WebsocketsHandler(SockJSConnection):
             else:
                 self.authenticated = True
                 logger.info("user {} connected".format(self.auth_user['id']))
-                self.send(json.dumps({'user':'authenticatedt'}))
+                self.send(json.dumps({'user':'authenticated'}))
                 return
 
         if self.authenticated and 'watch' in data:
