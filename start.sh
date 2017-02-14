@@ -1,4 +1,10 @@
 #!/bin/bash
+
+touch /var/log/myslice/myslice-web.log
+
+## How to start the script and redirect stdout to logfile
+# ./start.sh > /var/log/myslice/myslice-web.log
+
 #service rethinkdb restart
 
 # Path of the script
@@ -14,4 +20,3 @@ $DIR/myslice/bin/myslice-live &
 $DIR/myslice/bin/myslice-monitor &
 
 ps -aux | grep 'myslice'
-tail -100 /var/log/myslice/myslice-web.log
