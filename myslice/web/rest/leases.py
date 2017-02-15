@@ -114,23 +114,35 @@ class LeasesHandler(Api):
             self.userError("malformed request", e.msg)
             return
 
-        results = []
+        evData = []
         try:
             if isinstance(data, list):
                 for l in data:
-                    r = yield self.processLease(l)
-                    results = results + r 
+                    d = yield self.processLease(l)
+                    evData.append(d)
             else:
-                r = yield self.processLease(data)
-                results = results + r 
+                yield self.processLease(data)
+                evData.append(d)
 
+            event = Event({
+                'action': EventAction.CREATE,
+                'user': self.get_current_user()['id'],
+                'object': {
+                    'type': ObjectType.LEASE,
+                    'id': None,
+                },
+                'data': evData
+            })
+
+            res = yield dispatch(self.dbconnection, event)
+            result = res['generated_keys']
         except Exception as e:
             self.userError(e)
 
         self.write(json.dumps(
             {
                 "result": "success",
-                "events": results,
+                "events": result,
                 "error": None,
                 "debug": None,
             }, cls=myJSONEncoder))  
@@ -147,8 +159,8 @@ class LeasesHandler(Api):
 
         # XXX Just to debug
         if not 'start_time' in data:
-            # Start 5 minutes later
-            data['start_time']=int(time.time())+5*60
+            # Start 1 minute later than now
+            data['start_time']=int(time.time())+1*60
 
         # Scheduled reservation
         if 'start_time' in data:
@@ -170,24 +182,7 @@ class LeasesHandler(Api):
         except Exception:
             raise Exception("not authenticated")
 
-        try:
-            event = Event({
-                'action': EventAction.CREATE,
-                'user': self.get_current_user()['id'],
-                'object': {
-                    'type': ObjectType.LEASE,
-                    'id': None,
-                },
-                'data': data
-            })
-        except AttributeError as e:
-            raise Exception("Can't create request", e)
-        except Exception as e:
-            raise Exception("Can't create request", e)
-        else:
-            result = yield dispatch(self.dbconnection, event)
-
-        return result['generated_keys']
+        return data
 
     @gen.coroutine
     def delete(self, id, o=None):
