@@ -37,7 +37,7 @@ def sync(lock):
             r = q(Resource).get()
 
             # update local resources table
-            if len(slices)>0:
+            if len(r)>0:
                 lresources = db.resources(dbconnection, r.dict())
 
                 for ls in lresources :
