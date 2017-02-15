@@ -20,3 +20,6 @@ $DIR/myslice/bin/myslice-live &
 $DIR/myslice/bin/myslice-monitor &
 
 ps -aux | grep 'myslice'
+
+nestat -ap 
+sleep 3600
