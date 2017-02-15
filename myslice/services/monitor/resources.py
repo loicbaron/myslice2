@@ -17,11 +17,14 @@ def run():
     while True:
         logger.info("syncing")
         try:
-            # retreive version and status info from the testbeds
+            # retreive resources from testbeds
             r = q(Resource).get()
 
-            # syncs testbeds configured with the db
-            db.syncResources(r)
+            if len(r)>0:
+                # syncs resources configured with the db
+                db.syncResources(r)
+            else:
+                logger.warning("Check myslicelib and SFA, q(Resource).get() returned empty")
 
         except Exception as e:
             import traceback
