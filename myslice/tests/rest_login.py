@@ -35,4 +35,11 @@ class TestLogin(unittest.TestCase):
         self.assertEqual(r.status_code, 200)
 
 if __name__ == '__main__':
-    unittest.main()
+    // unittest.main()
+    suites = [unittest.TestLoader().loadTestsFromTestCase(TestLogin)]
+    testResult = unittest.TextTestRunner(verbosity=0).run(unittest.TestSuite(suites))
+
+    print('The errors: ', testResult.errors)
+    print('The Failures: ', testResult.failures)
+    print('The number of runs: ', testResult.testsRun)
+    print('Test were successful: ', testResult.wasSuccessful())
