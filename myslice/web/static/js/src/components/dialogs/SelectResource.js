@@ -29,7 +29,7 @@ class SelectResourceDialog extends React.Component {
     componentDidMount() {
         store.listen(this.onChange);
         actions.fetchResources(this.props.testbed);
-        actions.initLease();
+        actions.initLease(this.props.testbed);
         console.log(this.state.lease);
     }
 

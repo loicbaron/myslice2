@@ -61,7 +61,8 @@ class FilterLeases extends React.Component {
     }
 }
 FilterLeases.propTypes = {
-    handleChange: React.PropTypes.func.isRequired
+    handleChange: React.PropTypes.func.isRequired,
+    testbed: React.PropTypes.object.isRequired
 };
 
 FilterLeases.defaultProps = {
