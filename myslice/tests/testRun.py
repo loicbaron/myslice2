@@ -12,11 +12,11 @@ import rest_users
 import rethinkdb as r
 
 if __name__ == '__main__':
-    suites = [# unittest.TestLoader().loadTestsFromTestCase(deployment.TestDeployment),
-              # unittest.TestLoader().loadTestsFromTestCase(rest_login.TestLogin),
+    suites = [unittest.TestLoader().loadTestsFromTestCase(deployment.TestDeployment),
+              unittest.TestLoader().loadTestsFromTestCase(rest_login.TestLogin),
               unittest.TestLoader().loadTestsFromTestCase(rest_authorities.TestAuthority),
-              # unittest.TestLoader().loadTestsFromTestCase(rest_projects.TestProjects),
-              # unittest.TestLoader().loadTestsFromTestCase(rest_users.TestUsers),
+              unittest.TestLoader().loadTestsFromTestCase(rest_projects.TestProjects),
+              unittest.TestLoader().loadTestsFromTestCase(rest_users.TestUsers),
               ]
     testResult = unittest.TextTestRunner(verbosity=0).run(unittest.TestSuite(suites))
 
@@ -30,7 +30,7 @@ if __name__ == '__main__':
     err = []
     for module, detail in testResult.errors:
         x = {}
-        x['module'] =  str(module).replace("'", '\'')
+        x['module'] = str(module).replace("'", '\'')
         x['details'] = str(detail).replace("'", '\'')
         err.append(x)
 
