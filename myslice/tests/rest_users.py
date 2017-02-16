@@ -46,11 +46,11 @@ class TestUsers(Tests):
     def test_2_postWrongUser(self):
         payload = {}
         r = requests.post('http://'+server+':8111/api/v1/users', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
-        #pprint(r.text)
-        self.assertEqual(r.status_code, 500)
+        print(r.text)
+        self.assertEqual(r.status_code, 400)
 
     def test_2_postUserNoAuth(self):
-        payload = { 'authority': authority, 'first_name': 'auto', 'last_name': 'test', 'email': 'onelabautotest1@yopmail.com', 'password': '12341234', 'terms': True }
+        payload = { 'authority': authority, 'first_name': 'radomir', 'last_name': 'autotest', 'email': 'onelabautotest1@yopmail.com', 'password': '12341234', 'terms': True }
         r = requests.post('http://'+server+':8111/api/v1/users', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
         self.assertEqual(r.status_code, 200)
 
@@ -60,10 +60,12 @@ class TestUsers(Tests):
         pprint(r.text)
         for event in result['events']:
             res = self.checkEvent(event)
-            self.assertEqual(res['status'], "PENDING")
+            self.assertEqual(res['status'], "CONFIRM")
 
             deny = {'action':'deny', 'message':'automated test denied this request'}
+            print(json.dumps(deny))
             rRequest = requests.put('http://'+server+':8111/api/v1/requests/'+event, headers={str('Content-Type'):'application/json'}, data=json.dumps(deny), cookies=self.cookies)
+            print(rRequest.text)
             self.assertEqual(rRequest.status_code, 200)
 
     def test_2_postUser(self):
