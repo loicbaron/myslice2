@@ -5,7 +5,7 @@ import requests
 import time
 import unittest
 
-from myslice.tests.config import s
+from myslice.tests.config import s, server
 
 class Tests(unittest.TestCase):
 
@@ -24,7 +24,7 @@ class Tests(unittest.TestCase):
         while(i < 30 and status not in final_status):
             time.sleep(2)
             i = i + 1
-            rActivity = requests.get('http://localhost:8111/api/v1/activity/'+event, cookies=self.cookies)
+            rActivity = requests.get('http://'+server+':8111/api/v1/activity/'+event, cookies=self.cookies)
             resActivity = json.loads(rActivity.text)
             res = resActivity['result'][0]
             status = res['status']
