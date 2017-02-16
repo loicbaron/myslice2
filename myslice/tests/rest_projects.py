@@ -16,9 +16,16 @@ class TestProjects(Tests):
 
     def setUp(self):
         self.timeout = 10
-        self.cookies = s['cookies']
+
+        # get cookies
+        payload = {'email': s['email'], 'password': s['password']}
+        r = requests.post("http://" + server + ":8111/api/v1/login", headers={str('Content-Type'): 'application/json'},
+                          data=json.dumps(payload))
+        self.cookies = r.cookies
+
         r = requests.get('http://'+server+':8111/api/v1/profile', cookies=self.cookies)
         result = json.loads(r.text)
+        print(result)
         self.user = result['result']
 
     def test_0_getNoAuth(self):
@@ -86,13 +93,19 @@ class TestProjects(Tests):
 
     def test_3_getProjectId(self):
         id = self.__class__.created_project
-        print(id)
+
+        if not id:
+            self.assertEqual(id, "expected created_project, but got non")
+        # print(id)
         r = requests.get('http://'+server+':8111/api/v1/projects/'+id, cookies=self.cookies)
         #pprint(r.text)
         self.assertEqual(r.status_code, 200)
 
     def test_4_putProject(self):
         id = self.__class__.created_project
+
+        if not id:
+            self.assertEqual(id, "expected created_project, but got non")
         rGet = requests.get('http://'+server+':8111/api/v1/projects/'+id, cookies=self.cookies)
         res = json.loads(rGet.text)
         project = res['result'][0]
@@ -124,6 +137,8 @@ class TestProjects(Tests):
 
     def test_5_deleteProject(self):
         id = self.__class__.created_project
+        if not id:
+            self.assertEqual(id, "expected created_project, but got non")
         rDelete = requests.delete('http://'+server+':8111/api/v1/projects/'+id, cookies=self.cookies)
         pprint(rDelete.text)
         self.assertEqual(rDelete.status_code, 200)
