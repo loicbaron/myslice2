@@ -41,14 +41,14 @@ def run():
     # threads
     threads = []
 
-    # projects manager
+    # leases manager
     for y in range(1):
         t = threading.Thread(target=manageLeases, args=(lock, qLeases))
         t.daemon = True
         threads.append(t)
         t.start()
 
-    # projects sync
+    # leases sync
     for y in range(1):
         t = threading.Thread(target=syncLeases, args=(lock,))
         t.daemon = True

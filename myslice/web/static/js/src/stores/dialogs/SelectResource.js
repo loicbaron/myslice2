@@ -98,9 +98,10 @@ class SelectResourceDialog {
             this.getInstance().fetchResources();
         }
     }
-    initLease(){
+    initLease(testbed){
         this.lease = {};
         this.lease['resources'] = [];
+        this.lease['testbed'] = testbed.id;
 
         // initialise the start date
         var d = new Date();

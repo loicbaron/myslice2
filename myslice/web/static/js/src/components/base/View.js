@@ -126,14 +126,42 @@ const ViewBody = ({children}) => {
     
 };
 
-const Panel = ({children}) =>
-    <div className="container-fluid">
-        <div className="row">
-            <div className="col-sm-12">
-                {children}
+const Panel = ({children, single}) => {
+
+    if (single) {
+        return (
+            <div className="container-fluid">
+                <div className="row">
+                    <div className="col-sm-6 col-sm-offset-3">
+                        <div className="view-panel">
+                            {children}
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>;
+        )
+    } else {
+        return (
+            <div className="container-fluid">
+                <div className="row">
+                    <div className="col-sm-12">
+                        <div className="view-panel">
+                            {children}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+}
+
+Panel.propTypes = {
+    single: React.PropTypes.bool
+};
+
+Panel.defaultProps = {
+    single: false
+};
 
 const PanelMenu = ({children}) =>
     <ul>{children}</ul>;

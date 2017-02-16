@@ -49,6 +49,18 @@ class ProjectsHandler(Api):
                        .pluck(self.fields_short['slices']) \
                        .coerce_to('array')
                 }) \
+                .merge(lambda project: {
+                    'pi_users': r.table('users') \
+                           .get_all(r.args(project['pi_users'])) \
+                           .pluck(self.fields_short['users']) \
+                           .coerce_to('array')
+                }) \
+                .merge(lambda project: {
+                    'users': r.table('users') \
+                           .get_all(r.args(project['users'])) \
+                           .pluck(self.fields_short['users']) \
+                           .coerce_to('array')
+                }) \
                 .run(self.dbconnection)
             while (yield cursor.fetch_next()):
                 project = yield cursor.next()

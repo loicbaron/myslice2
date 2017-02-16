@@ -2,7 +2,7 @@ import React from 'react';
 import Avatar from 'react-avatar';
 
 import { List, ListSimple } from '../base/List';
-import { Element } from '../base/Element';
+import { Element, ElementSummary } from '../base/Element';
 import ElementTitle from '../base/ElementTitle';
 import ElementId from '../base/ElementId';
 import DateTime from '../base/DateTime';
@@ -175,34 +175,4 @@ UserList.propTypes = {
 UserList.defaultProps = {
 };
 
-const UsersSummary = ({users}) => {
-    let usersList = <ul><li>No users found</li></ul>;
-
-    if (users.length > 0) {
-        usersList = <ul>
-            {
-                users.map((user) =>
-                    <li key={user.id}>
-                        {[user.first_name, user.last_name].join(' ')}
-                        &nbsp;-&nbsp;<span>{user.email}</span>
-                    </li>
-                )
-            }
-        </ul>;
-    }
-    return <div className="summaryList user">
-        <div className="elementIcon summaryIcon user">
-            <Icon name="user" size="2x"/>
-        </div>
-        {usersList}
-    </div>;
-};
-
-UsersSummary.propTypes = {
-    users: React.PropTypes.array.isRequired
-};
-
-UsersSummary.defaultProps = {
-};
-
-export { UserElement, UserElementSimple, UserList, UserListSimple, UserElementAvatar, UsersSummary };
+export { UserElement, UserElementSimple, UserList, UserListSimple, UserElementAvatar };

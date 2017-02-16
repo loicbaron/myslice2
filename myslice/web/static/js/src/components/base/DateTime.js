@@ -3,8 +3,8 @@ import moment from 'moment';
 
 const DateTime = (props) => {
 
-        var datetime = '';
-        var label = '';
+        let datetime = null;
+        let label = null;
 
         if (props.label) {
             label = <div className="elementLabel">{props.label}</div>;
@@ -31,8 +31,33 @@ DateTime.propTypes = {
 };
 
 DateTime.defaultProps = {
-    timestamp : '',
-    label: ''
+    timestamp : null,
+    label: null
 };
 
-export default DateTime;
+const CalendarDate = ({label, timestamp}) => {
+
+    if (timestamp) {
+        return (
+            <div className="dateTime">
+                <span className="elementLabel">{label}</span>
+                {moment(timestamp).fromNow()}
+            </div>
+        );
+    }
+
+    return null;
+
+};
+
+CalendarDate.propTypes = {
+    timestamp: React.PropTypes.string,
+    label: React.PropTypes.string
+};
+
+CalendarDate.defaultProps = {
+    timestamp : null,
+    label: null
+};
+
+export { DateTime, CalendarDate };

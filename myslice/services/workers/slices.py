@@ -186,26 +186,31 @@ def syncSlices(id=None):
             logger.warning("Query slices is empty, check myslicelib and the connection with SFA Registry")
 
         for slice in slices:
+            logger.info("Synchronize slice %s:" % slice.hrn)
             if len(slice.users) > 0:
                 try:
                     u = User(db.get(dbconnection, table='users', id=slice.users[0]))
+
+                    logger.info("with user %s:" % u.hrn)
 
                     # Synchronize resources of the slice only if we have the user's private key or its credentials
                     # XXX Should use delegated Credentials
                     #if (hasattr(u,'private_key') and u.private_key is not None and len(u.private_key)>0) or (hasattr(u,'credentials') and len(u.credentials)>0):
                     if u.private_key or (hasattr(u,'credentials') and len(u.credentials)>0):
                         user_setup = UserSetup(u,myslicelibsetup.endpoints)
-                        s = q(Slice, user_setup).id(slice.id).get()
+                        logger.info("Slice.id(%s).get() with user creds" % slice.hrn)
+                        s = q(Slice, user_setup).id(slice.id).get().first()
+                        db.slices(dbconnection, s.dict(), slice.id)
                 except Exception as e:
-                    import traceback
-                    traceback.print_exc()
+                    #import traceback
+                    #traceback.print_exc()
                     logger.error("Problem with slice %s" % slice.id)
+                    logger.exception(str(e))
             else:
                 logger.info("slice %s has no users" % slice.hrn)
 
         # update local slice table
         if not id:
-            # update local slice table
             if len(slices)>0:
                 lslices = db.slices(dbconnection, slices.dict())
 
@@ -224,5 +229,8 @@ def syncSlices(id=None):
                 logger.warning("Query slices is empty, check myslicelib and the connection with SFA Registry")
 
     except Exception as e:
-        import traceback
-        traceback.print_exc()
+        #import traceback
+        #traceback.print_exc()
+        logger.exception(str(e))
+
+    dbconnection.close()
