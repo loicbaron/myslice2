@@ -134,7 +134,7 @@ class ActivityHandler(Api):
             
 
     @gen.coroutine
-    def post(self):
+    def post(self, id=None):
         """
         ONLY FOR DEBUG
         """
@@ -195,26 +195,53 @@ class ActivityHandler(Api):
                 self.finish(json.dumps({"return": {"status":EventStatus.ERROR,"messages":e}}, cls=myJSONEncoder))
 
     @gen.coroutine
-    def put(self, id=None):
+    def put(self, id):
         '''
-        This method is only used for internal use
-        
+        PUT /activity/<id>
+        This method allows to update an event status
+        for example to re-run after an error
+
         {
-            user: <id>
-            action: APPROVED/ DENIED
+            status: <new_status>
         }
 
         '''
-        pass
+        # User has to be authenticated
+        current_user = self.get_current_user()
+        if not current_user:
+            self.userError("not authenticated")
+            return
 
+        # TODO: User's right to see an event
+        # User that has send the event OR PI of the authority OR Admin
 
+        # TODO: id must be a valid UUID
+        if not id:
+            self.userError("no event id provided")
+            return
+        try:
+            data = escape.json_decode(self.request.body)
+        except json.decoder.JSONDecodeError as e:
+            logger.error(self.request.body)
+            logger.exception("malformed request")
+            self.set_status(400)
+            self.finish(json.dumps({"return": {"status": "error", "messages": "malformed request"}}))
 
+        if not 'status' in data:
+            self.userError("status of event is required")
+            return
 
-
-
-
-
-
-
-
+        try:
+            activity = yield r.table('activity').get(id).run(self.dbconnection)
+            event = Event(activity)
+            event.previous_status = event.status
+            event.status = data['status']
+            result = yield dispatch(self.dbconnection, event)
+            self.set_status(200)
+            self.finish(json.dumps({"result": result}, cls=myJSONEncoder))
+        except Exception as e:
+            logger.exception("error in PUT activity")
+            self.set_status(500)
+            self.finish(json.dumps({"return": {"status":"error","messages":e.message}}))
+            return
 
