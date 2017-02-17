@@ -16,7 +16,7 @@ class TestUser(unittest.TestCase):
 
     def test_0_invalidRequest(self):
         payload = {'key1': 'value1', 'key2': 'value2'}
-        r = requests.post("http://localhost:8111/api/v1/activity", data=payload, timeout=self.timeout)
+        r = requests.post("http://"+server+":8111/api/v1/activity", data=payload, timeout=self.timeout)
         self.assertEqual(r.status_code, 400)
 
     def test_1_create_user_fail(self):
@@ -40,7 +40,7 @@ class TestUser(unittest.TestCase):
                     }
                 }
             }
-        r = requests.post("http://localhost:8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
+        r = requests.post("http://"+server+":8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
         self.assertEqual(r.status_code, 500)
 
     def test_2_create_user(self):
@@ -64,7 +64,7 @@ class TestUser(unittest.TestCase):
                     }
                 }
             }
-        r = requests.post("http://localhost:8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
+        r = requests.post("http://"+server+":8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
         pprint(r.text)
         self.assertEqual(r.status_code, 200)
         result = json.loads(r.text)
@@ -93,7 +93,7 @@ class TestUser(unittest.TestCase):
                     }
                 }
             }
-        r = requests.post("http://localhost:8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload))
+        r = requests.post("http://"+server+":8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload))
         self.assertEqual(r.status_code, 200)
         result = json.loads(r.text)
         self.assertEqual(result['return']['messages']['object'], payload['event']['object'])
@@ -113,7 +113,7 @@ class TestUser(unittest.TestCase):
                     }
                 }
             }
-        r = requests.post("http://localhost:8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload))
+        r = requests.post("http://"+server+":8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload))
         self.assertEqual(r.status_code, 200)
         result = json.loads(r.text)
         self.assertEqual(result['return']['messages']['object'], payload['event']['object'])

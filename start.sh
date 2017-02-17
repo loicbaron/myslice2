@@ -20,3 +20,17 @@ $DIR/myslice/bin/myslice-live &
 $DIR/myslice/bin/myslice-monitor &
 
 ps -aux | grep 'myslice'
+
+echo 'netstat -apn'
+netstat -apn
+echo 'sleep 30s'
+sleep 30
+
+echo 'netstat -apn' 
+netstat -apn
+echo 'sleep 30s'
+sleep 30
+
+echo 'netstat -apn' 
+netstat -apn
+

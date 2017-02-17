@@ -13,7 +13,7 @@ class TestSlice(unittest.TestCase):
 
     def setUp(self):
         self.timeout = 30
-        result = requests.get("http://localhost:8111/api/v1/resources", headers={str('Content-Type'): 'application/json'}, timeout=self.timeout)
+        result = requests.get("http://"+server+":8111/api/v1/resources", headers={str('Content-Type'): 'application/json'}, timeout=self.timeout)
         resources = json.loads(result.text)
         self.resource = resources['result'][0]['id']
 
@@ -38,7 +38,7 @@ class TestSlice(unittest.TestCase):
     #                }
     #            }
     #        }
-    #    r = requests.post("http://localhost:8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
+    #    r = requests.post("http://"+server+":8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
     #    pprint(r.text)
     #    self.assertEqual(r.status_code, 200)
     #    result = json.loads(r.text)
@@ -62,7 +62,7 @@ class TestSlice(unittest.TestCase):
     #                }
     #            }
     #        }
-    #    r = requests.post("http://localhost:8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
+    #    r = requests.post("http://"+server+":8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
     #    self.assertEqual(r.status_code, 200)
     #    result = json.loads(r.text)
     #    # Check each value sent, can't check result==payload because the API is adding hrn, id and authority to the data
@@ -84,7 +84,7 @@ class TestSlice(unittest.TestCase):
     #                }
     #            }
     #        }
-    #    r = requests.post("http://localhost:8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
+    #    r = requests.post("http://"+server+":8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
     #    self.assertEqual(r.status_code, 200)
     #    result = json.loads(r.text)
     #    pprint(result)
@@ -108,7 +108,7 @@ class TestSlice(unittest.TestCase):
     #                }
     #            }
     #        }
-    #    r = requests.post("http://localhost:8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
+    #    r = requests.post("http://"+server+":8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
     #    self.assertEqual(r.status_code, 200)
     #    result = json.loads(r.text)
     #    # Check each value sent, can't check result==payload because the API is adding hrn, id and authority to the data
@@ -130,7 +130,7 @@ class TestSlice(unittest.TestCase):
                     }
                 }
             }
-        r = requests.post("http://localhost:8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
+        r = requests.post("http://"+server+":8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
         self.assertEqual(r.status_code, 200)
         result = json.loads(r.text)
         # Check each value sent has been added to the object
@@ -152,7 +152,7 @@ class TestSlice(unittest.TestCase):
                     }
                 }
             }
-        r = requests.post("http://localhost:8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
+        r = requests.post("http://"+server+":8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
         self.assertEqual(r.status_code, 200)
         result = json.loads(r.text)
         # Check each value sent has been added to the object
@@ -174,7 +174,7 @@ class TestSlice(unittest.TestCase):
                     }
                 }
             }
-        r = requests.post("http://localhost:8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
+        r = requests.post("http://"+server+":8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
         self.assertEqual(r.status_code, 200)
         result = json.loads(r.text)
         # Check each value sent has been added to the object
@@ -198,7 +198,7 @@ class TestSlice(unittest.TestCase):
     #        }
     #    }
 
-    #    r = requests.post("http://localhost:8111/api/v1/activity", headers={str('Content-Type'): 'application/json'},
+    #    r = requests.post("http://"+server+":8111/api/v1/activity", headers={str('Content-Type'): 'application/json'},
     #                      data=json.dumps(payload), timeout=self.timeout)
     #    self.assertEqual(r.status_code, 200)
     #    result = json.loads(r.text)
@@ -217,7 +217,7 @@ class TestSlice(unittest.TestCase):
     #                }
     #            }
     #        }
-    #    r = requests.post("http://localhost:8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload))
+    #    r = requests.post("http://"+server+":8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload))
     #    self.assertEqual(r.status_code, 200)
     #    result = json.loads(r.text)
     #    self.assertEqual(result['return']['messages']['object'], payload['event']['object'])
