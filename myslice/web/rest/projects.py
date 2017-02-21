@@ -1,5 +1,5 @@
 import json
-
+import logging
 import rethinkdb as r
 
 from myslice.lib.util import myJSONEncoder
@@ -9,6 +9,8 @@ from myslice.db.activity import Event, EventAction, ObjectType, DataType
 from myslice.db import dispatch
 
 from tornado import gen, escape
+
+logger = logging.getLogger(__name__)
 
 class ProjectsHandler(Api):
 
@@ -220,6 +222,8 @@ class ProjectsHandler(Api):
             return
 
         # project id from DB
+        # TODO: Admin should be able to modify
+        # even if not member of project
         cursor = yield r.table('projects') \
             .pluck(self.fields['projects']) \
             .filter({'id': id}) \
