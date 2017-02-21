@@ -55,9 +55,16 @@ class ActivityHandler(Api):
                 self.NotFoundError('No such activity is found')
         else:
 
-            filter = json.loads(self.get_argument("filter", default={}, strip=False))
+            filter = json.loads(self.get_argument("filter", default='{}', strip=False))
 
             # status are uppercase
+            if 'status' not in filter:
+                filter['status'] = []
+            if 'action' not in filter:
+                filter['action'] = []
+            if 'object' not in filter:
+                filter['object'] = []
+
             filter['status'] = list(status.upper() for status in filter['status'])
             filter['action'] = list(action.upper() for action in filter['action'])
             filter['object'] = list(object.upper() for object in filter['object'])
