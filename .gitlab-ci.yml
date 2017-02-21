@@ -28,7 +28,7 @@ job0:
     - ./install.sh
     - ./key_to_file.py
     - ./init_user.py -e $ADMIN_EMAIL -P $ADMIN_PASSWORD -k /var/myslice/myslice.pkey -p /var/myslice/myslice.pub -s yes
-	- ./rethink.py -t users -i urn:publicid:IDN+onelab+user+myslice
+    - ./rethink.py -t users -i urn:publicid:IDN+onelab+user+myslice
     - ./start.sh
     - ./myslice/tests/deployment.py
     - ./myslice/tests/rest_login.py
