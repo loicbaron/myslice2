@@ -40,7 +40,7 @@ class Slice(myslicelibSlice):
         result = {**(self.dict()), **result['data'][0]}
         if not errors:
             for r in result['resources']:
-                if not r['services']:
+                if (not 'services' in r) or (not r['services']):
                     logger.warning("result from slice.save didn't hade login info")
                     logger.warning("sleeping 10s before asking again to AMs")
                     import time

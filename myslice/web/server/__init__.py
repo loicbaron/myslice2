@@ -11,6 +11,7 @@ from oauth2.store.memory import ClientStore, TokenStore
 from sockjs.tornado import SockJSRouter
 from rethinkdb import r
 import myslice.db as db
+from myslice import settings as s
 
 ##
 # Authenticaction handler
@@ -213,9 +214,9 @@ class Application(web.Application):
         # URLs handlers
         handlers = auth_handlers + web_handlers + rest_handlers + WebsocketRouter.urls
 
-        settings = dict(cookie_secret="x&7G1d2!5MhG9SWkXu",
+        settings = dict(cookie_secret=s.web.cookie_secret,
                         login_url="/login",
-                        token_secret = 'u636vbJV6Ph[EJB;Q',
+                        token_secret = s.web.token_secret,
                         template_path=self.templates,
                         static_path=self.static,
                         #xsrf_cookies=True,

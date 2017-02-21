@@ -7,7 +7,7 @@ import unittest
 
 from pprint import pprint
 
-from config import s
+from config import s, server
 
 class TestAuthority(unittest.TestCase):
 
@@ -17,7 +17,7 @@ class TestAuthority(unittest.TestCase):
 
     def test_0_invalidRequest(self):
         payload = {'key1': 'value1', 'key2': 'value2'}
-        r = requests.post("http://localhost:8111/api/v1/activity", data=payload, timeout=self.timeout)
+        r = requests.post("http://"+server+":8111/api/v1/activity", data=payload, timeout=self.timeout)
         self.assertEqual(r.status_code, 400)
 
     def test_1_create_authority_fail(self):
@@ -35,7 +35,7 @@ class TestAuthority(unittest.TestCase):
                     }
                 }
             }
-        r = requests.post("http://localhost:8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
+        r = requests.post("http://"+server+":8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
         self.assertEqual(r.status_code, 500)
 
     def test_2_create_authority(self):
@@ -53,7 +53,7 @@ class TestAuthority(unittest.TestCase):
                     }
                 }
             }
-        r = requests.post("http://localhost:8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
+        r = requests.post("http://"+server+":8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
         result = json.loads(r.text)
         #pprint(result)
         self.assertEqual(r.status_code, 200)
@@ -77,7 +77,7 @@ class TestAuthority(unittest.TestCase):
                     }
                 }
             }
-        r = requests.post("http://localhost:8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
+        r = requests.post("http://"+server+":8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
         result = json.loads(r.text)
         #pprint(result)
         self.assertEqual(r.status_code, 200)
@@ -101,7 +101,7 @@ class TestAuthority(unittest.TestCase):
                     }
                 }
             }
-        r = requests.post("http://localhost:8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
+        r = requests.post("http://"+server+":8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
         self.assertEqual(r.status_code, 200)
         result = json.loads(r.text)
         self.assertEqual(result['return']['messages']['object'], payload['event']['object'])
@@ -124,7 +124,7 @@ class TestAuthority(unittest.TestCase):
                     }
                 }
             }
-        r = requests.post("http://localhost:8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
+        r = requests.post("http://"+server+":8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
         self.assertEqual(r.status_code, 200)
         result = json.loads(r.text)
         self.assertEqual(result['return']['messages']['object'], payload['event']['object'])
@@ -143,7 +143,7 @@ class TestAuthority(unittest.TestCase):
                     }
                 }
             }
-        r = requests.post("http://localhost:8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
+        r = requests.post("http://"+server+":8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
         result = json.loads(r.text)
         #pprint(result)
         self.assertEqual(r.status_code, 200)

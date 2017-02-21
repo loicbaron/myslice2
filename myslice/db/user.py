@@ -1,9 +1,13 @@
+import logging
+
 from myslicelib.model.user import User as myslicelibUser
 from xmlrpc.client import Fault as SFAError
 from myslice import db
 from myslice.db.activity import ObjectType
 from myslice.lib import Status
 from myslice.lib.util import format_date
+
+logger = logging.getLogger('myslice.db.user')
 
 def generate_RSA(bits=2048):
     '''
@@ -52,26 +56,32 @@ class User(myslicelibUser):
             return string.split('+authority')[0]
 
         # user updates its own property
-        # user updates its own slices(experiments)
-        # user is Pi of the obj he wants to update
         if self.getAttribute('id') == event.object.id:
             return True
 
+        # user updates its own slices(experiments)
         if event.object.type == ObjectType.SLICE and event.object.id in self.getAttribute('slices'):
             return True
 
-        if event.object.type == ObjectType.LEASE and event.data['slice_id'] in self.getAttribute('slices'):
-            return True
-
-        for auth in self.getPiAuthorities(attribute=True):
-            ev_auth = event.data.get('authority', event.object.id)
-            if ev_auth:
-                if auth == ev_auth:
+        # user updates leases in its own slices(experiments)
+        if event.object.type == ObjectType.LEASE:
+            if isinstance(event.data, list):
+                if event.data[0]['slice_id'] in self.getAttribute('slices'):
                     return True
-                if get_header(ev_auth).startswith(get_header(auth)):
-                    return True
-            if auth == event.object.id:
+            elif event.data['slice_id'] in self.getAttribute('slices'):
                 return True
+
+        if event.object.type != ObjectType.LEASE:
+            # user is Pi of the obj he wants to update
+            for auth in self.getPiAuthorities(attribute=True):
+                ev_auth = event.data.get('authority', event.object.id)
+                if ev_auth:
+                    if auth == ev_auth:
+                        return True
+                    if get_header(ev_auth).startswith(get_header(auth)):
+                        return True
+                if auth == event.object.id:
+                    return True
 
         return False
 

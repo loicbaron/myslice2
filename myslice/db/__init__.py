@@ -88,7 +88,7 @@ def syncTestbeds(testbeds):
 
     dbconnection = connect()
 
-    localTestbeds = r.table('testbeds').run(dbconnection)
+    localTestbeds = r.db(s.db.name).table('testbeds').run(dbconnection)
 
     # sync
     for t in localTestbeds:
@@ -97,7 +97,7 @@ def syncTestbeds(testbeds):
             # update
             try:
                 logger.info('updating testbed {} ({})'.format(u.name, u.type))
-                r.table('testbeds').update(u.dict()).run(dbconnection)
+                r.db(s.db.name).table('testbeds').update(u.dict()).run(dbconnection)
             except Exception as e:
                 logger.error('{}'.format(str(e)))
             # remove the element from the working set
@@ -106,7 +106,7 @@ def syncTestbeds(testbeds):
             # delete
             try:
                 logger.info('deleting testbed {} ({})'.format(t['name'], t['type']))
-                r.table('testbeds').get(t['id']).delete().run(dbconnection)
+                r.db(s.db.name).table('testbeds').get(t['id']).delete().run(dbconnection)
             except Exception as e:
                 logger.error('{}'.format(str(e)))
 
@@ -115,7 +115,7 @@ def syncTestbeds(testbeds):
         # new
         try:
             logger.info('new testbed {} ({})'.format(n.name, n.type))
-            r.table('testbeds').insert(n.dict(), conflict='update').run(dbconnection)
+            r.db(s.db.name).table('testbeds').insert(n.dict(), conflict='update').run(dbconnection)
         except Exception as e:
             logger.error('{}'.format(str(e)))
 
@@ -139,7 +139,7 @@ def syncResources(resources):
 
     dbconnection = connect()
 
-    localResources = r.table('resources').run(dbconnection)
+    localResources = r.db(s.db.name).table('resources').run(dbconnection)
 
     # sync
     for t in localResources:
@@ -147,19 +147,19 @@ def syncResources(resources):
         if u is not None:
             # update
             logger.info('updating resource {} ({})'.format(u.name, u.testbed))
-            r.table('resources').update(u.dict()).run(dbconnection)
+            r.db(s.db.name).table('resources').update(u.dict()).run(dbconnection)
             # remove the element from the working set
             resources.remove(u)
         else:
             # delete
             logger.info('deleting resource {} ({})'.format(t['name'], t['testbed']))
-            r.table('resources').get(t['id']).delete().run(dbconnection)
+            r.db(s.db.name).table('resources').get(t['id']).delete().run(dbconnection)
 
     # check new resources with the remaining elements
     for n in resources:
         # new
         logger.info('new resource {} ({})'.format(n.name, n.testbed))
-        r.table('resources').insert(n.dict(), conflict='update').run(dbconnection)
+        r.db(s.db.name).table('resources').insert(n.dict(), conflict='update').run(dbconnection)
 
     dbconnection.close()
 
@@ -180,26 +180,65 @@ def syncLeases(leases):
 
     :param leases:
     :return:
+    slices: a list of slice to be Synchronized
     """
+
+    slices = []
 
     dbconnection = connect()
 
-    localLeases = r.table('leases').run(dbconnection)
-
-    ## sync
-    #for t in localLeases:
-    #    r.table('leases').update(leases.dict()).run(dbconnection)
+    localLeases = r.db(s.db.name).table('leases').run(dbconnection)
 
     # clear the leases table
-    r.table("leases").delete().run(dbconnection)
+    r.db(s.db.name).table("leases").delete().run(dbconnection)
 
-    # insert new leases
+    # sync
+    # we need to keep the local leases that match existing leases
+    # as some testbeds don't provide the slice_id related to the Lease
+    keep = False
+    for ll in localLeases:
+        for l in leases:
+            if not isinstance(l, dict):
+                l = l.dict()
+
+            if matchLeases(l, ll):
+                keep = True
+        # This lease does not exist anymore
+        if not keep:
+            # Synchronize the Slice if we have it locally
+            if 'slice_id' in ll and r.db(s.db.name).table('slices').get(ll['slice_id']).run(dbconnection):
+                slices.append(ll['slice_id'])
+
     for l in leases:
-        # new
-        r.table('leases').insert(l.dict(), conflict='update').run(dbconnection)
+        if not isinstance(l, dict):
+            l = l.dict()
+        # insert the lease
+        r.db(s.db.name).table('leases').insert(l, conflict='update').run(dbconnection)
+        # Synchronize the Slice if we have it locally
+        if 'slice_id' in l and r.db(s.db.name).table('slices').get(l['slice_id']).run(dbconnection):
+            slices.append(l['slice_id'])
 
     dbconnection.close()
+    return slices
 
+def matchLeases(l1, l2):
+    """
+    Check if 2 Leases parameters are matching
+    used to determine if 2 Leases have the same resources at the same time
+    indeed some AMs don't tag Leases with id...
+    :return:
+    boolean
+    """
+    if not isinstance(l1, dict):
+        l1 = l1.dict()
+    if not isinstance(l2, dict):
+        l2 = l2.dict()
+    if l1 == l2:
+        return True
+    if l1['resources'] == l2['resources']:
+        if l1['start_time'] == l2['start_time'] and l1['duration'] == l2['duration']:
+            return True
+    return False
 
 def getLeases():
     """
@@ -273,6 +312,9 @@ def authorities(dbconnection=None, data=None, id=None):
     if id and data:
         r.db(s.db.name).table('authorities').get(id).update(data).run(dbconnection)
 
+    if id:
+        return r.db(s.db.name).table('authorities').get(id).run(dbconnection)
+
     if data:
         r.db(s.db.name).table('authorities').insert(data, conflict='update').run(dbconnection)
 
@@ -285,6 +327,9 @@ def projects(dbconnection=None, data=None, id=None):
 
     if id and data:
         r.db(s.db.name).table('projects').get(id).update(data).run(dbconnection)
+
+    if id:
+        return r.db(s.db.name).table('projects').get(id).run(dbconnection)
 
     if data:
         r.db(s.db.name).table('projects').insert(data, conflict='update').run(dbconnection)
@@ -299,7 +344,10 @@ def slices(dbconnection=None, data=None, id=None):
     if id and data:
         r.db(s.db.name).table('slices').get(id).update(data).run(dbconnection)
 
-    if (data):
+    if id:
+        return r.db(s.db.name).table('slices').get(id).run(dbconnection)
+
+    if data:
         r.db(s.db.name).table('slices').insert(data, conflict='update').run(dbconnection)
 
     return r.db(s.db.name).table('slices').run(dbconnection)
@@ -311,7 +359,10 @@ def resources(dbconnection=None, data=None, id=None):
     if id and data:
         r.db(s.db.name).table('resources').get(id).update(data).run(dbconnection)
 
-    if (data):
+    if id:
+        return r.db(s.db.name).table('resources').get(id).run(dbconnection)
+
+    if data:
         r.db(s.db.name).table('resources').insert(data, conflict='update').run(dbconnection)
 
     return r.db(s.db.name).table('resources').run(dbconnection)
@@ -323,7 +374,10 @@ def leases(dbconnection=None, data=None, id=None):
     if id and data:
         r.db(s.db.name).table('leases').get(id).update(data).run(dbconnection)
 
-    if (data):
+    if id:
+        return r.db(s.db.name).table('leases').get(id).run(dbconnection)
+
+    if data:
         r.db(s.db.name).table('leases').insert(data, conflict='update').run(dbconnection)
 
     return r.db(s.db.name).table('leases').run(dbconnection)
@@ -334,7 +388,7 @@ def events(dbconnection=None, event=None, user=None, status=None, action=None, o
 
     if isinstance(event, Event):
         # update event on db
-        ret = r.db(s.db.name).table('activity').insert(event.dict(), conflict='update').run(dbconnection)
+        r.db(s.db.name).table('activity').insert(event.dict(), conflict='update').run(dbconnection)
     
     req = r.db(s.db.name).table('activity')
 

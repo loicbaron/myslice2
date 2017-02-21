@@ -1,5 +1,5 @@
 import json
-
+import logging
 import rethinkdb as r
 
 from myslice.lib.util import myJSONEncoder
@@ -9,6 +9,8 @@ from myslice.db.activity import Event, EventAction, ObjectType
 from myslice.db import dispatch
 
 from tornado import gen, escape
+
+logger = logging.getLogger('myslice.web.rest.testbeds')
 
 class TestbedsHandler(Api):
 
@@ -74,60 +76,74 @@ class TestbedsHandler(Api):
 
         # GET /testbeds/<id>/resources?timestamp_start=<XXX>&timestamp_end=<XXX>
         elif id and self.isUrn(id) and o == 'resources':
-            # Resources NOT in Leases
-            cursor = yield r.table(o) \
-                .filter(lambda resource: resource["testbed"] == id) \
-                .filter({'available':'true'}) \
-                .filter( lambda resource: 
-                    r.table("leases").map(lambda l: 
-                        l['resources'].coerce_to('array')
-                    ).reduce(lambda left, right:
-                        left.set_union(right)
-                    ).contains(resource['id']).not_() \
-                ).run(self.dbconnection)
+            try:
+                nb_leases = yield r.table("leases").count().run(self.dbconnection)
+                if nb_leases > 0:
+                    # Resources NOT in Leases
+                    cursor = yield r.table(o) \
+                        .filter(lambda resource: resource["testbed"] == id) \
+                        .filter({'available':'true'}) \
+                        .filter( lambda resource:
+                            r.table("leases").map(lambda l:
+                                l['resources'].coerce_to('array')
+                            ).reduce(lambda left, right:
+                                left.set_union(right)
+                            ).contains(resource['id']).not_() \
+                        ).run(self.dbconnection)
 
-            while (yield cursor.fetch_next()):
-                item = yield cursor.next()
-                response.append(item)
+                    while (yield cursor.fetch_next()):
+                        item = yield cursor.next()
+                        response.append(item)
 
-            if ts and te:
-                # List of Resources ids in Leases but not in the given time range
-                in_leases = yield r.table("leases").filter(lambda l:
-                    r.or_(l['start_time'].gt(int(te)),l['end_time'].lt(int(ts)))
-                ).map(lambda l: 
-                    l['resources'].coerce_to('array')
-                ).reduce(lambda left, right:
-                    left.set_union(right)
-                ).map(lambda x: 
-                    r.table('resources').get(x)
-                ).filter({'testbed':id}).run(self.dbconnection)
-                response = response + in_leases
+                    if ts and te:
+                        # List of Resources ids in Leases but not in the given time range
+                        in_leases = yield r.table("leases").filter(lambda l:
+                            r.or_(l['start_time'].gt(int(te)),l['end_time'].lt(int(ts)))
+                        ).map(lambda l:
+                            l['resources'].coerce_to('array')
+                        ).reduce(lambda left, right:
+                            left.set_union(right)
+                        ).map(lambda x:
+                            r.table('resources').get(x)
+                        ).filter({'testbed':id}).run(self.dbconnection)
+                        response = response + in_leases
 
-            if ts and not te:
-                # List of Resources ids in Leases but not in the given time range
-                in_leases = yield r.table("leases").filter(lambda l:
-                    l['start_time'].gt(int(te))
-                ).map(lambda l: 
-                    l['resources'].coerce_to('array')
-                ).reduce(lambda left, right:
-                    left.set_union(right)
-                ).map(lambda x: 
-                    r.table('resources').get(x)
-                ).filter({'testbed':id}).run(self.dbconnection)
-                response = response + in_leases
+                    if ts and not te:
+                        # List of Resources ids in Leases but not in the given time range
+                        in_leases = yield r.table("leases").filter(lambda l:
+                            l['start_time'].gt(int(te))
+                        ).map(lambda l:
+                            l['resources'].coerce_to('array')
+                        ).reduce(lambda left, right:
+                            left.set_union(right)
+                        ).map(lambda x:
+                            r.table('resources').get(x)
+                        ).filter({'testbed':id}).run(self.dbconnection)
+                        response = response + in_leases
 
-            if not ts and te:
-                # List of Resources ids in Leases but not in the given time range
-                in_leases = yield r.table("leases").filter(lambda l:
-                    l['end_time'].lt(int(ts))
-                ).map(lambda l: 
-                    l['resources'].coerce_to('array')
-                ).reduce(lambda left, right:
-                    left.set_union(right)
-                ).map(lambda x: 
-                    r.table('resources').get(x)
-                ).filter({'testbed':id}).run(self.dbconnection)
-                response = response + in_leases
+                    if not ts and te:
+                        # List of Resources ids in Leases but not in the given time range
+                        in_leases = yield r.table("leases").filter(lambda l:
+                            l['end_time'].lt(int(ts))
+                        ).map(lambda l:
+                            l['resources'].coerce_to('array')
+                        ).reduce(lambda left, right:
+                            left.set_union(right)
+                        ).map(lambda x:
+                            r.table('resources').get(x)
+                        ).filter({'testbed':id}).run(self.dbconnection)
+                        response = response + in_leases
+                else:
+                    # All available Resources (No Leases in DB)
+                    cursor = yield r.table(o) \
+                        .filter(lambda resource: resource["testbed"] == id) \
+                        .filter({'available':'true'}) \
+                        .run(self.dbconnection)
+                    while (yield cursor.fetch_next()):
+                        item = yield cursor.next()
+                        response.append(item)
+            except Exception as e:
+                logger.exception(e)
 
         # GET /testbeds/<id>/leases
         elif id and self.isUrn(id) and o == 'leases' and not ts and not te:
