@@ -6,6 +6,7 @@ import time
 import unittest
 
 from pprint import pprint
+from random import randint
 
 from myslice.tests import Tests
 from myslice.tests.config import s, authority, server
@@ -78,7 +79,8 @@ class TestProjects(Tests):
     #        self.assertEqual(rRequest.status_code, 200)
 
     def test_2_postProject(self):
-        payload = { 'authority': authority, 'name': 'project_auto', 'description': 'this is an automated project', 'pi_users':[self.user['id']] }
+        name = 'autotest_' + str(randint(0,10000))
+        payload = { 'authority': authority, 'name': name, 'description': 'this is an automated project', 'pi_users':[self.user['id']] }
         r = requests.post('http://'+server+':8111/api/v1/projects', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
         self.assertEqual(r.status_code, 200)
         # Event status = SUCCESS
