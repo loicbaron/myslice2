@@ -1,4 +1,5 @@
-image: ubuntu:14.04
+image: loicbaron/myslice:latest
+#image: ubuntu:14.04
 
 variables:
   ADMIN_EMAIL: "support@myslice.info"
@@ -27,6 +28,7 @@ job0:
     - ./install.sh
     - ./key_to_file.py
     - ./init_user.py -e $ADMIN_EMAIL -P $ADMIN_PASSWORD -k /var/myslice/myslice.pkey -p /var/myslice/myslice.pub -s yes
+	- ./rethink.py -t users -i urn:publicid:IDN+onelab+user+myslice
     - ./start.sh
     - ./myslice/tests/deployment.py
     - ./myslice/tests/rest_login.py
