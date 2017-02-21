@@ -67,46 +67,33 @@ class WebsocketsHandler(SockJSConnection):
         self.authenticated = False
         self.clients.add(self)
 
+    def authenticate(self, auth):
+
+        try:
+            self.authenticated_user = jwt.decode(auth, 'u636vbJV6Ph[EJB;Q', algorithms=['HS256'])
+        except Exception as e:
+            logger.error('Token Description errors %s' % e)
+            self.send(json.dumps({'error': 'Token Description errors','debug': None,'result': []}))
+            self.close()
+            return
+
+        else:
+            self.authenticated = True
+            logger.info("user {} connected".format(self.authenticated_user['id']))
+            self.send(json.dumps({'user': 'authenticated'}))
+            return
+
     def on_message(self, message):
         data = json.loads(message)
-        
+
         if not self.authenticated:
-            
+            ##
+            # websocket can be used only if authenticated
             try:
-                encrypted_string = data['auth']
+                self.authenticate(data['auth'])
             except KeyError as e:
-                self.send(
-                        json.dumps({
-                            'error': 'malformed request',
-                            'debug': None,
-                            'result': []
-                        })
-                )
-                # close websocket
+                self.send(json.dumps({'error': 'authentication is required to use this service', 'debug': None, 'result': []}))
                 self.close()
-                return
-
-            try:
-                secret = s.web.token_secret # used in websockets
-                self.auth_user = jwt.decode(encrypted_string, secret, algorithms=['HS256'])
-            except Exception as e:
-
-                logger.error('Token Decrption errors %s' % e)
-                self.send(
-                        json.dumps({
-                            'error': 'Token Decrption errors',
-                            'debug': None,
-                            'result': []
-                        })
-                )
-                # close websocket
-                self.close()
-                return
-
-            else:
-                self.authenticated = True
-                logger.info("user {} connected".format(self.auth_user['id']))
-                self.send(json.dumps({'user':'authenticated'}))
                 return
 
         if self.authenticated and 'watch' in data:
@@ -125,7 +112,6 @@ class WebsocketsHandler(SockJSConnection):
                             'result': []
                         })
                 )
-                # close websocket
                 self.close()
                 return
 
@@ -139,7 +125,6 @@ class WebsocketsHandler(SockJSConnection):
                          'result': []
                      })
                  )
-                 # close websocket
                 self.close()
                 return
 
@@ -171,6 +156,11 @@ class WebsocketsHandler(SockJSConnection):
 
         self.clients.remove(self)
         logger.info("user {} disconnected".format(self.auth_user['id']))
+
+
+
+
+
 
 
     def _activity(self, message):
