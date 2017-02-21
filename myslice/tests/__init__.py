@@ -21,6 +21,7 @@ class Tests(unittest.TestCase):
         if initial_status:
             final_status = list(set(final_status) - {initial_status})
 
+        # If processing the event takes more than 1 min = test failed
         while(i < 30 and status not in final_status):
             time.sleep(2)
             i = i + 1
