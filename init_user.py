@@ -15,7 +15,7 @@ def main(argv):
     except getopt.GetoptError:
        print('init_user.py -e <email> -P <password> -k <private_key path> -p <public_key path> -s <synchronize with Registry>')
        sys.exit(2)
-    if(len(opts)!=4):
+    if(len(opts)<4):
        print('Missing parameters:')
        print('init_user.py -e <email> -P <password> -k <private_key path> -p <public_key path> -s <synchronize with Registry>')
        sys.exit(2)
