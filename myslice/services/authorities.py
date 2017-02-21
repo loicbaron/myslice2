@@ -79,6 +79,7 @@ def run():
             if event.object.type == ObjectType.AUTHORITY:
                 qAuthorityEvents.put(event)
 
+    logger.warning("Service authorities stopped")
     for x in threads:
         x.join()
 

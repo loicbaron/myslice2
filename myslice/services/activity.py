@@ -72,6 +72,7 @@ def run():
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
 
+    logger.warning("Service activity stopped")
     # waits for the thread to finish
     for x in threads:
         x.join()

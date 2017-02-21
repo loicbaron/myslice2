@@ -37,35 +37,36 @@ def run():
     # db connection is shared between threads
     qProjects = Queue()
     qSlices = Queue()
-    lock = threading.Lock()
+    lockProjects = threading.Lock()
+    lockSlices = threading.Lock()
 
     # threads
     threads = []
 
     # projects manager
     for y in range(1):
-        t = threading.Thread(target=manageProjects, args=(lock, qProjects))
+        t = threading.Thread(target=manageProjects, args=(lockProjects, qProjects))
         t.daemon = True
         threads.append(t)
         t.start()
 
     # projects sync
     for y in range(1):
-        t = threading.Thread(target=syncProjects, args=(lock,))
+        t = threading.Thread(target=syncProjects, args=(lockProjects,))
         t.daemon = True
         threads.append(t)
         t.start()
 
     # slices manager
     for y in range(1):
-        t = threading.Thread(target=manageSlices, args=(lock, qSlices))
+        t = threading.Thread(target=manageSlices, args=(lockSlices, qSlices))
         t.daemon = True
         threads.append(t)
         t.start()
 
     # slices sync
     for y in range(1):
-        t = threading.Thread(target=syncSlices, args=(lock,))
+        t = threading.Thread(target=syncSlices, args=(lockSlices,))
         t.daemon = True
         threads.append(t)
         t.start()
@@ -93,6 +94,7 @@ def run():
                 qSlices.put(event)
 
     for activity in feed:
+        #logger.debug("Change detected in activity table %s" % activity["new_val"]["id"])
         try:
             event = Event(activity['new_val'])
         except Exception as e:
@@ -104,6 +106,7 @@ def run():
                 qSlices.put(event)
 
 
+    logger.warning("Service experiments stopped")
     # waits for the thread to finish
     for x in threads:
         x.join()

@@ -56,7 +56,6 @@ if __name__ == '__main__':
     p.daemon = True
     p.start()
 
-
-
+    logger.warning("Service myslice-monitor stopped")
     for proc in processes:
         proc.join()

@@ -84,6 +84,7 @@ def run():
             if event.object.type == ObjectType.LEASE:
                 qLeases.put(event)
 
+    logger.warning("Service leases stopped")
     # waits for the thread to finish
     for x in threads:
         x.join()

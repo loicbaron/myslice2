@@ -15,7 +15,7 @@ from myslice.services.workers.users import events_run as manageUsersEvents
 from myslice.services.workers.password import events_run as managePasswordEvents
 from myslice.services.workers.users import sync as syncUsers
 
-logger = logging.getLogger('myslice.service.activity')
+logger = logging.getLogger('myslice.service.users')
 
 def receive_signal(signum, stack):
     logger.info('Received signal %s', signum)
@@ -50,11 +50,11 @@ def run():
         threads.append(t)
         t.start()
 
-    for y in range(1):
-        t = threading.Thread(target=syncUsers, args=(lock, ))
-        t.daemon = True
-        threads.append(t)
-        t.start()
+    #for y in range(1):
+    #    t = threading.Thread(target=syncUsers, args=(lock, ))
+    #    t.daemon = True
+    #    threads.append(t)
+    #    t.start()
 
     dbconnection = connect()
 
@@ -90,7 +90,7 @@ def run():
             if event.object.type == ObjectType.PASSWORD:
                 qPasswordEvents.put(event)
 
-                
+    logger.warning("Service users stopped")
     for x in threads:
         x.join()
 

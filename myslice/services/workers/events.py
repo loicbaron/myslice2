@@ -61,11 +61,14 @@ def run(q):
                         # raising an Exception here, blocks the REST API
                         #raise Exception("User %s not found" % event.user)
             except Exception as e:
+                logger.error("Error processing Event")
+                logger.error(event)
                 import traceback
                 traceback.print_exc()
                 event.setError()
                 event.logError(str(e))
-                logger.error("Unable to fetch the user from db {}".format(e))
+                logger.error("Unable to fetch the user {} from db".format(event.user))
+                logger.exception(e)
 
             # dispatch the updated event
             dispatch(dbconnection, event)

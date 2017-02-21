@@ -14,7 +14,7 @@ from myslice.db import connect, changes, events
 from myslice.db.activity import Event
 from myslice.services.workers.emails import emails_run as manageEmails, confirmEmails
 
-logger = logging.getLogger('myslice.service.activity')
+logger = logging.getLogger('myslice.service.email')
 
 def receive_signal(signum, stack):
     logger.info('Received signal %s', signum)
@@ -96,6 +96,7 @@ def run():
             elif event.isSuccess() and event.notify:
                 qEmails.put(event)
 
+    logger.warning("Service emails stopped")
     # waits for the thread to finish
     for x in threads:
         x.join()
