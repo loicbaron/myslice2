@@ -30,4 +30,4 @@ job0:
     - ./start.sh
     - ./myslice/tests/deployment.py
     - ./myslice/tests/rest_login.py
-    - ./myslice/tests/rest_users.py
+    - ./myslice/tests/rest_projects.py
