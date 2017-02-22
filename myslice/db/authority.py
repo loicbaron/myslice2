@@ -51,11 +51,14 @@ class Authority(myslicelibAuthority):
             result['status'] = Status.ENABLED
             result['enabled'] = format_date()
 
-        db.authorities(dbconnection, result, self.id)
 
         # New Authority created
         if current is None:
+            db.authorities(dbconnection, result)
             current = db.get(dbconnection, table='authorities', id=self.id)
+        # Update existing authorityt
+        else:
+            db.authorities(dbconnection, result, self.id)
 
         # Create new users under a New Authority
         # Otherwise users are created with User.save()

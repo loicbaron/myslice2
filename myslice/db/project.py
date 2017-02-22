@@ -26,8 +26,6 @@ class Project(myslicelibProject):
         # to update the pi_users after Save
         current = db.get(dbconnection, table='projects', id=self.id)
 
-        p = self.getAttribute('pi_users')
-
         result = super(Project, self).save(setup)
         errors = result['errors']
 
