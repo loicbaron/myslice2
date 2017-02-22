@@ -39,6 +39,9 @@ def events_run(lock, qUserEvents):
             event = Event(qUserEvents.get())
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
+            event.logError(str(e))
+            event.setError()
+            dispatch(dbconnection, event)
         else:
             logger.info("Processing event from user {}".format(event.user))
             with lock:
@@ -125,34 +128,39 @@ def syncUsers(lock, email):
     # acquires lock
     with lock:
         logger.info("Worker users starting synchronization")
+        try:
 
-        if email:
-            users = q(User).filter('email', email).get()
-        else:
-            users = q(User).get()
-        logger.debug("Get Users")
-        logger.debug(users)
-        users = update_credentials(users)
-        logger.debug("Get Credentials")
-        logger.debug(users)
-        """
-        update local user table
-        """
-        if len(users)>0:
-            lusers = db.users(dbconnection, users.dict())
+            if email:
+                users = q(User).filter('email', email).get()
+            else:
+                users = q(User).get()
+            print("Get Users")
+            print(users)
+            users = update_credentials(users)
+            print("Get Credentials")
+            print(users)
+            """
+            update local user table
+            """
+            if len(users)>0:
+                lusers = db.users(dbconnection, users.dict())
 
-            for ls in lusers :
-                # add status if not present and update on db
-                if not 'status' in ls:
-                    ls['status'] = Status.ENABLED
-                    ls['enabled'] = format_date()
-                    db.users(dbconnection, ls)
+                for ls in lusers :
+                    # add status if not present and update on db
+                    if not 'status' in ls:
+                        ls['status'] = Status.ENABLED
+                        ls['enabled'] = format_date()
+                        db.users(dbconnection, ls)
 
-                if not users.has(ls['id']) and ls['status'] is not Status.PENDING:
-                    # delete resourc that have been deleted elsewhere
-                    db.delete(dbconnection, 'users', ls['id'])
-                    logger.info("User {} deleted".format(ls['id']))
-        else:
-            logger.warning("Query users is empty, check myslicelib and the connection with SFA Registry")
+                    if not users.has(ls['id']) and ls['status'] is not Status.PENDING:
+                        # delete resourc that have been deleted elsewhere
+                        db.delete(dbconnection, 'users', ls['id'])
+                        logger.info("User {} deleted".format(ls['id']))
+            else:
+                logger.warning("Query users is empty, check myslicelib and the connection with SFA Registry")
+            except Exception as e:
+                import traceback
+                traceback.print_exc()
+                logger.exception(e)
 
         logger.info("Worker users finished period synchronization") 

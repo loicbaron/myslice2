@@ -7,7 +7,7 @@ import threading
 from myslice import db
 from myslice.web.controllers.login import crypt_password
 from pprint import pprint
-from myslice.services.workers.users import sync as syncUsers
+from myslice.services.workers.users import syncUsers
 
 def main(argv):
     try:
