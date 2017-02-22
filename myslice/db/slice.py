@@ -53,13 +53,16 @@ class Slice(myslicelibSlice):
             result['status'] = Status.ENABLED
             result['enabled'] = format_date()
 
-        db.slices(dbconnection, result, self.id)
-
         # New Slice created
         if current is None:
+            db.slices(dbconnection, result)
             current = db.get(dbconnection, table='slices', id=self.id)
-        # XXX We only update the current users in slice, we must also update the Removed users
-        users = current['users'] + self.getAttribute('users')
+        # Update existing slice
+        else:
+            db.slices(dbconnection, result, self.id)
+
+        # Update users both previously and currently in Slice
+        users = list(set(current['users']) | set(self.getAttribute('users')))
         for u in users:
             user = q(User).id(u).get().first()
             user = user.merge(dbconnection)

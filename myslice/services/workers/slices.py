@@ -26,7 +26,7 @@ from myslicelib.model.slice import Slices
 from myslice.db.user import User
 from myslicelib.query import q
 
-logger = logging.getLogger('myslice.services.workers.experiments')
+logger = logging.getLogger('myslice.services.workers.slices')
 
 def events_run(lock, qSliceEvents):
     """
@@ -45,7 +45,7 @@ def events_run(lock, qSliceEvents):
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
         else:
-            logger.info("Processing event from user {}".format(event.user))
+            logger.info("Processing event {} from user {}".format(event.id, event.user))
             
             with lock:
                 try:
@@ -186,12 +186,11 @@ def syncSlices(id=None):
             logger.warning("Query slices is empty, check myslicelib and the connection with SFA Registry")
 
         for slice in slices:
-            logger.info("Synchronize slice %s:" % slice.hrn)
             if len(slice.users) > 0:
                 try:
                     u = User(db.get(dbconnection, table='users', id=slice.users[0]))
 
-                    logger.info("with user %s:" % u.hrn)
+                    logger.info("Synchronize slice %s:" % slice.hrn)
 
                     # Synchronize resources of the slice only if we have the user's private key or its credentials
                     # XXX Should use delegated Credentials

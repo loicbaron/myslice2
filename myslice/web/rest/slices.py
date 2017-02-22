@@ -30,6 +30,9 @@ class SlicesHandler(Api):
         slice = None
         response = []
 
+        if not self.get_current_user():
+            self.userError('permission denied user not logged in')
+            return
         ##
         # if id (hrn|urn) is set we get the slice with id <urn|hrn>
         #
