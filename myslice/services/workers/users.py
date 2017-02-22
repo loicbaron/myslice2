@@ -158,9 +158,9 @@ def syncUsers(lock, email):
                         logger.info("User {} deleted".format(ls['id']))
             else:
                 logger.warning("Query users is empty, check myslicelib and the connection with SFA Registry")
-            except Exception as e:
-                import traceback
-                traceback.print_exc()
-                logger.exception(e)
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            logger.exception(e)
 
         logger.info("Worker users finished period synchronization") 
