@@ -62,6 +62,19 @@ class TestUsers(Tests):
             res = self.checkEvent(event)
             self.assertEqual(res['status'], "CONFIRM")
 
+            rConfirm = requests.get('http://'+server+':8111/confirm/'+event)
+            self.assertEqual(rConfirm.status_code, 200)
+
+            res = self.checkEvent(event)
+            self.assertEqual(res['status'], "PENDING")
+
+            # TODO: CONFIRM you received the email
+            #sender = "zhouquantest16@gmail.com"
+            #to = "onelabautotest1@yopmail.com"
+            #obj = "Confirm your email"
+            #search = '(?:href=[\'"])([:/.A-z?<_&\s=>0-9;-]+)'
+            #event = self.checkEmail(search, sender, obj)
+
             deny = {'action':'deny', 'message':'automated test denied this request'}
             print(json.dumps(deny))
             rRequest = requests.put('http://'+server+':8111/api/v1/requests/'+event, headers={str('Content-Type'):'application/json'}, data=json.dumps(deny), cookies=self.cookies)
