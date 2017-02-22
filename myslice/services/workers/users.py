@@ -130,7 +130,11 @@ def syncUsers(lock, email):
             users = q(User).filter('email', email).get()
         else:
             users = q(User).get()
+        logger.debug("Get Users")
+        logger.debug(users)
         users = update_credentials(users)
+        logger.debug("Get Credentials")
+        logger.debug(users)
         """
         update local user table
         """
