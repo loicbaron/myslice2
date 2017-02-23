@@ -160,13 +160,11 @@ def syncUsers(lock, email):
                         remote_user = next((item for item in users if item.id == lu['id']), False)
                         if remote_user:
                             # merge fields of local user with remote
-                            remote_user = remote_user.dict()
-                            # keep local values for private_key, public_key and generate_keys
-                            del remote_user['private_key']
-                            del remote_user['public_key']
-                            del remote_user['generate_keys']
-                            updated_user = {**lu, **remote_user}
-                            # if local user has private key
+                            # keep local values for 
+                            # password, private_key, public_key and generate_keys
+                            updated_user = remote_user.merge(dbconnection)
+                            updated_user = updated_user.dict()
+                            # if user has private key
                             # update its Credentials
                             if 'private_key' in updated_user:
                                 updated_user = update_credentials(updated_user)
