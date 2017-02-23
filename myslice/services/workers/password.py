@@ -40,6 +40,9 @@ def events_run(lock, qPasswordEvents):
             event = Event(qPasswordEvents.get())
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
+            event.logError(str(e))
+            event.setError()
+            dispatch(dbconnection, event)
         else:
             logger.info("Processing password event from user {}".format(event.user))
 
