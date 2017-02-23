@@ -64,12 +64,12 @@ def run():
         threads.append(t)
         t.start()
 
-    # slices sync
-    for y in range(1):
-        t = threading.Thread(target=syncSlices, args=(lockSlices,))
-        t.daemon = True
-        threads.append(t)
-        t.start()
+    ## slices sync
+    #for y in range(1):
+    #    t = threading.Thread(target=syncSlices, args=(lockSlices,))
+    #    t.daemon = True
+    #    threads.append(t)
+    #    t.start()
 
     dbconnection = connect()
 
@@ -86,11 +86,14 @@ def run():
         try:
             event = Event(ev)
         except Exception as e:
+            logger.exception(e)
             logger.error("Problem with event: {}".format(e))
         else:
             if event.object.type == ObjectType.PROJECT:
+                logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
                 qProjects.put(event)
             if event.object.type == ObjectType.SLICE:
+                logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
                 qSlices.put(event)
 
     for activity in feed:
@@ -98,15 +101,18 @@ def run():
         try:
             event = Event(activity['new_val'])
         except Exception as e:
+            logger.exception(e)
             logger.error("Problem with event: {}".format(e))
         else:
             if event.object.type == ObjectType.PROJECT:
+                logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
                 qProjects.put(event)
             if event.object.type == ObjectType.SLICE:
+                logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
                 qSlices.put(event)
 
 
-    logger.warning("Service experiments stopped")
+    logger.critical("Service experiments stopped")
     # waits for the thread to finish
     for x in threads:
         x.join()
