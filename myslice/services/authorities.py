@@ -50,20 +50,10 @@ def run():
         t.start()
 
     dbconnection = connect()
-
     ##
     # will watch for incoming events/requests and pass them to
     # the appropriate thread group
     feed = changes(dbconnection, table='activity', status=["WAITING", "APPROVED"])
-    for activity in feed:
-        try:
-            event = Event(activity['new_val'])
-        except Exception as e:
-            logger.error("Problem with event: {}".format(e)) 
-        else:
-            if event.object.type == ObjectType.AUTHORITY:
-                # event.isReady() = Request APPROVED or Event WAITING
-                qAuthorityEvents.put(event)
 
     ##
     # Process events that were not watched 
@@ -74,12 +64,26 @@ def run():
         try:
             event = Event(ev)
         except Exception as e:
+            logger.exception(e)
             logger.error("Problem with event: {}".format(e))
         else:
             if event.object.type == ObjectType.AUTHORITY:
+                logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
                 qAuthorityEvents.put(event)
 
-    logger.warning("Service authorities stopped")
+    for activity in feed:
+        try:
+            event = Event(activity['new_val'])
+        except Exception as e:
+            logger.exception(e)
+            logger.error("Problem with event: {}".format(e))
+        else:
+            if event.object.type == ObjectType.AUTHORITY:
+                # event.isReady() = Request APPROVED or Event WAITING
+                logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
+                qAuthorityEvents.put(event)
+
+    logger.critical("Service authorities stopped")
     for x in threads:
         x.join()
 
