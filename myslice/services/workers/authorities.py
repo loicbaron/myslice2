@@ -40,7 +40,7 @@ def events_run(lock, qAuthorityEvents):
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
         else:
-            logger.info("Processing event from user {}".format(event.user))
+            logger.info("Processing event {} from user {}".format(event.id, event.user))
             
             with lock:
                 try:
@@ -95,7 +95,7 @@ def events_run(lock, qAuthorityEvents):
                     import traceback
                     traceback.print_exc()
                     logger.error("Problem with event: {}".format(e))
-                    event.logError(str(e)) 
+                    event.logError("Error in worker authorities: {}".format(e))
                     event.setError()
 
                 if isSuccess:
