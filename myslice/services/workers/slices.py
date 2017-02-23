@@ -44,6 +44,9 @@ def events_run(lock, qSliceEvents):
             event = Event(qSliceEvents.get())
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
+            event.logError(str(e))
+            event.setError()
+            dispatch(dbconnection, event)
         else:
             logger.info("Processing event {} from user {}".format(event.id, event.user))
             
