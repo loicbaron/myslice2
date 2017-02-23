@@ -25,7 +25,7 @@ from myslice.db.user import User
 from myslice.db.project import Project
 from myslicelib.query import q
 
-logger = logging.getLogger('myslice.service.experiments')
+logger = logging.getLogger('myslice.service.projects')
 
 def events_run(lock, qProjectEvents):
     """
@@ -43,6 +43,9 @@ def events_run(lock, qProjectEvents):
             event = Event(qProjectEvents.get())
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
+            event.logError(str(e))
+            event.setError()
+            dispatch(dbconnection, event)
         else:
             logger.info("Processing event from user {}".format(event.user))
 
@@ -57,7 +60,7 @@ def events_run(lock, qProjectEvents):
                     #user_setup = UserSetup(u, myslicelibsetup.endpoints)
 
                     if event.creatingObject() or event.updatingObject():
-                        logger.info("creating or updating the object project {}".format(event.object.id)) 
+                        logger.info("creating or updating the object project {}".format(event.data)) 
 
                         proj = Project(event.data)
                         proj.id = event.object.id
@@ -103,8 +106,8 @@ def events_run(lock, qProjectEvents):
                 except Exception as e:
                     import traceback
                     traceback.print_exc()
-                    logger.error("Problem with event: {}".format(e))
-                    event.logError(str(e))
+                    logger.error("Problem with event {}: {}".format(event.id,e))
+                    event.logError("Error in worker projects: {}".format(e))
                     event.setError()
 
                 if isSuccess:
