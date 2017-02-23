@@ -28,12 +28,15 @@ def run(q):
         try:
             event = Event(q.get())
         except Exception as e:
-            #import traceback
-            #traceback.print_exc()
-            event.setError()
+            import traceback
+            traceback.print_exc()
             logger.error("Problem with event: {}".format(e))
+            event.logError("Error in worker activity: {}".format(e))
+            event.setError()
+            dispatch(dbconnection, event)
         else:
             try:
+                logger.debug("%s - Manage event" % event.id)
                 # TODO: if event.creatingObject()
                 # Check if the event.object.id already exists or not
                 # if it exists -> add a numer to the id & hrn to make it unique
@@ -47,16 +50,22 @@ def run(q):
                     print("Event Type: %s" % type(event))
                     event.setConfirm()
                 else:
+                    logger.debug("%s - get user %s" % (event.id,event.user))
                     db_user = db.get(dbconnection, table='users', id=event.user)
                     if db_user:
                         user = User(db_user)
+                        logger.debug("%s - Does user %s has privilege?" % (event.id, event.user))
                         if user.has_privilege(event):
+                            logger.debug("%s - setWaiting" % event.id)
+                            event.logInfo("event waiting to be processed")
                             event.setWaiting()
                         else:
+                            logger.debug("%s - setPending" % event.id)
+                            event.logInfo("your user has no rights on %s, event pending until approved" % event.user)
                             event.setPending()
                     else:
                         event.setError()
-                        logger.error("User %s not found" % event.user)
+                        logger.error("User %s not found in event {}".format(event.user, event.id))
                         event.logError("User %s not found" % event.user)
                         # raising an Exception here, blocks the REST API
                         #raise Exception("User %s not found" % event.user)
