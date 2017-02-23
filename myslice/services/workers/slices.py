@@ -188,45 +188,60 @@ def syncSlices(id=None):
         if len(slices)==0:
             logger.warning("Query slices is empty, check myslicelib and the connection with SFA Registry")
 
-        for slice in slices:
-            if len(slice.users) > 0:
-                try:
-                    u = User(db.get(dbconnection, table='users', id=slice.users[0]))
+        # ------------------------------------------------------
+        # Synchronize resources of a Slice at AMs 
+        # !!! only if the slice_id is specified !!!
+        # Otherwise it is way too long to synchronize all slices
+        # ------------------------------------------------------
+        # TODO: trigger this function in background for a user 
+        # that want to refresh his slice / when he selected one
+        # ------------------------------------------------------
+        if id:
+            for slice in slices:
+                if len(slice.users) > 0:
+                    try:
+                        u = User(db.get(dbconnection, table='users', id=slice.users[0]))
 
-                    logger.info("Synchronize slice %s:" % slice.hrn)
+                        logger.info("Synchronize slice %s:" % slice.hrn)
 
-                    # Synchronize resources of the slice only if we have the user's private key or its credentials
-                    # XXX Should use delegated Credentials
-                    #if (hasattr(u,'private_key') and u.private_key is not None and len(u.private_key)>0) or (hasattr(u,'credentials') and len(u.credentials)>0):
-                    if u.private_key or (hasattr(u,'credentials') and len(u.credentials)>0):
-                        user_setup = UserSetup(u,myslicelibsetup.endpoints)
-                        logger.info("Slice.id(%s).get() with user creds" % slice.hrn)
-                        s = q(Slice, user_setup).id(slice.id).get().first()
-                        db.slices(dbconnection, s.dict(), slice.id)
-                except Exception as e:
-                    #import traceback
-                    #traceback.print_exc()
-                    logger.error("Problem with slice %s" % slice.id)
-                    logger.exception(str(e))
-            else:
-                logger.info("slice %s has no users" % slice.hrn)
+                        # Synchronize resources of the slice only if we have the user's private key or its credentials
+                        # XXX Should use delegated Credentials
+                        #if (hasattr(u,'private_key') and u.private_key is not None and len(u.private_key)>0) or (hasattr(u,'credentials') and len(u.credentials)>0):
+                        if u.private_key or (hasattr(u,'credentials') and len(u.credentials)>0):
+                            user_setup = UserSetup(u,myslicelibsetup.endpoints)
+                            logger.info("Slice.id(%s).get() with user creds" % slice.hrn)
+                            s = q(Slice, user_setup).id(slice.id).get().first()
+                            db.slices(dbconnection, s.dict(), slice.id)
+                    except Exception as e:
+                        #import traceback
+                        #traceback.print_exc()
+                        logger.error("Problem with slice %s" % slice.id)
+                        logger.exception(str(e))
+                else:
+                    logger.info("slice %s has no users" % slice.hrn)
 
         # update local slice table
-        if not id:
+        else:
             if len(slices)>0:
-                lslices = db.slices(dbconnection, slices.dict())
-
-                for ls in lslices :
+                local_slices = db.slices(dbconnection)
+                # Add slices from Registry unkown from local DB
+                for s in slices:
+                    if not db.get(dbconnection, table='slices', id=s.id):
+                        logger.info("Found new slice from Registry: %s" % s.id)
+                        db.slices(dbconnection, s.dict(), s.id)
+                # Update slices known in local DB
+                for ls in local_slices :
+                    logger.info("Synchronize Slice {}".format(ls['id']))
                     # add status if not present and update on db
                     if not 'status' in ls:
                         ls['status'] = Status.ENABLED
                         ls['enabled'] = format_date()
-                        db.slices(dbconnection, ls)
-
                     if not slices.has(ls['id']) and ls['status'] is not Status.PENDING:
                         # delete slices that have been deleted elsewhere
                         db.delete(dbconnection, 'slices', ls['id'])
                         logger.info("Slice {} deleted".format(ls['id']))
+                    else:
+                        db.slices(dbconnection, ls, ls['id'])
             else:
                 logger.warning("Query slices is empty, check myslicelib and the connection with SFA Registry")
 
@@ -235,4 +250,5 @@ def syncSlices(id=None):
         #traceback.print_exc()
         logger.exception(str(e))
 
+    logger.info("Worker slices finished period synchronization") 
     dbconnection.close()
