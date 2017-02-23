@@ -65,6 +65,7 @@ def run():
             logger.error("Problem with event: {}".format(e))
         else:
             if event.notify:
+                logger.debug("Add event %s to Email queue" % (event.id))
                 qEmails.put(event)
 
     new_confirmations = events(dbconnection, status="CONFIRM")
@@ -75,6 +76,7 @@ def run():
             logger.error("Problem with event: {}".format(e))
         else:
             if event.notify:
+                logger.debug("Add event %s to Confirm Email queue" % (event.id))
                 qConfirmEmails.put(event)
 
     for activity in feed:
@@ -84,19 +86,23 @@ def run():
             logger.error("Problem with event: {}".format(e))
         else:
             if event.isConfirm() and event.notify:
+                logger.debug("Add event %s to Confirm Email queue" % (event.id))
                 qConfirmEmails.put(event)
 
             elif event.isPending() and event.notify:
+                logger.debug("Add event %s to Email queue" % (event.id))
                 qEmails.put(event)
 
             elif event.isDenied() and event.notify:
                 logger.info("event {} is denied".format(event.id))
+                logger.debug("Add event %s to Email queue" % (event.id))
                 qEmails.put(event)
 
             elif event.isSuccess() and event.notify:
+                logger.debug("Add event %s to Email queue" % (event.id))
                 qEmails.put(event)
 
-    logger.warning("Service emails stopped")
+    logger.critical("Service emails stopped")
     # waits for the thread to finish
     for x in threads:
         x.join()
