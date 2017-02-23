@@ -57,22 +57,27 @@ def run():
     for ev in new_events:
         try:
             event = Event(ev)
-        except Exception as e:
-            logger.error("Problem with event: {}".format(e))
-        else:
             if event.status != event.previous_status:
+                logger.debug("Add event %s to Events queue" % (event.id))
                 qEvents.put(event)
+        except Exception as e:
+            logger.exception(e)
+            if 'id' in ev:
+                logger.error("Problem with event: {}".format(ev['id']))
 
     for activity in feed:
         try:
             event = Event(activity['new_val'])
             # If the status of the event changes then process it
             if event.status != event.previous_status:
+                logger.debug("Add event %s to Events queue" % (event.id))
                 qEvents.put(event)
         except Exception as e:
-            logger.error("Problem with event: {}".format(e))
+            logger.exception(e)
+            if 'new_val' in activity and 'id' in activity['new_val']:
+                logger.error("Problem with event: {}".format(activity['new_val']['id']))
 
-    logger.warning("Service activity stopped")
+    logger.critical("Service activity stopped")
     # waits for the thread to finish
     for x in threads:
         x.join()
