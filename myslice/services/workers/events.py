@@ -13,7 +13,7 @@ from myslice.db import connect, dispatch
 from myslice.db.activity import Event, ObjectType 
 from myslice.db.user import User
 
-logger = logging.getLogger('myslice.service.activity')
+logger = logging.getLogger('myslice.service.worker.event')
 
 def run(q):
     """
@@ -65,7 +65,7 @@ def run(q):
                             event.setPending()
                     else:
                         event.setError()
-                        logger.error("User %s not found in event {}".format(event.user, event.id))
+                        logger.error("User {} not found in event {}".format(event.user, event.id))
                         event.logError("User %s not found" % event.user)
                         # raising an Exception here, blocks the REST API
                         #raise Exception("User %s not found" % event.user)
