@@ -44,6 +44,9 @@ def events_run(lock, qLeasesEvents):
             event = Event(qLeasesEvents.get())
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
+            event.logError("Error in worker leases: {}".format(e))
+            event.setError()
+            dispatch(dbconnection, event)
         else:
             logger.info("Processing event from user {}".format(event.user))
             try:
@@ -108,7 +111,7 @@ def events_run(lock, qLeasesEvents):
                 # If at least one of the AMs replies with success, it's ok
                 # If all AMs have failed -> Error 
                 for err in e.stack:
-                    event.logError(str(err))
+                    event.logError("Error in worker leases: {}".format(err))
                 # XXX TO BE REFINED
                 event.setError()
 
@@ -120,8 +123,8 @@ def events_run(lock, qLeasesEvents):
             except Exception as e:
                 import traceback
                 traceback.print_exc()
-                logger.error("Problem with event: {}".format(e))
-                event.logError(str(e))
+                logger.error("Problem with event {}: {}".format(event.id,e))
+                event.logError("Error in worker leases: {}".format(e))
                 event.setError()
             else:
                 if isSuccess:
