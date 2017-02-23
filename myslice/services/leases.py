@@ -70,21 +70,25 @@ def run():
         try:
             event = Event(ev)
         except Exception as e:
+            logger.exception(e)
             logger.error("Problem with event: {}".format(e))
         else:
             if event.object.type == ObjectType.LEASE:
+                logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
                 qLeases.put(event)
 
     for activity in feed:
         try:
             event = Event(activity['new_val'])
         except Exception as e:
+            logger.exception(e)
             logger.error("Problem with event: {}".format(e))
         else:
             if event.object.type == ObjectType.LEASE:
+                logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
                 qLeases.put(event)
 
-    logger.warning("Service leases stopped")
+    logger.critical("Service leases stopped")
     # waits for the thread to finish
     for x in threads:
         x.join()
