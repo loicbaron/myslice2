@@ -64,12 +64,12 @@ def run():
         threads.append(t)
         t.start()
 
-    ## slices sync
-    #for y in range(1):
-    #    t = threading.Thread(target=syncSlices, args=(lockSlices,))
-    #    t.daemon = True
-    #    threads.append(t)
-    #    t.start()
+    # slices sync
+    for y in range(1):
+        t = threading.Thread(target=syncSlices, args=(lockSlices,))
+        t.daemon = True
+        threads.append(t)
+        t.start()
 
     dbconnection = connect()
 
