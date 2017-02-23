@@ -50,11 +50,11 @@ def run():
         threads.append(t)
         t.start()
 
-    #for y in range(1):
-    #    t = threading.Thread(target=syncUsers, args=(lock, ))
-    #    t.daemon = True
-    #    threads.append(t)
-    #    t.start()
+    for y in range(1):
+        t = threading.Thread(target=syncUsers, args=(lock, ))
+        t.daemon = True
+        threads.append(t)
+        t.start()
 
     dbconnection = connect()
 
@@ -70,27 +70,33 @@ def run():
         try:
             event = Event(ev)
         except Exception as e:
+            logger.exception(e)
             logger.error("Problem with event: {}".format(e))
         else:
             if event.object.type == ObjectType.USER:
+                logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
                 qUserEvents.put(event)
 
             if event.object.type == ObjectType.PASSWORD:
+                logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
                 qPasswordEvents.put(event)
 
     for activity in feed:
         try:
             event = Event(activity['new_val'])
         except Exception as e:
+            logger.exception(e)
             logger.error("Problem with event: {}".format(e)) 
         else:
             if event.object.type == ObjectType.USER:
+                logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
                 qUserEvents.put(event)
 
             if event.object.type == ObjectType.PASSWORD:
+                logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
                 qPasswordEvents.put(event)
 
-    logger.warning("Service users stopped")
+    logger.critical("Service users stopped")
     for x in threads:
         x.join()
 

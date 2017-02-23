@@ -93,19 +93,19 @@ def events_run(lock, qUserEvents):
             # we then dispatch the event
             db.dispatch(dbconnection, event)
 
-def update_credentials(users):
-    # Get users in RethinkDB
-    for u_db in db.users():
-        # We can only get credentials for users that have a private key stored in db
-        if 'private_key' in u_db and u_db['private_key'] is not None:
-            for u in users:
-                if u.id == u_db['id']:
-                    u_db_object = User(u_db)
-                    user_setup = UserSetup(u_db_object, myslicelibsetup.endpoints)
-                    c = u.getCredentials(setup=user_setup, delegate_to="onelab.myslice")
-                    u.private_key = u_db['private_key']
-                    u.public_key = u.keys[0]
-    return users
+def update_credentials(user):
+    # We can only get credentials for users that have a private key stored in db
+    if 'private_key' in user and user['private_key'] is not None:
+        u = User(user)
+        user_setup = UserSetup(u, myslicelibsetup.endpoints)
+        if u.hrn == "onelab.myslice":
+            c = u.getCredentials(setup=user_setup)
+        else:
+            c = u.getCredentials(setup=user_setup, delegate_to="onelab.myslice")
+        u.private_key = user['private_key']
+        u.public_key = u.keys[0]
+        return u.dict()
+    return user
 
 def sync(lock, email=None, job=True):
     """
@@ -134,28 +134,46 @@ def syncUsers(lock, email):
                 users = q(User).filter('email', email).get()
             else:
                 users = q(User).get()
-            print("Get Users")
-            print(users)
-            users = update_credentials(users)
-            print("Get Credentials")
-            print(users)
             """
             update local user table
             """
             if len(users)>0:
-                lusers = db.users(dbconnection, users.dict())
-
-                for ls in lusers :
+                local_users = db.users()
+                # Add users from Registry unkown from local DB
+                # this is used to bootstrap with init_user script
+                for u in users:
+                    if not db.get(dbconnection, table='users', id=u.id):
+                        logger.info("Found new user from Registry: %s" % u.id)
+                        db.users(dbconnection, u.dict(), u.id)
+                # Update users known in local DB
+                for lu in local_users:
+                    logger.info("Synchronize user %s" % lu['id'])
                     # add status if not present and update on db
-                    if not 'status' in ls:
-                        ls['status'] = Status.ENABLED
-                        ls['enabled'] = format_date()
-                        db.users(dbconnection, ls)
+                    if not 'status' in lu:
+                        lu['status'] = Status.ENABLED
+                        lu['enabled'] = format_date()
+                    if not users.has(lu['id']) and lu['status'] is not Status.PENDING:
+                        # delete user that has been deleted in Reg
+                        db.delete(dbconnection, 'users', lu['id'])
+                        logger.info("User {} deleted".format(lu['id']))
+                    else:
+                        remote_user = next((item for item in users if item.id == lu['id']), False)
+                        if remote_user:
+                            # merge fields of local user with remote
+                            remote_user = remote_user.dict()
+                            # keep local values for private_key, public_key and generate_keys
+                            del remote_user['private_key']
+                            del remote_user['public_key']
+                            del remote_user['generate_keys']
+                            updated_user = {**lu, **remote_user}
+                            # if local user has private key
+                            # update its Credentials
+                            if 'private_key' in updated_user:
+                                updated_user = update_credentials(updated_user)
+                            # Update user
+                            #logger.debug("Update user %s" % updated_user['id'])
+                            db.users(dbconnection, updated_user, updated_user['id'])
 
-                    if not users.has(ls['id']) and ls['status'] is not Status.PENDING:
-                        # delete resourc that have been deleted elsewhere
-                        db.delete(dbconnection, 'users', ls['id'])
-                        logger.info("User {} deleted".format(ls['id']))
             else:
                 logger.warning("Query users is empty, check myslicelib and the connection with SFA Registry")
         except Exception as e:
