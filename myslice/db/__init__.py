@@ -464,7 +464,7 @@ def changes(dbconnection=None, table=None, status=None, action=None, obj_type=No
     if not dbconnection:
         dbconnection = connect()
 
-    req = r.db(s.db.name).table(table).changes()
+    req = r.db(s.db.name).table(table)
 
     if status:
         if isinstance(status, str) or len(status) == 1:
@@ -480,4 +480,4 @@ def changes(dbconnection=None, table=None, status=None, action=None, obj_type=No
     if id:
         req = req.filter(lambda change: change['new_val']['id'] == id)
 
-    return req.run(dbconnection)
+    return req.changes().run(dbconnection)

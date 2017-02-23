@@ -1,3 +1,4 @@
+import logging
 from pprint import pprint
 from myslicelib.model.authority import Authority as myslicelibAuthority
 from myslicelib.query import q
@@ -7,6 +8,8 @@ from myslice.db.user import User
 from myslice.lib import Status
 from myslice.lib.util import format_date
 from xmlrpc.client import Fault as SFAError
+
+logger = logging.getLogger('myslice.db.authority')
 
 class AuthorityException(Exception):
     def __init__(self, errors):
@@ -44,6 +47,8 @@ class Authority(myslicelibAuthority):
         errors = result['errors']
         if errors:
             raise AuthorityException(errors)
+
+        logger.debug(result)
 
         result = { **(self.dict()), **result['data'][0]}
         # add status if not present and update on db
@@ -101,7 +106,7 @@ class Authority(myslicelibAuthority):
                 self.addPi(user)
                 modified = True
 
-            db.users(dbconnection, user.dict())
+            db.users(dbconnection, user.dict(), user.id)
 
         if modified:
             result = super(Authority, self).save(setup)
@@ -129,6 +134,6 @@ class Authority(myslicelibAuthority):
             user = q(User).id(u).get().first()
             if user:
                 user = user.merge(dbconnection)
-                db.users(dbconnection, user.dict())
+                db.users(dbconnection, user.dict(), user.id)
 
         return True

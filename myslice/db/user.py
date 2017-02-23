@@ -95,6 +95,9 @@ class User(myslicelibUser):
                 self.setAttribute('public_key', db_user['public_key'])
             if 'password' in db_user:
                 self.setAttribute('password', db_user['password'])
+            if 'generate_keys' in db_user:
+                self.setAttribute('generate_keys', db_user['generate_keys'])
+
         return self
 
     def save(self, dbconnection, setup=None):
@@ -117,7 +120,7 @@ class User(myslicelibUser):
         if not 'status' in result:
             result['status'] = Status.ENABLED
             result['enabled'] = format_date()
-
+        # Update user in local DB
         db.users(dbconnection, result, self.getAttribute('id'))
         return True
 

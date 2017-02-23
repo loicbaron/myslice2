@@ -51,7 +51,7 @@ class Project(myslicelibProject):
         for u in pi_users:
             user = q(User).id(u).get().first()
             user = user.merge(dbconnection)
-            db.users(dbconnection, user.dict())
+            db.users(dbconnection, user.dict(), user.id)
 
         # update slices after Save
         slices = list(set(current['slices']) | set(self.getAttribute('slices')))
@@ -80,7 +80,7 @@ class Project(myslicelibProject):
         for u in current['pi_users']:
             user = q(User).id(u).get().first()
             user = user.merge(dbconnection)
-            db.users(dbconnection, user.dict())
+            db.users(dbconnection, user.dict(), user.id)
 
         # Slices will be removed by Sync
 

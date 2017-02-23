@@ -66,7 +66,7 @@ class Slice(myslicelibSlice):
         for u in users:
             user = q(User).id(u).get().first()
             user = user.merge(dbconnection)
-            db.users(dbconnection, user.dict())
+            db.users(dbconnection, user.dict(), user.id)
 
         # Update the Project of the slice
         project = db.get(dbconnection, table='projects', id=self.project)
@@ -120,7 +120,7 @@ class Slice(myslicelibSlice):
         for u in current['users']:
             user = q(User).id(u).get().first()
             user = user.merge(dbconnection)
-            db.users(dbconnection, user.dict())
+            db.users(dbconnection, user.dict(), user.id)
 
         # Update the Project of the slice
         project = db.get(dbconnection, table='projects', id=self.project)
