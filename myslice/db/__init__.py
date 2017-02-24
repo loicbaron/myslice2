@@ -266,8 +266,8 @@ def get(dbconnection=None, table=None, id=None, filter=None, limit=None):
 
 def users(dbconnection=None, data=None, id=None, email=None, hashing=None):
 
-    logger.debug("users function called in db/__init__.py")
-    logger.debug("with parameters: data={}, id={}, email={}, hashing={}".format(data,id,email,hashing))
+    #logger.debug("users function called in db/__init__.py")
+    #logger.debug("with parameters: data={}, id={}, email={}, hashing={}".format(data,id,email,hashing))
 
     if not dbconnection:
         dbconnection = connect()
