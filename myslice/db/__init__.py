@@ -74,9 +74,6 @@ def setup():
         except RqlRuntimeError:
             logger.info('table %s already exists', t['name'])
 
-    dbconnection.close()
-
-
 def syncTestbeds(testbeds):
     """
     With the testbeds parameter specified syncs the db
@@ -119,8 +116,6 @@ def syncTestbeds(testbeds):
         except Exception as e:
             logger.error('{}'.format(str(e)))
 
-    dbconnection.close()
-
 def getTestbeds():
     """
     Returns the list of testbeds
@@ -160,10 +155,6 @@ def syncResources(resources):
         # new
         logger.info('new resource {} ({})'.format(n.name, n.testbed))
         r.db(s.db.name).table('resources').insert(n.dict(), conflict='update').run(dbconnection)
-
-    dbconnection.close()
-
-
 
 def getResources():
     """
@@ -218,7 +209,6 @@ def syncLeases(leases):
         if 'slice_id' in l and r.db(s.db.name).table('slices').get(l['slice_id']).run(dbconnection):
             slices.append(l['slice_id'])
 
-    dbconnection.close()
     return slices
 
 def matchLeases(l1, l2):
@@ -275,6 +265,10 @@ def get(dbconnection=None, table=None, id=None, filter=None, limit=None):
 
 
 def users(dbconnection=None, data=None, id=None, email=None, hashing=None):
+
+    logger.debug("users function called in db/__init__.py")
+    logger.debug("with parameters: data={}, id={}, email={}, hashing={}".format(data,id,email,hashing))
+
     if not dbconnection:
         dbconnection = connect()
 
