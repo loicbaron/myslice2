@@ -136,19 +136,35 @@ def syncResources(resources):
 
     localResources = r.db(s.db.name).table('resources').run(dbconnection)
 
+    # compare the list of testbeds online
+    # with the list of resources retreived
+    testbeds = r.db(s.db.name).table('testbeds').pluck('id','status').run(dbconnection)
+    onlineTestbeds = [v['id'] for v in testbeds if v['status']=='online']
+    #logger.debug("online testbeds : {}".format(onlineTestbeds))
+    testbedsInResources = list(set([v.dict()['testbed'] for v in list(resources) if 'testbed' in v.dict()]))
+    #logger.debug("in resources testbeds : {}".format(testbedsInResources))
+    # if we have no resources from an online testbed
+    # it means that the SFA AM didn't answered, maybe too long (timeout)
+    # but we keep the resources in local DB
+    missingTestbeds = list(set(onlineTestbeds) - set(testbedsInResources))
+    logger.info("missing testbeds : {}".format(missingTestbeds))
+
     # sync
-    for t in localResources:
-        u = resources.get(t['id'])
-        if u is not None:
+    for lr in localResources:
+        rs = resources.get(lr['id'])
+        if rs is not None:
             # update
-            logger.info('updating resource {} ({})'.format(u.name, u.testbed))
-            r.db(s.db.name).table('resources').update(u.dict()).run(dbconnection)
+            logger.info('updating resource {} ({})'.format(rs.name, rs.testbed))
+            r.db(s.db.name).table('resources').update(rs.dict()).run(dbconnection)
             # remove the element from the working set
-            resources.remove(u)
+            resources.remove(rs)
         else:
             # delete
-            logger.info('deleting resource {} ({})'.format(t['name'], t['testbed']))
-            r.db(s.db.name).table('resources').get(t['id']).delete().run(dbconnection)
+            if lr['testbed'] not in missingTestbeds:
+                logger.info('deleting resource {} ({})'.format(lr['name'], lr['testbed']))
+                r.db(s.db.name).table('resources').get(lr['id']).delete().run(dbconnection)
+            else:
+                logger.info("resource {} missing not deleted".format(lr['name']))
 
     # check new resources with the remaining elements
     for n in resources:
