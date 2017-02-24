@@ -141,37 +141,42 @@ def syncUsers(lock, email=None):
                 # Add users from Registry unkown from local DB
                 # this is used to bootstrap with init_user script
                 for u in users:
-                    print("looking for {} in local db".format(u.id))
+                    #print("looking for {} in local db".format(u.id))
                     if not db.get(dbconnection, table='users', id=u.id):
-                        print("this user is not in local db, add it")
+                        #print("this user is not in local db, add it")
                         logger.info("Found new user from Registry: %s" % u.id)
                         db.users(dbconnection, u.dict(), u.id)
                 # Update users known in local DB
                 for lu in local_users:
                     logger.info("Synchronize user %s" % lu['id'])
-                    # add status if not present and update on db
-                    if not 'status' in lu:
-                        lu['status'] = Status.ENABLED
-                        lu['enabled'] = format_date()
-                    if not users.has(lu['id']) and lu['status'] is not Status.PENDING:
-                        # delete user that has been deleted in Reg
-                        db.delete(dbconnection, 'users', lu['id'])
-                        logger.info("User {} deleted".format(lu['id']))
-                    else:
-                        remote_user = next((item for item in users if item.id == lu['id']), False)
-                        if remote_user:
-                            # merge fields of local user with remote
-                            # keep local values for 
-                            # password, private_key, public_key and generate_keys
-                            updated_user = remote_user.merge(dbconnection)
-                            updated_user = updated_user.dict()
-                            # if user has private key
-                            # update its Credentials
-                            if 'private_key' in updated_user:
-                                updated_user = update_credentials(updated_user)
-                            # Update user
-                            #logger.debug("Update user %s" % updated_user['id'])
-                            db.users(dbconnection, updated_user, updated_user['id'])
+                    try:
+                        # add status if not present and update on db
+                        if not 'status' in lu:
+                            lu['status'] = Status.ENABLED
+                            lu['enabled'] = format_date()
+                        if not users.has(lu['id']) and lu['status'] is not Status.PENDING:
+                            # delete user that has been deleted in Reg
+                            db.delete(dbconnection, 'users', lu['id'])
+                            logger.info("User {} deleted".format(lu['id']))
+                        else:
+                            remote_user = next((item for item in users if item.id == lu['id']), False)
+                            if remote_user:
+                                # merge fields of local user with remote
+                                # keep local values for
+                                # password, private_key, public_key and generate_keys
+                                updated_user = remote_user.merge(dbconnection)
+                                updated_user = updated_user.dict()
+                                # if user has private key
+                                # update its Credentials
+                                if 'private_key' in updated_user:
+                                    updated_user = update_credentials(updated_user)
+                                # Update user
+                                #logger.debug("Update user %s" % updated_user['id'])
+                                db.users(dbconnection, updated_user, updated_user['id'])
+                    except Exception as e:
+                        logger.warning("Could not synchronize user %s" % lu['id'])
+                        logger.exception(e)
+                        continue
 
             else:
                 logger.warning("Query users is empty, check myslicelib and the connection with SFA Registry")
