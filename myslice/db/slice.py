@@ -66,6 +66,8 @@ class Slice(myslicelibSlice):
         for u in users:
             user = q(User).id(u).get().first()
             user = user.merge(dbconnection)
+            logger.debug("Update user %s after Slice save()" % u)
+            logger.debug(user)
             db.users(dbconnection, user.dict(), user.id)
 
         # Update the Project of the slice
@@ -120,6 +122,8 @@ class Slice(myslicelibSlice):
         for u in current['users']:
             user = q(User).id(u).get().first()
             user = user.merge(dbconnection)
+            logger.debug("Update user %s after Slice save()" % u)
+            logger.debug(user)
             db.users(dbconnection, user.dict(), user.id)
 
         # Update the Project of the slice

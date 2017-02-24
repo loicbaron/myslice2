@@ -123,6 +123,9 @@ class User(myslicelibUser):
         # Update user in local DB
         if not self.getAttribute('id'):
             raise UserException("This user has no id, could not be saved in local DB: {}".format(self))
+        print("DB user save()")
+        from pprint import pprint
+        pprint(result)
         db.users(dbconnection, result, self.getAttribute('id'))
         return True
 

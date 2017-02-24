@@ -51,6 +51,8 @@ class Project(myslicelibProject):
         for u in pi_users:
             user = q(User).id(u).get().first()
             user = user.merge(dbconnection)
+            logger.debug("Update user %s after Project save()" % u)
+            logger.debug(user)
             db.users(dbconnection, user.dict(), user.id)
 
         # update slices after Save
@@ -80,6 +82,8 @@ class Project(myslicelibProject):
         for u in current['pi_users']:
             user = q(User).id(u).get().first()
             user = user.merge(dbconnection)
+            logger.debug("Update user %s after Project delete()" % u)
+            logger.debug(user)
             db.users(dbconnection, user.dict(), user.id)
 
         # Slices will be removed by Sync

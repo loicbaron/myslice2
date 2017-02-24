@@ -105,7 +105,8 @@ class Authority(myslicelibAuthority):
             elif user.id not in current['pi_users']:
                 self.addPi(user)
                 modified = True
-
+            logger.debug("Update user %s in Authority save()" % u)
+            logger.debug(user)
             db.users(dbconnection, user.dict(), user.id)
 
         if modified:
@@ -133,6 +134,8 @@ class Authority(myslicelibAuthority):
         for u in current['pi_users']:
             user = q(User).id(u).get().first()
             if user:
+                logger.debug("Update user %s in Authority delete()" % u)
+                logger.debug(user)
                 user = user.merge(dbconnection)
                 db.users(dbconnection, user.dict(), user.id)
 
