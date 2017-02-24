@@ -117,7 +117,7 @@ def sync(lock, email=None, job=True):
             syncUsers(lock, email)
 
             # sleep
-            time.sleep(86400)
+            time.sleep(1800)
     else:
         syncUsers(lock, email)
 
@@ -137,12 +137,17 @@ def syncUsers(lock, email):
             """
             update local user table
             """
+            from pprint import pprint
+            print("Users from Query")
+            pprint(users)
             if len(users)>0:
                 local_users = db.users()
                 # Add users from Registry unkown from local DB
                 # this is used to bootstrap with init_user script
                 for u in users:
+                    print("looking for {} in local db".format(u.id))
                     if not db.get(dbconnection, table='users', id=u.id):
+                        print("this user is not in local db, add it")
                         logger.info("Found new user from Registry: %s" % u.id)
                         db.users(dbconnection, u.dict(), u.id)
                 # Update users known in local DB
