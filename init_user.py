@@ -49,7 +49,7 @@ def main(argv):
     # Get the user that we want to update
     dbconnection = db.connect()
     result = r.db('myslice').table('users').filter({'email':email}, default=False).run(dbconnection)
-    logger.debug(result)
+    pprint(result)
     for u in result: 
         u['password']=password
         u['private_key']=private_key
