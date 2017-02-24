@@ -117,7 +117,7 @@ def sync(lock, email=None, job=True):
             syncUsers(lock, email)
 
             # sleep
-            time.sleep(1800)
+            time.sleep(3600)
     else:
         syncUsers(lock, email)
 
@@ -129,7 +129,6 @@ def syncUsers(lock, email=None):
     with lock:
         logger.info("Worker users starting synchronization")
         try:
-            print("email = %s" % email) 
             if email:
                 users = q(User).filter('email', email).get()
             else:
@@ -137,9 +136,6 @@ def syncUsers(lock, email=None):
             """
             update local user table
             """
-            from pprint import pprint
-            print("Users from Query")
-            pprint(users)
             if len(users)>0:
                 local_users = db.users()
                 # Add users from Registry unkown from local DB
