@@ -93,18 +93,23 @@ def events_run(lock, qUserEvents):
             # we then dispatch the event
             db.dispatch(dbconnection, event)
 
-def update_credentials(user):
+def update_credentials(dbconnection, user):
     # We can only get credentials for users that have a private key stored in db
     if 'private_key' in user and user['private_key'] is not None:
-        u = User(user)
-        user_setup = UserSetup(u, myslicelibsetup.endpoints)
-        if u.hrn == "onelab.myslice":
-            c = u.getCredentials(setup=user_setup)
-        else:
-            c = u.getCredentials(setup=user_setup, delegate_to="onelab.myslice")
-        u.private_key = user['private_key']
-        u.public_key = u.keys[0]
-        return u.dict()
+        try:
+            u = User(user)
+            user_setup = UserSetup(u, myslicelibsetup.endpoints)
+            if u.hrn == "onelab.myslice":
+                c = u.getCredentials(setup=user_setup)
+            else:
+                c = u.getCredentials(setup=user_setup, delegate_to="onelab.myslice")
+            u.private_key = user['private_key']
+            u.keys = [u.public_key]
+            return u.dict()
+        except Exception as e:
+            logger.warning("Key missmatch between local and Registry")
+            logger.warning("Trying to update the Registry")
+            u.save(dbconnection)
     return user
 
 def sync(lock, email=None, job=True):
@@ -169,7 +174,7 @@ def syncUsers(lock, email=None):
                                 # if user has private key
                                 # update its Credentials
                                 if 'private_key' in updated_user and updated_user['private_key'] is not None:
-                                    updated_user = update_credentials(updated_user)
+                                    updated_user = update_credentials(dbconnection, updated_user)
                                 # Update user
                                 #logger.debug("Update user %s" % updated_user['id'])
                                 db.users(dbconnection, updated_user, updated_user['id'])
