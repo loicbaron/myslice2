@@ -251,4 +251,3 @@ def syncSlices(id=None):
         logger.exception(str(e))
 
     logger.info("Worker slices finished period synchronization") 
-    dbconnection.close()
