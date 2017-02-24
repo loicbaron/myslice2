@@ -121,7 +121,7 @@ def sync(lock, email=None, job=True):
     else:
         syncUsers(lock, email)
 
-def syncUsers(lock, email):
+def syncUsers(lock, email=None):
     # DB connection
     dbconnection = db.connect()
 
@@ -129,7 +129,7 @@ def syncUsers(lock, email):
     with lock:
         logger.info("Worker users starting synchronization")
         try:
-
+            print("email = %s" % email) 
             if email:
                 users = q(User).filter('email', email).get()
             else:
