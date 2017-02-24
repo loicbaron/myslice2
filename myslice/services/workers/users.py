@@ -168,7 +168,7 @@ def syncUsers(lock, email=None):
                                 updated_user = updated_user.dict()
                                 # if user has private key
                                 # update its Credentials
-                                if 'private_key' in updated_user:
+                                if 'private_key' in updated_user and updated_user['private_key'] is not None:
                                     updated_user = update_credentials(updated_user)
                                 # Update user
                                 #logger.debug("Update user %s" % updated_user['id'])
