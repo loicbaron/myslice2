@@ -42,20 +42,20 @@ def main(argv):
    
     # Synchronize the users from SFA Registry into the DB 
     lock = threading.Lock()
-    #print("sync user %s" % email)
+    print("sync user %s" % email)
     if sync:
         syncUsers(lock, email=email, job=False)
 
     # Get the user that we want to update
     dbconnection = db.connect()
     result = r.db('myslice').table('users').filter({'email':email}, default=False).run(dbconnection)
+    logger.debug(result)
     for u in result: 
         u['password']=password
         u['private_key']=private_key
         u['public_key']=public_key
         u['generate_keys']=False
         r.db('myslice').table('users').get(u['id']).update(u).run(dbconnection)
-        break
 
 if __name__ == '__main__':
     main(sys.argv[1:])
