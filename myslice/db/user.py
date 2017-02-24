@@ -121,6 +121,8 @@ class User(myslicelibUser):
             result['status'] = Status.ENABLED
             result['enabled'] = format_date()
         # Update user in local DB
+        if not self.getAttribute('id'):
+            raise UserException("This user has no id, could not be saved in local DB: {}".format(self))
         db.users(dbconnection, result, self.getAttribute('id'))
         return True
 
