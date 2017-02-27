@@ -12,7 +12,8 @@ class Element extends React.Component {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-        return this.props.isSelected !== nextProps.isSelected;
+        //return this.props.isSelected !== nextProps.isSelected;
+        return true;
     }
 
     renderIcon() {
