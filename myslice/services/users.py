@@ -33,6 +33,7 @@ def run():
 
     logger.info("Service users starting")
 
+    dbconnection = connect()
     # db connection is shared between threads
     qUserEvents = Queue()
     qPasswordEvents = Queue()
@@ -56,8 +57,6 @@ def run():
         t.daemon = True
         threads.append(t)
         t.start()
-
-    dbconnection = connect()
 
     ##
     # Watch for changes on the activity table
