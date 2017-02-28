@@ -15,7 +15,7 @@ import RequestsList from '../RequestsList';
 import SlicesForm from '../SlicesForm';
 import UsersDialog from '../dialogs/SelectUser';
 
-import { live } from '../../live';
+import live from '../../live';
 
 class ProjectsView extends React.Component {
 
@@ -34,8 +34,8 @@ class ProjectsView extends React.Component {
     componentDidMount() {
         store.listen(this.onChange);
         this.fetchProjects();
+        live.register('projects', actions.updateProjectElement);
 
-        let l = new live();
     }
 
     componentWillUnmount() {

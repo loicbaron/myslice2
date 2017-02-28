@@ -3,26 +3,16 @@ import moment from 'moment';
 
 const DateTime = (props) => {
 
-        let datetime = null;
-        let label = null;
+    if (timestamp) {
+        return (
+            <div className="dateTime">
+                <span className="elementLabel">{label}</span>
+                {moment(timestamp).format("DD/MM/YYYY H:mm")}
+            </div>
+        );
+    }
 
-        if (props.label) {
-            label = <div className="elementLabel">{props.label}</div>;
-        }
-        if (props.timestamp) {
-            datetime = moment(props.timestamp).format("DD/MM/YYYY H:mm");
-        }
-
-        if (datetime) {
-            return (
-                <div className="dateTime">
-                    {label}
-                    {datetime}
-                </div>
-            );
-        } else {
-            return null;
-        }
+    return null;
 };
 
 DateTime.propTypes = {
@@ -41,7 +31,7 @@ const CalendarDate = ({label, timestamp}) => {
         return (
             <div className="dateTime">
                 <span className="elementLabel">{label}</span>
-                {moment(timestamp).fromNow()}
+                {moment(timestamp).calendar()}
             </div>
         );
     }
@@ -60,4 +50,29 @@ CalendarDate.defaultProps = {
     label: null
 };
 
-export { DateTime, CalendarDate };
+const HumanDate = ({label, timestamp}) => {
+
+    if (timestamp) {
+        return (
+            <div className="dateTime">
+                <span className="elementLabel">{label}</span>
+                {moment(timestamp).fromNow()}
+            </div>
+        );
+    }
+
+    return null;
+
+};
+
+HumanDate.propTypes = {
+    timestamp: React.PropTypes.string,
+    label: React.PropTypes.string
+};
+
+HumanDate.defaultProps = {
+    timestamp : null,
+    label: null
+};
+
+export { DateTime, CalendarDate, HumanDate };

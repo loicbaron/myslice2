@@ -1,13 +1,14 @@
 import React from 'react';
+import moment from 'moment';
 
 import { List } from '../base/List';
 import { Element, ElementDetails, ElementSummary } from '../base/Element';
-import { CalendarDate } from '../base/DateTime';
 
 const ProjectElement = ({project, isSelected, handleSelect, options, userOptions, sliceOptions}) => {
 
         let detailsText = project.pi_users.length + ' user'+ (project.pi_users.length > 1 ? "s" : "") + ', '
-                        + project.slices.length + ' slice' + (project.slices.length > 1 ? "s" : "");
+                        + project.slices.length + ' slice' + (project.slices.length > 1 ? "s" : "")
+                        + ', last updated ' + moment(project.updated).fromNow();
 
 
         return (
@@ -29,13 +30,16 @@ const ProjectElement = ({project, isSelected, handleSelect, options, userOptions
                             </h4>
                             <div className="row elementDate">
                                 <div className="col-sm-3">
-                                    <CalendarDate label="Created" timestamp={project.created}/>
+                                    <span className="elementLabel">created</span><br />
+                                    {moment(project.created).calendar()}
                                 </div>
                                 <div className="col-sm-3">
-                                    <CalendarDate label="Enabled" timestamp={project.enabled}/>
+                                    <span className="elementLabel">enabled</span><br />
+                                    {moment(project.enabled).calendar()}
                                 </div>
                                 <div className="col-sm-3">
-                                    <CalendarDate label="Updated" timestamp={project.updated}/>
+                                    <span className="elementLabel">updated</span><br />
+                                    {moment(project.updated).calendar()}
                                 </div>
                             </div>
                         </div>
