@@ -47,6 +47,8 @@ def events_run(lock, qUserEvents):
             with lock:
                 try:
                     event.setRunning()
+                    event.logInfo("Event is running")
+                    logger.debug("Event %s is running" % event.id)
                     isSuccess = False
 
                     # If we generate a new key pair the Query will not work, use the myslice account for that
@@ -87,8 +89,12 @@ def events_run(lock, qUserEvents):
 
                 if isSuccess:
                     event.setSuccess()
+                    event.logInfo("Event success")
+                    logger.debug("Event %s Success" % event.id)
                 else:
+                    logger.error("Error event {}: action failed".format(event.id))
                     event.setError()
+                    event.logError("Error in worker users: action failed")
             ##
             # we then dispatch the event
             db.dispatch(dbconnection, event)
@@ -146,8 +152,10 @@ def syncUsers(lock, email=None):
                 # Add users from Registry unkown from local DB
                 # this is used to bootstrap with init_user script
                 for u in users:
-                    #print("looking for {} in local db".format(u.id))
+                    logger.debug("looking for {} in local db".format(u.id))
                     if not db.get(dbconnection, table='users', id=u.id):
+                        nb = db.get(dbconnection, table='users')
+                        logger.warning("Number of users in local db: %s" % len(nb))
                         #print("this user is not in local db, add it")
                         logger.info("Found new user from Registry: %s" % u.id)
                         db.users(dbconnection, u.dict(), u.id)

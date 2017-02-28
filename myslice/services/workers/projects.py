@@ -52,6 +52,8 @@ def events_run(lock, qProjectEvents):
             with lock:
                 try:
                     event.setRunning()
+                    event.logInfo("Event is running")
+                    logger.debug("Event %s is running" % event.id)
                     isSuccess = False
 
                     u = User(db.get(dbconnection, table='users', id=event.user))
@@ -112,8 +114,12 @@ def events_run(lock, qProjectEvents):
 
                 if isSuccess:
                     event.setSuccess()
+                    event.logInfo("Event success")
+                    logger.debug("Event %s Success" % event.id)
                 else:
+                    logger.error("Error event {}: action failed".format(event.id))
                     event.setError()
+                    event.logError("Error in worker projects: action failed")
                 
                 db.dispatch(dbconnection, event)
 

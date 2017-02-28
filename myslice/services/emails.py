@@ -10,6 +10,7 @@ import logging
 import signal
 import threading
 from queue import Queue
+import rethinkdb as r
 from myslice.db import connect, changes, events
 from myslice.db.activity import Event
 from myslice.services.workers.emails import emails_run as manageEmails, confirmEmails
@@ -47,11 +48,13 @@ def run():
         t.daemon = True
         threads.append(t)
         t.start()
+
     dbconnection = connect()
 
     ##
     # Watch for changes on the activity table
-    feed = changes(table='activity')
+    feed = r.db('myslice').table('activity').changes().run(dbconnection)
+    #feed = changes(table='activity')
 
     ##
     # Process events that were not watched 

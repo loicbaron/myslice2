@@ -47,7 +47,8 @@ def events_run(lock, qPasswordEvents):
             logger.info("Processing password event from user {}".format(event.user))
 
             event.setRunning()
-
+            event.logInfo("Event is running")
+            logger.debug("Event %s is running" % event.id)
             ##
             # Creating a new password for user
             if event.creatingObject():
@@ -64,6 +65,8 @@ def events_run(lock, qPasswordEvents):
                     event.setError()
                 else:
                     event.setSuccess()
+                    event.logInfo("Event success")
+                    logger.debug("Event %s Success" % event.id)
             ##
             # we then dispatch the event
             db.dispatch(dbconnection, event)

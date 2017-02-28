@@ -11,6 +11,7 @@ import signal
 import threading
 from queue import Queue
 import myslice.db as db
+import rethinkdb as r
 from myslice.db import connect, changes, events
 from myslice.db.activity import Event, EventStatus
 from myslice.services.workers.events import run as manageEvents
@@ -47,7 +48,8 @@ def run():
     # to the running threads (via Queue).
     # A global watch feed is needed to permit spawning more threads to manage
     # events and requests
-    feed = changes(dbconnection, table='activity', status="NEW")
+    feed = r.db('myslice').table('activity').changes().run(dbconnection)
+    #feed = changes(dbconnection, table='activity', status="NEW")
 
     ##
     # Process events that were not watched 
@@ -66,13 +68,18 @@ def run():
                 logger.error("Problem with event: {}".format(ev['id']))
 
     for activity in feed:
+        logger.debug("Change in activity feed")
         try:
-            event = Event(activity['new_val'])
-            # If the status of the event changes then process it
-            if event.status != event.previous_status:
-                logger.debug("Add event %s to Events queue" % (event.id))
-                qEvents.put(event)
+            if activity['new_val']['status'] == "NEW":
+                logger.debug("NEW event in activity feed")
+                event = Event(activity['new_val'])
+                # If the status of the event changes then process it
+                if event.status != event.previous_status:
+                    logger.debug("Add event %s to Events queue" % (event.id))
+                    qEvents.put(event)
         except Exception as e:
+            import traceback
+            traceback.print_exc()
             logger.exception(e)
             if 'new_val' in activity and 'id' in activity['new_val']:
                 logger.error("Problem with event: {}".format(activity['new_val']['id']))

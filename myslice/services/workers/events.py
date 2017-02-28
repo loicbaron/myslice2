@@ -43,12 +43,16 @@ def run(q):
 
                 if event.object.type == ObjectType.PASSWORD:
                     event.setPending()
+                    event.logInfo("Event is pending, please check your email")
+                    logger.debug("Event %s is pending" % event.id)
                 # Register a new object for a new user
                 # id should be generated into the web to avoid duplicates
                 elif event.user is None and event.creatingObject():
                     # The user must confirm his/her email
                     print("Event Type: %s" % type(event))
                     event.setConfirm()
+                    logger.debug("Event %s is confirm" % event.id)
+                    event.logInfo("Event is expecting your confirmation, please check your email")
                 else:
                     logger.debug("%s - get user %s" % (event.id,event.user))
                     db_user = db.get(dbconnection, table='users', id=event.user)
@@ -57,7 +61,7 @@ def run(q):
                         logger.debug("%s - Does user %s has privilege?" % (event.id, event.user))
                         if user.has_privilege(event):
                             logger.debug("%s - setWaiting" % event.id)
-                            event.logInfo("event waiting to be processed")
+                            event.logInfo("Event waiting to be processed")
                             event.setWaiting()
                         else:
                             logger.debug("%s - setPending" % event.id)

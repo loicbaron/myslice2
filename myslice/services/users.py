@@ -9,6 +9,7 @@ import logging
 import signal
 import threading
 from queue import Queue
+import rethinkdb as r
 from myslice.db.activity import Event, ObjectType
 from myslice.db import connect, changes, events
 from myslice.services.workers.users import events_run as manageUsersEvents
@@ -60,7 +61,9 @@ def run():
 
     ##
     # Watch for changes on the activity table
-    feed = changes(dbconnection, table='activity', status=["WAITING", "APPROVED"])
+    feed = r.db('myslice').table('activity').changes().run(dbconnection)
+    #feed = changes(dbconnection, table='activity', status=["WAITING", "APPROVED"])
+
     ##
     # Process events that were not watched 
     # while Server process was not running
@@ -83,18 +86,21 @@ def run():
 
     for activity in feed:
         try:
-            event = Event(activity['new_val'])
-        except Exception as e:
-            logger.exception(e)
-            logger.error("Problem with event: {}".format(e)) 
-        else:
-            if event.object.type == ObjectType.USER:
-                logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
-                qUserEvents.put(event)
+            if activity['new_val']['status'] in ["WAITING","APPROVED"]:
+                event = Event(activity['new_val'])
+                if event.object.type == ObjectType.USER:
+                    logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
+                    qUserEvents.put(event)
 
-            if event.object.type == ObjectType.PASSWORD:
-                logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
-                qPasswordEvents.put(event)
+                if event.object.type == ObjectType.PASSWORD:
+                    logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
+                    qPasswordEvents.put(event)
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            logger.exception(e)
+            if 'new_val' in activity and 'id' in activity['new_val']:
+                logger.error("Problem with event: {}".format(activity['new_val']['id']))
 
     logger.critical("Service users stopped")
     for x in threads:

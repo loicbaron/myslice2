@@ -12,6 +12,7 @@ import signal
 import threading
 from queue import Queue
 import myslice.db as db
+import rethinkdb as r
 from myslice.db import changes, connect, events
 from myslice.db.activity import Event, ObjectType
 from myslice.services.workers.projects import events_run as manageProjects, sync as syncProjects
@@ -76,7 +77,9 @@ def run():
     ##
     # will watch for incoming events/requests and pass them to
     # the appropriate thread group
-    feed = changes(dbconnection, table='activity', status=['WAITING', 'APPROVED'])
+    feed = r.db('myslice').table('activity').changes().run(dbconnection)
+    #feed = changes(dbconnection, table='activity', status=['WAITING', 'APPROVED'])
+
     ##
     # Process events that were not watched 
     # while Server process was not running
@@ -99,18 +102,20 @@ def run():
     for activity in feed:
         #logger.debug("Change detected in activity table %s" % activity["new_val"]["id"])
         try:
-            event = Event(activity['new_val'])
+            if activity['new_val']['status'] in ["WAITING","APPROVED"]:
+                event = Event(activity['new_val'])
+                if event.object.type == ObjectType.PROJECT:
+                    logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
+                    qProjects.put(event)
+                if event.object.type == ObjectType.SLICE:
+                    logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
+                    qSlices.put(event)
         except Exception as e:
+            import traceback
+            traceback.print_exc()
             logger.exception(e)
-            logger.error("Problem with event: {}".format(e))
-        else:
-            if event.object.type == ObjectType.PROJECT:
-                logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
-                qProjects.put(event)
-            if event.object.type == ObjectType.SLICE:
-                logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
-                qSlices.put(event)
-
+            if 'new_val' in activity and 'id' in activity['new_val']:
+                logger.error("Problem with event: {}".format(activity['new_val']['id']))
 
     logger.critical("Service experiments stopped")
     # waits for the thread to finish

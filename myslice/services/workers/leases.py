@@ -51,6 +51,8 @@ def events_run(lock, qLeasesEvents):
             logger.info("Processing event from user {}".format(event.user))
             try:
                 event.setRunning()
+                event.logInfo("Event is running")
+                logger.debug("Event %s is running" % event.id)
                 isSuccess = False
 
                 u = User(db.get(dbconnection, table='users', id=event.user))
@@ -112,12 +114,14 @@ def events_run(lock, qLeasesEvents):
                 # If all AMs have failed -> Error 
                 for err in e.stack:
                     event.logError("Error in worker leases: {}".format(err))
+                    logger.error("Error in worker leases: {}".format(err))
                 # XXX TO BE REFINED
                 event.setError()
 
             except SliceWarningException as e:
                 for err in e.stack:
-                    event.logError(str(err))
+                    event.logWarning(str(err))
+                    logger.warning(str(err))
                 event.setWarning()
 
             except Exception as e:
@@ -129,8 +133,13 @@ def events_run(lock, qLeasesEvents):
             else:
                 if isSuccess:
                     event.setSuccess()
+                    event.logInfo("Event success")
+                    logger.debug("Event %s Success" % event.id)
                 else:
+                    logger.error("Error event {}: action failed".format(event.id))
                     event.setError()
+                    event.logError("Error in worker leases: action failed")
+
             db.dispatch(dbconnection, event)
 
 def sync(lock):
