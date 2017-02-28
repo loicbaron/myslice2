@@ -16,11 +16,13 @@ class TestLogin(unittest.TestCase):
         self.cookies = s['cookies']
 
     def test_0_noAuth(self):
+        """Check if unauth user can get profile data"""
         r = requests.get('http://'+server+':8111/api/v1/profile')
-        # user not authenticated
         self.assertEqual(r.status_code, 400)
 
-    def test_1_cookies(self):
+    def test_1_auth_to_get_cookie(self):
+        """Log in and check if we recive any cookie"""
+
         payload = {'email': s['email'], 'password': s['password']}
         r = requests.post("http://"+server+":8111/api/v1/login",
                           headers={str('Content-Type'):'application/json'},
@@ -29,17 +31,12 @@ class TestLogin(unittest.TestCase):
         self.assertEqual(r.status_code, 200)
         self.assertTrue(hasattr(r, 'cookies'))
         self.assertIsNotNone(r.cookies)
+        if r.cookies is not None:
+            self.cookies = r.cookies
 
-    def test_2_auth(self):
+    def test_2_get_profile_with_cookie(self):
+        """Takes cookie from test 1 and check if we can get users profile hrn"""
         r = requests.get("http://"+server+":8111/api/v1/profile", cookies=self.cookies)
         self.assertEqual(r.status_code, 200)
+        self.assertEqual(s['hrn'], json.loads(r.text)['result']['hrn'])
 
-if __name__ == '__main__':
-    suites = [unittest.TestLoader().loadTestsFromTestCase(TestLogin)]
-    testResult = unittest.TextTestRunner(verbosity=0).run(unittest.TestSuite(suites))
-
-    print('The errors: ', testResult.errors)
-    print('The Failures: ', testResult.failures)
-    print('The number of runs: ', testResult.testsRun)
-
-    print('Test were successful: ', testResult.wasSuccessful())

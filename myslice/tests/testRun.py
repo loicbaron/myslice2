@@ -35,7 +35,7 @@ if __name__ == '__main__':
         err.append(x)
 
     fail = []
-    for module, detail in testResult.failures:
+    for module, detai   l in testResult.failures:
         x = {}
         x['module'] =  str(module).replace("'", '\'')
         x['details'] = str(detail).replace("'", '\'')
