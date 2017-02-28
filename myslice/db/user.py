@@ -101,6 +101,7 @@ class User(myslicelibUser):
         return self
 
     def save(self, dbconnection, setup=None):
+        logger.warning("User.save() called")
         if self.getAttribute('generate_keys'):
             private_key, public_key = generate_RSA()
             self.setAttribute('private_key', private_key.decode('utf-8'))
@@ -124,12 +125,13 @@ class User(myslicelibUser):
         if not self.getAttribute('id'):
             raise UserException("This user has no id, could not be saved in local DB: {}".format(self))
         print("DB user save()")
-        from pprint import pprint
-        pprint(result)
+        logger.debug(result)
         db.users(dbconnection, result, self.getAttribute('id'))
         return True
 
     def delete(self, dbconnection, setup=None):
+        logger.warning("User.delete() called")
+        logger.debug(self.getAttribute('id'))
         result = super(User, self).delete(setup)
         errors = result['errors']
         if errors:

@@ -282,8 +282,8 @@ def get(dbconnection=None, table=None, id=None, filter=None, limit=None):
 
 def users(dbconnection=None, data=None, id=None, email=None, hashing=None):
 
-    #logger.debug("users function called in db/__init__.py")
-    #logger.debug("with parameters: data={}, id={}, email={}, hashing={}".format(data,id,email,hashing))
+    logger.debug("users function called in db/__init__.py")
+    logger.debug("with parameters: data=xxx, id={}, email={}, hashing={}".format(id,email,hashing))
 
     if not dbconnection:
         dbconnection = connect()
@@ -291,18 +291,20 @@ def users(dbconnection=None, data=None, id=None, email=None, hashing=None):
     ##
     # Updating an existing user
     if id and data:
+        logger.debug("Update parameters given id={} and data={}".format(id,data))
         r.db(s.db.name).table('users').get(id).update(data).run(dbconnection)
-
-    ##
-    # Adding a new user
-    if data:
-        r.db(s.db.name).table('users').insert(data, conflict='update').run(dbconnection)
 
     ##
     # Return the user
     if id:
+        logger.debug("return updated user")
         return r.db(s.db.name).table('users').get(id).run(dbconnection)
 
+    ##
+    # Adding a new user
+    if data:
+        logger.debug("Insert parameters given data={}".format(data))
+        r.db(s.db.name).table('users').insert(data, conflict='update').run(dbconnection)
     ##
     # Search user by email
     if email:
@@ -397,6 +399,8 @@ def events(dbconnection=None, event=None, user=None, status=None, action=None, o
         dbconnection = connect()
 
     if isinstance(event, Event):
+        logger.debug("Local DB events() called")
+        logger.debug(event.dict())
         # update event on db
         r.db(s.db.name).table('activity').insert(event.dict(), conflict='update').run(dbconnection)
     
@@ -436,7 +440,8 @@ def dispatch(dbconnection=None, activity=None):
     Dispatches an Activity (Event or Request object)
     """
     table = 'activity'
-
+    logger.debug("Local DB: dispatch() called")
+    logger.debug(activity)
     if not isinstance(activity, Event):
         raise Exception("Only Events can be dispatched")
 
@@ -459,6 +464,8 @@ def dispatch(dbconnection=None, activity=None):
 
 
 def delete(dbconnection=None, table=None, id=None):
+    logger.warning("local DB: delete() called")
+    logger.debug("table={}, id={}".format(table,id))
     if not dbconnection:
         dbconnection = connect()
 
