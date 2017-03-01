@@ -4,6 +4,7 @@ import json
 import requests
 import sys
 import unittest
+from datetime import datetime
 
 from pprint import pprint
 
@@ -14,6 +15,13 @@ class TestLogin(unittest.TestCase):
     def setUp(self):
         self.timeout = 10
         self.cookies = s['cookies']
+        self.tick = datetime.now()
+
+    def tearDown(self):
+        self.tock = datetime.now()
+        diff = self.tock - self.tick
+        print((diff.microseconds / 1000), "ms")
+
 
     def test_0_noAuth(self):
         """Check if unauth user can get profile data"""
@@ -31,12 +39,12 @@ class TestLogin(unittest.TestCase):
         self.assertEqual(r.status_code, 200)
         self.assertTrue(hasattr(r, 'cookies'))
         self.assertIsNotNone(r.cookies)
-        if r.cookies is not None:
-            self.cookies = r.cookies
 
     def test_2_get_profile_with_cookie(self):
-        """Takes cookie from test 1 and check if we can get users profile hrn"""
+        """Takes cookie and check if we can get users profile hrn"""
         r = requests.get("http://"+server+":8111/api/v1/profile", cookies=self.cookies)
         self.assertEqual(r.status_code, 200)
         self.assertEqual(s['hrn'], json.loads(r.text)['result']['hrn'])
+
+
 
