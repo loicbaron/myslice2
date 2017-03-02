@@ -5,22 +5,25 @@ import requests
 import sys
 import unittest
 from datetime import datetime
-
-from pprint import pprint
+from myslice.tests import LocalTestCase
 
 from myslice.tests.config import s, server
 
-class TestLogin(unittest.TestCase):
+class TestLogin(LocalTestCase):
 
     def setUp(self):
+        self.automateTest = s['automate_test']
         self.timeout = 10
         self.cookies = s['cookies']
-        self.tick = datetime.now()
+        self.startTimer()
+
 
     def tearDown(self):
-        self.tock = datetime.now()
-        diff = self.tock - self.tick
-        print((diff.microseconds / 1000), "ms")
+        # self.tock = datetime.now()
+        # diff = self.tock - self.tick
+        # print((diff.microseconds / 1000), "ms")
+        self.stopTimer()
+
 
 
     def test_0_noAuth(self):
