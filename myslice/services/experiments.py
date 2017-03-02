@@ -39,7 +39,6 @@ def run():
     qProjects = Queue()
     qSlices = Queue()
     lockProjects = threading.Lock()
-    lockSlices = threading.Lock()
 
     # threads
     threads = []
@@ -60,14 +59,14 @@ def run():
 
     # slices manager
     for y in range(1):
-        t = threading.Thread(target=manageSlices, args=(lockSlices, qSlices))
+        t = threading.Thread(target=manageSlices, args=(qSlices))
         t.daemon = True
         threads.append(t)
         t.start()
 
     # slices sync
     for y in range(1):
-        t = threading.Thread(target=syncSlices, args=(lockSlices,))
+        t = threading.Thread(target=syncSlices)
         t.daemon = True
         threads.append(t)
         t.start()
