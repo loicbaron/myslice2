@@ -9,7 +9,7 @@ if not os.path.exists(config_path):
     pass
 
 ## logging
-logging_path = os.path.abspath("/var/log/myslice")
+logging_path = os.path.abspath("")
 if not os.path.exists(logging_path):
     try:
         os.mkdir(logging_path)
@@ -73,7 +73,6 @@ cert = path + "myslice.cert"
 
 
 myslicelibsetup.authentication = Authentication(hrn=hrn, email=email, certificate=cert, private_key=pkey)
-##
 
 class settings(object):
 
