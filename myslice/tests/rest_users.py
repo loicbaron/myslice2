@@ -89,9 +89,9 @@ class TestUsers(LocalTestCase):
             res = self.checkEvent(event)
             self.assertEqual(res['status'], "SUCCESS")
             self.__class__.created_user = res['data']['id']
-        pprint(self.__class__.created_user)
+        print('created user:', self.__class__.created_user)
 
-    def test_4_getUserId(self):
+    def test_5_getUserId(self):
         id = self.__class__.created_user
         if id:
             r = requests.get('http://'+server+':8111/api/v1/users/'+id, cookies=self.cookies)
@@ -101,7 +101,7 @@ class TestUsers(LocalTestCase):
             self.assertEqual(id, "User was not created in previous test, we cannot continue this test")
 
 
-    def test_4_putUser(self):
+    def test_6_putUser(self):
         id = self.__class__.created_user
         if id:
             rGet = requests.get('http://'+server+':8111/api/v1/users/'+id, cookies=self.cookies)
@@ -130,7 +130,7 @@ class TestUsers(LocalTestCase):
         else:
             self.assertEqual(id, "User was not created in previous test, we cannot continue this test")
 
-    def test_5_deleteUser(self):
+    def test_7_deleteUser(self):
         id = self.__class__.created_user
         if id:
 
