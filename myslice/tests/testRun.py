@@ -19,10 +19,10 @@ from myslice.tests.config import server
 def runTest():
 
     suites = [unittest.TestLoader().loadTestsFromTestCase(TestLogin),
-              #unittest.TestLoader().loadTestsFromTestCase(TestAuthority),
-              #unittest.TestLoader().loadTestsFromTestCase(rTestProjects),
-              #unittest.TestLoader().loadTestsFromTestCase(TestUsers),
-              #unittest.TestLoader().loadTestsFromTestCase(TestSlices)
+              unittest.TestLoader().loadTestsFromTestCase(TestAuthority),
+              unittest.TestLoader().loadTestsFromTestCase(TestProjects),
+              unittest.TestLoader().loadTestsFromTestCase(TestUsers),
+              unittest.TestLoader().loadTestsFromTestCase(TestSlices)
               ]
 
     testResults = unittest.TextTestRunner(verbosity=0).run(unittest.TestSuite(suites))
