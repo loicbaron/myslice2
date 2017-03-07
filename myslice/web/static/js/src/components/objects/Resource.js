@@ -8,11 +8,10 @@ import ElementId from '../base/ElementId';
 import DateTime from '../base/DateTime';
 import { Icon } from '../base/Icon';
 
-const ResourceElement = ({resource, isSelected, handleSelect}) => {
+const ResourceElement = ({resource, isSelected, handleSelect, options}) => {
 
     var label = resource.hostname || resource.shortname;
 
-    var button = '';
     var status;
     if (resource.available == 'true') {
         status = 'online';
@@ -26,19 +25,40 @@ const ResourceElement = ({resource, isSelected, handleSelect}) => {
         // let flag = 'flag-icon flag-icon-' + countries.getCode(resource.location.country);
         // location = <div>Location: <span class={flag}></span> {resource.location.country}</div>;
     }
+    var services = null;
+    if (resource.services){
+        services = <div>
+        <List>
+        {
+            resource.services.map(function(service, i) {
+                if(service.hasOwnProperty('login')){
+                    return <div key={i}>
+                        <code>
+                        ssh -p {service.login.port} {service.login.username}@{service.login.hostname}
+                        </code>
+                    </div>
+                }else{
+                    console.log('service not supported');
+                    console.log(service);
+                } 
+            })
+        }
+        </List>
+        </div>
+    }
     return (
          <Element type="resource"
                   element={resource}
                   isSelected={isSelected}
                   handleSelect={handleSelect}
                   status={status}
-                  icon="resource"
-                  iconSelected="check"
+                  options={options}
          >
 
              <ElementTitle label={resource.name} detail={resource.type} />
              <ElementId id={resource.id} />
              {location}
+             {services}
          </Element>
      );
 };
@@ -54,18 +74,23 @@ const ResourceList = ({resources, selected, handleSelect, options}) => {
 
     let iconSelected = "check";
 
-    if ((selected) && (selected instanceof Object)) {
-        selected = [selected];
-        iconSelected = "arrow";
+    if (selected) {
+        if (selected instanceof Array) {
+            iconSelected = "check";
+        } else {
+            selected = [selected];
+        }
     }
-    if(resources.length==0){
+
+    if (resources.length == 0) {
         return (
             <div>No Resources</div>
         );
     }
+
     return (<List>
         {
-            resources.map(function (resource) {
+            resources.map(function(resource) {
                 let isSelected = false;
                 if (selected) {
                     isSelected = selected.some(function (el) {
@@ -91,11 +116,11 @@ ResourceList.propTypes = {
 ResourceList.defaultProps = {
 };
 
-const ResourcesSummary = ({resources}) => {
-    let resourcesList = <ul><li>No resources found</li></ul>;
+const ResourceSummary = ({resources}) => {
+    let resourceList = <ul><li>No resources found</li></ul>;
 
     if (resources.length > 0) {
-        resourcesList = <ul>
+        resourceList = <ul>
             {
                 resources.map((resource) =>
                     <li key={resource.id}>
@@ -107,19 +132,19 @@ const ResourcesSummary = ({resources}) => {
         </ul>;
     }
 
-    return <div className="summaryList">
+    return <div className="summaryList resource">
         <div className="elementIcon summaryIcon resource">
             <Icon name="resource" size="2x"/>
         </div>
-        {resourcesList}
+        {resourceList}
     </div>;
 };
 
-ResourcesSummary.propTypes = {
+ResourceSummary.propTypes = {
     resources: React.PropTypes.array.isRequired
 };
 
-ResourcesSummary.defaultProps = {
+ResourceSummary.defaultProps = {
 };
 
-export { ResourceElement, ResourceList, ResourcesSummary };
+export { ResourceElement, ResourceList, ResourceSummary };

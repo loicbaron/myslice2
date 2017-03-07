@@ -3,8 +3,7 @@ import React from 'react';
 import store from '../../stores/views/Status';
 import actions from '../../actions/views/Status';
 
-import View from '../base/View';
-import { Panel, PanelHeader, PanelBody } from '../base/Panel';
+import { View, ViewHeader, ViewBody, Panel } from '../base/View';
 import Title from '../base/Title';
 
 import { TestbedList } from '../objects/Testbed';
@@ -33,14 +32,13 @@ class StatusView extends React.Component {
 
     /* set the current testbed */
     setCurrentTestbed(testbed) {
-        console.log('current testbed = ');
-        console.log(testbed);
         actions.setCurrentTestbed(testbed);
     }
 
 
     render() {
-        var panelRight = null;
+        let panelRight = null;
+        let currentTestbedName = null;
 
         if (this.state.errorMessage) {
             return (
@@ -49,31 +47,28 @@ class StatusView extends React.Component {
         }
 
         if (this.state.currentTestbed) {
-
-            panelRight = <Panel>
-                <PanelHeader>
-                    <Title title={this.state.currentTestbed.name} subtitle={this.state.currentTestbed.hostname} />
-                </PanelHeader>
-                <PanelBody>
-                    <ResourceList resources={this.state.resources} />
-                </PanelBody>
-            </Panel>;
-
+            panelRight = <ResourceList resources={this.state.resources} />;
+            currentTestbedName = this.state.currentTestbed.name;
         }
 
         return (
             <View>
-                <Panel>
-                    <PanelHeader>
-                        <Title title="Service Status" subtitle="" />
-                    </PanelHeader>
-                    <PanelBody>
+                <ViewHeader>
+                    <Title title="Service Status"
+                           subtitle={currentTestbedName}
+                           separator="/"
+                    />
+                </ViewHeader>
+                <ViewBody>
+                    <Panel>
                         <TestbedList testbeds={this.state.testbeds}
-                                     handleSelect={this.setCurrentTestbed}
-                                     current={this.state.currentTestbed} />
-                    </PanelBody>
-                </Panel>
-                {panelRight}
+                                    handleSelect={this.setCurrentTestbed}
+                                    current={this.state.currentTestbed} />
+                    </Panel>
+                    <Panel>
+                        {panelRight}
+                    </Panel>
+                </ViewBody>
             </View>
         );
     }

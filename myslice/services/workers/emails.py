@@ -36,6 +36,7 @@ def confirmEmails(qConfirmEmails):
         try:
             event = Event(qConfirmEmails.get())
         except Exception as e:
+            logger.exception(e)
             logger.error("Problem with event: {}".format(e))
         else:
             try:
@@ -68,7 +69,10 @@ def confirmEmails(qConfirmEmails):
             except Exception as e:
                 import traceback
                 traceback.print_exc()
-                logger.error("Error while trying to send a confirmation email: {}".format(e))
+                msg = "Error in event {} while trying to send a confirmation email: {}".format(event.id, e)
+                logger.error(msg)
+                event.logWarning(msg)
+                dispatch(dbconnection, event)
 
 
 def emails_run(qEmails):
@@ -114,8 +118,7 @@ def emails_run(qEmails):
                     except KeyError:
                         msg = 'Authority id not specified ({})'.format(event.id)
                         logger.error(msg)
-                        event.logDebug(msg)
-                        event.logWarning('Authority not specified, email not sent')
+                        event.logWarning('Authority not specified in event {}, email not sent'.format(event.id))
                         event.notify = False
                         dispatch(dbconnection, event)
                         continue
@@ -128,8 +131,7 @@ def emails_run(qEmails):
                     if not recipients:
                         msg = 'Emails cannot be sent because no one is the PI of {}'.format(event.object.id)
                         logger.error(msg)
-                        event.logDebug(msg)
-                        event.logWarning('No recipients could be found, email not sent')
+                        event.logWarning('No recipients could be found for event {}, email not sent'.format(event.id))
                         event.notify = False
                         dispatch(dbconnection, event)
                         continue
@@ -200,8 +202,7 @@ def sendEmail(event, recipients, subject, template, url, buttonLabel):
     except Exception as e:
         msg = '{} {}'.format(e, event.object.id)
         logger.error(msg)
-        event.logDebug(msg)
-        event.logWarning('could not send email to PI users')
+        event.logWarning('Could not send email to PI users in event {}'.format(event.id))
     finally:
         event.notify = False
         dispatch(dbconnection, event)

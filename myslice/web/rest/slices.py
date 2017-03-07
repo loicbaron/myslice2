@@ -30,6 +30,9 @@ class SlicesHandler(Api):
         slice = None
         response = []
 
+        if not self.get_current_user():
+            self.userError('permission denied user not logged in')
+            return
         ##
         # if id (hrn|urn) is set we get the slice with id <urn|hrn>
         #
@@ -163,10 +166,13 @@ class SlicesHandler(Api):
         try:
             # Check if the user has the right to create a slice under this project
             u = yield r.table('users').get(self.get_current_user()['id']).run(self.dbconnection)
-            if data['project'] in u['pi_authorities']:
+            if isinstance(data['project'], dict):
+                project_id = data['project']['id']
+            if project_id in u['pi_authorities']:
                 data['authority'] = data['project']
             else:
                 self.userError("your user has no rights on project: %s" % data['project'])
+                return
         except Exception:
             self.userError("not authenticated or project not specified")
             return
@@ -253,19 +259,24 @@ class SlicesHandler(Api):
         if all(isinstance(n, dict) for n in data['users']):
             data['users'] = [x['id'] for x in data['users']]
 
-        # adding users
-        events += self.add_users(data, slice)
+        ## adding users
+        #events += self.add_users(data, slice)
 
-        # removing users
-        events += self.remove_users(data, slice)
+        ## removing users
+        #events += self.remove_users(data, slice)
 
-        # adding resources
-        e = self.add_resources(data, slice)
-        if e:
-            events.append(e)
+        ## adding resources
+        #e = self.add_resources(data, slice)
+        #if e:
+        #    events.append(e)
 
-        # removing resources
-        e = self.remove_resources(data, slice)
+        ## removing resources
+        #e = self.remove_resources(data, slice)
+        #if e:
+        #    events.append(e)
+
+        # update slice
+        e = self.update_slice(data, slice)
         if e:
             events.append(e)
 
@@ -437,6 +448,29 @@ class SlicesHandler(Api):
         except Exception as e:
             # TODO: we should log here
             # log.error("Can't create request....")
+            return False
+        else:
+            return event
+
+    def update_slice(self, data, slice):
+        # update slice data only if it has changed
+        # TODO: check what we can change
+
+        # Update slice properties
+        try:
+            event = Event({
+                'action': EventAction.UPDATE,
+                'user': self.get_current_user()['id'],
+                'object': {
+                    'type': ObjectType.SLICE,
+                    'id': slice['id']
+                },
+                'data': data
+            })
+        except Exception as e:
+            # TODO: we should log here
+            log.error("Can't create event")
+            log.errpr(e)
             return False
         else:
             return event

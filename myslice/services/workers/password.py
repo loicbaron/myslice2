@@ -40,11 +40,15 @@ def events_run(lock, qPasswordEvents):
             event = Event(qPasswordEvents.get())
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
+            event.logError(str(e))
+            event.setError()
+            dispatch(dbconnection, event)
         else:
             logger.info("Processing password event from user {}".format(event.user))
 
             event.setRunning()
-
+            event.logInfo("Event is running")
+            logger.debug("Event %s is running" % event.id)
             ##
             # Creating a new password for user
             if event.creatingObject():
@@ -53,15 +57,16 @@ def events_run(lock, qPasswordEvents):
                 try:
                     cursor = db.users(dbconnection, email=event.data['email'])
                     u = cursor.next()
-                    user = User(u)
-                    user.password = event.data['password']
-                    ret = user.save(dbconnection)
+                    u['password'] = event.data['password']
+                    db.users(dbconnection, u, u['id'])
                 except Exception as e:
                     logger.error("Problem updating password of user: {} - {}".format(event.object.id, e))
                     event.logError(str(e))
                     event.setError()
                 else:
                     event.setSuccess()
+                    event.logInfo("Event success")
+                    logger.debug("Event %s Success" % event.id)
             ##
             # we then dispatch the event
             db.dispatch(dbconnection, event)

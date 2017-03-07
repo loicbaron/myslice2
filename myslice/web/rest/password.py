@@ -57,7 +57,7 @@ class PasswordHandler(Api):
 
         # Directly modify the database, no need to go through Events
         user['password'] = crypt_password(data['new_password'])
-        yield r.table('users').update(user).run(self.dbconnection)
+        yield r.table('users').get(user_id).update(user).run(self.dbconnection)
 
         #event = Event({
         #    'action': EventAction.UPDATE,

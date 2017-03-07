@@ -12,8 +12,6 @@ from tornado import gen, escape
 class RequestsHandler(Api):
 
 
-
-
     @gen.coroutine
     def get(self, id=None):
         """
@@ -191,5 +189,3 @@ class RequestsHandler(Api):
         
 
         self.finish(json.dumps({"result": requests}, cls=myJSONEncoder))
-
-

@@ -3,26 +3,16 @@ import moment from 'moment';
 
 const DateTime = (props) => {
 
-        var datetime = '';
-        var label = '';
+    if (timestamp) {
+        return (
+            <div className="dateTime">
+                <span className="elementLabel">{label}</span>
+                {moment(timestamp).format("DD/MM/YYYY H:mm")}
+            </div>
+        );
+    }
 
-        if (props.label) {
-            label = <div className="elementLabel">{props.label}</div>;
-        }
-        if (props.timestamp) {
-            datetime = moment(props.timestamp).format("DD/MM/YYYY H:mm");
-        }
-
-        if (datetime) {
-            return (
-                <div className="dateTime">
-                    {label}
-                    {datetime}
-                </div>
-            );
-        } else {
-            return null;
-        }
+    return null;
 };
 
 DateTime.propTypes = {
@@ -31,8 +21,58 @@ DateTime.propTypes = {
 };
 
 DateTime.defaultProps = {
-    timestamp : '',
-    label: ''
+    timestamp : null,
+    label: null
 };
 
-export default DateTime;
+const CalendarDate = ({label, timestamp}) => {
+
+    if (timestamp) {
+        return (
+            <div className="dateTime">
+                <span className="elementLabel">{label}</span>
+                {moment(timestamp).calendar()}
+            </div>
+        );
+    }
+
+    return null;
+
+};
+
+CalendarDate.propTypes = {
+    timestamp: React.PropTypes.string,
+    label: React.PropTypes.string
+};
+
+CalendarDate.defaultProps = {
+    timestamp : null,
+    label: null
+};
+
+const HumanDate = ({label, timestamp}) => {
+
+    if (timestamp) {
+        return (
+            <div className="dateTime">
+                <span className="elementLabel">{label}</span>
+                {moment(timestamp).fromNow()}
+            </div>
+        );
+    }
+
+    return null;
+
+};
+
+HumanDate.propTypes = {
+    timestamp: React.PropTypes.string,
+    label: React.PropTypes.string
+};
+
+HumanDate.defaultProps = {
+    timestamp : null,
+    label: null
+};
+
+export { DateTime, CalendarDate, HumanDate };

@@ -1,3 +1,4 @@
+import logging
 from pprint import pprint
 from myslicelib.model.authority import Authority as myslicelibAuthority
 from myslicelib.query import q
@@ -7,6 +8,8 @@ from myslice.db.user import User
 from myslice.lib import Status
 from myslice.lib.util import format_date
 from xmlrpc.client import Fault as SFAError
+
+logger = logging.getLogger('myslice.db.authority')
 
 class AuthorityException(Exception):
     def __init__(self, errors):
@@ -45,17 +48,22 @@ class Authority(myslicelibAuthority):
         if errors:
             raise AuthorityException(errors)
 
+        logger.debug(result)
+
         result = { **(self.dict()), **result['data'][0]}
         # add status if not present and update on db
         if not 'status' in result:
             result['status'] = Status.ENABLED
             result['enabled'] = format_date()
 
-        db.authorities(dbconnection, result, self.id)
 
         # New Authority created
         if current is None:
+            db.authorities(dbconnection, result)
             current = db.get(dbconnection, table='authorities', id=self.id)
+        # Update existing authorityt
+        else:
+            db.authorities(dbconnection, result, self.id)
 
         # Create new users under a New Authority
         # Otherwise users are created with User.save()
@@ -97,8 +105,9 @@ class Authority(myslicelibAuthority):
             elif user.id not in current['pi_users']:
                 self.addPi(user)
                 modified = True
-
-            db.users(dbconnection, user.dict())
+            logger.debug("Update user %s in Authority save()" % u)
+            logger.debug(user)
+            db.users(dbconnection, user.dict(), user.id)
 
         if modified:
             result = super(Authority, self).save(setup)
@@ -125,7 +134,9 @@ class Authority(myslicelibAuthority):
         for u in current['pi_users']:
             user = q(User).id(u).get().first()
             if user:
+                logger.debug("Update user %s in Authority delete()" % u)
+                logger.debug(user)
                 user = user.merge(dbconnection)
-                db.users(dbconnection, user.dict())
+                db.users(dbconnection, user.dict(), user.id)
 
         return True

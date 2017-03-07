@@ -1,10 +1,11 @@
 import React from 'react';
 
 import { List, ListSimple } from '../base/List';
-import { Element } from '../base/Element';
+import { Element, ElementOptions } from '../base/Element';
 import ElementTitle from '../base/ElementTitle';
 import ElementId from '../base/ElementId';
 import DateTime from '../base/DateTime';
+import { Icon } from '../base/Icon';
 
 const SliceElement = ({slice, isSelected, handleSelect, options}) => {
 
@@ -104,4 +105,4 @@ SliceList.propTypes = {
 SliceList.defaultProps = {
 };
 
-export { SliceElement, SliceList};
+export { SliceElement, SliceList };

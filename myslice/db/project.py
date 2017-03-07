@@ -1,3 +1,4 @@
+import logging
 from pprint import pprint
 
 from myslice import myslicelibsetup
@@ -12,6 +13,7 @@ from myslice.lib import Status
 from myslice.lib.util import format_date
 from xmlrpc.client import Fault as SFAError
 
+logger = logging.getLogger('myslice.db.project')
 
 class ProjectException(Exception):
     def __init__(self, errors):
@@ -35,21 +37,26 @@ class Project(myslicelibProject):
         if not 'status' in result:
             result['status'] = Status.ENABLED
             result['enabled'] = format_date()
-        db.projects(dbconnection, result, self.id)
 
         # New Project created
         if current is None:
+            db.projects(dbconnection, result)
             current = db.get(dbconnection, table='projects', id=self.id)
+        # Update existing project
+        else:
+            db.projects(dbconnection, result, self.id)
 
         # update pi_users after Save
-        pi_users = current['pi_users'] + self.getAttribute('pi_users')
+        pi_users = list(set(current['pi_users']) | set(self.getAttribute('pi_users')))
         for u in pi_users:
             user = q(User).id(u).get().first()
             user = user.merge(dbconnection)
-            db.users(dbconnection, user.dict())
+            logger.debug("Update user %s after Project save()" % u)
+            logger.debug(user)
+            db.users(dbconnection, user.dict(), user.id)
 
         # update slices after Save
-        slices = current['slices'] + self.getAttribute('slices')
+        slices = list(set(current['slices']) | set(self.getAttribute('slices')))
         if setup:
             setup.setEndpoints(myslicelibsetup.endpoints)
 
@@ -75,7 +82,9 @@ class Project(myslicelibProject):
         for u in current['pi_users']:
             user = q(User).id(u).get().first()
             user = user.merge(dbconnection)
-            db.users(dbconnection, user.dict())
+            logger.debug("Update user %s after Project delete()" % u)
+            logger.debug(user)
+            db.users(dbconnection, user.dict(), user.id)
 
         # Slices will be removed by Sync
 

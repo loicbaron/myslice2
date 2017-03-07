@@ -13,6 +13,7 @@ import signal
 import threading
 from queue import Queue
 import myslice.db as db
+import rethinkdb as r
 from myslice.db import changes, connect, events
 from myslice.db.activity import Event, ObjectType
 from myslice.services.workers.leases import events_run as manageLeases, sync as syncLeases
@@ -41,14 +42,14 @@ def run():
     # threads
     threads = []
 
-    # projects manager
+    # leases manager
     for y in range(1):
         t = threading.Thread(target=manageLeases, args=(lock, qLeases))
         t.daemon = True
         threads.append(t)
         t.start()
 
-    # projects sync
+    # leases sync
     for y in range(1):
         t = threading.Thread(target=syncLeases, args=(lock,))
         t.daemon = True
@@ -60,7 +61,9 @@ def run():
     ##
     # will watch for incoming events/requests and pass them to
     # the appropriate thread group
-    feed = changes(dbconnection, table='activity', status=['WAITING', 'APPROVED'])
+    feed = r.db('myslice').table('activity').changes().run(dbconnection)
+    #feed = changes(dbconnection, table='activity', status=['WAITING', 'APPROVED'])
+
     ##
     # Process events that were not watched 
     # while Server process was not running
@@ -70,20 +73,29 @@ def run():
         try:
             event = Event(ev)
         except Exception as e:
+            logger.exception(e)
             logger.error("Problem with event: {}".format(e))
         else:
             if event.object.type == ObjectType.LEASE:
+                logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
                 qLeases.put(event)
 
     for activity in feed:
         try:
-            event = Event(activity['new_val'])
+            if activity['new_val']['status'] in ["WAITING","APPROVED"]:
+                event = Event(activity['new_val'])
+                if event.object.type == ObjectType.LEASE:
+                    logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
+                    qLeases.put(event)
         except Exception as e:
-            logger.error("Problem with event: {}".format(e))
-        else:
-            if event.object.type == ObjectType.LEASE:
-                qLeases.put(event)
+            import traceback
+            traceback.print_exc()
+            logger.exception(e)
+            if 'new_val' in activity and 'id' in activity['new_val']:
+                logger.error("Problem with event: {}".format(activity['new_val']['id']))
 
+
+    logger.critical("Service leases stopped")
     # waits for the thread to finish
     for x in threads:
         x.join()

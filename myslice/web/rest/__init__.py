@@ -5,6 +5,7 @@ import tornado_cors as cors
 from tornado import web
 import re
 
+from myslice.db.activity import Event, EventAction, ObjectType, DataType
 from myslice.lib.util import myJSONEncoder
 
 logger = logging.getLogger(__name__)
@@ -133,7 +134,8 @@ class Api(cors.CorsMixin, web.RequestHandler):
             except Exception as e:
                 # TODO: we should log here
                 # log.error("Can't create request....")
-                pass
+                logger.error("Can't create event in add_pi_users")
+                logger.exception(e)
             else:
                 events.append(event)
 
@@ -160,7 +162,8 @@ class Api(cors.CorsMixin, web.RequestHandler):
             except Exception as e:
                 # TODO: we should log here
                 # log.error("Can't create request....")
-                pass
+                logger.error("Can't create event in add_pi_users")
+                logger.exception(e)
             else:
                 events.append(event)
 

@@ -21,7 +21,6 @@ class RequestsList extends React.Component {
     componentWillMount() {
         store.listen(this.onChange);
         if(this.props.filters){
-            console.log(this.props.filters);
             actions.fetchRequests(this.props.filters);
         }else{
             actions.fetchRequests();
@@ -29,7 +28,6 @@ class RequestsList extends React.Component {
     }
 
     componentDidMount() {
-        actions.watchRequest();
     }
     
     componentWillUnmount() {
@@ -41,7 +39,6 @@ class RequestsList extends React.Component {
     }
 
     handleFilter(filter) {
-        console.log(filter);
         actions.fetchRequests(filter);
     }
 

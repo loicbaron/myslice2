@@ -10,11 +10,12 @@ import logging
 import signal
 import threading
 from queue import Queue
+import rethinkdb as r
 from myslice.db import connect, changes, events
 from myslice.db.activity import Event
 from myslice.services.workers.emails import emails_run as manageEmails, confirmEmails
 
-logger = logging.getLogger('myslice.service.activity')
+logger = logging.getLogger('myslice.service.email')
 
 def receive_signal(signum, stack):
     logger.info('Received signal %s', signum)
@@ -47,11 +48,13 @@ def run():
         t.daemon = True
         threads.append(t)
         t.start()
+
     dbconnection = connect()
 
     ##
     # Watch for changes on the activity table
-    feed = changes(table='activity')
+    feed = r.db('myslice').table('activity').changes().run(dbconnection)
+    #feed = changes(table='activity')
 
     ##
     # Process events that were not watched 
@@ -65,6 +68,7 @@ def run():
             logger.error("Problem with event: {}".format(e))
         else:
             if event.notify:
+                logger.debug("Add event %s to Email queue" % (event.id))
                 qEmails.put(event)
 
     new_confirmations = events(dbconnection, status="CONFIRM")
@@ -74,7 +78,9 @@ def run():
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
         else:
-            qConfirmEmails.put(event)
+            if event.notify:
+                logger.debug("Add event %s to Confirm Email queue" % (event.id))
+                qConfirmEmails.put(event)
 
     for activity in feed:
         try:
@@ -82,19 +88,24 @@ def run():
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
         else:
-            if event.isConfirm():
+            if event.isConfirm() and event.notify:
+                logger.debug("Add event %s to Confirm Email queue" % (event.id))
                 qConfirmEmails.put(event)
 
             elif event.isPending() and event.notify:
+                logger.debug("Add event %s to Email queue" % (event.id))
                 qEmails.put(event)
 
             elif event.isDenied() and event.notify:
                 logger.info("event {} is denied".format(event.id))
+                logger.debug("Add event %s to Email queue" % (event.id))
                 qEmails.put(event)
 
             elif event.isSuccess() and event.notify:
+                logger.debug("Add event %s to Email queue" % (event.id))
                 qEmails.put(event)
 
+    logger.critical("Service emails stopped")
     # waits for the thread to finish
     for x in threads:
         x.join()

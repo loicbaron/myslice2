@@ -44,35 +44,47 @@ def events_run(lock, qLeasesEvents):
             event = Event(qLeasesEvents.get())
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
+            event.logError("Error in worker leases: {}".format(e))
+            event.setError()
+            dispatch(dbconnection, event)
         else:
             logger.info("Processing event from user {}".format(event.user))
             try:
                 event.setRunning()
+                event.logInfo("Event is running")
+                logger.debug("Event %s is running" % event.id)
                 isSuccess = False
 
                 u = User(db.get(dbconnection, table='users', id=event.user))
                 user_setup = UserSetup(u, myslicelibsetup.endpoints)
 
                 if event.creatingObject(): 
-                    lease = Lease(event.data)
-                    sli = Slice(db.get(dbconnection, table='slices', id=event.data['slice_id']))
+                    leases = []
+                    if isinstance(event.data, list):
+                        for l in event.data:
+                            slice_id = l['slice_id']
+                            leases.append(Lease(l))
+                    else:
+                        slice_id = event.data['slice_id']
+                        leases.append(Lease(event.data))
+                    sli = Slice(db.get(dbconnection, table='slices', id=slice_id))
                     if not sli:
                         raise Exception("Slice doesn't exist")
+                    for lease in leases:
+                        for val in lease.resources:
+                            r = db.get(dbconnection, table='resources', id=val)
+                            # Add resource only if it exists in DB
+                            if r is not None:
+                                r = Resource(r)
+                                sli.addResource(r)
+                            else:
+                                r = Resource({'id':val})
+                                lease.removeResource(r)
 
-                    for val in event.data['resources']:
-                        r = db.get(dbconnection, table='resources', id=val)
-                        # Add resource only if it exists in DB
-                        if r is not None:
-                            r = Resource(r)
-                            sli.addResource(r)
+                        if len(lease.resources) > 0:
+                            sli.addLease(lease)
                         else:
-                            r = Resource({'id':val})
-                            lease.removeResource(r)
-
-                    if len(lease.resources) > 0:
-                        sli.addLease(lease)
-                    else:
-                        raise Exception("Invalid resources")
+                            raise Exception("Invalid resources")
                     isSuccess = sli.save(dbconnection, user_setup)
 
                 if event.deletingObject(): 
@@ -101,26 +113,33 @@ def events_run(lock, qLeasesEvents):
                 # If at least one of the AMs replies with success, it's ok
                 # If all AMs have failed -> Error 
                 for err in e.stack:
-                    event.logError(str(err))
+                    event.logError("Error in worker leases: {}".format(err))
+                    logger.error("Error in worker leases: {}".format(err))
                 # XXX TO BE REFINED
                 event.setError()
 
             except SliceWarningException as e:
                 for err in e.stack:
-                    event.logError(str(err))
+                    event.logWarning(str(err))
+                    logger.warning(str(err))
                 event.setWarning()
 
             except Exception as e:
                 import traceback
                 traceback.print_exc()
-                logger.error("Problem with event: {}".format(e))
-                event.logError(str(e))
+                logger.error("Problem with event {}: {}".format(event.id,e))
+                event.logError("Error in worker leases: {}".format(e))
                 event.setError()
             else:
                 if isSuccess:
                     event.setSuccess()
+                    event.logInfo("Event success")
+                    logger.debug("Event %s Success" % event.id)
                 else:
+                    logger.error("Error event {}: action failed".format(event.id))
                     event.setError()
+                    event.logError("Error in worker leases: action failed")
+
             db.dispatch(dbconnection, event)
 
 def sync(lock):
@@ -134,24 +153,20 @@ def sync(lock):
     while True:
         logger.info("syncing Leases")
         try:
-            logger.info("Query Lease")
+            logger.debug("Query Lease")
             ll = q(Lease).get()
-            logger.info("End Query")
 
+            logger.debug("syncLeases")
             # syncs leases configured with the db
-            db.syncLeases(ll)
+            slices = db.syncLeases(ll)
 
-            for l in ll:
-                if hasattr(l, 'slice_id'):
-                    logger.info("Synchronize slice %s" % l.slice_id)
-                    logger.info("Synchronize slice %s" % l.slice_id)
-                    # if the slice is part of the portal
-                    if db.get(dbconnection, table='slices', id=l.slice_id):
-                        syncSlices(l.slice_id)
+            for s in slices:
+                logger.info("Synchronize slice %s after syncLeases" % s)
+                syncSlices(s)
 
         except Exception as e:
-            import traceback
-            traceback.print_exc()
+            #import traceback
+            #traceback.print_exc()
             logger.exception("Service does not seem to be available")
             logger.exception(str(e))
 

@@ -1,3 +1,4 @@
+import logging
 from pprint import pprint
 
 from myslicelib.model.slice import Slice as myslicelibSlice
@@ -8,6 +9,8 @@ from myslice.db.user import User
 from myslice.lib import Status
 from myslice.lib.util import format_date
 from xmlrpc.client import Fault as SFAError
+
+logger = logging.getLogger('myslice.db.slice')
 
 class SliceException(Exception):
     def __init__(self, errors):
@@ -35,22 +38,37 @@ class Slice(myslicelibSlice):
         result = super(Slice, self).save(setup)
         errors = result['errors']
         result = {**(self.dict()), **result['data'][0]}
+        if not errors:
+            for r in result['resources']:
+                if (not 'services' in r) or (not r['services']):
+                    logger.warning("result from slice.save didn't hade login info")
+                    logger.warning("sleeping 10s before asking again to AMs")
+                    import time
+                    time.sleep(10)
+                    slice = q(Slice, setup).id(self.id).get().first()
+                    result = slice.dict()
+                    break
         # add status if not present and update on db
         if not 'status' in result:
             result['status'] = Status.ENABLED
             result['enabled'] = format_date()
 
-        db.slices(dbconnection, result, self.id)
-
         # New Slice created
         if current is None:
+            db.slices(dbconnection, result)
             current = db.get(dbconnection, table='slices', id=self.id)
-        # XXX We only update the current users in slice, we must also update the Removed users
-        users = current['users'] + self.getAttribute('users')
+        # Update existing slice
+        else:
+            db.slices(dbconnection, result, self.id)
+
+        # Update users both previously and currently in Slice
+        users = list(set(current['users']) | set(self.getAttribute('users')))
         for u in users:
             user = q(User).id(u).get().first()
             user = user.merge(dbconnection)
-            db.users(dbconnection, user.dict())
+            logger.debug("Update user %s after Slice save()" % u)
+            logger.debug(user)
+            db.users(dbconnection, user.dict(), user.id)
 
         # Update the Project of the slice
         project = db.get(dbconnection, table='projects', id=self.project)
@@ -104,7 +122,9 @@ class Slice(myslicelibSlice):
         for u in current['users']:
             user = q(User).id(u).get().first()
             user = user.merge(dbconnection)
-            db.users(dbconnection, user.dict())
+            logger.debug("Update user %s after Slice save()" % u)
+            logger.debug(user)
+            db.users(dbconnection, user.dict(), user.id)
 
         # Update the Project of the slice
         project = db.get(dbconnection, table='projects', id=self.project)

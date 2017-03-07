@@ -9,7 +9,7 @@ if not os.path.exists(config_path):
     pass
 
 ## logging
-logging_path = os.path.abspath("/var/log/myslice")
+logging_path = os.path.abspath("")
 if not os.path.exists(logging_path):
     try:
         os.mkdir(logging_path)
@@ -41,20 +41,20 @@ config_file = config_path
 
 ## Setup MySliceLib
 myslicelibsetup.endpoints = [
-          #  Endpoint(url="https://sfa3.planet-lab.eu:12346",type="AM", timeout=60, name="PlanetLab Europe", technologies="vm"),
-           # Endpoint(url="https://194.199.16.164:12346",type="AM", timeout=60, name="FIT IoT-Lab", technologies="iot,robot"),
-            #Endpoint(url="https://www.wilab2.ilabt.iminds.be:12369/protogeni/xmlrpc/am/3.0",type="AM",name="WiLab.t"),
-            #Endpoint(url="http://www.wall2.ilabt.iminds.be:12369/protogeni/xmlrpc/am/3.0",type="AM",name="Virtual Wall 2"),
+          #  Endpoint(url="https://sfa3.planet-lab.eu:12346",type="AM", timeout=60, name="PlanetLab Europe", technologies="vm", hasLeases=False),
+           # Endpoint(url="https://194.199.16.164:12346",type="AM", timeout=60, name="FIT IoT-Lab", technologies="iot,robot", hasLeases=True),
+            #Endpoint(url="https://www.wilab2.ilabt.iminds.be:12369/protogeni/xmlrpc/am/3.0",type="AM",name="WiLab.t", hasLeases=False),
+            #Endpoint(url="http://www.wall2.ilabt.iminds.be:12369/protogeni/xmlrpc/am/3.0",type="AM",name="Virtual Wall 2", hasLeases=False),
             #Endpoint(url="https://fuseco.fokus.fraunhofer.de/api/sfa/am/v3",type="AM"),
-           # Endpoint(url="https://griffin.ipv6.lip6.fr:8001/RPC2",type="AM",name="FIT WiFi UPMC", technologies="wireless"),
+           # Endpoint(url="https://griffin.ipv6.lip6.fr:8001/RPC2",type="AM",name="FIT WiFi UPMC", technologies="wireless", hasLeases=True),
            # Endpoint(url="https://faraday.inria.fr:12346/RPC2",type="AM",name="FIT R2Lab", technologies="wireless"),
-            Endpoint(url="https://portal.onelab.eu:6080",type="Reg",name="OneLab Registry"),
+            Endpoint(url="https://portal.onelab.eu:6080",type="Reg", timeout=30, name="OneLab Registry"),
             #Endpoint(url="https://dev.myslice.info:12345",type="Reg", timeout=10, name="OneLab Registry"),
             #Endpoint(url="https://sfa-fed4fire.pl.sophia.inria.fr:443",type="Reg")
         ]
 
 myslicelibsetup.registry_endpoints = [
-            Endpoint(url="https://portal.onelab.eu:6080",type="Reg", timeout=10, name="OneLab Registry"),
+            Endpoint(url="https://portal.onelab.eu:6080",type="Reg", timeout=30, name="OneLab Registry"),
         ]
 
 #if os.path.exists(os.path.expanduser("~/.sfi/")):
@@ -73,7 +73,6 @@ cert = path + "myslice.cert"
 
 
 myslicelibsetup.authentication = Authentication(hrn=hrn, email=email, certificate=cert, private_key=pkey)
-##
 
 class settings(object):
 
@@ -90,7 +89,7 @@ class settings(object):
     class email(object):
         dirpath = '/myslice/myslice/web/templates/email'
         theme = 'onelab'
-        domain = 'onelan.eu'
+        domain = 'onelab.eu'
         host = 'smtp.gmail.com'
         port = 587
         ssl = True
@@ -100,6 +99,8 @@ class settings(object):
     class web(object):
         url = 'http://dev.myslice.info'
         port = '8111'
+        cookie_secret="x&7G1d2!5MhG9SWkXu"
+        token_secret = 'u636vbJV6Ph[EJB;Q'
 
 ## override with configuration file
 #parser = SafeConfigParser()

@@ -1,17 +1,20 @@
 import jwt
 import logging, json
 
-from pprint import pprint
-
 from tornado import gen
 from sockjs.tornado import SockJSConnection
 from myslice.lib.util import myJSONEncoder
+from myslice import settings as s
 
 ##
 # Setup ZMQ with tornado event loop support
 import zmq
 from zmq.eventloop import ioloop
 from zmq.eventloop.zmqstream import ZMQStream
+
+##
+# WebSocket MySlice protocol API
+from myslice.web.websocket.api import Request, Response, ResponseError, Stream
 
 ioloop.install()
 
@@ -68,97 +71,70 @@ class WebsocketsHandler(SockJSConnection):
         self.authenticated = False
         self.clients.add(self)
 
-    def on_message(self, message):
-        data = json.loads(message)
-        
-        if not self.authenticated:
-            
-            try:
-                encrypted_string = data['auth']
-            except KeyError as e:
-                self.send(
-                        json.dumps({
-                            'error': 'malformed request',
-                            'debug': None,
-                            'result': []
-                        })
-                )
-                # close websocket
-                self.close()
-                return
+    def api_data(self):
+        pass
 
-            try:
-                self.auth_user = jwt.decode( encrypted_string, 'u636vbJV6Ph[EJB;Q', algorithms=['HS256'])
-            except Exception as e:
-                logger.error('Token Decrption errors %s' % e)
-                self.send(
-                        json.dumps({
-                            'error': 'Token Decrption errors',
-                            'debug': None,
-                            'result': []
-                        })
-                )
-                # close websocket
-                self.close()
-                return
+    def api_message(self, payload):
+        self.send(payload.json())
+
+    def api_error(self, payload):
+        self.send(payload.json())
+
+    def api_fatal(self, payload):
+        self.api_error(payload.json())
+        #self.close()
+
+    def on_message(self, message):
+        '''
+        Manage incoming messages.
+        :param message:
+        :return:
+        '''
+
+        try:
+            request = Request(message)
+        except Exception as e:
+            ##
+            # API protocol failure (bad command)
+            # TODO: Create specific exceptions
+            self.api_fatal(json.dumps({ "result": { "code": -1, "message": "API error: {}".format(str(e)) }} ))
+        else:
+            if request.isAuthenticating():
+                ##
+                # Authentication
+                try:
+                    self.authenticated_user = jwt.decode(request.token, 'u636vbJV6Ph[EJB;Q', algorithms=['HS256'])
+                except Exception as e:
+                    self.api_fatal(
+                        ResponseError(request, str(e))
+                    )
+                else:
+                    self.authenticated = True
+                    logger.info("user {} connected".format(self.authenticated_user['id']))
+                    self.api_message(
+                        Response(request, "connected")
+                    )
+            elif self.authenticated:
+                ##
+                # User is already authenticated
+                if request.isWatching():
+                    logger.info("user {} is watching {}".format(self.authenticated_user['id'], request.object))
+                    self.pubsub = ZMQPubSub(self.context, self.on_change).connect().subscribe(u"".format(request.object))
+                    self.api_message(
+                        Response(request, "watching {}".format(request.object))
+                    )
+                    pass
+                elif request.isUnwatching():
+                    pass
+                elif request.isCounting():
+                    pass
 
             else:
-                self.authenticated = True
-                logger.info("user {} connected".format(self.auth_user['id']))
-                self.send(json.dumps({'user':'authenticatedt'}))
-                return
-
-        if self.authenticated and 'watch' in data:
-
-            logger.info("user {} subscribed to {}".format(self.auth_user['id'], message))
-            self.send(json.dumps({'user':'watching'}))
-            
-            # check if all the specified entities exist
-            try:
-                watch = data['watch']
-            except KeyError as e:
-                self.send(
-                        json.dumps({
-                            'error': 'malformed request',
-                            'debug': None,
-                            'result': []
-                        })
+                ##
+                # User is not authenticated (error)
+                self.fatal_error(
+                    ResponseError(request, "Not authenticated")
                 )
-                # close websocket
-                self.close()
-                return
-
-            # check if all the specified watch exist
-            if not watch in self.watch:
-                
-                self.send(
-                     json.dumps({
-                         'error': '{} not supported'.format(watch),
-                         'debug': None,
-                         'result': []
-                     })
-                 )
-                 # close websocket
-                self.close()
-                return
-
-            self.send(json.dumps({'user':'watching %s' % watch}))
-
-            if watch == 'activity':
-                self.pubsub = ZMQPubSub(self.context, self._activity).connect().subscribe('activity')
-
-            if watch == 'requests':
-                self.pubsub = ZMQPubSub(self.context, self._requests).connect().subscribe('activity')
-
-            if watch == 'projects':
-                self.pubsub = ZMQPubSub(self.context, self._projects).connect().subscribe('projects')
-
-            # F-Interop specific
-            if watch == 'sessions':
-                self.pubsub = ZMQPubSub(self.context, self._sessions).connect().subscribe('sessions')
-
-            if watch == 'messages':
-                self.pubsub = ZMQPubSub(self.context, self._messages).connect().subscribe('messages')
 
 
     def on_close(self):
@@ -169,51 +145,24 @@ class WebsocketsHandler(SockJSConnection):
                 self.pubsub.disconnect()
 
         self.clients.remove(self)
-        logger.info("user {} disconnected".format(self.auth_user['id']))
+        logger.info("user {} disconnected".format(self.authenticated_user['id']))
 
+    def on_change(self, zmqmessage):
+        '''
+        This is a callback function that will be called when we receive data on the ZMQ socket.
+        ATM there is not filter, but the data should be filtered according to the user authorisations.
 
-    def _activity(self, message):
-        self.send(json.dumps({'user':'entered function _activity'}))
-        change = json.loads(message[1].decode('utf-8'))
+        :param message:
+        :return:
+        '''
+        logger.info(zmqmessage)
+        object = zmqmessage[0].decode('utf-8')
+        change = json.loads(zmqmessage[1].decode('utf-8'))
 
-        if  self.auth_user['admin'] or change['user'] == self.auth_user['id'] or \
-                ('authority' in change['data'] and ['data']['authority'] in self.auth_user['pi_auth']):
-            
-            self.send(json.dumps({ 'activity': change }, ensure_ascii=False, cls=myJSONEncoder).encode('utf8'))  
-
-
-    def _requests(self, message):
-        change = json.loads(message[1].decode('utf-8'))
-
-        if change['status'] == "PENDING":
-
-            if  self.auth_user['admin'] or \
-                    ('authority' in change['data'] and ['data']['authority'] in self.auth_user['pi_auth']):
-
-                # give the user the right to execute it 
-                change.update({"executable": True})
-
-                self.send(json.dumps({ 'request': change }, ensure_ascii=False, cls=myJSONEncoder).encode('utf8'))
-                
-            if change['user'] == self.auth_user['id']:
-
-                self.send(json.dumps({ 'request': change }, ensure_ascii=False, cls=myJSONEncoder).encode('utf8'))
-
-
-    def _projects(self, message):
-        change = json.loads(message[1].decode('utf-8'))
-
-        if self.auth_user['id'] in change['pi_users']:
-            self.send(json.dumps({ 'projects': change }, ensure_ascii=False, cls=myJSONEncoder).encode('utf8'))
-
-    def _sessions(self, message):
-        change = json.loads(message[1].decode('utf-8'))
-
-        if change['slice_id'] in self.auth_user['slices']:
-            self.send(json.dumps({ 'sessions': change }, ensure_ascii=False, cls=myJSONEncoder).encode('utf8'))
-
-    def _messages(self, message):
-        change = json.loads(message[1].decode('utf-8'))
-
-        if change['slice_id'] in self.auth_user['slices']:
-            self.send(json.dumps({ 'messages': change }, ensure_ascii=False, cls=myJSONEncoder).encode('utf8'))
+        stream = Stream(
+            command="watch",
+            object=object,
+            data=change,
+            event="updated"
+        )
+        self.send(stream.json().encode('utf8'))

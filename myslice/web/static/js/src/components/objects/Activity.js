@@ -12,8 +12,8 @@ import DateTime from '../base/DateTime';
 import { DialogBar } from '../base/Dialog';
 import { UserElementAvatar } from './User';
 
-import store from '../../stores/ActivityStore';
-import actions from '../../actions/ActivityActions';
+import store from '../../stores/views/Activity';
+import actions from '../../actions/views/Activity';
 
 class ActivityElement extends React.Component {
 

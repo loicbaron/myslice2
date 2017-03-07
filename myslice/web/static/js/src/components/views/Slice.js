@@ -3,14 +3,13 @@ import React from 'react';
 import store from '../../stores/views/Slice';
 import actions from '../../actions/views/Slice';
 
-import View from '../base/View';
-import { Panel, PanelHeader, PanelBody } from '../base/Panel';
-import { UsersSummary } from '../objects/User';
-import { ResourcesSummary } from '../objects/Resource';
+import { View, ViewHeader, ViewBody, Panel  } from '../base/View';
+import { ElementSummary } from '../base/Element';
 import Title from '../base/Title';
 import Text from '../base/Text';
-import DateTime from '../base/DateTime';
+import { DateTime } from '../base/DateTime';
 
+import { ResourcesSection } from '../sections/Resource';
 import { TestbedSectionPanel } from '../sections/Testbed';
 import { ResourceList } from '../objects/Resource';
 
@@ -53,10 +52,28 @@ class SliceView extends React.Component {
     /*
         Once user select some resources and apply this wil be called.
      */
-    addResources(resources, lease={}) {
-        actions.saveSlice({'resources': resources, 'lease': lease})
+    addResources(resources, leases=[]) {
+        actions.saveSlice({'resources': resources, 'leases': leases})
     }
-    
+    removeResources(resources, leases=[]) {
+        if(!Array.isArray(resources)){
+            resources = Array(resources);
+        }
+        console.log(resources);
+        actions.removeResources({'resources': resources, 'leases': leases})
+        //actions.saveSlice({remove_resource: resource});
+    }
+
+    renderSliceTitle() {
+        return this.state.slice.name || this.state.slice.shortname || ''
+    }
+    renderSliceProjectTitle() {
+        if (this.state.slice.project) {
+            return this.state.slice.project.name || this.state.slice.project.shortname
+        }else{
+            return "";
+        }
+    }
     render() {
         let dialog = null;
 
@@ -85,40 +102,43 @@ class SliceView extends React.Component {
                 'callback' : this.selectResourceDialog
             }
         ];
+        console.log(this.state.slice);
+        /*
+         *  Define options for ResourcesSummary
+         * */
+        let resourcesOptions = [
+            {
+                'label' : 'remove',
+                'callback' : this.removeResources
+            }
+        ];
 
-        return (
-            <View>
+        return (<View>
+            <ViewHeader>
+                <Title
+                    title={this.renderSliceProjectTitle()}
+                    subtitle={this.renderSliceTitle()}
+                    separator="/"
+                />
+            </ViewHeader>
+            <ViewBody>
                 <Panel>
-                    <PanelHeader>
-                        <Title title={this.state.slice.name || this.state.slice.shortname || ''} />
-                    </PanelHeader>
-                    <PanelBody>
-                        <div>
-                            <p>
-                                {this.state.slice.id}
-                            </p>
-                            <DateTime label="Created" timestamp={this.state.slice.created} />
-                            <DateTime label="Last updated" timestamp={this.state.slice.updated} />
-                        </div>
-                        <ResourcesSummary resources={this.state.slice.resources} />
-                        <UsersSummary users={this.state.slice.users} />
-                    </PanelBody>
+                    <div>
+                        <p>
+                            {this.state.slice.id}
+                        </p>
+                        <DateTime label="Created" timestamp={this.state.slice.created} />
+                        <DateTime label="Last updated" timestamp={this.state.slice.updated} />
+                    </div>
+                    <ElementSummary elements={this.state.slice.resources} type="resource"  />
+                    <ElementSummary elements={this.state.slice.users} type="user"  />
                 </Panel>
                 <Panel>
-                    <PanelHeader>
-
-                    </PanelHeader>
-                    <PanelBody>
-                        <Text>
-                            Please select the resources to reserve by choosing a Testbed (text to change)
-                        </Text>
-                        <br />
-                        <TestbedSectionPanel testbeds={this.state.testbeds} listOptions={testbedListOptions} />
-                    </PanelBody>
-                    {dialog}
+                    <TestbedSectionPanel testbeds={this.state.testbeds} listOptions={testbedListOptions} />
                 </Panel>
-            </View>
-        );
+            </ViewBody>
+            {dialog}
+        </View>);
     }
 
 }

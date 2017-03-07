@@ -40,11 +40,13 @@ def events_run(lock, qAuthorityEvents):
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
         else:
-            logger.info("Processing event from user {}".format(event.user))
+            logger.info("Processing event {} from user {}".format(event.id, event.user))
             
             with lock:
                 try:
                     event.setRunning()
+                    event.logInfo("Event is running")
+                    logger.debug("Event %s is running" % event.id)
                     isSuccess = False
                     
                     if event.creatingObject():
@@ -94,14 +96,18 @@ def events_run(lock, qAuthorityEvents):
                 except Exception as e:
                     import traceback
                     traceback.print_exc()
-                    logger.error("Problem with event: {}".format(e))
-                    event.logError(str(e)) 
+                    logger.error("Problem with event {}: {}".format(event.id,e))
+                    event.logError("Error in worker authorities: {}".format(e))
                     event.setError()
 
                 if isSuccess:
                     event.setSuccess()
+                    event.logInfo("Event success")
+                    logger.debug("Event %s Success" % event.id)
                 else:
+                    logger.error("Error event {}: action failed".format(event.id))
                     event.setError()
+                    event.logError("Error in worker authorities: action failed")
                 
                 db.dispatch(dbconnection, event)
 

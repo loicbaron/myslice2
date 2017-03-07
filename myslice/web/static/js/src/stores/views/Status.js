@@ -33,6 +33,7 @@ class StatusViewStore {
     }
 
     setCurrentTestbed(testbed) {
+        this.resources = [];
         this.currentTestbed = testbed;
 
         if (!this.getInstance().isLoading()) {

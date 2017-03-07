@@ -12,6 +12,7 @@ import signal
 import threading
 from queue import Queue
 import myslice.db as db
+import rethinkdb as r
 from myslice.db import changes, connect, events
 from myslice.db.activity import Event, ObjectType
 from myslice.services.workers.projects import events_run as manageProjects, sync as syncProjects
@@ -37,35 +38,35 @@ def run():
     # db connection is shared between threads
     qProjects = Queue()
     qSlices = Queue()
-    lock = threading.Lock()
+    lockProjects = threading.Lock()
 
     # threads
     threads = []
 
     # projects manager
     for y in range(1):
-        t = threading.Thread(target=manageProjects, args=(lock, qProjects))
+        t = threading.Thread(target=manageProjects, args=(lockProjects, qProjects))
         t.daemon = True
         threads.append(t)
         t.start()
 
     # projects sync
     for y in range(1):
-        t = threading.Thread(target=syncProjects, args=(lock,))
+        t = threading.Thread(target=syncProjects, args=(lockProjects,))
         t.daemon = True
         threads.append(t)
         t.start()
 
     # slices manager
     for y in range(1):
-        t = threading.Thread(target=manageSlices, args=(lock, qSlices))
+        t = threading.Thread(target=manageSlices, args=(qSlices))
         t.daemon = True
         threads.append(t)
         t.start()
 
     # slices sync
     for y in range(1):
-        t = threading.Thread(target=syncSlices, args=(lock,))
+        t = threading.Thread(target=syncSlices)
         t.daemon = True
         threads.append(t)
         t.start()
@@ -75,7 +76,9 @@ def run():
     ##
     # will watch for incoming events/requests and pass them to
     # the appropriate thread group
-    feed = changes(dbconnection, table='activity', status=['WAITING', 'APPROVED'])
+    feed = r.db('myslice').table('activity').changes().run(dbconnection)
+    #feed = changes(dbconnection, table='activity', status=['WAITING', 'APPROVED'])
+
     ##
     # Process events that were not watched 
     # while Server process was not running
@@ -85,25 +88,35 @@ def run():
         try:
             event = Event(ev)
         except Exception as e:
+            logger.exception(e)
             logger.error("Problem with event: {}".format(e))
         else:
             if event.object.type == ObjectType.PROJECT:
+                logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
                 qProjects.put(event)
             if event.object.type == ObjectType.SLICE:
+                logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
                 qSlices.put(event)
 
     for activity in feed:
+        #logger.debug("Change detected in activity table %s" % activity["new_val"]["id"])
         try:
-            event = Event(activity['new_val'])
+            if activity['new_val']['status'] in ["WAITING","APPROVED"]:
+                event = Event(activity['new_val'])
+                if event.object.type == ObjectType.PROJECT:
+                    logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
+                    qProjects.put(event)
+                if event.object.type == ObjectType.SLICE:
+                    logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
+                    qSlices.put(event)
         except Exception as e:
-            logger.error("Problem with event: {}".format(e))
-        else:
-            if event.object.type == ObjectType.PROJECT:
-                qProjects.put(event)
-            if event.object.type == ObjectType.SLICE:
-                qSlices.put(event)
+            import traceback
+            traceback.print_exc()
+            logger.exception(e)
+            if 'new_val' in activity and 'id' in activity['new_val']:
+                logger.error("Problem with event: {}".format(activity['new_val']['id']))
 
-
+    logger.critical("Service experiments stopped")
     # waits for the thread to finish
     for x in threads:
         x.join()

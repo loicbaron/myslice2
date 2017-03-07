@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import DashboardView from './components/DashboardView.js';
+import DashboardView from './components/views/Dashboard.js';
 
 ReactDOM.render(
   <DashboardView />,

@@ -18,7 +18,6 @@ class RequestsStore {
 
             executeAction: actions.EXECUTE_ACTION,
             fetchRequests: actions.FETCH_REQUESTS,
-            watchRequest: actions.WATCH_REQUEST,
         });
 
         this.registerAsync(source);
@@ -42,8 +41,6 @@ class RequestsStore {
         this.getInstance().fetchRequests();
 
     }
-
-    watchRequest() {}
 
     updateRequests(requests) {
         if (requests.hasOwnProperty('data')) {

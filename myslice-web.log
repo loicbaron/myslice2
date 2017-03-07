@@ -1,0 +1,40 @@
+2017-03-07 10:40:00 DEBUG [tornado.general] sockjs.tornado will use json module
+2017-03-07 10:40:00 DEBUG [passlib.registry] registered 'md5_crypt' handler: <class 'passlib.handlers.md5_crypt.md5_crypt'>
+2017-03-07 10:40:00 DEBUG [passlib.registry] registered 'sha256_crypt' handler: <class 'passlib.handlers.sha2_crypt.sha256_crypt'>
+2017-03-07 10:40:00 INFO [myslice.db] Connecting to db myslice on localhost:28015
+2017-03-07 10:40:00 INFO [myslice.db] Connecting to db myslice on localhost:28015
+2017-03-07 10:40:00 INFO [myslice-web] Starting web server
+2017-03-07 10:40:00 INFO [myslice.db] Connecting to db myslice on localhost:28015
+2017-03-07 10:40:00 DEBUG [myslice.web.server] /authorize
+2017-03-07 10:40:00 DEBUG [myslice.web.server] /token
+2017-03-07 10:45:08 INFO [tornado.access] 200 GET / (::1) 14.33ms
+2017-03-07 10:45:08 INFO [tornado.access] 200 GET /static/css/stylesheet.css (::1) 27.32ms
+2017-03-07 10:45:08 INFO [tornado.access] 200 GET /static/images/onelab/onelab-white.svg (::1) 1.38ms
+2017-03-07 10:45:08 INFO [tornado.access] 200 GET /static/js/build/dashboard.js (::1) 48.69ms
+2017-03-07 10:45:08 INFO [tornado.access] 200 GET /static/css/stylesheet.css.map (::1) 2.11ms
+2017-03-07 10:45:09 INFO [tornado.access] 304 GET /api/v1/projects (::1) 22.18ms
+2017-03-07 10:45:09 INFO [tornado.access] 304 GET /api/v1/users/slices (::1) 29.24ms
+2017-03-07 11:16:42 INFO [tornado.access] 304 GET / (::1) 24.41ms
+2017-03-07 11:16:42 INFO [tornado.access] 304 GET /static/css/stylesheet.css (::1) 7.14ms
+2017-03-07 11:16:42 INFO [tornado.access] 304 GET /static/js/build/dashboard.js (::1) 23.61ms
+2017-03-07 11:16:42 INFO [tornado.access] 200 GET /static/js/build/navbar.js (::1) 17.92ms
+2017-03-07 11:16:42 INFO [tornado.access] 304 GET /static/images/onelab/onelab-white.svg (::1) 1.66ms
+2017-03-07 11:16:42 INFO [tornado.access] 304 GET /static/css/stylesheet.css.map (::1) 1.39ms
+2017-03-07 11:16:42 INFO [tornado.access] 304 GET /api/v1/projects (::1) 29.54ms
+2017-03-07 11:16:42 INFO [tornado.access] 304 GET /api/v1/users/slices (::1) 25.69ms
+2017-03-07 11:39:26 INFO [tornado.access] 304 GET / (::1) 22.91ms
+2017-03-07 11:39:26 INFO [tornado.access] 304 GET /static/css/stylesheet.css (::1) 2.69ms
+2017-03-07 11:39:26 INFO [tornado.access] 304 GET /static/js/build/dashboard.js (::1) 14.18ms
+2017-03-07 11:39:26 INFO [tornado.access] 304 GET /static/js/build/navbar.js (::1) 5.57ms
+2017-03-07 11:39:26 INFO [tornado.access] 304 GET /static/images/onelab/onelab-white.svg (::1) 1.66ms
+2017-03-07 11:39:26 INFO [tornado.access] 304 GET /static/css/stylesheet.css.map (::1) 2.24ms
+2017-03-07 11:39:26 INFO [tornado.access] 304 GET /api/v1/projects (::1) 18.32ms
+2017-03-07 11:39:27 INFO [tornado.access] 304 GET /api/v1/users/slices (::1) 15.95ms
+2017-03-07 12:47:13 INFO [tornado.access] 304 GET / (::1) 16.87ms
+2017-03-07 12:47:13 INFO [tornado.access] 304 GET /static/css/stylesheet.css (::1) 7.00ms
+2017-03-07 12:47:13 INFO [tornado.access] 304 GET /static/js/build/dashboard.js (::1) 18.23ms
+2017-03-07 12:47:13 INFO [tornado.access] 304 GET /static/js/build/navbar.js (::1) 7.85ms
+2017-03-07 12:47:13 INFO [tornado.access] 304 GET /static/images/onelab/onelab-white.svg (::1) 1.33ms
+2017-03-07 12:47:13 INFO [tornado.access] 304 GET /static/css/stylesheet.css.map (::1) 1.23ms
+2017-03-07 12:47:14 INFO [tornado.access] 304 GET /api/v1/projects (::1) 16.45ms
+2017-03-07 12:47:14 INFO [tornado.access] 304 GET /api/v1/users/slices (::1) 19.62ms

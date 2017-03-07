@@ -1,4 +1,5 @@
-image: ubuntu:14.04
+image: loicbaron/myslice:latest
+#image: ubuntu:14.04
 
 variables:
   ADMIN_EMAIL: "support@myslice.info"
@@ -31,3 +32,5 @@ job0:
     - ./myslice/tests/deployment.py
     - ./myslice/tests/rest_login.py
     - ./myslice/tests/rest_users.py
+    - ./myslice/tests/rest_projects.py
+    - ./myslice/tests/rest_slices.py

@@ -17,10 +17,13 @@ def run():
         logger.info("syncing")
         try:
             # retreive version and status info from the testbeds
-            r = q(Testbed).version()
+            t = q(Testbed).version()
 
-            # syncs testbeds configured with the db
-            db.syncTestbeds(r)
+            if len(t)>0:
+                # syncs testbeds configured with the db
+                db.syncTestbeds(t)
+            else:
+                logger.warning("Check myslicelib and SFA, q(Testbed).version() returned empty")
 
         except Exception as e:
             logger.exception("Service does not seem to be available")
