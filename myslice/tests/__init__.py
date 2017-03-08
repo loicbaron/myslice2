@@ -36,11 +36,15 @@ class LocalTestCase(unittest.TestCase):
 
 
 
-    def checkEvent(self, event, initial_status=None):
+    def checkEvent(self, event, initial_status=None, expected_status= None):
         status = "INIT"
         res = None
         i = 0
-        final_status = ["PENDING","SUCCESS","ERROR","WARNING","DENIED"]
+        if expected_status:
+            final_status = [expected_status]
+        else:
+            final_status = ["PENDING","SUCCESS","ERROR","WARNING","DENIED"]
+
         if initial_status:
             final_status = list(set(final_status) - {initial_status})
 
