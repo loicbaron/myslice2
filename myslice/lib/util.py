@@ -1,3 +1,4 @@
+import os
 import logging
 from datetime import datetime
 import pytz
@@ -5,6 +6,7 @@ import json
 import decimal
 from enum import Enum
 from json import JSONEncoder
+from configparser import ConfigParser, NoOptionError
 
 log = logging.getLogger('server')
 
@@ -96,4 +98,68 @@ class myJSONEncoder(JSONEncoder):
             return (str(o) for o in [o])
 
         return JSONEncoder.default(self, o)
+
+class Config(object):
+
+    def __init__(self):
+        ##
+        # configuration path(s)
+        self.path = os.path.abspath("/etc/myslice")
+        if not os.path.exists(self.path):
+            exit("Configuration path {} does not exists".format(self.path))
+
+        ##
+        # Configuration file: main
+        self.config_main = ConfigParser()
+        try:
+            self.config_main.read_file(open("{}/main.cfg".format(self.path)))
+        except FileNotFoundError:
+            exit("Configuration file main.cfg not found")
+
+        ##
+        # Configuration file: services
+        self.config_services = ConfigParser()
+        try:
+            self.config_services.read_file(open("{}/services.cfg".format(self.path)))
+        except FileNotFoundError:
+            exit("Configuration file services.cfg not found")
+
+        ##
+        # Configuration file: endpoints
+        self.config_endpoints = ConfigParser()
+        try:
+            self.config_endpoints.read_file(open("{}/endpoints.cfg".format(self.path)))
+        except FileNotFoundError:
+            exit("Configuration file endpoints.cfg not found")
+
+    @property
+    def services(self):
+        services = {}
+        for service in self.config_services.sections():
+            services[service] = {
+                "enabled": self.config_services.getboolean(service, "enabled", fallback=False),
+                "log": self.config_services.get(service, "log", fallback=None)
+            }
+
+
+        return services
+
+    @property
+    def endpoints(self):
+        endpoints = {}
+        for endpoint in self.config_endpoints.sections():
+            try:
+                endpoints[endpoint] = {
+                    "enabled": self.config_endpoints.getboolean(endpoint, "enabled", fallback=False),
+                    "name": self.config_endpoints.get(endpoint, "name", fallback=None),
+                    "url": self.config_endpoints.get(endpoint, "url"),
+                    "type": self.config_endpoints.get(endpoint, "type"),
+                    "timeout": self.config_endpoints.get(endpoint, "timeout", fallback=30),
+                    "technologies": self.config_endpoints.get(endpoint, "technologies", fallback=None)
+                }
+            except NoOptionError:
+                pass
+
+        return endpoints
+
 
