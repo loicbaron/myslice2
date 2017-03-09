@@ -132,7 +132,7 @@ class WebsocketsHandler(SockJSConnection):
             else:
                 ##
                 # User is not authenticated (error)
-                self.fatal_error(
+                self.api_fatal(
                     ResponseError(request, "Not authenticated")
                 )
 
