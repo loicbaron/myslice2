@@ -8,55 +8,55 @@ import unittest
 from pprint import pprint
 from random import randint
 
-from myslice.tests import Tests
+from myslice.tests import LocalTestCase
 from myslice.tests.config import s, authority, server
+from datetime import datetime
 
-class TestProjects(Tests):
+class TestProjects(LocalTestCase):
 
     created_project = None
 
     def setUp(self):
+
+        self.automateTest = s['automate_test']
+        self.startTimer()
         self.timeout = 10
 
-        # get cookies
-        payload = {'email': s['email'], 'password': s['password']}
-        r = requests.post("http://" + server + ":8111/api/v1/login", headers={str('Content-Type'): 'application/json'},
-                          data=json.dumps(payload))
-        self.cookies = r.cookies
+        self.cookies = s['cookies']
 
         r = requests.get('http://'+server+':8111/api/v1/profile', cookies=self.cookies)
         result = json.loads(r.text)
-        print(result)
         self.user = result['result']
+
+    def tearDown(self):
+        # self.tock = datetime.now()
+        # diff = self.tock - self.tick
+        # print((diff.microseconds / 1000), "ms")
+        self.stopTimer()
 
     def test_0_getNoAuth(self):
         r = requests.get('http://'+server+':8111/api/v1/projects')
-        # user not authenticated
-        #pprint(r.text)
         self.assertEqual(r.status_code, 400)
 
     def test_0_postNoAuth(self):
         r = requests.post('http://'+server+':8111/api/v1/projects')
-        # user not authenticated
-        #pprint(r.text)
         self.assertEqual(r.status_code, 400)
 
     def test_0_putNoAuth(self):
         r = requests.put('http://'+server+':8111/api/v1/projects')
-        # user not authenticated
-        #pprint(r.text)
         self.assertEqual(r.status_code, 400)
 
     def test_1_getProjects(self):
         r = requests.get('http://'+server+':8111/api/v1/projects', cookies=self.cookies)
-        #pprint(r.text)
         self.assertEqual(r.status_code, 200)
+
 
     def test_2_postWrongProject(self):
         payload = {}
         r = requests.post('http://'+server+':8111/api/v1/projects', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
-        pprint(r.text)
         self.assertEqual(r.status_code, 400)
+        self.assertEqual('{"debug": null, "error": "Project name must be specified"}', r.text)
+
 
 
     # TODO: SimpleUser Request New Project
@@ -79,8 +79,9 @@ class TestProjects(Tests):
     #        self.assertEqual(rRequest.status_code, 200)
 
     def test_2_postProject(self):
+        tock = datetime.now()
         name = 'autotest_' + str(randint(0,10000))
-        payload = { 'authority': authority, 'name': name, 'description': 'this is an automated project', 'pi_users':[self.user['id']] }
+        payload = {'authority': authority, 'name': name, 'description': 'this is an automated project', 'pi_users':[self.user['id']] }
         r = requests.post('http://'+server+':8111/api/v1/projects', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
         self.assertEqual(r.status_code, 200)
         # Event status = SUCCESS
@@ -92,6 +93,7 @@ class TestProjects(Tests):
             self.assertEqual(res['status'], "SUCCESS")
             self.__class__.created_project = res['data']['id']
         pprint(self.__class__.created_project)
+        print(datetime.now()-tock)
 
     def test_3_getProjectId(self):
         id = self.__class__.created_project
