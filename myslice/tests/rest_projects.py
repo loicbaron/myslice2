@@ -81,7 +81,7 @@ class TestProjects(LocalTestCase):
     def test_2_postProject(self):
         tock = datetime.now()
         name = 'autotest_' + str(randint(0,10000))
-        payload = {'authority': authority, 'name': name, 'description': 'this is an automated project', 'pi_users':[self.user['id']] }
+        payload = {'authority': {"id": authority}, 'name': name, 'description': 'this is an automated project', 'pi_users':[self.user['id']] }
         r = requests.post('http://'+server+':8111/api/v1/projects', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
         self.assertEqual(r.status_code, 200)
         # Event status = SUCCESS
