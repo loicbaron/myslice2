@@ -8,7 +8,7 @@ class Object(Enum):
     slices = "slices"
     users = "users"
     resources = "resources"
-    activities = "activities"
+    activities = "activity"
 
     def __str__(self):
         return str(self.value)
@@ -161,6 +161,10 @@ class Stream(Message):
             self.object = object
         except KeyError:
             raise Exception("Object not specified")
+        except Exception as e:
+            # TODO: better handling of exceptions, we should print an error
+            # on log and ignore the incoming message
+            pass
 
         try:
             self.data = data
