@@ -46,6 +46,7 @@ class TestLogin(LocalTestCase):
     def test_2_get_profile_with_cookie(self):
         """Takes cookie and check if we can get users profile hrn"""
         r = requests.get("http://"+server+":8111/api/v1/profile", cookies=self.cookies)
+        print(r.text)
         self.assertEqual(r.status_code, 200)
         self.assertEqual(s['hrn'], json.loads(r.text)['result']['hrn'])
 
