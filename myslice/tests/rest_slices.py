@@ -69,7 +69,6 @@ class TestSlices(LocalTestCase):
         r = requests.post('http://'+server+':8111/api/v1/slices', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
         pprint(r.text)
         self.assertEqual(r.status_code, 200)
-
         result = json.loads(r.text)
         self.assertEqual(result['result'], "success")
         for event in result['events']:

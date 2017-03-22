@@ -168,8 +168,8 @@ class SlicesHandler(Api):
             u = yield r.table('users').get(self.get_current_user()['id']).run(self.dbconnection)
             if isinstance(data['project'], dict):
                 project_id = data['project']['id']
-            if project_id in u['pi_authorities']:
-                data['authority'] = data['project']
+                if project_id in u['pi_authorities']:
+                    data['authority'] = data['project']
             else:
                 self.userError("your user has no rights on project: %s" % data['project'])
                 return
