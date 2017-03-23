@@ -1,9 +1,0 @@
-2017-03-22 09:45:29 DEBUG [tornado.general] sockjs.tornado will use json module
-2017-03-22 09:45:29 DEBUG [passlib.registry] registered 'md5_crypt' handler: <class 'passlib.handlers.md5_crypt.md5_crypt'>
-2017-03-22 09:45:29 DEBUG [passlib.registry] registered 'sha256_crypt' handler: <class 'passlib.handlers.sha2_crypt.sha256_crypt'>
-2017-03-22 09:45:29 INFO [myslice.db] Connecting to db myslice on localhost:28015
-2017-03-22 09:45:29 INFO [myslice.db] Connecting to db myslice on localhost:28015
-2017-03-22 09:45:29 INFO [myslice-web] Starting web server
-2017-03-22 09:45:29 INFO [myslice.db] Connecting to db myslice on localhost:28015
-2017-03-22 09:45:29 DEBUG [myslice.web.server] /authorize
-2017-03-22 09:45:29 DEBUG [myslice.web.server] /token
