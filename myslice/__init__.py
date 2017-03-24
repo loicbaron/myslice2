@@ -1,57 +1,33 @@
-import sys, os, logging
-from configparser import SafeConfigParser, NoSectionError, NoOptionError, Error
+import sys
+
+from myslice.lib.util import Config
 from myslicelib.util import Authentication, Endpoint
 from myslicelib import setup as myslicelibsetup
 
-## paths
-config_path = os.path.abspath("/etc/myslice")
-if not os.path.exists(config_path):
-    pass
-
-## logging
-logging_path = os.path.abspath("")
-if not os.path.exists(logging_path):
-    try:
-        os.mkdir(logging_path)
-    except PermissionError as e:
-        logging.error("Can't create directory {}".format(logging_path))
-        exit("Can't create directory {}".format(logging_path))
-logging_file = logging_path + "/myslice-web.log"
-try:
-    logging.basicConfig(level=logging.DEBUG,
-                    format="%(asctime)s %(levelname)s [%(name)s] %(message)s",
-                    datefmt="%Y-%m-%d %H:%M:%S",
-                    filename=logging_file, filemode="a")
-
-except PermissionError as e:
-        logging.error("Can't write log file {}".format(logging_file))
-        exit("Can't write log file {}".format(logging_file))
-
-
-## version check
+##
+# MySlice requires Python 3.5
 try:
     assert sys.version_info >= (3,5)
 except AssertionError:
-    logging.error("MySlice requires Python 3.5")
     exit("MySlice requires Python 3.5")
 
+##
+# init config
+config = Config()
 
-## config file
-config_file = config_path
-
-## Setup MySliceLib
-myslicelibsetup.endpoints = [
-          #  Endpoint(url="https://sfa3.planet-lab.eu:12346",type="AM", timeout=60, name="PlanetLab Europe", technologies="vm", hasLeases=False),
-           # Endpoint(url="https://194.199.16.164:12346",type="AM", timeout=60, name="FIT IoT-Lab", technologies="iot,robot", hasLeases=True),
-            #Endpoint(url="https://www.wilab2.ilabt.iminds.be:12369/protogeni/xmlrpc/am/3.0",type="AM",name="WiLab.t", hasLeases=False),
-            #Endpoint(url="http://www.wall2.ilabt.iminds.be:12369/protogeni/xmlrpc/am/3.0",type="AM",name="Virtual Wall 2", hasLeases=False),
-            #Endpoint(url="https://fuseco.fokus.fraunhofer.de/api/sfa/am/v3",type="AM"),
-           # Endpoint(url="https://griffin.ipv6.lip6.fr:8001/RPC2",type="AM",name="FIT WiFi UPMC", technologies="wireless", hasLeases=True),
-           # Endpoint(url="https://faraday.inria.fr:12346/RPC2",type="AM",name="FIT R2Lab", technologies="wireless"),
-            Endpoint(url="https://portal.onelab.eu:6080",type="Reg", timeout=30, name="OneLab Registry"),
-            #Endpoint(url="https://dev.myslice.info:12345",type="Reg", timeout=10, name="OneLab Registry"),
-            #Endpoint(url="https://sfa-fed4fire.pl.sophia.inria.fr:443",type="Reg")
-        ]
+## Setup endpoints with MySliceLib
+myslicelibsetup.endpoints = []
+for k,endpoint in config.endpoints.items():
+    if (endpoint["enabled"]):
+        myslicelibsetup.endpoints.append(
+            Endpoint(
+                url = endpoint["url"],
+                type = endpoint["type"],
+                timeout = endpoint["timeout"],
+                name = endpoint["name"],
+                technologies = endpoint["technologies"]
+            )
+        )
 
 myslicelibsetup.registry_endpoints = [
             Endpoint(url="https://portal.onelab.eu:6080",type="Reg", timeout=30, name="OneLab Registry"),
