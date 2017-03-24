@@ -1,0 +1,22 @@
+[onelab_registry]
+name=OneLab Registry
+url=https://portal.onelab.eu:6080
+type=Reg
+timeout=30
+enabled=true
+
+[ple]
+name=PlanetLab Europe
+url=https://sfa3.planet-lab.eu:12346
+type=AM
+timeout=30
+technologies="vm"
+enabled=true
+
+[fit-iot]
+name=FIT IoT-Lab
+url=https://194.199.16.164:12346
+type=AM
+timeout=30
+technologies="iot,robot"
+enabled=false
