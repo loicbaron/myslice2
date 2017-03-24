@@ -102,43 +102,36 @@ class myJSONEncoder(JSONEncoder):
 class Config(object):
 
     def __init__(self):
+
+        self._path = os.path.abspath("/etc/myslice")
+
+        self._config = {
+            "main" : None,
+            "web" : None,
+            "server" : None,
+            "endpoints" : None
+        }
+
         ##
         # configuration path(s)
-        self.path = os.path.abspath("/etc/myslice")
-        if not os.path.exists(self.path):
-            exit("Configuration path {} does not exists".format(self.path))
+        if not os.path.exists(self._path):
+            exit("Configuration path {} does not exists".format(self._path))
 
-        ##
-        # Configuration file: main
-        self.config_main = ConfigParser()
-        try:
-            self.config_main.read_file(open("{}/main.cfg".format(self.path)))
-        except FileNotFoundError:
-            exit("Configuration file main.cfg not found")
-
-        ##
-        # Configuration file: services
-        self.config_services = ConfigParser()
-        try:
-            self.config_services.read_file(open("{}/services.cfg".format(self.path)))
-        except FileNotFoundError:
-            exit("Configuration file services.cfg not found")
-
-        ##
-        # Configuration file: endpoints
-        self.config_endpoints = ConfigParser()
-        try:
-            self.config_endpoints.read_file(open("{}/endpoints.cfg".format(self.path)))
-        except FileNotFoundError:
-            exit("Configuration file endpoints.cfg not found")
+        for c in self._config.keys():
+            self._config[c] = ConfigParser()
+            try:
+                self._config[c].read_file(open("{}/{}.cfg".format(self._path, c)))
+            except FileNotFoundError:
+                exit("Configuration file {}.cfg not found".format(c))
 
     @property
     def services(self):
         services = {}
-        for service in self.config_services.sections():
+        for service in self._config["server"].sections():
             services[service] = {
-                "enabled": self.config_services.getboolean(service, "enabled", fallback=False),
-                "log": self.config_services.get(service, "log", fallback=None)
+                "enabled": self._config["server"].getboolean(service, "enabled", fallback=False),
+                "log_file": self._config["server"].get(service, "log_file", fallback=None),
+                "log_level": self._config["server"].get(service, "log_level", fallback=None)
             }
 
 
@@ -147,19 +140,30 @@ class Config(object):
     @property
     def endpoints(self):
         endpoints = {}
-        for endpoint in self.config_endpoints.sections():
+        for endpoint in self._config["endpoints"].sections():
             try:
                 endpoints[endpoint] = {
-                    "enabled": self.config_endpoints.getboolean(endpoint, "enabled", fallback=False),
-                    "name": self.config_endpoints.get(endpoint, "name", fallback=None),
-                    "url": self.config_endpoints.get(endpoint, "url"),
-                    "type": self.config_endpoints.get(endpoint, "type"),
-                    "timeout": self.config_endpoints.get(endpoint, "timeout", fallback=30),
-                    "technologies": self.config_endpoints.get(endpoint, "technologies", fallback=None)
+                    "enabled": self._config["endpoints"].getboolean(endpoint, "enabled", fallback=False),
+                    "name": self._config["endpoints"].get(endpoint, "name", fallback=None),
+                    "url": self._config["endpoints"].get(endpoint, "url"),
+                    "type": self._config["endpoints"].get(endpoint, "type"),
+                    "timeout": self._config["endpoints"].get(endpoint, "timeout", fallback=30),
+                    "technologies": self._config["endpoints"].get(endpoint, "technologies", fallback=None)
                 }
             except NoOptionError:
                 pass
 
         return endpoints
 
+    @property
+    def web(self):
+        if self._config["main"].has_section("web"):
+            return {
+                "url": self._config["main"].get("web", "url", fallback="http://localhost"),
+                "port": self._config["main"].get("web", "port", fallback="80"),
+                "cookie_secret": self._config["main"].get("web", "cookie_secret", fallback=""),
+                "token_secret": self._config["main"].get("web", "token_secret", fallback=""),
+            }
+        else:
+            exit("no web configuration section found")
 
