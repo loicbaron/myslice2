@@ -7,7 +7,6 @@
 #            Loïc Baron <loic.baron@lip6.fr>
 ##
 
-import logging
 import time
 
 import myslice.db as db
@@ -25,8 +24,9 @@ from myslicelib.model.lease import Lease
 from myslicelib.model.resource import Resource
 from myslice.db.slice import Slice, SliceException, SliceWarningException
 from myslicelib.query import q
+import myslice.lib.log as logging
 
-logger = logging.getLogger('myslice.services.workers.leases')
+logger = logging.getLogger("leases")
 
 def events_run(lock, qLeasesEvents):
     """

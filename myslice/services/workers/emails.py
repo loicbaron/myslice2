@@ -6,9 +6,6 @@
 #   (c) 2016 Ciro Scognamiglio <ciro.scognamiglio@lip6.fr>
 ##
 
-import logging
-
-import html
 from premailer import transform
 
 from myslice import db
@@ -21,9 +18,9 @@ from myslice.db.user import User
 
 from myslice.email.message import Message, Mailer, build_subject_and_template
 
+import myslice.lib.log as logging
 
-
-logger = logging.getLogger('myslice.service.emails')
+logger = logging.getLogger("emails")
 
 def confirmEmails(qConfirmEmails):
     """

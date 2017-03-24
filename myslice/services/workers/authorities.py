@@ -7,7 +7,6 @@
 ##
 
 import json
-import logging
 import time
 from pprint import pprint
 import myslice.db as db
@@ -19,8 +18,9 @@ from myslice.db import changes, connect
 from myslice.db.user import User
 from myslice.db.authority import Authority
 from myslicelib.query import q
+import myslice.lib.log as logging
 
-logger = logging.getLogger('myslice.service.authorities')
+logger = logging.getLogger("authorities")
 
 
 def events_run(lock, qAuthorityEvents):

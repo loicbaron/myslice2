@@ -6,7 +6,6 @@
 #   (c) 2016 Ciro Scognamiglio <ciro.scognamiglio@lip6.fr>, Loïc Baron <loic.baron@lip6.fr>
 ##
 import pprint
-import logging
 import signal
 import threading
 from queue import Queue
@@ -15,8 +14,9 @@ import rethinkdb as r
 from myslice.db import connect, changes, events
 from myslice.services.workers.authorities import events_run as manageAuthoritiesEvents
 from myslice.services.workers.authorities import sync as syncAuthorities
+import myslice.lib.log as logging
 
-logger = logging.getLogger('myslice.service.activity')
+logger = logging.getLogger("authorities")
 
 def receive_signal(signum, stack):
     logger.info('Received signal %s', signum)
@@ -30,8 +30,6 @@ def run():
     signal.signal(signal.SIGINT, receive_signal)
     signal.signal(signal.SIGTERM, receive_signal)
     signal.signal(signal.SIGHUP, receive_signal)
-
-    logger.info("Service authorities starting")
 
     # db connection is shared between threads
     qAuthorityEvents = Queue()

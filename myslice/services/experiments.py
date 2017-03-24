@@ -7,7 +7,6 @@
 #   (c) 2016 Ciro Scognamiglio <ciro.scognamiglio@lip6.fr>
 ##
 
-import logging
 import signal
 import threading
 from queue import Queue
@@ -17,8 +16,9 @@ from myslice.db import changes, connect, events
 from myslice.db.activity import Event, ObjectType
 from myslice.services.workers.projects import events_run as manageProjects, sync as syncProjects
 from myslice.services.workers.slices import events_run as manageSlices, sync as syncSlices
+import myslice.lib.log as logging
 
-logger = logging.getLogger('myslice.service.experiments')
+logger = logging.getLogger("experiments")
 
 def receive_signal(signum, stack):
     logger.info('Received signal %s', signum)
@@ -32,8 +32,6 @@ def run():
     signal.signal(signal.SIGINT, receive_signal)
     signal.signal(signal.SIGTERM, receive_signal)
     signal.signal(signal.SIGHUP, receive_signal)
-
-    logger.info("Service experiments starting")
 
     # db connection is shared between threads
     qProjects = Queue()

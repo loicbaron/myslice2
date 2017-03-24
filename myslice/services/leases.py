@@ -8,7 +8,6 @@
 #            Loïc Baron <loic.baron@lip6.fr>
 ##
 
-import logging
 import signal
 import threading
 from queue import Queue
@@ -17,8 +16,9 @@ import rethinkdb as r
 from myslice.db import changes, connect, events
 from myslice.db.activity import Event, ObjectType
 from myslice.services.workers.leases import events_run as manageLeases, sync as syncLeases
+import myslice.lib.log as logging
 
-logger = logging.getLogger('myslice.service.leases')
+logger = logging.getLogger("leases")
 
 def receive_signal(signum, stack):
     logger.info('Received signal %s', signum)
@@ -32,8 +32,6 @@ def run():
     signal.signal(signal.SIGINT, receive_signal)
     signal.signal(signal.SIGTERM, receive_signal)
     signal.signal(signal.SIGHUP, receive_signal)
-
-    logger.info("Service leases starting")
 
     # db connection is shared between threads
     qLeases = Queue()
