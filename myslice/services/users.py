@@ -9,12 +9,15 @@ import signal
 import threading
 from queue import Queue
 import rethinkdb as r
+
+from myslice import config
 from myslice.db.activity import Event, ObjectType
 from myslice.db import connect, changes, events
 from myslice.services.workers.users import events_run as manageUsersEvents
 from myslice.services.workers.password import events_run as managePasswordEvents
 from myslice.services.workers.users import sync as syncUsers
 import myslice.lib.log as logging
+from myslice import config
 
 logger = logging.getLogger("users")
 
@@ -50,11 +53,12 @@ def run():
         threads.append(t)
         t.start()
 
-    for y in range(1):
-        t = threading.Thread(target=syncUsers, args=(lock, ))
-        t.daemon = True
-        threads.append(t)
-        t.start()
+    if config.services['users']['sync']:
+        for y in range(1):
+            t = threading.Thread(target=syncUsers, args=(lock, ))
+            t.daemon = True
+            threads.append(t)
+            t.start()
 
     ##
     # Watch for changes on the activity table

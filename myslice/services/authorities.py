@@ -15,6 +15,7 @@ from myslice.db import connect, changes, events
 from myslice.services.workers.authorities import events_run as manageAuthoritiesEvents
 from myslice.services.workers.authorities import sync as syncAuthorities
 import myslice.lib.log as logging
+from myslice import config
 
 logger = logging.getLogger("authorities")
 
@@ -42,11 +43,12 @@ def run():
         threads.append(t)
         t.start()
 
-    for y in range(1):
-        t = threading.Thread(target=syncAuthorities, args=(lock, ))
-        t.daemon = True
-        threads.append(t)
-        t.start()
+    if config.services['authorities']['sync']:
+        for y in range(1):
+            t = threading.Thread(target=syncAuthorities, args=(lock, ))
+            t.daemon = True
+            threads.append(t)
+            t.start()
 
     dbconnection = connect()
     ##

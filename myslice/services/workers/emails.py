@@ -10,7 +10,6 @@ from premailer import transform
 
 from myslice import db
 from myslice import settings as s
-from myslice.email import settings
 from myslice.db import connect, dispatch
 from myslice.db.activity import Event, ObjectType
 from myslice.db.authority import Authority
@@ -43,9 +42,9 @@ def confirmEmails(qConfirmEmails):
                     logger.warning("TODO: send specific emails with messages")
                 recipients = set()
 
-                url = s.web.url
-                if s.web.port and s.web.port != 80:
-                    url = url +':'+ s.web.port
+                url = s.web['url']
+                if s.web['port'] and s.web['port'] != 80:
+                    url = url +':'+ s.web['port']
 
                 # Look for the user email in the Event
                 if event.object.type == ObjectType.USER:
@@ -177,7 +176,7 @@ def sendEmail(event, recipients, subject, template, url, buttonLabel):
                     title = subject,
                     entity = str(event.object.type),
                     event = event,
-                    theme = s.email.theme,
+                    theme = s.email['theme'],
                     recipients = recipients,
                     url = url,
                     buttonLabel = buttonLabel,
@@ -185,7 +184,7 @@ def sendEmail(event, recipients, subject, template, url, buttonLabel):
     # use premailer module to get CSS inline
     mail_body_inline = transform(mail_body.decode())
 
-    m = Message(mail_from=['OneLab Support', settings.email.sender],
+    m = Message(mail_from=['OneLab Support', s.email['sender']],
                 mail_to = mail_to,
                 subject = subject,
                 html_content = mail_body_inline

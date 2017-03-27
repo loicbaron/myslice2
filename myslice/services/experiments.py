@@ -17,6 +17,7 @@ from myslice.db.activity import Event, ObjectType
 from myslice.services.workers.projects import events_run as manageProjects, sync as syncProjects
 from myslice.services.workers.slices import events_run as manageSlices, sync as syncSlices
 import myslice.lib.log as logging
+from myslice import config
 
 logger = logging.getLogger("experiments")
 
@@ -49,25 +50,27 @@ def run():
         t.start()
 
     # projects sync
-    for y in range(1):
-        t = threading.Thread(target=syncProjects, args=(lockProjects,))
-        t.daemon = True
-        threads.append(t)
-        t.start()
+    if config.services['experiments']['sync']:
+        for y in range(1):
+            t = threading.Thread(target=syncProjects, args=(lockProjects,))
+            t.daemon = True
+            threads.append(t)
+            t.start()
 
     # slices manager
     for y in range(1):
-        t = threading.Thread(target=manageSlices, args=(qSlices))
+        t = threading.Thread(target=manageSlices, args=(qSlices,))
         t.daemon = True
         threads.append(t)
         t.start()
 
     # slices sync
-    for y in range(1):
-        t = threading.Thread(target=syncSlices)
-        t.daemon = True
-        threads.append(t)
-        t.start()
+    if config.services['experiments']['sync']:
+        for y in range(1):
+            t = threading.Thread(target=syncSlices)
+            t.daemon = True
+            threads.append(t)
+            t.start()
 
     dbconnection = connect()
 

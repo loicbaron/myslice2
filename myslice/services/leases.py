@@ -17,6 +17,7 @@ from myslice.db import changes, connect, events
 from myslice.db.activity import Event, ObjectType
 from myslice.services.workers.leases import events_run as manageLeases, sync as syncLeases
 import myslice.lib.log as logging
+from myslice import config
 
 logger = logging.getLogger("leases")
 
@@ -48,11 +49,12 @@ def run():
         t.start()
 
     # leases sync
-    for y in range(1):
-        t = threading.Thread(target=syncLeases, args=(lock,))
-        t.daemon = True
-        threads.append(t)
-        t.start()
+    if config.services['leases']['sync']:
+        for y in range(1):
+            t = threading.Thread(target=syncLeases, args=(lock,))
+            t.daemon = True
+            threads.append(t)
+            t.start()
 
     dbconnection = connect()
 
