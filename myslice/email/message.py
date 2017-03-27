@@ -7,7 +7,8 @@ from email.utils import formataddr, formatdate
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-from myslice.email import settings
+from myslice.email import dir_path
+from myslice import settings as s
 from myslice.email.utils import MessageID
 
 class Message(object):
@@ -99,8 +100,8 @@ class Message(object):
 
 def build_subject_and_template( action, 
                                 event,
-                                path=settings.email.dir_path,
-                                theme=settings.email.theme):
+                                path=dir_path,
+                                theme=s.email['theme']):
     action, entity = str(action), str(event.object.type)
 
     if action == 'request':
@@ -123,14 +124,14 @@ class Mailer(object):
 
     def __init__(self):
         #smtp server mailer needs optimatization
-        self.server = smtplib.SMTP(settings.email.host, settings.email.port)
+        self.server = smtplib.SMTP(s.email['host'], s.email['port'])
 
     def send(self, message):
         
         self.server.starttls()
         #self.server.set_debuglevel(1)
-        self.server.login(settings.email.user, settings.email.password)
-        self.server.sendmail(settings.email.sender, message.mail_to , message.as_string())
+        self.server.login(s.email['user'], s.email['password'])
+        self.server.sendmail(s.email['sender'], message.mail_to , message.as_string())
         self.server.quit()
         
 

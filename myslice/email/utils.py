@@ -4,7 +4,7 @@ from datetime import datetime
 
 from myslice import settings as s
 
-DOMAIN = s.email.domain
+DOMAIN = s.email['domain']
 
 class MessageID:
     """Returns a string suitable for RFC 2822 compliant Message-ID, e.g:
