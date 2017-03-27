@@ -65,10 +65,23 @@ class Slice(myslicelibSlice):
         users = list(set(current['users']) | set(self.getAttribute('users')))
         for u in users:
             user = q(User).id(u).get().first()
-            user = user.merge(dbconnection)
-            logger.debug("Update user %s after Slice save()" % u)
-            logger.debug(user)
-            db.users(dbconnection, user.dict(), user.id)
+            if user:
+                user = user.merge(dbconnection)
+                logger.debug("Update user %s after Slice save()" % u)
+                logger.debug(user)
+                user = user.dict()
+            else:
+                logger.error("Could not update user after Slice.save(), no answer from Registry")
+                logger.warning("Updating the local DB manually")
+                user = db.get(dbconnection, table='users', id=u)
+                if u in current['users'] and u not in self.getAttribute('users'):
+                    # Remove slice from user
+                    del u['slices'][self.id]
+                elif u not in current['users'] and u in self.getAttribute('users'):
+                    # Add slice to user
+                    u['slice'].append(self.id)
+
+            db.users(dbconnection, user, u)
 
         # Update the Project of the slice
         project = db.get(dbconnection, table='projects', id=self.project)
@@ -121,10 +134,19 @@ class Slice(myslicelibSlice):
 
         for u in current['users']:
             user = q(User).id(u).get().first()
-            user = user.merge(dbconnection)
-            logger.debug("Update user %s after Slice save()" % u)
-            logger.debug(user)
-            db.users(dbconnection, user.dict(), user.id)
+            if user:
+                user = user.merge(dbconnection)
+                logger.debug("Update user %s after Slice delete()" % u)
+                logger.debug(user)
+                user = user.dict()
+            else:
+                logger.error("Could not update user after Slice.delete(), no answer from Registry")
+                logger.warning("Updating the local DB manually")
+                user = db.get(dbconnection, table='users', id=u)
+                # Remove slice from user
+                del u['slices'][self.id]
+
+            db.users(dbconnection, user, u)
 
         # Update the Project of the slice
         project = db.get(dbconnection, table='projects', id=self.project)
