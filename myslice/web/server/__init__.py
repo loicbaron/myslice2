@@ -1,6 +1,7 @@
-import os, logging
+import os
 
 from tornado import web, gen, httpserver
+from tornado.ioloop import IOLoop
 
 from oauth2 import Provider
 from oauth2.web.tornado import OAuth2Handler
@@ -11,7 +12,8 @@ from oauth2.store.memory import ClientStore, TokenStore
 from sockjs.tornado import SockJSRouter
 from rethinkdb import r
 import myslice.db as db
-from myslice import settings as s
+from myslice import config
+import myslice.lib.log as logging
 
 ##
 # Authenticaction handler
@@ -45,11 +47,24 @@ from myslice.web.websocket import WebsocketsHandler
 from myslice.web.controllers import addOrganization, activity, confirm, home, login, logout, password, projects, registration, slices, status, users
 from myslice.web.controllers import test
 
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("web")
+
+def run():
+    logger.info("Starting web server")
+
+    IOLoop.current().run_sync(WebServer)
+
+    try :
+        IOLoop.instance().start()
+    except KeyboardInterrupt:
+        IOLoop.instance().stop()
+    except Exception as e:
+        print(e)
+        exit(1)
+
 
 @gen.coroutine
-def run():
+def WebServer():
     """
     Tornado Web Server launcher
     :return:
@@ -214,12 +229,12 @@ class Application(web.Application):
         # URLs handlers
         handlers = auth_handlers + web_handlers + rest_handlers + WebsocketRouter.urls
 
-        settings = dict(cookie_secret=s.web.cookie_secret,
-                        login_url="/login",
-                        token_secret = s.web.token_secret,
-                        template_path=self.templates,
-                        static_path=self.static,
+        settings = dict(cookie_secret = config.web["cookie_secret"],
+                        login_url = "/login",
+                        token_secret = config.web["token_secret"],
+                        template_path = self.templates,
+                        static_path = self.static,
                         #xsrf_cookies=True,
-                        debug=True)
+                        debug = True)
 
         web.Application.__init__(self, handlers, **settings)

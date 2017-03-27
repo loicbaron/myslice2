@@ -7,7 +7,6 @@
 ##
 
 import json
-import logging
 import time
 
 from pprint import pprint
@@ -24,8 +23,9 @@ from myslice.db import changes, connect
 from myslice.db.user import User
 from myslice.db.project import Project
 from myslicelib.query import q
+import myslice.lib.log as logging
 
-logger = logging.getLogger('myslice.service.projects')
+logger = logging.getLogger("projects")
 
 def events_run(lock, qProjectEvents):
     """

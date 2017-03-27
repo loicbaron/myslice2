@@ -5,7 +5,6 @@
 #
 #   (c) 2016 Ciro Scognamiglio <ciro.scognamiglio@lip6.fr>
 ##
-import logging
 import time
 import myslice.db as db
 from myslice.lib import Status
@@ -14,6 +13,7 @@ from myslice.lib.authentication import UserSetup
 from myslice import myslicelibsetup
 
 from myslice.lib.util import format_date
+import myslice.lib.log as logging
 
 from myslice.db.activity import Event
 from myslice.db import connect
@@ -21,7 +21,7 @@ from myslice.db.user import User
 from myslicelib.query import q
 
 
-logger = logging.getLogger('myslice.service.users')
+logger = logging.getLogger("users")
 
 
 def events_run(lock, qUserEvents):

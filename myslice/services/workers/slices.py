@@ -7,7 +7,6 @@
 ##
 
 import json
-import logging
 import time
 import threading
 
@@ -27,11 +26,13 @@ from myslicelib.model.slice import Slices
 from myslice.db.user import User
 from myslicelib.query import q
 
+import myslice.lib.log as logging
+
 ##
 # lock shared byt the two workers sync and manage
 lock = threading.Lock()
 
-logger = logging.getLogger('myslice.services.workers.slices')
+logger = logging.getLogger("experiments")
 
 def events_run(qSliceEvents):
     """

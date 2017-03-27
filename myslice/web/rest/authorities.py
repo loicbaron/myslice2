@@ -256,7 +256,7 @@ class AuthoritiesHandler(Api):
                     if not self.isEmail(u['email']):
                         self.userError("Wrong Email address")
                         return
-                    if not any([user['email']==u['email'] for user in data['users']]):
+                    if not any([user['email'] == u['email'] for user in data['users']]):
                         self.userError("email %s of pi_user is not among new users" % u['email'])
                         return
 

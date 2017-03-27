@@ -5,7 +5,6 @@
 #
 #   (c) 2016 Ciro Scognamiglio <ciro.scognamiglio@lip6.fr>
 ##
-import logging
 import signal
 import threading
 from queue import Queue
@@ -15,8 +14,9 @@ from myslice.db import connect, changes, events
 from myslice.services.workers.users import events_run as manageUsersEvents
 from myslice.services.workers.password import events_run as managePasswordEvents
 from myslice.services.workers.users import sync as syncUsers
+import myslice.lib.log as logging
 
-logger = logging.getLogger('myslice.service.users')
+logger = logging.getLogger("users")
 
 def receive_signal(signum, stack):
     logger.info('Received signal %s', signum)
@@ -30,8 +30,6 @@ def run():
     signal.signal(signal.SIGINT, receive_signal)
     signal.signal(signal.SIGTERM, receive_signal)
     signal.signal(signal.SIGHUP, receive_signal)
-
-    logger.info("Service users starting")
 
     dbconnection = connect()
     # db connection is shared between threads

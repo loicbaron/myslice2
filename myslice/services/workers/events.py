@@ -5,15 +5,14 @@
 #
 #   (c) 2016 Ciro Scognamiglio <ciro.scognamiglio@lip6.fr>
 ##
-import logging
-import time
-from pprint import pprint
+
 import myslice.db as db
 from myslice.db import connect, dispatch
 from myslice.db.activity import Event, ObjectType 
 from myslice.db.user import User
+import myslice.lib.log as logging
 
-logger = logging.getLogger('myslice.service.worker.event')
+logger = logging.getLogger("activity")
 
 def run(q):
     """

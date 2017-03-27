@@ -6,17 +6,19 @@
 #   (c) 2016 Ciro Scognamiglio <ciro.scognamiglio@lip6.fr>
 ##
 
-import logging
 import signal
 import threading
 from queue import Queue
+
 import myslice.db as db
 import rethinkdb as r
+
 from myslice.db import connect, changes, events
 from myslice.db.activity import Event, EventStatus
 from myslice.services.workers.events import run as manageEvents
+import myslice.lib.log as logging
 
-logger = logging.getLogger('myslice.service.activity')
+logger = logging.getLogger("activity")
 
 def receive_signal(signum, stack):
     logger.info('Received signal %s', signum)
@@ -29,8 +31,6 @@ def run():
     signal.signal(signal.SIGINT, receive_signal)
     signal.signal(signal.SIGTERM, receive_signal)
     signal.signal(signal.SIGHUP, receive_signal)
-
-    logger.info("Service activity starting")
 
     qEvents = Queue()
 
