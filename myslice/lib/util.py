@@ -107,7 +107,6 @@ class Config(object):
 
         self._config = {
             "main" : None,
-            "web" : None,
             "server" : None,
             "endpoints" : None
         }
@@ -131,7 +130,8 @@ class Config(object):
             services[service] = {
                 "enabled": self._config["server"].getboolean(service, "enabled", fallback=False),
                 "log_file": self._config["server"].get(service, "log_file", fallback=None),
-                "log_level": self._config["server"].get(service, "log_level", fallback=None)
+                "log_level": self._config["server"].get(service, "log_level", fallback=None),
+                "sync": self._config["server"].getboolean(service, "sync", fallback=False)
             }
 
 
@@ -165,5 +165,42 @@ class Config(object):
                 "token_secret": self._config["main"].get("web", "token_secret", fallback=""),
             }
         else:
-            exit("no web configuration section found")
+            exit("no web configuration section found in %s/main.cfg" % self._path)
 
+    @property
+    def db(self):
+        if self._config["main"].has_section("db"):
+            return {
+                "host": self._config["main"].get("db", "host", fallback="localhost"),
+                "port": self._config["main"].get("db", "port", fallback="28015"),
+                "name": self._config["main"].get("db", "name", fallback="myslice"),
+            }
+        else:
+            exit("no db configuration section found in %s/main.cfg" % self._path)
+
+    @property
+    def email(self):
+        if self._config["main"].has_section("email"):
+            return {
+                "theme": self._config["main"].get("email", "theme", fallback="onelab"),
+                "domain": self._config["main"].get("email", "domain", fallback="onelab.eu"),
+                "host": self._config["main"].get("email", "host", fallback="smtp.gmail.com"),
+                "port": self._config["main"].get("email", "port", fallback="587"),
+                "ssl": self._config["main"].get("email", "ssl", fallback=True),
+                "user": self._config["main"].get("email", "user", fallback="zhouquantest16@gmail.com"),
+                "password": self._config["main"].get("email", "password", fallback="zqtest123"),
+            }
+        else:
+            exit("no email configuration section found in %s/main.cfg" % self._path)
+
+    @property
+    def auth(self):
+        if self._config["main"].has_section("auth"):
+            return {
+                "pkey": self._config["main"].get("auth", "pkey", fallback="/var/myslice/myslice.pkey"),
+                "cert": self._config["main"].get("auth", "cert", fallback="/var/myslice/myslice.cert"),
+                "hrn": self._config["main"].get("auth", "hrn", fallback="onelab.myslice"),
+                "email": self._config["main"].get("auth", "email", fallback="support@myslice.info"),
+            }
+        else:
+            exit("no auth configuration section found in %s/main.cfg" % self._path)
