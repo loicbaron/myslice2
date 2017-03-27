@@ -67,7 +67,7 @@ def events_run(lock, qUserEvents):
                     # Deleting user
                     if event.deletingObject():
                         logger.info("Deleting user {}".format(event.object.id))
-                        user = User(db.users(dbconnection, id=event.object.id))
+                        user = User(db.get(dbconnection, table='users', id=event.object.id))
                         if not user:
                             raise Exception("User doesn't exist")
                         user.id = event.object.id
@@ -77,7 +77,9 @@ def events_run(lock, qUserEvents):
                     if event.updatingObject():
                         logger.info("Updating user {}".format(event.object.id))
                         user = User(event.data)
-                        user.email = User(db.users(dbconnection, id=event.object.id)).email
+                        local_user = User(db.get(dbconnection, table='users', id=event.object.id))
+                        # we don't allow users to change their email
+                        user.email = local_user.email
                         user.id = event.object.id
                         isSuccess = user.save(dbconnection, user_setup)
                 except Exception as e:
@@ -148,17 +150,19 @@ def syncUsers(lock, email=None):
             update local user table
             """
             if len(users)>0:
-                local_users = db.users()
                 # Add users from Registry unkown from local DB
                 # this is used to bootstrap with init_user script
                 for u in users:
                     logger.debug("looking for {} in local db".format(u.id))
                     if not db.get(dbconnection, table='users', id=u.id):
-                        nb = db.get(dbconnection, table='users')
-                        logger.warning("Number of users in local db: %s" % len(nb))
+                        local_users = db.get(dbconnection, table='users')
+                        logger.warning("Number of users in local db: %s" % len(local_users))
                         #print("this user is not in local db, add it")
                         logger.info("Found new user from Registry: %s" % u.id)
-                        db.users(dbconnection, u.dict(), u.id)
+                        #logger.info("We don't add the missing users yet, as portal is the single point of entry")
+                        db.users(dbconnection, u.dict())
+
+                local_users = db.get(dbconnection, table='users')
                 # Update users known in local DB
                 for lu in local_users:
                     logger.info("Synchronize user %s" % lu['id'])

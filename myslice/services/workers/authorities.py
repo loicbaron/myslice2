@@ -116,36 +116,39 @@ def sync(lock):
     A thread that will sync users with the local rethinkdb
     """
 
+    while True:
+        syncAuthorities(lock)
+        # sleep
+        time.sleep(86400)
+
+def syncAuthorities(lock):
+
     # DB connection
     dbconnection = db.connect()
 
-    while True:
-        # acquires lock
-        with lock:
-            logger.info("Worker authorities starting period synchronization")
+    # acquires lock
+    with lock:
+        logger.info("Worker authorities starting period synchronization")
 
-            authorities = q(Authority).get()
+        authorities = q(Authority).get()
 
-            """
-            update local slice table
-            """
-            if len(authorities)>0:
-                lauthorities = db.authorities(dbconnection, authorities.dict())
-                for ls in lauthorities :
-                    # add status if not present and update on db
-                    if not 'status' in ls:
-                        ls['status'] = Status.ENABLED
-                        ls['enabled'] = format_date()
-                        db.authorities(dbconnection, ls)
+        """
+        update local slice table
+        """
+        if len(authorities)>0:
+            lauthorities = db.authorities(dbconnection, authorities.dict())
+            for ls in lauthorities :
+                # add status if not present and update on db
+                if not 'status' in ls:
+                    ls['status'] = Status.ENABLED
+                    ls['enabled'] = format_date()
+                    db.authorities(dbconnection, ls)
 
-                    if not authorities.has(ls['id']) and ls['status'] is not Status.PENDING:
-                        # delete resourc that have been deleted elsewhere
-                        db.delete(dbconnection, 'authorities', ls['id'])
-                        logger.info("Authority {} deleted".format(ls['id']))
-            else:
-                logger.warning("Query authorities is empty, check myslicelib and the connection with SFA Registry")
+                if not authorities.has(ls['id']) and ls['status'] is not Status.PENDING:
+                    # delete resourc that have been deleted elsewhere
+                    db.delete(dbconnection, 'authorities', ls['id'])
+                    logger.info("Authority {} deleted".format(ls['id']))
+        else:
+            logger.warning("Query authorities is empty, check myslicelib and the connection with SFA Registry")
 
-            logger.info("Worker authorities finished period synchronization") 
-        
-        # sleep
-        time.sleep(86400)
+        logger.info("Worker authorities finished period synchronization") 

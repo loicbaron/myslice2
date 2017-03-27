@@ -127,36 +127,36 @@ def sync(lock):
     """
     A thread that will sync projects with the local rethinkdb
     """
+    while True:
+        syncProjects(lock)
+        # sleep
+        time.sleep(86400)
+
+def syncProjects(lock):
 
     # DB connection
     dbconnection = connect()
 
-    while True:
-        # acquires lock
-        with lock:
-            logger.info("Worker projects starting synchronization")
+    # acquires lock
+    with lock:
+        logger.info("Worker projects starting synchronization")
 
-            # MySliceLib Query Slices
-            p = q(Project).get()
+        # MySliceLib Query Slices
+        p = q(Project).get()
 
-            # update local projects table
-            if len(p)>0:
-                lprojects = db.projects(dbconnection, p.dict())
-                for ls in lprojects :
-                    # add status if not present and update on db
-                    if not 'status' in ls:
-                        ls['status'] = Status.ENABLED
-                        ls['enabled'] = format_date()
-                        db.projects(dbconnection, ls)
+        # update local projects table
+        if len(p)>0:
+            lprojects = db.projects(dbconnection, p.dict())
+            for ls in lprojects :
+                # add status if not present and update on db
+                if not 'status' in ls:
+                    ls['status'] = Status.ENABLED
+                    ls['enabled'] = format_date()
+                    db.projects(dbconnection, ls)
 
-                    if not p.has(ls['id']) and ls['status'] is not Status.PENDING:
-                        # delete projects that have been deleted elsewhere
-                        db.delete(dbconnection, 'projects', ls['id'])
-                        logger.info("Project {} deleted".format(ls['id']))
-            else:
-                logger.warning("Query projects is empty, check myslicelib and the connection with SFA Registry")
-
-        # sleep
-        time.sleep(86400)
-
-
+                if not p.has(ls['id']) and ls['status'] is not Status.PENDING:
+                    # delete projects that have been deleted elsewhere
+                    db.delete(dbconnection, 'projects', ls['id'])
+                    logger.info("Project {} deleted".format(ls['id']))
+        else:
+            logger.warning("Query projects is empty, check myslicelib and the connection with SFA Registry")
