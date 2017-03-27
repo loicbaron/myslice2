@@ -4,7 +4,6 @@ import logging, json
 from tornado import gen
 from sockjs.tornado import SockJSConnection
 from myslice.lib.util import myJSONEncoder
-from myslice import settings as s
 
 ##
 # Setup ZMQ with tornado event loop support

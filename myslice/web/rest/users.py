@@ -14,7 +14,6 @@ from myslice.db.activity import Event, EventAction, ObjectType, DataType
 from myslice.db import dispatch
 from myslice.web.rest import Api
 from myslice.web.controllers.login import check_password, crypt_password
-from myslice import settings as s
 
 from tornado import gen, escape
 
