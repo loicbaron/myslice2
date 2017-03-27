@@ -51,9 +51,9 @@ tables = [
     ]
 
 def connect():
-    logger.info("Connecting to db {} on {}:{}".format(s.db.name,s.db.host,s.db.port))
+    logger.info("Connecting to db {} on {}:{}".format(s.db['name'],s.db['host'],s.db['port']))
     try :
-        return r.connect(host=s.db.host, port=s.db.port, db=s.db.name)
+        return r.connect(host=s.db['host'], port=s.db['port'], db=s.db['name'])
     except RqlDriverError :
         logger.error("Can't connect to RethinkDB")
         raise SystemExit("Can't connect to RethinkDB")
@@ -62,14 +62,14 @@ def setup():
     dbconnection = connect()
 
     try:
-        r.db_create(s.db.name).run(dbconnection)
+        r.db_create(s.db['name']).run(dbconnection)
         logger.info('MyOps2 database created successfully')
     except RqlRuntimeError:
         logger.info('MyOps2 database already exists')
 
     for t in tables:
         try:
-            r.db(s.db.name).table_create(t['name'], primary_key=t['pkey']).run(dbconnection)
+            r.db(s.db['name']).table_create(t['name'], primary_key=t['pkey']).run(dbconnection)
             logger.info('table %s setup completed', t['name'])
         except RqlRuntimeError:
             logger.info('table %s already exists', t['name'])
@@ -85,7 +85,7 @@ def syncTestbeds(testbeds):
 
     dbconnection = connect()
 
-    localTestbeds = r.db(s.db.name).table('testbeds').run(dbconnection)
+    localTestbeds = r.db(s.db['name']).table('testbeds').run(dbconnection)
 
     # sync
     for t in localTestbeds:
@@ -94,7 +94,7 @@ def syncTestbeds(testbeds):
             # update
             try:
                 logger.info('updating testbed {} ({})'.format(u.name, u.type))
-                r.db(s.db.name).table('testbeds').update(u.dict()).run(dbconnection)
+                r.db(s.db['name']).table('testbeds').update(u.dict()).run(dbconnection)
             except Exception as e:
                 logger.error('{}'.format(str(e)))
             # remove the element from the working set
@@ -103,7 +103,7 @@ def syncTestbeds(testbeds):
             # delete
             try:
                 logger.info('deleting testbed {} ({})'.format(t['name'], t['type']))
-                r.db(s.db.name).table('testbeds').get(t['id']).delete().run(dbconnection)
+                r.db(s.db['name']).table('testbeds').get(t['id']).delete().run(dbconnection)
             except Exception as e:
                 logger.error('{}'.format(str(e)))
 
@@ -112,7 +112,7 @@ def syncTestbeds(testbeds):
         # new
         try:
             logger.info('new testbed {} ({})'.format(n.name, n.type))
-            r.db(s.db.name).table('testbeds').insert(n.dict(), conflict='update').run(dbconnection)
+            r.db(s.db['name']).table('testbeds').insert(n.dict(), conflict='update').run(dbconnection)
         except Exception as e:
             logger.error('{}'.format(str(e)))
 
@@ -134,11 +134,11 @@ def syncResources(resources):
 
     dbconnection = connect()
 
-    localResources = r.db(s.db.name).table('resources').run(dbconnection)
+    localResources = r.db(s.db['name']).table('resources').run(dbconnection)
 
     # compare the list of testbeds online
     # with the list of resources retreived
-    testbeds = r.db(s.db.name).table('testbeds').pluck('id','status').run(dbconnection)
+    testbeds = r.db(s.db['name']).table('testbeds').pluck('id','status').run(dbconnection)
     onlineTestbeds = [v['id'] for v in testbeds if v['status']=='online']
     #logger.debug("online testbeds : {}".format(onlineTestbeds))
     testbedsInResources = list(set([v.dict()['testbed'] for v in list(resources) if 'testbed' in v.dict()]))
@@ -155,14 +155,14 @@ def syncResources(resources):
         if rs is not None:
             # update
             logger.info('updating resource {} ({})'.format(rs.name, rs.testbed))
-            r.db(s.db.name).table('resources').update(rs.dict()).run(dbconnection)
+            r.db(s.db['name']).table('resources').update(rs.dict()).run(dbconnection)
             # remove the element from the working set
             resources.remove(rs)
         else:
             # delete
             if lr['testbed'] not in missingTestbeds:
                 logger.info('deleting resource {} ({})'.format(lr['name'], lr['testbed']))
-                r.db(s.db.name).table('resources').get(lr['id']).delete().run(dbconnection)
+                r.db(s.db['name']).table('resources').get(lr['id']).delete().run(dbconnection)
             else:
                 logger.info("resource {} missing not deleted".format(lr['name']))
 
@@ -170,7 +170,7 @@ def syncResources(resources):
     for n in resources:
         # new
         logger.info('new resource {} ({})'.format(n.name, n.testbed))
-        r.db(s.db.name).table('resources').insert(n.dict(), conflict='update').run(dbconnection)
+        r.db(s.db['name']).table('resources').insert(n.dict(), conflict='update').run(dbconnection)
 
 def getResources():
     """
@@ -194,10 +194,10 @@ def syncLeases(leases):
 
     dbconnection = connect()
 
-    localLeases = r.db(s.db.name).table('leases').run(dbconnection)
+    localLeases = r.db(s.db['name']).table('leases').run(dbconnection)
 
     # clear the leases table
-    r.db(s.db.name).table("leases").delete().run(dbconnection)
+    r.db(s.db['name']).table("leases").delete().run(dbconnection)
 
     # sync
     # we need to keep the local leases that match existing leases
@@ -213,16 +213,16 @@ def syncLeases(leases):
         # This lease does not exist anymore
         if not keep:
             # Synchronize the Slice if we have it locally
-            if 'slice_id' in ll and r.db(s.db.name).table('slices').get(ll['slice_id']).run(dbconnection):
+            if 'slice_id' in ll and r.db(s.db['name']).table('slices').get(ll['slice_id']).run(dbconnection):
                 slices.append(ll['slice_id'])
 
     for l in leases:
         if not isinstance(l, dict):
             l = l.dict()
         # insert the lease
-        r.db(s.db.name).table('leases').insert(l, conflict='update').run(dbconnection)
+        r.db(s.db['name']).table('leases').insert(l, conflict='update').run(dbconnection)
         # Synchronize the Slice if we have it locally
-        if 'slice_id' in l and r.db(s.db.name).table('slices').get(l['slice_id']).run(dbconnection):
+        if 'slice_id' in l and r.db(s.db['name']).table('slices').get(l['slice_id']).run(dbconnection):
             slices.append(l['slice_id'])
 
     return slices
@@ -262,19 +262,19 @@ def get(dbconnection=None, table=None, id=None, filter=None, limit=None):
         dbconnection = connect()
 
     if id:
-        return r.db(s.db.name).table(table).get(id).run(dbconnection)
+        return r.db(s.db['name']).table(table).get(id).run(dbconnection)
 
     if filter:
         if limit:
-            cursor = r.db(s.db.name).table(table).filter(filter).limit(limit).run(dbconnection)
+            cursor = r.db(s.db['name']).table(table).filter(filter).limit(limit).run(dbconnection)
         else:
             # return somthing with filter
-            cursor = r.db(s.db.name).table(table).filter(filter).run(dbconnection)
+            cursor = r.db(s.db['name']).table(table).filter(filter).run(dbconnection)
 
     elif limit:
-        cursor = r.db(s.db.name).table(table).limit(limit).run(dbconnection)
+        cursor = r.db(s.db['name']).table(table).limit(limit).run(dbconnection)
     else:
-        cursor = r.db(s.db.name).table(table).run(dbconnection)
+        cursor = r.db(s.db['name']).table(table).run(dbconnection)
     res = list(cursor)
     #process_results(res)
     return res
@@ -292,45 +292,45 @@ def users(dbconnection=None, data=None, id=None, email=None, hashing=None):
     # Updating an existing user
     if id and data:
         logger.debug("Update parameters given id={} and data={}".format(id,data))
-        r.db(s.db.name).table('users').get(id).update(data).run(dbconnection)
+        r.db(s.db['name']).table('users').get(id).update(data).run(dbconnection)
 
     ##
     # Return the user
     if id:
         logger.debug("return updated user")
-        return r.db(s.db.name).table('users').get(id).run(dbconnection)
+        return r.db(s.db['name']).table('users').get(id).run(dbconnection)
 
     ##
     # Adding a new user
     if data:
         logger.debug("Insert parameters given data={}".format(data))
-        r.db(s.db.name).table('users').insert(data, conflict='update').run(dbconnection)
+        r.db(s.db['name']).table('users').insert(data, conflict='update').run(dbconnection)
     ##
     # Search user by email
     if email:
-        return r.db(s.db.name).table('users').filter({'email':email}).run(dbconnection)
+        return r.db(s.db['name']).table('users').filter({'email':email}).run(dbconnection)
 
     ##
     # Search user by hashing when reset passord
     if hashing:
-        return r.db(s.db.name).table('users').filter({'hashing':hashing}).run(dbconnection)
+        return r.db(s.db['name']).table('users').filter({'hashing':hashing}).run(dbconnection)
 
-    return r.db(s.db.name).table('users').run(dbconnection)
+    return r.db(s.db['name']).table('users').run(dbconnection)
 
 def authorities(dbconnection=None, data=None, id=None):
     if not dbconnection:
         dbconnection = connect()
 
     if id and data:
-        r.db(s.db.name).table('authorities').get(id).update(data).run(dbconnection)
+        r.db(s.db['name']).table('authorities').get(id).update(data).run(dbconnection)
 
     if id:
-        return r.db(s.db.name).table('authorities').get(id).run(dbconnection)
+        return r.db(s.db['name']).table('authorities').get(id).run(dbconnection)
 
     if data:
-        r.db(s.db.name).table('authorities').insert(data, conflict='update').run(dbconnection)
+        r.db(s.db['name']).table('authorities').insert(data, conflict='update').run(dbconnection)
 
-    return r.db(s.db.name).table('authorities').run(dbconnection)
+    return r.db(s.db['name']).table('authorities').run(dbconnection)
 
 
 def projects(dbconnection=None, data=None, id=None):
@@ -338,15 +338,15 @@ def projects(dbconnection=None, data=None, id=None):
         dbconnection = connect()
 
     if id and data:
-        r.db(s.db.name).table('projects').get(id).update(data).run(dbconnection)
+        r.db(s.db['name']).table('projects').get(id).update(data).run(dbconnection)
 
     if id:
-        return r.db(s.db.name).table('projects').get(id).run(dbconnection)
+        return r.db(s.db['name']).table('projects').get(id).run(dbconnection)
 
     if data:
-        r.db(s.db.name).table('projects').insert(data, conflict='update').run(dbconnection)
+        r.db(s.db['name']).table('projects').insert(data, conflict='update').run(dbconnection)
 
-    return r.db(s.db.name).table('projects').run(dbconnection)
+    return r.db(s.db['name']).table('projects').run(dbconnection)
 
 
 def slices(dbconnection=None, data=None, id=None):
@@ -354,45 +354,45 @@ def slices(dbconnection=None, data=None, id=None):
         dbconnection = connect()
 
     if id and data:
-        r.db(s.db.name).table('slices').get(id).update(data).run(dbconnection)
+        r.db(s.db['name']).table('slices').get(id).update(data).run(dbconnection)
 
     if id:
-        return r.db(s.db.name).table('slices').get(id).run(dbconnection)
+        return r.db(s.db['name']).table('slices').get(id).run(dbconnection)
 
     if data:
-        r.db(s.db.name).table('slices').insert(data, conflict='update').run(dbconnection)
+        r.db(s.db['name']).table('slices').insert(data, conflict='update').run(dbconnection)
 
-    return r.db(s.db.name).table('slices').run(dbconnection)
+    return r.db(s.db['name']).table('slices').run(dbconnection)
 
 def resources(dbconnection=None, data=None, id=None):
     if not dbconnection:
         dbconnection = connect()
 
     if id and data:
-        r.db(s.db.name).table('resources').get(id).update(data).run(dbconnection)
+        r.db(s.db['name']).table('resources').get(id).update(data).run(dbconnection)
 
     if id:
-        return r.db(s.db.name).table('resources').get(id).run(dbconnection)
+        return r.db(s.db['name']).table('resources').get(id).run(dbconnection)
 
     if data:
-        r.db(s.db.name).table('resources').insert(data, conflict='update').run(dbconnection)
+        r.db(s.db['name']).table('resources').insert(data, conflict='update').run(dbconnection)
 
-    return r.db(s.db.name).table('resources').run(dbconnection)
+    return r.db(s.db['name']).table('resources').run(dbconnection)
 
 def leases(dbconnection=None, data=None, id=None):
     if not dbconnection:
         dbconnection = connect()
 
     if id and data:
-        r.db(s.db.name).table('leases').get(id).update(data).run(dbconnection)
+        r.db(s.db['name']).table('leases').get(id).update(data).run(dbconnection)
 
     if id:
-        return r.db(s.db.name).table('leases').get(id).run(dbconnection)
+        return r.db(s.db['name']).table('leases').get(id).run(dbconnection)
 
     if data:
-        r.db(s.db.name).table('leases').insert(data, conflict='update').run(dbconnection)
+        r.db(s.db['name']).table('leases').insert(data, conflict='update').run(dbconnection)
 
-    return r.db(s.db.name).table('leases').run(dbconnection)
+    return r.db(s.db['name']).table('leases').run(dbconnection)
 
 def events(dbconnection=None, event=None, user=None, status=None, action=None, obj_type=None):
     if not dbconnection:
@@ -402,9 +402,9 @@ def events(dbconnection=None, event=None, user=None, status=None, action=None, o
         logger.debug("Local DB events() called")
         logger.debug(event.dict())
         # update event on db
-        r.db(s.db.name).table('activity').insert(event.dict(), conflict='update').run(dbconnection)
+        r.db(s.db['name']).table('activity').insert(event.dict(), conflict='update').run(dbconnection)
     
-    req = r.db(s.db.name).table('activity')
+    req = r.db(s.db['name']).table('activity')
 
     if user:
         req = req.filter({'user':user})
@@ -433,7 +433,7 @@ def event(dbconnection=None, id=None):
     if not dbconnection:
         dbconnection = connect()
 
-    return r.db(s.db.table).table('activity').get(id).run(dbconnection)
+    return r.db(s.db['name']).table('activity').get(id).run(dbconnection)
 
 def dispatch(dbconnection=None, activity=None):
     """
@@ -452,11 +452,11 @@ def dispatch(dbconnection=None, activity=None):
     if activity.id:
         ##
         # updating existing event/request
-        ret = r.db(s.db.name).table(table).get(activity.id).update(activity.dict()).run(dbconnection)
+        ret = r.db(s.db['name']).table(table).get(activity.id).update(activity.dict()).run(dbconnection)
     else:
         ##
         # dispatching new event/request
-        ret = r.db(s.db.name).table(table).insert(activity.dict()).run(dbconnection)
+        ret = r.db(s.db['name']).table(table).insert(activity.dict()).run(dbconnection)
 
     return ret
 
@@ -470,7 +470,7 @@ def delete(dbconnection=None, table=None, id=None):
         dbconnection = connect()
 
     if id and table:
-        return r.db(s.db.name).table(table).get(id).delete().run(dbconnection)
+        return r.db(s.db['name']).table(table).get(id).delete().run(dbconnection)
 
     return False
 
@@ -481,7 +481,7 @@ def changes(dbconnection=None, table=None, status=None, action=None, obj_type=No
     if not dbconnection:
         dbconnection = connect()
 
-    req = r.db(s.db.name).table(table)
+    req = r.db(s.db['name']).table(table)
 
     if status:
         if isinstance(status, str) or len(status) == 1:
