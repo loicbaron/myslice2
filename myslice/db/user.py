@@ -126,8 +126,12 @@ class User(myslicelibUser):
             raise UserException("This user has no id, could not be saved in local DB: {}".format(self))
         print("DB user save()")
         logger.debug(result)
-        db.users(dbconnection, result, self.getAttribute('id'))
-        return True
+        if not self.getAttribute('id'):
+            logger.critical("-------> USER HAS NO ID <-------")
+            raise Exception("Trying to save a user that has no id will remove all data in users table!!!")
+        else:
+            db.users(dbconnection, result, self.getAttribute('id'))
+            return True
 
     def delete(self, dbconnection, setup=None):
         logger.warning("User.delete() called")
