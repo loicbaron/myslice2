@@ -66,9 +66,9 @@ class Forgot(BaseController):
         try:
             post_email = self.get_argument("email")
             payload = {"email":post_email}
-            url = s.web.url
-            if s.web.port and s.web.port != 80:
-                url = url +':'+ s.web.port
+            url = s.web['url']
+            if s.web['port'] and s.web['port'] != 80:
+                url = url +':'+ s.web['port']
             headers = {'Content-type': 'application/json'}
             url = url+"/api/v1/password"
             r = requests.put(url, data=payload, headers=headers)
