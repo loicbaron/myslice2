@@ -2,10 +2,6 @@
 enabled=false
 log_file=web.log
 log_level=debug
-url=http://dev.myslice.info
-port=8111
-cookie_secret=x&7G1d2!5MhG9SWkXu
-token_secret=u636vbJV6Ph[EJB;Q
 
 [emails]
 enabled=false
@@ -19,20 +15,24 @@ log_level=debug
 
 [authorities]
 enabled=false
+sync=false
 log_file=authorities.log
 log_level=debug
 
 [users]
 enabled=false
+sync=false
 log_file=users.log
 log_level=debug
 
 [experiments]
 enabled=false
+sync=false
 log_file=experiments.log
 log_level=debug
 
 [leases]
 enabled=false
+sync=false
 log_file=leases.log
 log_level=debug
