@@ -43,7 +43,7 @@ cd /root/ \
 echo "Installing myslice" \
         && cd /root/ \
         && git clone http://gitlab.noc.onelab.eu/onelab/myslice.git \
-        && apt-get -y install libzmq3-dev curl nodejs \
+        && apt-get -y install libzmq3-dev curl nodejs libmysqlclient-dev \
         && pip install -r myslice/requirements.txt \
         && cd myslice \
         && python3.5 setup.py develop \
