@@ -42,6 +42,9 @@ cd /root/ \
 # Here we need to configure pkey and cert:
 
 
+mkdir /var/myslice
+mkdir /etc/myslice
+
 # INSTALLING myslice #
 echo "Installing myslice" \
         && cd /root/ \
@@ -58,7 +61,10 @@ echo "Installing myslice" \
         && npm i -g webpack \
         && webpack
 
-mkdir /var/myslice
+echo "Configure MySlice with default .cfg"
+cp /root/myslice/myslice/dist/config/* /etc/myslice/
+rename 's/.dist$//' /etc/myslice/*.dist
+
 echo "Configure RethinkDB"
 echo "bind=all" > /etc/rethinkdb/instances.d/myslice.conf
 /etc/init.d/rethinkdb start

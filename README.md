@@ -25,7 +25,9 @@ Configure
 =======================
 
 ~~~
-    vi ~/myslice/myslice/__init__.py
+	sudo mkdir /etc/myslice
+	sudo cp myslice/dist/config/* /etc/myslice/
+	sudo rename 's/.dist$//' /etc/myslice/*.dist
 ~~~
 
 
