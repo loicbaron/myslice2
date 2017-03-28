@@ -94,9 +94,9 @@ def emails_run(qEmails):
                 logger.warning("TODO: send specific emails with messages")
             recipients = set()
 
-            url = s.web.url
-            if s.web.port and s.web.port != 80:
-                url = url +':'+ s.web.port
+            url = s.web['url']
+            if s.web['port'] and s.web['port'] != 80:
+                url = url +':'+ s.web['port']
             
             buttonLabel = "View details"
             if event.object.type == ObjectType.PASSWORD:
