@@ -34,8 +34,8 @@ echo "deb http://download.rethinkdb.com/apt trusty main" > /etc/apt/sources.list
 # Installing myslicelib
 cd /root/ \
         && git clone http://gitlab.noc.onelab.eu/onelab/myslicelib.git \
-        && pip install --upgrade pip \
-        && pip install -r myslicelib/requirements.txt \
+        && pip3 install --upgrade pip \
+        && pip3 install -r myslicelib/requirements.txt \
         && cd myslicelib \
         && python3.5 setup.py develop
 
@@ -50,7 +50,7 @@ echo "Installing myslice" \
         && cd /root/ \
         && git clone http://gitlab.noc.onelab.eu/onelab/myslice.git \
         && apt-get -y install libzmq3-dev curl nodejs \
-        && pip install -r myslice/requirements.txt \
+        && pip3 install -r myslice/requirements.txt \
         && cd myslice \
         && python3.5 setup.py develop \
         && cd /root/ \
