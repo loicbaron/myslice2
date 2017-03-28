@@ -50,5 +50,5 @@ class TestLogin(LocalTestCase):
         self.assertEqual(r.status_code, 200)
         self.assertEqual(s['hrn'], json.loads(r.text)['result']['hrn'])
 
-
-
+if __name__ == '__main__':
+    unittest.main()
