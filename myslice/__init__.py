@@ -17,6 +17,7 @@ config = Config()
 
 ## Setup endpoints with MySliceLib
 myslicelibsetup.endpoints = []
+myslicelibsetup.registry_endpoints = []
 for k,endpoint in config.endpoints.items():
     if (endpoint["enabled"]):
         myslicelibsetup.endpoints.append(
@@ -29,10 +30,15 @@ for k,endpoint in config.endpoints.items():
                 hasLeases = endpoint["hasLeases"],
             )
         )
-
-myslicelibsetup.registry_endpoints = [
-            Endpoint(url="https://portal.onelab.eu:6080",type="Reg", timeout=30, name="OneLab Registry"),
-        ]
+        if endpoint['type'] == "Reg":
+            myslicelibsetup.registry_endpoints.append(
+                Endpoint(
+                    url = endpoint["url"],
+                    type = endpoint["type"],
+                    timeout = int(endpoint["timeout"]),
+                    name = endpoint["name"],
+                )
+            )
 
 #if os.path.exists(os.path.expanduser("~/.sfi/")):
 #    path = os.path.expanduser("~/.sfi/")
