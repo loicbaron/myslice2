@@ -30,6 +30,7 @@ job0:
     - ./init_user.py -e $ADMIN_EMAIL -P $ADMIN_PASSWORD -k /var/myslice/myslice.pkey -p /var/myslice/myslice.pub
     - ./sync.py all
     - ./start.sh
+    - mv myslice/tests/config.myslice.py myslice/tests/config.py
     - ./myslice/tests/deployment.py
     - ./myslice/tests/rest_login.py
     - ./myslice/tests/rest_users.py
