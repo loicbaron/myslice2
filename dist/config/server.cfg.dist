@@ -1,38 +1,38 @@
 [web]
-enabled=false
+enabled=true
 log_file=web.log
 log_level=debug
 
 [emails]
-enabled=false
+enabled=true
 log_file=emails.log
 log_level=debug
 
 [activity]
-enabled=false
+enabled=true
 log_file=activity.log
 log_level=debug
 
 [authorities]
-enabled=false
+enabled=true
 sync=false
 log_file=authorities.log
 log_level=debug
 
 [users]
-enabled=false
+enabled=true
 sync=false
 log_file=users.log
 log_level=debug
 
 [experiments]
-enabled=false
+enabled=true
 sync=false
 log_file=experiments.log
 log_level=debug
 
 [leases]
-enabled=false
+enabled=true
 sync=false
 log_file=leases.log
 log_level=debug
