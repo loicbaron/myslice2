@@ -34,23 +34,17 @@ echo "deb http://download.rethinkdb.com/apt trusty main" > /etc/apt/sources.list
 # Installing myslicelib
 cd /root/ \
         && git clone http://gitlab.noc.onelab.eu/onelab/myslicelib.git \
-        && pip3 install --upgrade pip \
-        && pip3 install -r myslicelib/requirements.txt \
+        && pip install --upgrade pip \
+        && pip install -r myslicelib/requirements.txt \
         && cd myslicelib \
         && python3.5 setup.py develop
-
-# Here we need to configure pkey and cert:
-
-
-mkdir /var/myslice
-mkdir /etc/myslice
 
 # INSTALLING myslice #
 echo "Installing myslice" \
         && cd /root/ \
         && git clone http://gitlab.noc.onelab.eu/onelab/myslice.git \
         && apt-get -y install libzmq3-dev curl nodejs \
-        && pip3 install -r myslice/requirements.txt \
+        && pip install -r myslice/requirements.txt \
         && cd myslice \
         && python3.5 setup.py develop \
         && cd /root/ \
@@ -60,6 +54,13 @@ echo "Installing myslice" \
         && npm install \
         && npm i -g webpack \
         && webpack
+
+# Here we need to configure pkey and cert:
+echo "Creating pkey and cert folder /var/myslice"
+mkdir /var/myslice
+
+echo "Creating config folder /etc/myslice"
+mkdir /etc/myslice
 
 echo "Configure MySlice with default .cfg"
 cp /root/myslice/dist/config/* /etc/myslice/
