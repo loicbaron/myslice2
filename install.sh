@@ -62,7 +62,7 @@ echo "Installing myslice" \
         && webpack
 
 echo "Configure MySlice with default .cfg"
-cp /root/myslice/myslice/dist/config/* /etc/myslice/
+cp /root/myslice/dist/config/* /etc/myslice/
 rename 's/.dist$//' /etc/myslice/*.dist
 
 echo "Configure RethinkDB"
