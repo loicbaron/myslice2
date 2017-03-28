@@ -148,7 +148,8 @@ class Config(object):
                     "url": self._config["endpoints"].get(endpoint, "url"),
                     "type": self._config["endpoints"].get(endpoint, "type"),
                     "timeout": self._config["endpoints"].get(endpoint, "timeout", fallback=30),
-                    "technologies": self._config["endpoints"].get(endpoint, "technologies", fallback=None)
+                    "technologies": self._config["endpoints"].get(endpoint, "technologies", fallback=None),
+                    "hasLeases": self._config["endpoints"].getboolean(endpoint, "hasLeases", fallback=False),
                 }
             except NoOptionError:
                 pass
@@ -188,6 +189,7 @@ class Config(object):
                 "port": self._config["main"].get("email", "port", fallback="587"),
                 "ssl": self._config["main"].get("email", "ssl", fallback=True),
                 "user": self._config["main"].get("email", "user", fallback="zhouquantest16@gmail.com"),
+                "sender": self._config["main"].get("email", "sender", fallback="zhouquantest16@gmail.com"),
                 "password": self._config["main"].get("email", "password", fallback="zqtest123"),
             }
         else:

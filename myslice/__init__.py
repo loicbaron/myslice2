@@ -25,7 +25,8 @@ for k,endpoint in config.endpoints.items():
                 type = endpoint["type"],
                 timeout = int(endpoint["timeout"]),
                 name = endpoint["name"],
-                technologies = endpoint["technologies"]
+                technologies = endpoint["technologies"],
+                hasLeases = endpoint["hasLeases"],
             )
         )
 
