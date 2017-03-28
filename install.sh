@@ -59,6 +59,9 @@ echo "Installing myslice" \
 echo "Creating pkey and cert folder /var/myslice"
 mkdir /var/myslice
 
+echo "Creating log folder /var/log/myslice"
+mkdir /var/log/myslice
+
 echo "Creating config folder /etc/myslice"
 mkdir /etc/myslice
 
