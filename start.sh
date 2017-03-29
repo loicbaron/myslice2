@@ -12,13 +12,13 @@ ps -aux | grep 'myslice'
 
 echo 'netstat -apn'
 netstat -apn
-echo 'sleep 10s'
-sleep 10
+echo 'sleep 20s'
+sleep 20
 
 echo 'netstat -apn' 
 netstat -apn
-echo 'sleep 10s'
-sleep 10
+echo 'sleep 20s'
+sleep 20
 
 echo 'netstat -apn' 
 netstat -apn
