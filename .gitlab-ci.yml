@@ -31,6 +31,7 @@ job0:
     - ./sync.py all
     - ./start.sh
     - mv myslice/tests/config.myslice.py myslice/tests/config.py
+	- cat myslice/tests/config.py
     - ./myslice/tests/deployment.py
     - ./myslice/tests/rest_login.py
     - ./myslice/tests/rest_users.py
