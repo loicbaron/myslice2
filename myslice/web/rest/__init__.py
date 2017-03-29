@@ -121,6 +121,8 @@ class Api(cors.CorsMixin, web.RequestHandler):
         # check if the users in the request are in the object
         for data_pi in data['pi_users']:
             if data_pi not in object['pi_users']:
+                if isinstance(data_pi, dict):
+                    data_pi = data_pi['id']
                 pi_users.append(data_pi)
         if len(pi_users)>0:
             # create event add user to object pis
@@ -148,6 +150,9 @@ class Api(cors.CorsMixin, web.RequestHandler):
         # check if the users in the object are int the delete request
         for object_pi in object['pi_users']:
             if object_pi not in data['pi_users']:
+                if isinstance(object_pi, dict):
+                    object_pi = object_pi['id']
+
                 pi_users.append(object_pi)
 
         if len(pi_users)>0:
