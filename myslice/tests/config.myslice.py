@@ -7,6 +7,7 @@ server = 'localhost'
 s['email'] = "support@myslice.info"
 s['password'] = "my_password"
 s['hrn'] = 'onelab.myslice'
+print("config trying to login to %s" % server)
 payload = {'email': s['email'], 'password': s['password']}
 r = requests.post("http://"+server+":8111/api/v1/login", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload))
 s['cookies'] = r.cookies
