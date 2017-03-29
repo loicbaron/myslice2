@@ -215,6 +215,10 @@ class AuthoritiesHandler(Api):
             self.userError("Authority shortname must be specified")
             return
 
+        if not self.get_current_user() and 'users' not in data:
+            self.userError("users of the new Authority must be specified")
+            return
+
         # if new users are specified to be added to the authority
         if len(data.get('users', [])) > 0:
             for u in data['users']:

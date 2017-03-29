@@ -68,6 +68,7 @@ def confirmEmails(qConfirmEmails):
                 msg = "Error in event {} while trying to send a confirmation email: {}".format(event.id, e)
                 logger.error(msg)
                 event.logWarning(msg)
+                event.notify = False
                 dispatch(dbconnection, event)
 
 
