@@ -58,14 +58,16 @@ def main(argv):
             # Get the user from SFA Registry
             print("get user %s from SFA Reg" % email)
             remote_user = q(User).filter('email', email).get().first()
-            print(remote_user.hrn)
+            pprint(remote_user)
             # merge fields from script with remote_user
             remote_user.setAttribute('password', password)
             remote_user.setAttribute('private_key', private_key)
             remote_user.setAttribute('generate_keys', False)
             remote_user.setAttribute('public_key', public_key)
             remote_user.setAttribute('keys', [public_key])
-            result = remote_user.save(dbconnection)
+            r.db('myslice').table('users').insert(remote_user.dict()).run(dbconnection)
+            result = r.db('myslice').table('users').get(remote_user.id).run(dbconnection)
+            #result = remote_user.save(dbconnection)
             if result:
                 print("User saved")
             else:
