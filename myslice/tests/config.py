@@ -13,8 +13,7 @@ r = requests.post("http://"+server+":8111/api/v1/login", headers={str('Content-T
 s['cookies'] = r.cookies
 s['automate_test'] = False
 
-#authority = "urn:publicid:IDN+onelab:upmc+authority+sa"
-authority = "urn:publicid:IDN+onelab+authority+sa"
+authority = "urn:publicid:IDN+onelab:upmc+authority+sa"
 rootAuthority = "urn:publicid:IDN+onelab+authority+sa"
 
 #on this project we will test creating deleting slices
