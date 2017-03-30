@@ -38,4 +38,3 @@ job0:
     - ./myslice/tests/rest_login.py
     - ./myslice/tests/rest_users.py
     - ./myslice/tests/rest_projects.py
-    - ./myslice/tests/rest_slices.py

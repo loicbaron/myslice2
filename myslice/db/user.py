@@ -147,8 +147,9 @@ class User(myslicelibUser):
         if errors:
             raising = True
             for err in errors:
-                if "Resolve: Record not found" in err['exception']:
+                if "Record not found" in err['exception']:
                     raising = False
+                    break
             if raising:
                 raise UserException(errors)
 

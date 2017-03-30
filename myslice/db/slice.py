@@ -130,7 +130,7 @@ class Slice(myslicelibSlice):
             raising = False
             for err in errors:
                 if err['type'] == "Reg":
-                    if "Resolve: Record not found" in err['exception']:
+                    if "Record not found" in err['exception']:
                         raising = False
                     else:
                         raising = True
