@@ -1,6 +1,6 @@
 [onelab_registry]
 name=OneLab Registry
-url=https://portal.onelab.eu:6080
+url=https://dev.myslice.info:12345
 type=Reg
 timeout=30
 enabled=true
