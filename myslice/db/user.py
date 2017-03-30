@@ -102,6 +102,9 @@ class User(myslicelibUser):
 
     def save(self, dbconnection, setup=None):
         logger.warning("User.save() called")
+        # Get User from local DB 
+        current = db.get(dbconnection, table='users', id=self.id)
+
         if self.getAttribute('generate_keys'):
             private_key, public_key = generate_RSA()
             self.setAttribute('private_key', private_key.decode('utf-8'))
@@ -124,14 +127,17 @@ class User(myslicelibUser):
         # Update user in local DB
         if not self.getAttribute('id'):
             raise UserException("This user has no id, could not be saved in local DB: {}".format(self))
-        print("DB user save()")
+        logger.debug("DB user save()")
         logger.debug(result)
         if not self.getAttribute('id'):
             logger.critical("-------> USER HAS NO ID <-------")
             raise Exception("Trying to save a user that has no id will remove all data in users table!!!")
+        # New User created
+        if current is None:
+            db.users(dbconnection, result)
         else:
             db.users(dbconnection, result, self.getAttribute('id'))
-            return True
+        return True
 
     def delete(self, dbconnection, setup=None):
         logger.warning("User.delete() called")
@@ -139,7 +145,12 @@ class User(myslicelibUser):
         result = super(User, self).delete(setup)
         errors = result['errors']
         if errors:
-            raise UserException(errors)
+            raising = True
+            for err in errors:
+                if "Resolve: Record not found" in err['exception']:
+                    raising = False
+            if raising:
+                raise UserException(errors)
 
         db.delete(dbconnection, 'users', self.getAttribute('id'))
 
