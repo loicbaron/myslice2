@@ -75,7 +75,12 @@ class Project(myslicelibProject):
         errors = result['errors']
 
         if errors:
-            raise ProjectException(errors)
+            raising = True
+            for err in errors:
+                if "Resolve: Record not found" in err['exception']:
+                    raising = False
+            if raising:
+                raise ProjectException(errors)
 
         db.delete(dbconnection, 'projects', self.id)
 

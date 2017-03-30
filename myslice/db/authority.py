@@ -61,7 +61,7 @@ class Authority(myslicelibAuthority):
         if current is None:
             db.authorities(dbconnection, result)
             current = db.get(dbconnection, table='authorities', id=self.id)
-        # Update existing authorityt
+        # Update existing authority
         else:
             db.authorities(dbconnection, result, self.id)
 
@@ -124,8 +124,14 @@ class Authority(myslicelibAuthority):
 
         result = super(Authority, self).delete(setup)
         errors = result['errors']
+
         if errors:
-            raise AuthorityException(errors)
+            raising = True
+            for err in errors:
+                if "Resolve: Record not found" in err['exception']:
+                    raising = False
+            if raising:
+                raise AuthorityException(errors)
 
         db.delete(dbconnection, 'authorities', self.id)
 

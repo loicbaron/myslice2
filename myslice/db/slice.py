@@ -126,8 +126,15 @@ class Slice(myslicelibSlice):
         errors = result['errors']
 
         # Signal only Registry Errors
-        for err in errors:
-            if err['type'] == "Reg":
+        if errors:
+            raising = False
+            for err in errors:
+                if err['type'] == "Reg":
+                    if "Resolve: Record not found" in err['exception']:
+                        raising = False
+                    else:
+                        raising = True
+            if raising:
                 raise SliceException(errors)
 
         db.delete(dbconnection, 'slices', self.id)
