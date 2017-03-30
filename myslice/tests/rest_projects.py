@@ -55,8 +55,8 @@ class TestProjects(LocalTestCase):
         payload = {}
         r = requests.post('http://'+server+':8111/api/v1/projects', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
         self.assertEqual(r.status_code, 400)
-        self.assertEqual('{"debug": null, "error": "Project name must be specified"}', r.text)
-
+        res = json.loads(r.text)
+        self.assertEqual("Project name must be specified", res['error'])
 
 
     # TODO: SimpleUser Request New Project
@@ -104,14 +104,17 @@ class TestProjects(LocalTestCase):
         r = requests.get('http://'+server+':8111/api/v1/projects/'+id, cookies=self.cookies)
         #pprint(r.text)
         self.assertEqual(r.status_code, 200)
+        res = json.loads(r.text)
+        self.assertGreater(len(res['result']),0)
 
     def test_4_putProject(self):
         id = self.__class__.created_project
 
         if not id:
-            self.assertEqual(id, "expected created_project, but got non")
+            self.assertEqual(id, "Project was not created in previous test, we cannot continue this test")
         rGet = requests.get('http://'+server+':8111/api/v1/projects/'+id, cookies=self.cookies)
         res = json.loads(rGet.text)
+        self.assertGreater(len(res['result']),0)
         project = res['result'][0]
         self.assertEqual(rGet.status_code, 200)
 
@@ -142,7 +145,7 @@ class TestProjects(LocalTestCase):
     def test_5_deleteProject(self):
         id = self.__class__.created_project
         if not id:
-            self.assertEqual(id, "expected created_project, but got non")
+            self.assertEqual(id, "Project was not created in previous test, we cannot continue this test")
         rDelete = requests.delete('http://'+server+':8111/api/v1/projects/'+id, cookies=self.cookies)
         pprint(rDelete.text)
         self.assertEqual(rDelete.status_code, 200)

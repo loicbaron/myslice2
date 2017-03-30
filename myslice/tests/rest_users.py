@@ -77,7 +77,7 @@ class TestUsers(LocalTestCase):
 
             deny = {'action':'deny', 'message':'automated test denied this request'}
             print(json.dumps(deny))
-            rRequest = requests.put('http://'+server+':8111/api/v1/requests/'+event, headers={str('Content-Type'):'application/json'}, data=json.dumps(deny), cookies=self.cookies)
+            rRequest = requests.put('http://'+server+':8111/api/v1/requests/'+event, headers={str('Content-Type'):'application/json'}, data=json.dumzps(deny), cookies=self.cookies)
             print(rRequest.text)
             self.assertEqual(rRequest.status_code, 200)
 
