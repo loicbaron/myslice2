@@ -52,9 +52,10 @@ class TestSlices(LocalTestCase):
         self.assertEqual(r.status_code, 200)
 
     def test_1_getProjectSlices(self):
+        project = getProjectName(self.cookies)
         r = requests.get('http://'+server+':8111/api/v1/projects/'+project+'/slices', cookies=self.cookies)
         data = json.loads(r.text)
-        print(data['result'][0])
+        # print(data['result'][0])
         self.assertEqual(r.status_code, 200)
 
     def test_2_postWrongSlice(self):
@@ -65,7 +66,8 @@ class TestSlices(LocalTestCase):
     def test_2_postSlice(self):
         tock = datetime.now()
         name = 'autotest_' + str(randint(0,10000))
-        payload = {'shortname': name, 'name': name, 'project': {'id': 'urn:publicid:IDN+onelab:upmc:testradomir+authority+sa'}}
+        project = getProjectName(self.cookies)
+        payload = {'shortname': name, 'name': name, 'project': {'id': project}}
         r = requests.post('http://'+server+':8111/api/v1/slices', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
         pprint(r.text)
         self.assertEqual(r.status_code, 200)
@@ -98,6 +100,21 @@ class TestSlices(LocalTestCase):
         slice = res['result']
         self.assertEqual(rGet.status_code, 200)
         pprint(slice)
+
+
+def getProjectName(cookies):
+    """
+    Returns project hrn that exists so we can add/remove slices on it
+    by default it takes first project on the list 
+    """
+
+    r = requests.get('http://' + server + ':8111/api/v1/projects', cookies=cookies)
+    data = json.loads(r.text)
+    print(data)
+    try:
+        return data['result'][0]['id']
+    except:
+        return None
 
 
 if __name__ == '__main__':
