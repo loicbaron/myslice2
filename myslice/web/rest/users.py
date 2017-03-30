@@ -328,7 +328,17 @@ class UsersHandler(Api):
             return
 
         if not self.isEmail(data['email']):
-            self.userError("Wrong Email address")
+            self.userError("Wrong Email address format")
+            return
+
+        user = None
+        cursor = yield r.table('users') \
+                .filter({'email':data['email']}) \
+                .run(self.dbconnection)
+        while (yield cursor.fetch_next()):
+            user = yield cursor.next()
+        if user:
+            self.userError("This email is already registered")
             return
 
         if data.get('password', None) is None:
