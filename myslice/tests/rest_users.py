@@ -47,6 +47,11 @@ class TestUsers(LocalTestCase):
     def test_3_postUserNoAuth(self):
         payload = { 'authority': authority, 'first_name': 'radomir', 'last_name': 'autotest', 'email': 'onelabautotest1@yopmail.com', 'password': '12341234', 'terms': True }
         r = requests.post('http://'+server+':8111/api/v1/users', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
+        if r.status_code == 400:
+            pprint(r.text)
+            res = json.loads(r.text)
+            if "error" in res and "already registered" in res['error']:
+                print("Please clean up records from previously run tests using clean.py")
         self.assertEqual(r.status_code, 200)
 
         result = json.loads(r.text)
@@ -77,9 +82,13 @@ class TestUsers(LocalTestCase):
             self.assertEqual(rRequest.status_code, 200)
 
     def test_4_postUser(self):
-
         payload = { 'authority': authority, 'first_name': 'auto', 'last_name': 'test', 'email': 'onelabautotest2@yopmail.com', 'password': '12341234', 'terms': True }
         r = requests.post('http://'+server+':8111/api/v1/users', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
+        if r.status_code == 400:
+            pprint(r.text)
+            res = json.loads(r.text)
+            if "error" in res and "already registered" in res['error']:
+                print("Please clean up records from previously run tests using clean.py")
         self.assertEqual(r.status_code, 200)
         # Event status = SUCCESS
         pprint(r.text)
@@ -95,19 +104,25 @@ class TestUsers(LocalTestCase):
         id = self.__class__.created_user
         if id:
             r = requests.get('http://'+server+':8111/api/v1/users/'+id, cookies=self.cookies)
-            #pprint(r.text)
             self.assertEqual(r.status_code, 200)
+            res = json.loads(r.text)
+            pprint(res)
+            self.assertGreater(len(res['result']),0)
+            user = res['result'][0]
+            self.assertEqual(user['id'], id)
         else:
             self.assertEqual(id, "User was not created in previous test, we cannot continue this test")
-
 
     def test_6_putUser(self):
         id = self.__class__.created_user
         if id:
             rGet = requests.get('http://'+server+':8111/api/v1/users/'+id, cookies=self.cookies)
-            res = json.loads(rGet.text)
-            user = res['result'][0]
             self.assertEqual(rGet.status_code, 200)
+            res = json.loads(rGet.text)
+            pprint(res)
+            self.assertGreater(len(res['result']),0)
+            user = res['result'][0]
+            self.assertEqual(user['id'], id)
 
             payload = user
             payload['first_name'] = "toto"
