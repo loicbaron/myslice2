@@ -35,41 +35,44 @@ def confirmEmails(qConfirmEmails):
             logger.exception(e)
             logger.error("Problem with event: {}".format(e))
         else:
-            try:
-                # Recipients
-                # Status did NOT changed
-                if event.status == event.previous_status:
-                    logger.warning("TODO: send specific emails with messages")
-                recipients = set()
-
-                url = s.web['url']
-                if s.web['port'] and s.web['port'] != 80:
-                    url = url +':'+ s.web['port']
-
-                # Look for the user email in the Event
-                if event.object.type == ObjectType.USER:
-                    recipients.add(User({'email':event.data['email'], 'first_name':event.data['first_name'], 'last_name':event.data['last_name']}))
-                elif event.object.type == ObjectType.AUTHORITY:
-                    for user in event.data['users']:
-                        if isinstance(user, dict):
-                            recipients.add(User({'email':user['email'], 'first_name':user['first_name'], 'last_name':user['last_name']}))
-                else:
-                    for user in event.data['pi_users']:
-                        if isinstance(user, dict):
-                            recipients.add(User({'email':user['email'], 'first_name':user['first_name'], 'last_name':user['last_name']}))
-                url = url+'/confirm/'+event.id
-                subject, template = build_subject_and_template('confirm', event)
-                buttonLabel = "Confirm Email"
-
-                sendEmail(event, recipients, subject, template, url, buttonLabel)
-            except Exception as e:
-                import traceback
-                traceback.print_exc()
-                msg = "Error in event {} while trying to send a confirmation email: {}".format(event.id, e)
-                logger.error(msg)
-                event.logWarning(msg)
+            if event.notify:
+                # We try to send the email only once
                 event.notify = False
-                dispatch(dbconnection, event)
+                try:
+                    # Recipients
+                    # Status did NOT changed
+                    if event.status == event.previous_status:
+                        logger.warning("TODO: send specific emails with messages")
+                    recipients = set()
+
+                    url = s.web['url']
+                    if s.web['port'] and s.web['port'] != 80:
+                        url = url +':'+ s.web['port']
+
+                    # Look for the user email in the Event
+                    if event.object.type == ObjectType.USER:
+                        recipients.add(User({'email':event.data['email'], 'first_name':event.data['first_name'], 'last_name':event.data['last_name']}))
+                    elif event.object.type == ObjectType.AUTHORITY:
+                        for user in event.data['users']:
+                            if isinstance(user, dict):
+                                recipients.add(User({'email':user['email'], 'first_name':user['first_name'], 'last_name':user['last_name']}))
+                    else:
+                        for user in event.data['pi_users']:
+                            if isinstance(user, dict):
+                                recipients.add(User({'email':user['email'], 'first_name':user['first_name'], 'last_name':user['last_name']}))
+                    url = url+'/confirm/'+event.id
+                    subject, template = build_subject_and_template('confirm', event)
+                    buttonLabel = "Confirm Email"
+
+                    sendEmail(event, recipients, subject, template, url, buttonLabel)
+                except Exception as e:
+                    import traceback
+                    traceback.print_exc()
+                    msg = "Error in event {} while trying to send a confirmation email: {}".format(event.id, e)
+                    logger.error(msg)
+                    event.logWarning(msg)
+                finally:
+                    dispatch(dbconnection, event)
 
 
 def emails_run(qEmails):
@@ -86,73 +89,79 @@ def emails_run(qEmails):
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
         else:
+            if event.notify:
+                # We try to send the email only once
+                event.notify = False
 
-            # Recipients
-            # TODO: Send specific emails
-            # Status did NOT changed
-            # Comments about an event with a message
-            if event.status == event.previous_status:
-                logger.warning("TODO: send specific emails with messages")
-            recipients = set()
+                try:
+                    # Recipients
+                    # TODO: Send specific emails
+                    # Status did NOT changed
+                    # Comments about an event with a message
+                    if event.status == event.previous_status:
+                        logger.warning("TODO: send specific emails with messages")
+                    recipients = set()
 
-            url = s.web['url']
-            if s.web['port'] and s.web['port'] != 80:
-                url = url +':'+ s.web['port']
-            
-            buttonLabel = "View details"
-            if event.object.type == ObjectType.PASSWORD:
-                recipients.add(User(db.get(dbconnection, table='users', id=event.object.id)))
-                url = url+'/password/'+event.data['hashing']
-                subject, template = build_subject_and_template('password', event)
-                buttonLabel = "Change password"
-            else:
-                if event.isPending():
-
-                    # Find the authority of the event object
-                    # Then according the authority, put the pi_emails in pis_email
-                    try:
-                        authority_id = event.data['authority']
-                    except KeyError:
-                        msg = 'Authority id not specified ({})'.format(event.id)
-                        logger.error(msg)
-                        event.logWarning('Authority not specified in event {}, email not sent'.format(event.id))
-                        event.notify = False
-                        dispatch(dbconnection, event)
-                        continue
-
-                    authority = Authority(db.get(dbconnection, table='authorities', id=authority_id))
-                    for pi_id in authority.pi_users:
-                        pi = User(db.get(dbconnection, table='users', id=pi_id))
-                        recipients.add(pi)
-
-                    if not recipients:
-                        msg = 'Emails cannot be sent because no one is the PI of {}'.format(event.object.id)
-                        logger.error(msg)
-                        event.logWarning('No recipients could be found for event {}, email not sent'.format(event.id))
-                        event.notify = False
-                        dispatch(dbconnection, event)
-                        continue
-                else:
-                    # USER REQUEST in body
-                    if event.object.type == ObjectType.USER:
-                        recipients.add(User(event.data))
-
-                    # SLICE/ PROJECT REQUEST
+                    url = s.web['url']
+                    if s.web['port'] and s.web['port'] != 80:
+                        url = url +':'+ s.web['port']
+                    
+                    buttonLabel = "View details"
+                    if event.object.type == ObjectType.PASSWORD:
+                        recipients.add(User(db.get(dbconnection, table='users', id=event.object.id)))
+                        url = url+'/password/'+event.data['hashing']
+                        subject, template = build_subject_and_template('password', event)
+                        buttonLabel = "Change password"
                     else:
-                        recipients.add(User(db.get(dbconnection, table='users', id=event.user)))
+                        if event.isPending():
 
-                if event.isPending():
-                    subject, template = build_subject_and_template('request', event)
-                    buttonLabel = "Approve / Deny"
-                    url = url+'/activity'
+                            # Find the authority of the event object
+                            # Then according the authority, put the pi_emails in pis_email
+                            try:
+                                authority_id = event.data['authority']
+                            except KeyError:
+                                msg = 'Authority id not specified ({})'.format(event.id)
+                                logger.error(msg)
+                                event.logWarning('Authority not specified in event {}, email not sent'.format(event.id))
 
-                elif event.isSuccess():
-                    subject, template = build_subject_and_template('approve', event)
+                            authority = Authority(db.get(dbconnection, table='authorities', id=authority_id))
+                            for pi_id in authority.pi_users:
+                                pi = User(db.get(dbconnection, table='users', id=pi_id))
+                                recipients.add(pi)
 
-                elif event.isDenied():
-                    subject, template = build_subject_and_template('deny', event)
+                            if not recipients:
+                                msg = 'Emails cannot be sent because no one is the PI of {}'.format(event.object.id)
+                                logger.error(msg)
+                                event.logWarning('No recipients could be found for event {}, email not sent'.format(event.id))
+                        else:
+                            # USER REQUEST in body
+                            if event.object.type == ObjectType.USER:
+                                recipients.add(User(event.data))
 
-            sendEmail(event, recipients, subject, template, url, buttonLabel)
+                            # SLICE/ PROJECT REQUEST
+                            else:
+                                recipients.add(User(db.get(dbconnection, table='users', id=event.user)))
+
+                        if event.isPending():
+                            subject, template = build_subject_and_template('request', event)
+                            buttonLabel = "Approve / Deny"
+                            url = url+'/activity'
+
+                        elif event.isSuccess():
+                            subject, template = build_subject_and_template('approve', event)
+
+                        elif event.isDenied():
+                            subject, template = build_subject_and_template('deny', event)
+
+                    sendEmail(event, recipients, subject, template, url, buttonLabel)
+                except Exception as e:
+                    import traceback
+                    traceback.print_exc()
+                    msg = "Error in event {} while trying to send an email: {}".format(event.id, e)
+                    logger.error(msg)
+                    event.logWarning(msg)
+                finally:
+                    dispatch(dbconnection, event)
 
 def sendEmail(event, recipients, subject, template, url, buttonLabel):
     # db connection is shared between threads
@@ -190,16 +199,4 @@ def sendEmail(event, recipients, subject, template, url, buttonLabel):
                 subject = subject,
                 html_content = mail_body_inline
                 )
-    try:
-        Mailer().send(m)
-        # TODO: better handle email cases
-
-        #event.logInfo("The PIs of {} have been contacted".format(authority.name))
-        #logger.info("The PIs of {} have been contacted".format(authority.name))
-    except Exception as e:
-        msg = '{} {}'.format(e, event.object.id)
-        logger.error(msg)
-        event.logWarning('Could not send email to PI users in event {}'.format(event.id))
-    finally:
-        event.notify = False
-        dispatch(dbconnection, event)
+    Mailer().send(m)
