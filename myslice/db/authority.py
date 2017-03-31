@@ -28,7 +28,7 @@ class Authority(myslicelibAuthority):
         for u in self.getAttribute(key):
             if isinstance(u, dict) and 'id' not in u:
                 new_elms.append(u)
-            elif isinstance(u, dict):
+            elif isinstance(u, dict) and 'id' in u:
                 tmp_elms.append(u['id'])
             else:
                 tmp_elms.append(u)
@@ -55,7 +55,6 @@ class Authority(myslicelibAuthority):
         if not 'status' in result:
             result['status'] = Status.ENABLED
             result['enabled'] = format_date()
-
 
         # New Authority created
         if current is None:
