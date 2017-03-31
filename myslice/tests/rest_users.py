@@ -5,6 +5,7 @@ import requests
 import unittest
 
 from pprint import pprint
+from random import randint
 
 from myslice.tests import LocalTestCase
 from myslice.tests.config import s, server, authority
@@ -45,7 +46,8 @@ class TestUsers(LocalTestCase):
         self.assertEqual(r.status_code, 400)
 
     def test_3_postUserNoAuth(self):
-        payload = { 'authority': authority, 'first_name': 'radomir', 'last_name': 'autotest', 'email': 'onelabautotest1@yopmail.com', 'password': '12341234', 'terms': True }
+        email = "onelab_autotest_"+str(randint(0,10000))
+        payload = { 'authority': authority, 'first_name': 'radomir', 'last_name': 'autotest', 'email': email, 'password': '12341234', 'terms': True }
         r = requests.post('http://'+server+':8111/api/v1/users', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
         if r.status_code == 400:
             pprint(r.text)
@@ -82,7 +84,8 @@ class TestUsers(LocalTestCase):
             self.assertEqual(rRequest.status_code, 200)
 
     def test_4_postUser(self):
-        payload = { 'authority': authority, 'first_name': 'auto', 'last_name': 'test', 'email': 'onelabautotest2@yopmail.com', 'password': '12341234', 'terms': True }
+        email = "onelab_autotest_"+str(randint(0,10000))
+        payload = { 'authority': authority, 'first_name': 'auto', 'last_name': 'test', 'email': email, 'password': '12341234', 'terms': True }
         r = requests.post('http://'+server+':8111/api/v1/users', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
         if r.status_code == 400:
             pprint(r.text)
