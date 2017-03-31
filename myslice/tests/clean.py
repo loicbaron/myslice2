@@ -3,120 +3,70 @@
 import json
 import requests
 import sys
-import unittest
 from datetime import datetime
 from pprint import pprint
+from tornado import gen
+
 from myslice.tests import LocalTestCase
 from myslice.tests.config import s, server
 
-class CleanUp(LocalTestCase):
+timeout = 10
+cookies = s['cookies']
+s['automate_test'] = False
+test = LocalTestCase()
+test.cookies = cookies
 
-    def setUp(self):
-        self.timeout = 10
-        self.cookies = s['cookies']
-        self.automateTest = s['automate_test']
-        r = requests.get('http://'+server+':8111/api/v1/profile', cookies=self.cookies)
-        result = json.loads(r.text)
-        self.profile = result['result']
+def clean(cookies, objectType):
+   """Delete objectType if the id contains autotest"""
+   r = requests.get('http://'+server+':8111/api/v1/'+objectType, cookies=cookies)
+   result = json.loads(r.text)
+   objects = result['result']
+   for o in objects:
+       if "autotest" in o['id']:
+           print("deleting %s %s" % (objectType,o['hrn']))
+           rDelete = requests.delete('http://'+server+':8111/api/v1/'+objectType+'/'+o['id'], cookies=cookies)
+           pprint(rDelete.text)
 
-        r = requests.get('http://'+server+':8111/api/v1/authorities', cookies=self.cookies)
-        result = json.loads(r.text)
-        self.authorities = result['result']
+           result = json.loads(rDelete.text)
+           for event in result['events']:
+               res = test.checkEvent(event)
+               if res['status'] == "SUCCESS":
+                   print("%s %s deleted" % (objectType,o['hrn']))
+               else:
+                   print("could not delete %s %s" % (objectType,o['hrn']))
 
-        r = requests.get('http://'+server+':8111/api/v1/users', cookies=self.cookies)
-        result = json.loads(r.text)
-        self.users = result['result']
+@gen.coroutine
+def main(argv):
+    try:
+        if len(argv) != 1:
+            print("Help: use the command with one of the parameters")
+            print("clean.py all|authorities|projects|users|slices")
+            sys.exit(2)
 
-        r = requests.get('http://'+server+':8111/api/v1/projects', cookies=self.cookies)
-        result = json.loads(r.text)
-        self.projects = result['result']
 
-        r = requests.get('http://'+server+':8111/api/v1/slices', cookies=self.cookies)
-        result = json.loads(r.text)
-        self.slices = result['result']
 
-        self.startTimer()
+        if argv[0].startswith('auth') or argv[0] == 'all':
+            print("clean authorities...")
+            clean(cookies, 'authorities')
 
-    def tearDown(self):
-        # self.tock = datetime.now()
-        # diff = self.tock - self.tick
-        # print((diff.microseconds / 1000), "ms")
-        self.stopTimer()
+        if argv[0].startswith('p') or argv[0] == 'all':
+            print("clean projects...")
+            clean(cookies, 'projects')
 
-    def test_0_auth_to_get_cookie(self):
-        """Log in and check if we recive any cookie"""
-        payload = {'email': s['email'], 'password': s['password']}
-        r = requests.post("http://"+server+":8111/api/v1/login",
-                          headers={str('Content-Type'):'application/json'},
-                          data=json.dumps(payload),
-                          timeout=self.timeout)
-        self.assertEqual(r.status_code, 200)
-        self.assertTrue(hasattr(r, 'cookies'))
-        self.assertIsNotNone(r.cookies)
+        if argv[0].startswith('u') or argv[0] == 'all':
+            print("clean users...")
+            clean(cookies, 'users')
 
-    def test_1_cleanAuthorities(self):
-        """Delete authorities if the name contains autotest"""
-        print("Cleaning")
-        for a in self.authorities:
-            if "autotest" in a['id']:
-                print("deleting project %s" % a['hrn'])
-                rDelete = requests.delete('http://'+server+':8111/api/v1/auhtorities/'+a['id'], cookies=self.cookies)
-                pprint(rDelete.text)
-                self.assertEqual(rDelete.status_code, 200)
+        if argv[0].startswith('s') or argv[0] == 'all':
+            print("clean slices...")
+            clean(cookies, 'slices')
 
-                result = json.loads(rDelete.text)
-                self.assertEqual(result['result'], "success")
-                for event in result['events']:
-                    res = self.checkEvent(event)
-                    self.assertEqual(res['status'], "SUCCESS")
-
-    def test_2_cleanUsers(self):
-        """Delete users if the name contains autotest"""
-        print("Cleaning")
-        for u in self.users:
-            if "autotest" in u['id']:
-                print("deleting user %s" % u['hrn'])
-                rDelete = requests.delete('http://'+server+':8111/api/v1/users/'+u['id'], cookies=self.cookies)
-                pprint(rDelete.text)
-                self.assertEqual(rDelete.status_code, 200)
-
-                result = json.loads(rDelete.text)
-                self.assertEqual(result['result'], "success")
-                for event in result['events']:
-                    res = self.checkEvent(event)
-                    self.assertEqual(res['status'], "SUCCESS")
-
-    def test_3_cleanProjects(self):
-        """Delete projects if the name contains autotest"""
-        print("Cleaning")
-        for p in self.projects:
-            if "autotest" in p['id']:
-                print("deleting project %s" % p['hrn'])
-                rDelete = requests.delete('http://'+server+':8111/api/v1/projects/'+p['id'], cookies=self.cookies)
-                pprint(rDelete.text)
-                self.assertEqual(rDelete.status_code, 200)
-
-                result = json.loads(rDelete.text)
-                self.assertEqual(result['result'], "success")
-                for event in result['events']:
-                    res = self.checkEvent(event)
-                    self.assertEqual(res['status'], "SUCCESS")
-
-    def test_4_cleanSlices(self):
-        """Delete slices if the name contains autotest"""
-        print("Cleaning")
-        for sl in self.slices:
-            if "autotest" in sl['id']:
-                print("deleting slice %s" % sl['hrn'])
-                rDelete = requests.delete('http://'+server+':8111/api/v1/projects/'+sl['id'], cookies=self.cookies)
-                pprint(rDelete.text)
-                self.assertEqual(rDelete.status_code, 200)
-
-                result = json.loads(rDelete.text)
-                self.assertEqual(result['result'], "success")
-                for event in result['events']:
-                    res = self.checkEvent(event)
-                    self.assertEqual(res['status'], "SUCCESS")
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        print("Help: use the command with one of the parameters")
+        print("clean.py all|authorities|projects|users|slices")
+        sys.exit(2)
 
 if __name__ == '__main__':
-    unittest.main()
+    main(sys.argv[1:])
