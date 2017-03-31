@@ -101,7 +101,8 @@ class Message(object):
 def build_subject_and_template( action, 
                                 event,
                                 path=dir_path,
-                                theme=s.email['theme']):
+                                theme=s.email['theme'],
+                                name=s.email['name']):
     action, entity = str(action), str(event.object.type)
 
     if action == 'request':

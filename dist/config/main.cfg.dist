@@ -11,6 +11,7 @@ name=myslice
 
 [email]
 theme=onelab
+name=OneLab
 domain=onelab.eu
 host=smtp.gmail.com
 port=587
