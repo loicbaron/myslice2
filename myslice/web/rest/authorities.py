@@ -205,8 +205,10 @@ class AuthoritiesHandler(Api):
             return
 
         if data.get('authority', None) is None:
-            self.userError("authority must be specified")
-            return
+            data['authority'] = self.get_root_auth()
+            if not data['authority']:
+                self.userError("authority must be specified")
+                return
 
         if data.get('name', None) is None:
             self.userError("Authority name must be specified")
