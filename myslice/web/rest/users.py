@@ -788,10 +788,8 @@ class UserTokenHandler(Api):
        
         pi_auth = [] 
         
-        # if not admin
-        if not admin:
-            user = yield r.table('users').get(current_user_id).run(self.dbconnection)
-            pi_auth = user['pi_authorities']
+        user = yield r.table('users').get(current_user_id).run(self.dbconnection)
+        pi_auth = user['pi_authorities']
 
         try:
             secret = self.application.settings['token_secret'] # used in websockets
