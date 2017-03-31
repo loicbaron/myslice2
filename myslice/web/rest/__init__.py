@@ -109,7 +109,6 @@ class Api(cors.CorsMixin, web.RequestHandler):
             import traceback
             traceback.print_exc()
             self.serverError("unable to identify user permission")
-        finally:
             return False
 
     def isUrn(self, urn):
