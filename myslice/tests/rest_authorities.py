@@ -87,7 +87,7 @@ class TestAuthority(LocalTestCase):
         for event in result['events']:
             res = self.checkEvent(event, expected_status="PENDING")
             self.assertEqual(res['status'], "PENDING")
-            self.__class__.created_authority = res['data']['id']
+            self.__class__.created_authority = res['id']
 
     def test_5_deleteAuthority(self):
 
