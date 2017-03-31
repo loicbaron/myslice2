@@ -611,8 +611,8 @@ class UsersHandler(Api):
                 # Check if the user isAdmin 
                 admin = self.isAdmin()
                 a = yield r.table('authorities').get(user['authority']).run(self.dbconnection)
-                if a and current_user['id'] not in a['pi_users'] and not admin:
-                    self.userError("your user has no rights on authority: %s" % id)
+                if (a and current_user['id'] not in a['pi_users']) and not admin:
+                    self.userError("your user has no rights on: %s" % id)
                     return
         except Exception as e:
             self.userError(e)
