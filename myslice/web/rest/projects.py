@@ -37,9 +37,13 @@ class ProjectsHandler(Api):
             if not current_user:
                 self.userError('permission denied')
                 return
+            if self.isAdmin():
+                f = {}
+            else:
+                f = lambda project: project["pi_users"].contains(current_user['id'])
             cursor = yield r.table('projects') \
                 .pluck(self.fields['projects']) \
-                .filter(lambda project: project["pi_users"].contains(current_user['id'])) \
+                .filter(f) \
                 .merge(lambda project: {
                     'authority': r.table('authorities').get(project['authority']) \
                                                         .pluck(self.fields_short['authorities']) \
@@ -151,15 +155,16 @@ class ProjectsHandler(Api):
             self.userError("malformed request", e.message)
             return
 
-        try:
-            data['authority'] = self.current_user['authority']
-        except Exception:
-            self.userError("not authenticated")
-            return
-
+        # authority should be specified
+        # if it's not use the user's authority
         if data.get('authority', None) is None:
-            self.userError("authority must be specified")
-            return
+            try:
+                data['authority'] = self.current_user['authority']
+            except Exception:
+                self.userError("not authenticated")
+                return
+        if isinstance(data['authority'],dict):
+            data['authority'] = data['authority']['id']
 
         if data.get('name', None) is None:
             self.userError("Project name must be specified")
