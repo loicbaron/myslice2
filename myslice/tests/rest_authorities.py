@@ -9,7 +9,7 @@ from pprint import pprint
 from random import randint
 
 from myslice.tests import LocalTestCase
-from myslice.tests.config import s, authority, server
+from myslice.tests.config import s, rootAuthority, server
 
 class TestAuthority(LocalTestCase):
 
@@ -40,7 +40,7 @@ class TestAuthority(LocalTestCase):
 
     def test_3_postAuthorityNoAuth_AndDeny(self):
         name = 'autotest_' + str(randint(0, 10000))
-        payload = { 'authority': name,
+        payload = { 'authority': rootAuthority,
                     'name': 'Authotrity Auto',
                     'shortname': name,
                     'users': [{'first_name': 'Jan',
@@ -72,11 +72,13 @@ class TestAuthority(LocalTestCase):
             print(self.cookies)
             print(r.text)
             self.assertEqual(r.status_code, 200)
+            res = self.checkEvent(event, expected_status="DENIED")
+            self.assertEqual("DENIED", res['status'])
 
     def test_4_postAuthorityAuth(self):
-        """ Is that mean  that registered user can create new authority??!!"""
+        """ A registered user can create new authority??!!"""
         name = 'autotest_' + str(randint(0, 10000))
-        payload = { 'authority': name, 'name': 'Authotrity Auto 2', 'shortname': name}
+        payload = { 'authority': rootAuthority, 'name': 'Authotrity Auto 2', 'shortname': name}
         r = requests.post('http://'+server+':8111/api/v1/authorities', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
         print("postAuthority -> success, ", r.text)
         self.assertEqual(r.status_code, 200)
@@ -84,10 +86,21 @@ class TestAuthority(LocalTestCase):
         result = json.loads(r.text)
         self.assertEqual(result['result'], "success")
         # Event status = SUCCESS
+        if rootAuthority in [a['id'] for a in self.getProfile()['pi_authorities']]:
+            expectedStatus = 'SUCCESS'
+        else:
+            expectedStatus = 'PENDING'
         for event in result['events']:
-            res = self.checkEvent(event, expected_status="PENDING")
-            self.assertEqual(res['status'], "PENDING")
-            self.__class__.created_authority = res['data']['id']
+            res = self.checkEvent(event, expected_status=expectedStatus)
+            self.assertEqual(res['status'], expectedStatus)
+        if expectedStatus == 'PENDING':
+            approve = {'action':'approve', 'message':'automated test approved this request'}
+            r = requests.put('http://'+server+':8111/api/v1/requests/'+event, headers={str('Content-Type'):'application/json'}, data=json.dumps(approve), cookies=self.cookies)
+            self.assertEqual(r.status_code, 200)
+            res = self.checkEvent(event, expected_status="SUCCESS")
+            self.assertEqual("SUCCESS", res['status'])
+
+        self.__class__.created_authority = res['data']['id']
 
     def test_5_deleteAuthority(self):
 
@@ -113,10 +126,11 @@ class TestAuthority(LocalTestCase):
 
     def test_6_postAuthorityUserNoAuth_AndApprove(self):
         name = 'autotest_' + str(randint(0, 10000))
+        email = "onelab_autotest_"+str(randint(0,10000))+"@yopmail.com"
         payload = {
            "name":"Aototest 5",
            "shortname":name,
-           "authority":name,
+           "authority":rootAuthority,
            "domains":[
               "toto.com"
            ],
@@ -125,17 +139,17 @@ class TestAuthority(LocalTestCase):
                  "first_name":"toto2",
                  "last_name":"titi2",
                  "password":"12345678kl",
-                 "email":"toto2@yopmail.com",
+                 "email":email,
                  "terms":True
               }
            ],
            "pi_users":[
               {
-                 "email":"toto2@yopmail.com"
+                 "email":email
               }
            ]
         }
-        user_email = "toto2@yopmail.com"
+        user_email = email
         r = requests.post('http://'+server+':8111/api/v1/authorities', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
         print("postAuthority with user -> approve")
         self.assertEqual(r.status_code, 200)
