@@ -5,6 +5,8 @@ import tornado_cors as cors
 from tornado import web
 import re
 
+import rethinkdb as r
+
 from myslice.db.activity import Event, EventAction, ObjectType, DataType
 from myslice.lib.util import myJSONEncoder
 
@@ -77,6 +79,18 @@ class Api(cors.CorsMixin, web.RequestHandler):
         # Allow CORS
         self.set_header("Access-Control-Allow-Origin", "*")
         self.set_header("Content-Type", "application/json")
+
+    def get_root_auth(self):
+        try:
+            cursor = yield r.table('authorities').limit(1).run(self.dbconnection)
+            while (yield cursor.fetch_next()):
+                a = yield cursor.next()
+                return a['authority']
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            self.serverError("unable to find root authority")
+            return
 
     def isAdmin(self):
         auth_pattern = re.compile(r"(urn:publicid:IDN\+)(?P<hrn>[\:]*[a-zA-Z]*)(\+authority\+sa)")

@@ -308,7 +308,9 @@ class SlicesHandler(Api):
             # Check if the user has the right to delete a slice
             s = yield r.table('slices').get(id).run(self.dbconnection)
             u = yield r.table('users').get(self.get_current_user()['id']).run(self.dbconnection)
-            if not self.get_current_user()['id'] in s['users'] and s['authority'] not in u['pi_authorities']:
+            # Check if the user isAdmin 
+            admin = self.isAdmin()
+            if not self.get_current_user()['id'] in s['users'] and s['authority'] not in u['pi_authorities'] and not admin: 
                 self.userError("your user has no rights on slice: %s" % id)
                 return
         except Exception:

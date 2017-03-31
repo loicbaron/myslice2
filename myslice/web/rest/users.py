@@ -608,11 +608,10 @@ class UsersHandler(Api):
                 return
 
             if current_user['id']!=id:
-                # Check if the user has the right to delete
-                # PI of user's authority or PI of root authority
+                # Check if the user isAdmin 
+                admin = self.isAdmin()
                 a = yield r.table('authorities').get(user['authority']).run(self.dbconnection)
-                root_auth = yield r.table('authorities').get(a['authority']).run(self.dbconnection)
-                if current_user['id'] not in a['pi_users'] and current_user['id'] not in root_auth['pi_users']:
+                if current_user['id'] not in a['pi_users'] and not admin: 
                     self.userError("your user has no rights on authority: %s" % id)
                     return
         except Exception as e:

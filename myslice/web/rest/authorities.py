@@ -62,8 +62,9 @@ class AuthoritiesHandler(Api):
                 if not a:
                     self.userError("this authority %s does not exist" % id)
                     return
-                root_auth = yield r.table('authorities').get(a['authority']).run(self.dbconnection)
-                if self.current_user['id'] not in a['pi_users'] and self.current_user['id'] not in root_auth['pi_users']:
+                # Check if the user isAdmin 
+                admin = self.isAdmin()
+                if self.current_user['id'] not in a['pi_users'] and not admin: 
                     self.userError("your user has no rights on authority: %s" % id)
                     return
             except Exception:
@@ -444,8 +445,9 @@ class AuthoritiesHandler(Api):
             if not a:
                 self.userError("this authority %s does not exist" % id)
                 return
-            root_auth = yield r.table('authorities').get(a['authority']).run(self.dbconnection)
-            if self.current_user['id'] not in a['pi_users'] and self.current_user['id'] not in root_auth['pi_users']:
+            # Check if the user isAdmin 
+            admin = self.isAdmin()
+            if self.current_user['id'] not in a['pi_users'] and not admin: 
                 self.userError("your user has no rights on authority: %s" % id)
                 return
         except Exception:

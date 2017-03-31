@@ -287,7 +287,9 @@ class ProjectsHandler(Api):
         try:
             p = yield r.table('projects').get(id).run(self.dbconnection)
             u = yield r.table('users').get(self.current_user['id']).run(self.dbconnection)
-            if not self.current_user['id'] in p['pi_users'] and p['authority'] not in u['pi_authorities']:
+            # Check if the user isAdmin 
+            admin = self.isAdmin()
+            if not self.current_user['id'] in p['pi_users'] and p['authority'] not in u['pi_authorities'] and not admin: 
                 self.userError("your user has no rights on project: %s" % id)
                 return
         except Exception:
