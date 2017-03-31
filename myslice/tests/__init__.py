@@ -53,10 +53,10 @@ class LocalTestCase(unittest.TestCase):
             time.sleep(5)
             i = i + 1
             rActivity = requests.get('http://'+server+':8111/api/v1/activity/'+event, cookies=self.cookies)
-            self.assertEqual(rActivity.status_code, 200)
-            resActivity = json.loads(rActivity.text)
-            if 'result' in resActivity:
-                res = resActivity['result'][0]
-                status = res['status']
+            if rActivity.status_code == 200:
+                resActivity = json.loads(rActivity.text)
+                if 'result' in resActivity:
+                    res = resActivity['result'][0]
+                    status = res['status']
         return res
 
