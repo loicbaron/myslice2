@@ -176,16 +176,9 @@ class RequestsHandler(Api):
 
         yield dispatch(self.dbconnection, event)
 
-
         requests = []
-
-        cursor = yield r.table('activity').filter(lambda activity:
-                r.expr(['PENDING']).contains(activity['status'])
-                                                        ).run(self.dbconnection)
-
-        while (yield cursor.fetch_next()):
-                item = yield cursor.next()
-                requests.append(item)
-        
+        # Get the updated event after dispatch
+        ev = yield r.table('activity').get(id).run(self.dbconnection)
+        requests.append(ev)        
 
         self.finish(json.dumps({"result": requests}, cls=myJSONEncoder))
