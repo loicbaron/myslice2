@@ -34,7 +34,7 @@ job0:
     - mv /root/myslice/myslice/tests/config.myslice.py /root/myslice/myslice/tests/config.py
     - cat /root/myslice/myslice/tests/config.py
     - ./start.sh
-    - ./myslice/tests/clean.py
+    - ./myslice/tests/clean.py all
     - ./myslice/tests/deployment.py
     - ./myslice/tests/rest_login.py
     - ./myslice/tests/rest_users.py
