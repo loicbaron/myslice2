@@ -310,9 +310,10 @@ class SlicesHandler(Api):
             u = yield r.table('users').get(self.get_current_user()['id']).run(self.dbconnection)
             # Check if the user isAdmin 
             admin = self.isAdmin()
-            if not self.get_current_user()['id'] in s['users'] and s['authority'] not in u['pi_authorities'] and not admin: 
-                self.userError("your user has no rights on slice: %s" % id)
-                return
+            if not admin:
+                if not self.get_current_user()['id'] in s['users'] and s['authority'] not in u['pi_authorities']: 
+                    self.userError("your user has no rights on slice: %s" % id)
+                    return
         except Exception:
             self.userError("not authenticated or project not specified")
             return

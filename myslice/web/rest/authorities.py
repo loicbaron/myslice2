@@ -447,9 +447,10 @@ class AuthoritiesHandler(Api):
                 return
             # Check if the user isAdmin 
             admin = self.isAdmin()
-            if self.current_user['id'] not in a['pi_users'] and not admin: 
-                self.userError("your user has no rights on authority: %s" % id)
-                return
+            if not admin:
+                if self.current_user['id'] not in a['pi_users']: 
+                    self.userError("your user has no rights on authority: %s" % id)
+                    return
         except Exception:
             import traceback
             traceback.print_exc()

@@ -289,9 +289,10 @@ class ProjectsHandler(Api):
             u = yield r.table('users').get(self.current_user['id']).run(self.dbconnection)
             # Check if the user isAdmin 
             admin = self.isAdmin()
-            if not self.current_user['id'] in p['pi_users'] and p['authority'] not in u['pi_authorities'] and not admin: 
-                self.userError("your user has no rights on project: %s" % id)
-                return
+            if not admin:
+                if not self.current_user['id'] in p['pi_users'] and p['authority'] not in u['pi_authorities']: 
+                    self.userError("your user has no rights on project: %s" % id)
+                    return
         except Exception:
             self.userError("not authenticated or project not specified")
             return
