@@ -46,11 +46,11 @@ class TestUsers(LocalTestCase):
         self.assertEqual(r.status_code, 400)
 
     def test_3_postUserNoAuth(self):
-        email = "onelab_autotest_"+str(randint(0,10000))
+        email = "onelab_autotest_"+str(randint(0,10000))+"@yopmail.com"
         payload = { 'authority': authority, 'first_name': 'radomir', 'last_name': 'autotest', 'email': email, 'password': '12341234', 'terms': True }
         r = requests.post('http://'+server+':8111/api/v1/users', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
+        pprint(r.text)
         if r.status_code == 400:
-            pprint(r.text)
             res = json.loads(r.text)
             if "error" in res and "already registered" in res['error']:
                 print("Please clean up records from previously run tests using clean.py")
@@ -59,7 +59,6 @@ class TestUsers(LocalTestCase):
         result = json.loads(r.text)
         self.assertEqual(result['result'], "success")
         # Event status = PENDING
-        pprint(r.text)
         for event in result['events']:
             res = self.checkEvent(event)
             self.assertEqual(res['status'], "CONFIRM")
@@ -84,11 +83,11 @@ class TestUsers(LocalTestCase):
             self.assertEqual(rRequest.status_code, 200)
 
     def test_4_postUser(self):
-        email = "onelab_autotest_"+str(randint(0,10000))
+        email = "onelab_autotest_"+str(randint(0,10000))+"@yopmail.com"
         payload = { 'authority': authority, 'first_name': 'auto', 'last_name': 'test', 'email': email, 'password': '12341234', 'terms': True }
         r = requests.post('http://'+server+':8111/api/v1/users', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
+        pprint(r.text)
         if r.status_code == 400:
-            pprint(r.text)
             res = json.loads(r.text)
             if "error" in res and "already registered" in res['error']:
                 print("Please clean up records from previously run tests using clean.py")
@@ -109,7 +108,6 @@ class TestUsers(LocalTestCase):
             r = requests.get('http://'+server+':8111/api/v1/users/'+id, cookies=self.cookies)
             self.assertEqual(r.status_code, 200)
             res = json.loads(r.text)
-            pprint(res)
             self.assertGreater(len(res['result']),0)
             user = res['result'][0]
             self.assertEqual(user['id'], id)
@@ -122,7 +120,6 @@ class TestUsers(LocalTestCase):
             rGet = requests.get('http://'+server+':8111/api/v1/users/'+id, cookies=self.cookies)
             self.assertEqual(rGet.status_code, 200)
             res = json.loads(rGet.text)
-            pprint(res)
             self.assertGreater(len(res['result']),0)
             user = res['result'][0]
             self.assertEqual(user['id'], id)
