@@ -43,7 +43,7 @@ class LocalTestCase(unittest.TestCase):
         if expected_status:
             final_status = [expected_status]
         else:
-            final_status = ["PENDING","SUCCESS","ERROR","WARNING","DENIED"]
+            final_status = ["CONFIRM", "PENDING","SUCCESS","ERROR","WARNING","DENIED"]
 
         if initial_status:
             final_status = list(set(final_status) - {initial_status})
