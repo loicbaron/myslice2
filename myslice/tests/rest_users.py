@@ -66,7 +66,7 @@ class TestUsers(LocalTestCase):
             rConfirm = requests.get('http://'+server+':8111/confirm/'+event)
             self.assertEqual(rConfirm.status_code, 200)
 
-            res = self.checkEvent(event)
+            res = self.checkEvent(event, initial_status="CONFIRM")
             self.assertEqual(res['status'], "PENDING")
 
             # TODO: CONFIRM you received the email
