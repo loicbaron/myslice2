@@ -72,13 +72,14 @@ def events_run(lock, qProjectEvents):
                             pi = User(db.get(dbconnection, table='users', id=event.user))
                             proj.addPi(pi)
                         isSuccess = proj.save(dbconnection, user_setup)
+                    else:
+                        p = db.get(dbconnection, table='projects', id=event.object.id)
+                        if not p:
+                            raise Exception("Project doesn't exist")
+                        proj = Project(p)
 
                     if event.deletingObject():
                         logger.info("deleting the object project {}".format(event.object.id)) 
-
-                        proj = Project(db.get(dbconnection, table='projects', id=event.object.id))
-                        if not proj:
-                            raise Exception("Projects doesn't exist")
                         isSuccess = proj.delete(dbconnection, user_setup)
 
                     if event.addingObject():
@@ -87,7 +88,6 @@ def events_run(lock, qProjectEvents):
                         if event.data.type == DataType.USER:
                             logger.info("Project only supports PI at the moment, need new feature in SFA Reg")
                         if event.data.type == DataType.PI or event.data.type == DataType.USER:
-                            proj = Project(db.get(dbconnection, table='projects', id=event.object.id))
                             for val in event.data.values:
                                 pi = User(db.get(dbconnection, table='users', id=val))
                                 proj.addPi(pi)
@@ -99,7 +99,6 @@ def events_run(lock, qProjectEvents):
                         if event.data.type == DataType.USER:
                             logger.info("Project only supports PI at the moment, need new feature in SFA Reg")
                         if event.data.type == DataType.PI or event.data.type == DataType.USER:
-                            proj = Project(db.get(dbconnection, table='projects', id=event.object.id))
                             for val in event.data.values:
                                 pi = User(db.get(dbconnection, table='users', id=val))
                                 proj.removePi(pi)

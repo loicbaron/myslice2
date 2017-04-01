@@ -49,24 +49,19 @@ def events_run(lock, qAuthorityEvents):
                     logger.debug("Event %s is running" % event.id)
                     isSuccess = False
                     
-                    if event.creatingObject():
+                    if event.creatingObject() or event.updatingObject():
+                        logger.info("creating or updating the object authority {}".format(event.object.id)) 
                         auth = Authority(event.data)
                         auth.id = event.object.id
                         isSuccess = auth.save(dbconnection)
-
-                    if event.updatingObject():
-                        logger.info("updating the object authority {}".format(event.object.id)) 
-                        
-                        auth = Authority(event.data)
-                        auth.id = event.object.id
-                        isSuccess = auth.save(dbconnection)
+                    else:
+                        a = db.get(dbconnection, table='authorities', id=event.object.id)
+                        if not a:
+                            raise Exception("Authority doesn't exist")
+                        auth = Authority(a)
 
                     if event.deletingObject():
                         logger.info("deleting the object authority {}".format(event.object.id)) 
-                        
-                        auth = Authority(db.get(dbconnection, table='authorities', id=event.object.id))
-                        if not auth:
-                            raise Exception("Authority doesn't exist")
                         isSuccess = auth.delete(dbconnection)
 
                     if event.addingObject():
@@ -75,7 +70,6 @@ def events_run(lock, qAuthorityEvents):
                         if event.data.type == DataType.USER:
                             raise Exception("Please use CREATE USER instead")
                         if event.data.type == DataType.PI:
-                            auth = Authority(db.get(dbconnection, table='authorities', id=event.object.id))
                             for val in event.data.values:
                                 pi = User(db.get(dbconnection, table='users', id=val))
                                 auth.addPi(pi)
@@ -87,7 +81,6 @@ def events_run(lock, qAuthorityEvents):
                         if event.data.type == DataType.USER:
                             raise Exception("Please use DELETE USER instead")
                         if event.data.type == DataType.PI:
-                            auth = Authority(db.get(dbconnection, table='authorities', id=event.object.id))
                             for val in event.data.values:
                                 pi = User(db.get(dbconnection, table='users', id=val))
                                 auth.removePi(pi)
