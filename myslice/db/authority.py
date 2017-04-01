@@ -78,6 +78,8 @@ class Authority(myslicelibAuthority):
                     userCreated = user.save(dbconnection)
                     if not userCreated:
                         raise Warning("user has not been created")
+                    self.users.append(user.id)
+                    modified = True
 
         # Grant or Revoke PI Rights
         current['pi_users'] = current.get('pi_users', [])
@@ -113,17 +115,27 @@ class Authority(myslicelibAuthority):
             errors = result['errors']
             if errors:
                 raise AuthorityException(errors)
+            result = { **(self.dict()), **result['data'][0]}
+            # add status if not present and update on db
+            if not 'status' in result:
+                result['status'] = Status.ENABLED
+                result['enabled'] = format_date()
+            db.authorities(dbconnection, result, self.id)
 
         return True
 
     def delete(self, dbconnection, setup=None):
+        logger.debug("Delete Authority %s" % self.id)
         # Get Authority from local DB 
         # to update the pi_users after Save
+        logger.debug("Get current object")
         current = db.get(dbconnection, table='authorities', id=self.id)
-
+        logger.debug("Delete sent to myslicelib")
         result = super(Authority, self).delete(setup)
+        logger.debug("result from myslicelib")
+        logger.debug(result)
         errors = result['errors']
-
+        logger.debug("checking errors")
         if errors:
             raising = True
             for err in errors:
@@ -132,12 +144,15 @@ class Authority(myslicelibAuthority):
                     break
             if raising:
                 raise AuthorityException(errors)
-
+        logger.debug("Delete Authority from local DB")
         db.delete(dbconnection, 'authorities', self.id)
-
+        logger.debug("Delete users of the Authority from local DB")
         for u in current['users']:
+            logger.debug("Delete user %s" % u)
             db.delete(dbconnection, 'users', u)
+        logger.debug("Update PI users of the Authority in local DB")
         for u in current['pi_users']:
+            logger.debug("Get user %s" % u)
             user = q(User).id(u).get().first()
             if user:
                 logger.debug("Update user %s in Authority delete()" % u)
