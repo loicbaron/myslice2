@@ -13,7 +13,7 @@ from myslice.tests.config import s, rootAuthority, server
 
 class TestAuthority(LocalTestCase):
 
-    created_authority = None
+    created_authority = None 
 
     def setUp(self):
         self.timeout = 10
@@ -105,15 +105,12 @@ class TestAuthority(LocalTestCase):
     def test_5_deleteAuthority(self):
 
         id = self.__class__.created_authority
-
         if id:
-
+            print("deleting %s" % id)
             rDelete = requests.delete('http://' + server + ':8111/api/v1/authorities/' + id, cookies=self.cookies)
-
-            print("deleteAuthority -> success")
             self.assertEqual(rDelete.status_code, 200)
-
             result = json.loads(rDelete.text)
+            pprint(result)
             self.assertEqual(result['result'], "success")
             for event in result['events']:
                 res = self.checkEvent(event)
@@ -164,14 +161,13 @@ class TestAuthority(LocalTestCase):
             self.assertEqual("CONFIRM", res['status'])
             r = requests.get('http://' + server + ':8111/confirm/' + event)
             print(r.text)
-
-            res = self.checkEvent(event)
+            res = self.checkEvent(event, expected_status="PENDING")
             self.assertEqual(res['status'], "PENDING")
 
             approve = {'action':'approve', 'message':'automated test approved this request'}
             r = requests.put('http://'+server+':8111/api/v1/requests/'+event, headers={str('Content-Type'):'application/json'}, data=json.dumps(approve), cookies=self.cookies)
             self.assertEqual(r.status_code, 200)
-            res = self.checkEvent(event, initial_status="PENDING")
+            res = self.checkEvent(event, expected_status="SUCCESS")
             self.__class__.created_authority = res['data']['id']
             self.assertEqual(res['status'], "SUCCESS")
 
@@ -182,6 +178,7 @@ class TestAuthority(LocalTestCase):
         self.assertNotEqual(len(userCreated), 0)
 
     def test_7_putAuthority(self):
+        print("start test 7 - PUT Authority")
         id = self.__class__.created_authority
         if id:
             rGet = requests.get('http://'+server+':8111/api/v1/authorities/'+id, cookies=self.cookies)
@@ -194,10 +191,12 @@ class TestAuthority(LocalTestCase):
             rGetUser = requests.get('http://'+server+':8111/api/v1/users', cookies=self.cookies)
             res = json.loads(rGetUser.text)
             otherUser = res['result'][0]
+            print("Other User to be added to authority {}".format(otherUser))
             self.assertEqual(rGet.status_code, 200)
 
             payload = authority
             payload['pi_users'].append(otherUser['id'])
+            print("Sending PUT {}".format(payload))
             rPut = requests.put('http://'+server+':8111/api/v1/authorities/'+id, headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
             pprint(rPut.text)
             self.assertEqual(rPut.status_code, 200)
