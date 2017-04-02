@@ -34,7 +34,11 @@ class LocalTestCase(unittest.TestCase):
                 "timestamp": datetime.now(r.make_timezone('00:00')),
             }).run()
 
-
+    def getProfile(self):
+        r = requests.get('http://'+server+':8111/api/v1/profile', cookies=self.cookies)
+        self.assertEqual(r.status_code, 200)
+        result = json.loads(r.text)
+        return result['result']
 
     def checkEvent(self, event, initial_status=None, expected_status= None):
         status = "INIT"

@@ -658,18 +658,13 @@ class ProfileHandler(Api):
         """
         # TODO: id must be a valid URN
         try:
-            profile = yield r.table('users')\
+            pQuery = r.table('users')\
                     .get(self.get_current_user()['id']) \
                     .pluck(self.fields['profile']) \
                     .merge(lambda user: {
                     'authority': r.table('authorities').get(user['authority']) \
                                                            .pluck(self.fields_short['authorities']) \
                                                            .default({'id': user['authority']})
-                     }) \
-                    .merge(lambda user: {
-                    'pi_authorities': r.table('authorities').get_all(r.args(user['pi_authorities'])) \
-                                                           .pluck(self.fields_short['authorities']) \
-                                                           .coerce_to('array')
                      }) \
                     .merge(lambda user: {
                         'projects': r.table('projects') \
@@ -682,10 +677,23 @@ class ProfileHandler(Api):
                                .get_all(r.args(user['slices'])) \
                                .pluck(self.fields_short['slices']) \
                                .coerce_to('array')
+                    })
+            if self.isAdmin():
+                profile = yield pQuery.merge(lambda user: {
+                    'pi_authorities': r.expr(user['pi_authorities']).map(lambda a: {'id':a})
+                    }) \
+                    .run(self.dbconnection)
+            else:
+                profile = yield pQuery.merge(lambda user: {
+                    'pi_authorities': r.table('authorities').get_all(r.args(user['pi_authorities'])) \
+                                                           .pluck(self.fields_short['authorities']) \
+                                                           .coerce_to('array')
                     }) \
                     .run(self.dbconnection)
         except Exception:
-            self.userError("not authenticated ")
+            import traceback
+            traceback.print_exc()
+            self.userError("not authenticated")
             return
         self.write(json.dumps({"result": profile}, cls=myJSONEncoder))
 
@@ -780,10 +788,8 @@ class UserTokenHandler(Api):
        
         pi_auth = [] 
         
-        # if not admin
-        if not admin:
-            user = yield r.table('users').get(current_user_id).run(self.dbconnection)
-            pi_auth = user['pi_authorities']
+        user = yield r.table('users').get(current_user_id).run(self.dbconnection)
+        pi_auth = user['pi_authorities']
 
         try:
             secret = self.application.settings['token_secret'] # used in websockets

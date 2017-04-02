@@ -17,23 +17,23 @@ test = LocalTestCase()
 test.cookies = cookies
 
 def clean(cookies, objectType):
-   """Delete objectType if the id contains autotest"""
-   r = requests.get('http://'+server+':8111/api/v1/'+objectType, cookies=cookies)
-   result = json.loads(r.text)
-   objects = result['result']
-   for o in objects:
-       if "autotest" in o['id']:
-           print("deleting %s %s" % (objectType,o['hrn']))
-           rDelete = requests.delete('http://'+server+':8111/api/v1/'+objectType+'/'+o['id'], cookies=cookies)
-           pprint(rDelete.text)
+    """Delete objectType if the id contains autotest"""
+    r = requests.get('http://'+server+':8111/api/v1/'+objectType, cookies=cookies)
+    result = json.loads(r.text)
+    objects = result['result']
+    for o in objects:
+        if "autotest" in o['id']:
+            print("deleting %s %s" % (objectType,o['hrn']))
+            rDelete = requests.delete('http://'+server+':8111/api/v1/'+objectType+'/'+o['id'], cookies=cookies)
+            pprint(rDelete.text)
 
-           result = json.loads(rDelete.text)
-           for event in result['events']:
-               res = test.checkEvent(event)
-               if res['status'] == "SUCCESS":
-                   print("%s %s deleted" % (objectType,o['hrn']))
-               else:
-                   print("could not delete %s %s" % (objectType,o['hrn']))
+            result = json.loads(rDelete.text)
+            for event in result['events']:
+                res = test.checkEvent(event)
+                if res['status'] == "SUCCESS":
+                    print("%s %s deleted" % (objectType,o['hrn']))
+                else:
+                    print("could not delete %s %s" % (objectType,o['hrn']))
 
 @gen.coroutine
 def main(argv):

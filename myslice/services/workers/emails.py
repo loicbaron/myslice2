@@ -125,9 +125,18 @@ def emails_run(qEmails):
                                 event.logWarning('Authority not specified in event {}, email not sent'.format(event.id))
 
                             authority = Authority(db.get(dbconnection, table='authorities', id=authority_id))
-                            for pi_id in authority.pi_users:
-                                pi = User(db.get(dbconnection, table='users', id=pi_id))
-                                recipients.add(pi)
+                            if not authority:
+                                # get admin users 
+                                cursor = yield r.table('users') \
+                                .filter(lambda u: u["pi_authorities"].contains(authority_id)) \
+                                .run(self.dbconnection)
+                                while (yield cursor.fetch_next()):
+                                    item = yield cursor.next()
+                                    recipients.append(item)
+                            else:
+                                for pi_id in authority.pi_users:
+                                    pi = User(db.get(dbconnection, table='users', id=pi_id))
+                                    recipients.add(pi)
 
                             if not recipients:
                                 msg = 'Emails cannot be sent because no one is the PI of {}'.format(event.object.id)
@@ -137,7 +146,14 @@ def emails_run(qEmails):
                             # USER REQUEST in body
                             if event.object.type == ObjectType.USER:
                                 recipients.add(User(event.data))
-
+                            elif event.object.type == ObjectType.AUTHORITY:
+                                # get admin users 
+                                cursor = yield r.table('users') \
+                                .filter(lambda u: u["pi_authorities"].contains(authority_id)) \
+                                .run(self.dbconnection)
+                                while (yield cursor.fetch_next()):
+                                    item = yield cursor.next()
+                                    recipients.append(item)
                             # SLICE/ PROJECT REQUEST
                             else:
                                 recipients.add(User(db.get(dbconnection, table='users', id=event.user)))
@@ -187,6 +203,7 @@ def sendEmail(event, recipients, subject, template, url, buttonLabel):
                     entity = str(event.object.type),
                     event = event,
                     theme = s.email['theme'],
+                    name = s.email['name'],
                     recipients = recipients,
                     url = url,
                     buttonLabel = buttonLabel,

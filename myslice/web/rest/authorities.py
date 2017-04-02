@@ -129,8 +129,7 @@ class AuthoritiesHandler(Api):
                 if not a:
                     self.userError("this authority %s does not exist" % id)
                     return
-                root_auth = yield r.table('authorities').get(a['authority']).run(self.dbconnection)
-                if self.current_user['id'] not in a['pi_users'] and self.current_user['id'] not in root_auth['pi_users']:
+                if self.current_user['id'] not in a['pi_users'] and not self.isAdmin():
                     self.userError("your user has no rights on authority: %s" % id)
                     return
             except Exception:
@@ -205,8 +204,10 @@ class AuthoritiesHandler(Api):
             return
 
         if data.get('authority', None) is None:
-            self.userError("authority must be specified")
-            return
+            data['authority'] = self.get_root_auth()
+            if not data['authority']:
+                self.userError("authority must be specified")
+                return
 
         if data.get('name', None) is None:
             self.userError("Authority name must be specified")
@@ -304,19 +305,18 @@ class AuthoritiesHandler(Api):
         :return:
         """
         try:
-            # Check if the user has the right to Update an authority, PI of an upper authority
+            # Check if the user has the right to Update an authority
             a = yield r.table('authorities').get(id).run(self.dbconnection)
             if not a:
                 self.userError("this authority %s does not exist" % id)
                 return
-            root_auth = yield r.table('authorities').get(a['authority']).run(self.dbconnection)
-            # TBD: admin or pi?
-            #if self.current_user['id'] not in a['pi_users'] and self.current_user['id'] not in root_auth['pi_users']:
-            # only root_auth admin at the moment
-            if self.current_user['id'] not in root_auth['pi_users']:
+            # only admin or pi?
+            if self.current_user['id'] not in a['pi_users'] and not self.isAdmin(): 
                 self.userError("your user has no rights on authority: %s" % id)
                 return
         except Exception:
+            import traceback
+            traceback.print_exc()
             self.userError("not authenticated ")
             return
 

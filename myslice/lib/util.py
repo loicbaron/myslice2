@@ -184,6 +184,7 @@ class Config(object):
         if self._config["main"].has_section("email"):
             return {
                 "theme": self._config["main"].get("email", "theme", fallback="onelab"),
+                "name": self._config["main"].get("email", "name", fallback="OneLab"),
                 "domain": self._config["main"].get("email", "domain", fallback="onelab.eu"),
                 "host": self._config["main"].get("email", "host", fallback="smtp.gmail.com"),
                 "port": self._config["main"].get("email", "port", fallback="587"),
