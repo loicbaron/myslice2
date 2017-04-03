@@ -41,7 +41,7 @@ class Slice(myslicelibSlice):
         if not errors:
             for r in result['resources']:
                 if (not 'services' in r) or (not r['services']):
-                    logger.warning("result from slice.save didn't hade login info")
+                    logger.warning("result from slice.save didn't had login info")
                     logger.warning("sleeping 10s before asking again to AMs")
                     import time
                     time.sleep(10)

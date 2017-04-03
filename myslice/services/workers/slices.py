@@ -34,15 +34,16 @@ lock = threading.Lock()
 
 logger = logging.getLogger("experiments")
 
+# db connection is shared between threads
+dbconnection = connect()
+
+
 def events_run(qSliceEvents):
     """
     Process the slice after approval 
     """
 
     logger.info("Worker slices events starting") 
-
-    # db connection is shared between threads
-    dbconnection = connect()
 
     while True:
 
@@ -64,7 +65,7 @@ def events_run(qSliceEvents):
                     u = User(db.get(dbconnection, table='users', id=event.user))
                     user_setup = UserSetup(u, myslicelibsetup.endpoints)
 
-                    if event.creatingObject() or event.updatingObject():
+                    if event.creatingObject(): 
                         sli = Slice(event.data)
                         sli.id = event.object.id
                         # Add all Project PIs to the Slice
@@ -76,8 +77,34 @@ def events_run(qSliceEvents):
                             for u_id in event.data['users']:
                                 u = User(db.get(dbconnection, table='users', id=u_id))
                                 sli.addUser(u)
-                        # Don't take into account the Resources on Create or Update???
+                        # Take into account the Resources on Create
+                        if 'resources' in event.data:
+                            for resource in event.data['resources']:
+                                if not isinstance(resource, dict):
+                                    res = db.get(dbconnection, table='resources', id=resource)
+                                    if not res:
+                                        raise Exception("Resource %s doesn't exist" % resource)
+                                    resource = res
+                                sli.addResource(Resource(resource))
                         # expiration_date = Renew at AMs
+                        isSuccess = sli.save(dbconnection, user_setup)
+
+                    if event.updatingObject():
+                        logger.debug("Update users / resources of Slice %s" % event.object.id)
+                        sli = Slice(db.get(dbconnection, table='slices', id=event.object.id))
+
+                        ## adding users
+                        sli = add_users(event.data, sli)
+
+                        ## removing users
+                        sli = remove_users(event.data, sli)
+
+                        ## adding resources
+                        sli = add_resources(event.data, sli)
+
+                        ## removing resources
+                        sli = remove_resources(event.data, sli)
+
                         isSuccess = sli.save(dbconnection, user_setup)
 
                     if event.deletingObject():
@@ -101,8 +128,8 @@ def events_run(qSliceEvents):
                             for val in event.data.values:
                                 if isinstance(val, dict):
                                     val = val['id']
-                                r = Resource(db.get(dbconnection, table='resources', id=val))
-                                sli.addResource(r)
+                                res = Resource(db.get(dbconnection, table='resources', id=val))
+                                sli.addResource(res)
                             isSuccess = sli.save(dbconnection, user_setup)
 
                     if event.removingObject():
@@ -164,6 +191,48 @@ def events_run(qSliceEvents):
                         event.setError()
                 db.dispatch(dbconnection, event)
 
+def add_users(data, slice):
+    # check if the users in the request are in the slice
+    for data_user in data['users']:
+        if isinstance(data_user, dict):
+            u = User(data_user)
+        else:
+            u = User(db.get(dbconnection, table='users', id=data_user))
+        if u.id not in slice.users:
+            slice.addUser(u)
+    return slice
+
+def remove_users(data, slice):
+    data_users = [d['id'] if isinstance(d,dict) else d for d in data['users']]
+    # check if we need to remove users from the slice
+    for user_id in slice.users:
+        if user_id not in data_users:
+            # remove user from slice
+            u = User(db.get(dbconnection, table='users', id=user_id))
+            slice.removeUser(u)
+    return slice
+
+def add_resources(data, slice):
+    # check if the resources in the request are in the slice
+    for data_resource in data['resources']:
+        if isinstance(data_resource, dict):
+            res = Resource(data_resource)
+        else:
+            res = Resource(db.get(dbconnection, table='resources', id=data_resource))
+        if res.id not in [x['id'] for x in slice.resources]:
+            slice.addResource(res)
+    return slice
+
+def remove_resources(data, slice):
+    data_resources = [d['id'] if isinstance(d,dict) else d for d in data['resources']]
+    # check if we need to remove resources from the slice
+    for resource_id in [x['id'] for x in slice.resources]:
+        if resource_id not in data_resources:
+            # remove resource from slice
+            res = Resource(db.get(dbconnection, table='resources', id=resource_id))
+            slice.removeUser(res)
+    return slice
+
 def sync():
     """
     A thread that will sync slices with the local rethinkdb
@@ -216,8 +285,8 @@ def syncSlices(id=None):
                                 s = q(Slice, user_setup).id(slice.id).get().first()
                                 db.slices(dbconnection, s.dict(), slice.id)
                         except Exception as e:
-                            #import traceback
-                            #traceback.print_exc()
+                            import traceback
+                            traceback.print_exc()
                             logger.error("Problem with slice %s" % slice.id)
                             logger.exception(str(e))
                     else:
@@ -249,8 +318,8 @@ def syncSlices(id=None):
                     logger.warning("Query slices is empty, check myslicelib and the connection with SFA Registry")
 
         except Exception as e:
-            #import traceback
-            #traceback.print_exc()
+            import traceback
+            traceback.print_exc()
             logger.exception(str(e))
 
         logger.info("Worker slices finished period synchronization")
