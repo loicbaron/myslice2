@@ -11,7 +11,7 @@ print("config trying to login to %s" % server)
 payload = {'email': s['email'], 'password': s['password']}
 r = requests.post("http://"+server+":8111/api/v1/login", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload))
 s['cookies'] = r.cookies
-s['automate_test'] = False
+s['automate_test'] = True
 
 authority = "urn:publicid:IDN+onelab:upmc+authority+sa"
 rootAuthority = "urn:publicid:IDN+onelab+authority+sa"

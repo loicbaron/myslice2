@@ -91,6 +91,7 @@ class TestAuthority(LocalTestCase):
         else:
             expectedStatus = 'PENDING'
         for event in result['events']:
+
             res = self.checkEvent(event, expected_status=expectedStatus)
             self.assertEqual(res['status'], expectedStatus)
         if expectedStatus == 'PENDING':
