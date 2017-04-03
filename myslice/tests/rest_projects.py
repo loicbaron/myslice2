@@ -50,7 +50,6 @@ class TestProjects(LocalTestCase):
         r = requests.get('http://'+server+':8111/api/v1/projects', cookies=self.cookies)
         self.assertEqual(r.status_code, 200)
 
-
     def test_2_postWrongProject(self):
         payload = {}
         r = requests.post('http://'+server+':8111/api/v1/projects', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
@@ -140,7 +139,7 @@ class TestProjects(LocalTestCase):
         self.assertEqual(rUpdated.status_code, 200)
 
         self.assertNotEqual(project, projectUpdated)
-        self.assertEqual(projectUpdated['pi_users'], payload['pi_users'])
+        self.assertCountEqual(projectUpdated['pi_users'], payload['pi_users'])
 
     def test_5_deleteProject(self):
         id = self.__class__.created_project

@@ -212,7 +212,7 @@ class TestAuthority(LocalTestCase):
             self.assertEqual(rUpdated.status_code, 200)
 
             self.assertNotEqual(authority, authorityUpdated)
-            self.assertEqual(authorityUpdated['pi_users'], payload['pi_users'])
+            self.assertCountEqual(authorityUpdated['pi_users'], payload['pi_users'])
         else:
             self.assertEqual(id, "Authority was not created in previous test, we cannot continue this test")
 
