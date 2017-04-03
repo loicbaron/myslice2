@@ -17,6 +17,7 @@ class TestSlices(LocalTestCase):
     created_slice = None
     project = None
     testbeds = None
+    testbedsLeases = None
 
     def setUp(self):
 
