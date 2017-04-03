@@ -34,6 +34,21 @@ class LocalTestCase(unittest.TestCase):
                 "timestamp": datetime.now(r.make_timezone('00:00')),
             }).run()
 
+    def getProjectId(self):
+        """
+        Returns a project id
+        one of the user's projects
+        by default it takes first project on the list 
+        """
+        r = requests.get('http://' + server + ':8111/api/v1/users/projects', cookies=self.cookies)
+        data = json.loads(r.text)
+        #from pprint import pprint
+        #pprint(data)
+        try:
+            return data['result'][0]['id']
+        except:
+            return None
+
     def getProfile(self):
         r = requests.get('http://'+server+':8111/api/v1/profile', cookies=self.cookies)
         self.assertEqual(r.status_code, 200)
