@@ -10,7 +10,7 @@
 '''
 
 import signal
-import logging
+import myslice.lib.log as logging
 import multiprocessing
 
 import myslice.db as db
@@ -25,7 +25,7 @@ def receive_signal(signum, stack):
 
 if __name__ == '__main__':
 
-    logger = logging.getLogger("myslice-monitor")
+    logger = logging.getLogger()
 
     logger.info("Starting myslice-monitor")
 
