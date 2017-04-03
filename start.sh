@@ -7,6 +7,8 @@ DIR=$(dirname "$0")
 
 # As deamon 
 $DIR/myslice/bin/myslice-server &
+# As deamon 
+$DIR/myslice/bin/myslice-monitor &
 
 ps -aux | grep 'myslice'
 
