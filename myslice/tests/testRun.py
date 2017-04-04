@@ -23,7 +23,7 @@ def runTest():
               unittest.TestLoader().loadTestsFromTestCase(TestProjects),
               unittest.TestLoader().loadTestsFromTestCase(TestUsers),
               unittest.TestLoader().loadTestsFromTestCase(TestSlices),
-              unittest.TestLoader().loadTestsFromTestCase(TestLeases),
+              unittest.TestLoader().loadTestsFromTestCase(TestLeases)
               ]
 
     testResults = unittest.TextTestRunner(verbosity=0).run(unittest.TestSuite(suites))
