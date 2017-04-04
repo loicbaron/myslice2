@@ -41,3 +41,4 @@ job0:
     - ./myslice/tests/rest_projects.py
     - ./myslice/tests/rest_authorities.py
     - ./myslice/tests/rest_slices.py
+    - ./myslice/tests/rest_leases.py
