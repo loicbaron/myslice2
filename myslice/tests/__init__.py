@@ -5,11 +5,13 @@ import requests
 import time
 import unittest
 
+from pprint import pprint
+from random import randint
 from myslice.tests.config import s, server
 from datetime import datetime
 import rethinkdb as r
 
-
+from myslice.tests.config import authority
 
 class LocalTestCase(unittest.TestCase):
 
@@ -39,16 +41,61 @@ class LocalTestCase(unittest.TestCase):
         Returns a project id
         one of the user's projects
         by default it takes first project on the list 
+        if the user has no project, create one
         """
         r = requests.get('http://' + server + ':8111/api/v1/users/projects', cookies=self.cookies)
         data = json.loads(r.text)
         #from pprint import pprint
         #pprint(data)
-        try:
+        if len(data['result']) > 0:
             return data['result'][0]['id']
-        except:
-            return None
+        else:
+            return self.createProject()['id']
 
+    def createProject(self):
+        name = 'autotest_' + str(randint(0,10000))
+        payload = {'name': name, 'description': 'this is an automated project', 'authority':authority}
+        r = requests.post('http://'+server+':8111/api/v1/projects', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
+        pprint(r.text)
+        self.assertEqual(r.status_code, 200)
+        # Event status = SUCCESS
+        result = json.loads(r.text)
+        self.assertEqual(result['result'], "success")
+        for event in result['events']:
+            res = self.checkEvent(event)
+            self.assertEqual(res['status'], "SUCCESS")
+            return res['data']
+        return None
+
+    def getSliceId(self):
+        """
+        Returns a slice id
+        one of the user's slices
+        by default it takes first slice on the list 
+        if the user has no slice, create one
+        """
+        r = requests.get('http://' + server + ':8111/api/v1/users/slices', cookies=self.cookies)
+        data = json.loads(r.text)
+        if len(data['result']) > 0:
+            return data['result'][0]['id']
+        else:
+            return self.createSlice()['id']
+
+    def createSlice(self):
+        name = 'autotest_' + str(randint(0,10000))
+        project = self.getProjectId()
+        payload = {'shortname': name, 'name': name, 'project': {'id': project}}
+        r = requests.post('http://'+server+':8111/api/v1/slices', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
+        pprint(r.text)
+        self.assertEqual(r.status_code, 200)
+        result = json.loads(r.text)
+        self.assertEqual(result['result'], "success")
+        for event in result['events']:
+            res = self.checkEvent(event)
+            self.assertEqual(res['status'], "SUCCESS")
+            return res['data']
+        return None
+      
     def getProfile(self):
         r = requests.get('http://'+server+':8111/api/v1/profile', cookies=self.cookies)
         self.assertEqual(r.status_code, 200)
