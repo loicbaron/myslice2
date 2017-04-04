@@ -69,6 +69,7 @@ class TestLeases(LocalTestCase):
         r = requests.get('http://'+server+':8111/api/v1/testbeds', cookies=self.cookies)
         self.assertEqual(r.status_code, 200)
         data = json.loads(r.text)
+        pprint(data)
         testbeds = []
         testbedsLeases = []
         for t in data['result']:
@@ -102,7 +103,7 @@ class TestLeases(LocalTestCase):
             self.assertLessEqual(l['end_time'], ts_end)
 
     #    /resources/<id>/leases
-    def test_4_getResourceLeses(self):
+    def test_4_getResourceLeases(self):
         resource = self.__class__.resource
         if not resource:
             self.assertEqual(resource, "expected resource but got none")
@@ -160,7 +161,8 @@ class TestLeases(LocalTestCase):
         self.assertEqual(result['result'], "success")
         for event in result['events']:
             res = self.checkEvent(event)
-            self.assertEqual(res['status'], "SUCCESS")
+            # Some resources may not be available
+            self.assertIn(res['status'], ["SUCCESS","WARNING"])
 
         # TODO: check that the selectedResources are in the Slice
 
