@@ -121,7 +121,7 @@ class LeasesHandler(Api):
                     d = yield self.processLease(l)
                     evData.append(d)
             else:
-                yield self.processLease(data)
+                d = yield self.processLease(data)
                 evData.append(d)
 
             event = Event({
