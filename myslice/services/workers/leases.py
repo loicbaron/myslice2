@@ -152,26 +152,29 @@ def sync(lock):
     logger = logging.getLogger('myslice.leases')
     while True:
         logger.info("syncing Leases")
-        try:
-            logger.debug("Query Lease")
-            ll = q(Lease).get()
-
-            logger.debug("syncLeases")
-            # syncs leases configured with the db
-            slices = db.syncLeases(ll)
-
-            for s in slices:
-                logger.info("Synchronize slice %s after syncLeases" % s)
-                syncSlices(s)
-
-        except Exception as e:
-            #import traceback
-            #traceback.print_exc()
-            logger.exception("Service does not seem to be available")
-            logger.exception(str(e))
-
+        syncLeases()
         logger.info("sleeping")
 
         # sleep for 5 minutes
         # to be fine tuned
         time.sleep(300)
+
+def syncLeases():
+    try:
+        logger.debug("Query Lease")
+        ll = q(Lease).get()
+
+        logger.debug("syncLeases")
+        # syncs leases configured with the db
+        slices = db.syncLeases(ll)
+
+        for s in slices:
+            logger.info("Synchronize slice %s after syncLeases" % s)
+            syncSlices(s)
+
+    except Exception as e:
+        #import traceback
+        #traceback.print_exc()
+        logger.exception("Service does not seem to be available")
+        logger.exception(str(e))
+

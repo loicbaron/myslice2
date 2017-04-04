@@ -15,18 +15,22 @@ def run():
 
     while True:
         logger.info("syncing")
-        try:
-            # retreive version and status info from the testbeds
-            t = q(Testbed).version()
-
-            if len(t)>0:
-                # syncs testbeds configured with the db
-                db.syncTestbeds(t)
-            else:
-                logger.warning("Check myslicelib and SFA, q(Testbed).version() returned empty")
-
-        except Exception as e:
-            logger.exception("Service does not seem to be available")
-
+        syncTestbeds()
         logger.info("sleeping")
         time.sleep(86400)
+
+def syncTestbeds():
+    try:
+        # retreive version and status info from the testbeds
+        t = q(Testbed).version()
+
+        if len(t)>0:
+            # syncs testbeds configured with the db
+            db.syncTestbeds(t)
+        else:
+            logger.warning("Check myslicelib and SFA, q(Testbed).version() returned empty")
+
+    except Exception as e:
+        logger.exception("Service does not seem to be available")
+
+
