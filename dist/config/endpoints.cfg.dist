@@ -11,6 +11,7 @@ url=https://sfa3.planet-lab.eu:12346
 type=AM
 timeout=30
 technologies="vm"
+hasLeases=false
 enabled=true
 
 [fit-iot]
@@ -19,4 +20,16 @@ url=https://194.199.16.164:12346
 type=AM
 timeout=30
 technologies="iot,robot"
-enabled=false
+hasLeases=true
+enabled=true
+
+[nitos]
+name=Nitos Greece
+url=https://nitlab.inf.uth.gr:8001/RPC2
+type=AM
+timeout=60
+technologies="wireless"
+hasLeases=true
+enabled=true
+
+
