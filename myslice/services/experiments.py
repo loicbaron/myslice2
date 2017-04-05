@@ -43,7 +43,7 @@ def run():
     threads = []
 
     # projects manager
-    for y in range(1):
+    for y in range(10):
         t = threading.Thread(target=manageProjects, args=(lockProjects, qProjects))
         t.daemon = True
         threads.append(t)
@@ -58,7 +58,7 @@ def run():
             t.start()
 
     # slices manager
-    for y in range(1):
+    for y in range(10):
         t = threading.Thread(target=manageSlices, args=(qSlices,))
         t.daemon = True
         threads.append(t)
