@@ -1,4 +1,4 @@
-
+#!/usr/bin/env python3.5
 import unittest
 
 from myslice.tests.rest_authorities import TestAuthority
@@ -13,7 +13,6 @@ import rethinkdb as r
 from myslice.tests.config import s
 from datetime import datetime
 
-from myslice.tests.mysqlTestBackend import MysqlTestBackend
 from myslice.tests.config import server
 
 def runTest():
@@ -72,7 +71,7 @@ if __name__ == '__main__':
     testResult = runTest()
 
     if s['automate_test']:
-
+        from myslice.tests.mysqlTestBackend import MysqlTestBackend
         #save results to db
         database = MysqlTestBackend(testResult, server)
         database.newTestRun()
