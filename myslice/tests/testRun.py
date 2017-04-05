@@ -6,7 +6,7 @@ from myslice.tests.rest_login import TestLogin
 from myslice.tests.rest_projects import TestProjects
 from myslice.tests.rest_users import TestUsers
 from myslice.tests.rest_slices import TestSlices
-
+from myslice.tests.rest_leases import TestLeases
 from myslice.tests.tools import send_email
 
 import rethinkdb as r
@@ -21,7 +21,8 @@ def runTest():
               unittest.TestLoader().loadTestsFromTestCase(TestAuthority),
               unittest.TestLoader().loadTestsFromTestCase(TestProjects),
               unittest.TestLoader().loadTestsFromTestCase(TestUsers),
-              unittest.TestLoader().loadTestsFromTestCase(TestSlices)
+              unittest.TestLoader().loadTestsFromTestCase(TestSlices),
+              unittest.TestLoader().loadTestsFromTestCase(TestLeases)
               ]
 
     testResults = unittest.TextTestRunner(verbosity=0).run(unittest.TestSuite(suites))
