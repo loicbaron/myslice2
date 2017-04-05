@@ -657,6 +657,11 @@ class ProfileHandler(Api):
         :return:
         """
         # TODO: id must be a valid URN
+        current_user = self.get_current_user()
+        if not current_user:
+            self.userError("not authenticated")
+            return
+
         try:
             pQuery = r.table('users')\
                     .get(self.get_current_user()['id']) \
