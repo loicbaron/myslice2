@@ -43,8 +43,6 @@ def main(argv):
             print("clean.py all|authorities|projects|users|slices")
             sys.exit(2)
 
-
-
         if argv[0].startswith('auth') or argv[0] == 'all':
             print("clean authorities...")
             clean(cookies, 'authorities')

@@ -1,12 +1,12 @@
-import os
-import logging
-from datetime import datetime
-import pytz
-import json
 import decimal
+import json
+import logging
+import os
+import pytz
+from configparser import ConfigParser, NoOptionError
+from datetime import datetime
 from enum import Enum
 from json import JSONEncoder
-from configparser import ConfigParser, NoOptionError
 
 log = logging.getLogger('server')
 
