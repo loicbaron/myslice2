@@ -200,7 +200,7 @@ class LeasesHandler(Api):
             if p['slice_id'] not in u['slices']:
                 self.userError("your user is not a member of this slice: %s" % p['slice_id'])
         except Exception:
-            self.userError("not authenticated or project not specified")
+            self.userError("not authenticated or slice not specified")
             return
 
         try:

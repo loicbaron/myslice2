@@ -64,6 +64,7 @@ class TestSlices(LocalTestCase):
         self.assertEqual(r.status_code, 200)
 
         self.__class__.project = project
+        print("project = %s" % self.__class__.project)
 
     def test_2_postWrongSlice(self):
         payload = {}
