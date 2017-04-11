@@ -34,16 +34,7 @@ def clean(cookies, objectType):
                     print("%s %s deleted" % (objectType,o['hrn']))
                 else:
                     print("could not delete %s %s" % (objectType,o['hrn']))
-        if o['duration'] == '300':
-            print ("deleting tester leases " )
-            rDelete = requests.delete('http://'+server+':8111/api/v1/'+objectType+'/'+o['id'], cookies=cookies)
-            pprint(rDelete.text)
-            for event in result['events']:
-                res = test.checkEvent(event)
-                if res['status'] == "SUCCESS":
-                    print(" deleted lease %s" % (o['id']))
-                else:
-                    print("could not delete %s" % (o['id']))
+        
 
 @gen.coroutine
 def main(argv):
