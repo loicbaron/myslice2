@@ -51,7 +51,7 @@ const SelectResourceDialog = () => {
                 return axios.post('/api/v1/leases/',
                     {
                         "testbed":state.testbed.id,
-                        "slice_id": slice.hrn,
+                        "slice_id": currentSlice.id,
                         "start_time" : state.start_date,
                         "duration" : state.duration,
                         "resources" :state.selectedIdList
