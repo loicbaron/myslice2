@@ -86,7 +86,7 @@ class TestSlices(LocalTestCase):
             self.assertEqual(res['status'], "SUCCESS")
             self.__class__.created_slice = res['data']['id']
         pprint(self.__class__.created_slice)
-        print(datetime.now()-tock)
+        #print(datetime.now()-tock)
 
     def test_3_getSliceId(self):
         id = self.__class__.created_slice
