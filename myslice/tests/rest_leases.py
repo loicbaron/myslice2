@@ -122,6 +122,7 @@ class TestLeases(LocalTestCase):
         ts_end = int(time.time()) + 3600
         # Get resources available in the coming 1h
         testbedsLeases = self.__class__.testbedsLeases
+        pprint(testbedsLeases)
         self.assertGreater(len(testbedsLeases), 0)
         # 1 testbed per lease
         # -----------------------------------

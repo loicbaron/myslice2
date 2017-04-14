@@ -34,7 +34,7 @@ def clean(cookies, objectType):
                     print("%s %s deleted" % (objectType,o['hrn']))
                 else:
                     print("could not delete %s %s" % (objectType,o['hrn']))
-        
+
 
 @gen.coroutine
 def main(argv):

@@ -48,7 +48,7 @@ class LocalTestCase(unittest.TestCase):
         #from pprint import pprint
         #pprint(data)
         if len(data['result']) > 0:
-            return data['result'][0]['id']
+            return data['result'][-1]['id']
         else:
             return self.createProject()['id']
 
@@ -77,7 +77,7 @@ class LocalTestCase(unittest.TestCase):
         r = requests.get('http://' + server + ':8111/api/v1/users/slices', cookies=self.cookies)
         data = json.loads(r.text)
         if len(data['result']) > 0:
-            return data['result'][0]['id']
+            return data['result'][-1]['id']
         else:
             return self.createSlice()['id']
 
