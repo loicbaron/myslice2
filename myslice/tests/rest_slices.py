@@ -70,7 +70,6 @@ class TestSlices(LocalTestCase):
         payload = {}
         r = requests.post('http://'+server+':8111/api/v1/slices', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
         self.assertEqual(r.status_code, 400)
-
     def test_2_postSlice(self):
         tock = datetime.now()
         name = 'autotest_' + str(randint(0,10000))
@@ -87,7 +86,6 @@ class TestSlices(LocalTestCase):
             self.__class__.created_slice = res['data']['id']
         pprint(self.__class__.created_slice)
         #print(datetime.now()-tock)
-
     def test_3_getSliceId(self):
         id = self.__class__.created_slice
         if not id:
@@ -180,6 +178,7 @@ class TestSlices(LocalTestCase):
 
     def test_7_deleteSlice(self):
         id = self.__class__.created_slice
+        pprint(id)
         if not id:
             self.assertEqual(id, "expected created_slice but got none")
         rDelete = requests.delete('http://'+server+':8111/api/v1/slices/'+id, cookies=self.cookies)
@@ -195,7 +194,9 @@ class TestSlices(LocalTestCase):
         rGet = requests.get('http://'+server+':8111/api/v1/slices/'+id, cookies=self.cookies)
         res = json.loads(rGet.text)
         slice = res['result']
+        pprint(slice)
         self.assertEqual(rGet.status_code, 200)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -3,7 +3,7 @@ import json
 import requests
 
 s = {}
-server = 'theseus.noc.onelab.eu'
+server = 'zeus.noc.onelab.eu'
 s['email'] = "loic.baron@lip6.fr"
 s['password'] = "test12345"
 s['hrn'] = 'onelab.upmc.loic_baron'

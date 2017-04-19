@@ -48,7 +48,7 @@ class LocalTestCase(unittest.TestCase):
         #from pprint import pprint
         #pprint(data)
         if len(data['result']) > 0:
-            return data['result'][-1]['id']
+            return data['result'][0]['id']
         else:
             return self.createProject()['id']
 
@@ -74,12 +74,11 @@ class LocalTestCase(unittest.TestCase):
         by default it takes first slice on the list 
         if the user has no slice, create one
         """
-        r = requests.get('http://' + server + ':8111/api/v1/users/slices', cookies=self.cookies)
+        r = requests.get('http://' + server + ':8111/api/v1/profile', cookies=self.cookies)
         data = json.loads(r.text)
-        if len(data['result']) > 0:
-            return data['result'][-1]['id']
-        else:
-            return self.createSlice()['id']
+        if len(data['result']['slices']) > 0:
+            return data['result']['slices'][0]['id']
+
 
     def createSlice(self):
         name = 'autotest_' + str(randint(0,10000))
@@ -114,9 +113,9 @@ class LocalTestCase(unittest.TestCase):
         if initial_status:
             final_status = list(set(final_status) - {initial_status})
 
-        # If processing the event takes more than 5 min = test failed
-        while(i < 60 and status not in final_status):
-            time.sleep(5)
+        # If processing the event takes more than 10 min = test failed
+        while(i < 80 and status not in final_status):
+            time.sleep(10)
             i = i + 1
             rActivity = requests.get('http://'+server+':8111/api/v1/activity/'+event, cookies=self.cookies)
             if rActivity.status_code == 200:
