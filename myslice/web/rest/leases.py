@@ -176,8 +176,8 @@ class LeasesHandler(Api):
                 raise Exception("duration must be specified for ASAP reservation")
 
         try:
-            u = yield r.table('users').get(self.get_current_user()['id']).run(self.dbconnection)
-            if data['slice_id'] not in u['slices']:
+            u = yield r.table('slices').get(data['slice_id']).run(self.dbconnection)
+            if self.get_current_user()['id'] not in u['users']:
                 raise Exception("your user is not a member of this slice: %s" % data['slice_id'])
         except Exception:
             raise Exception("not authenticated")
