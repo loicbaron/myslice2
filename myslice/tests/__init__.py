@@ -74,10 +74,13 @@ class LocalTestCase(unittest.TestCase):
         by default it takes first slice on the list 
         if the user has no slice, create one
         """
-        r = requests.get('http://' + server + ':8111/api/v1/profile', cookies=self.cookies)
+        r = requests.get('http://' + server + ':8111/api/v1/users/slices', cookies=self.cookies)
         data = json.loads(r.text)
-        if len(data['result']['slices']) > 0:
-            return data['result']['slices'][0]['id']
+        if len(data['result']) > 0:
+            return data['result'][0]['id']
+
+        else:
+            return self.createSlice()['id']
 
 
     def createSlice(self):
