@@ -149,6 +149,7 @@ class TestLeases(LocalTestCase):
         #   "end_time": 1475718194,
         #}
         # Create a Lease for 5 minutes starting now
+        pprint(self.getSliceId())
         payload = {
            "slice_id": self.getSliceId(), 
            "resources": selectedResources, 
