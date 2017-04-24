@@ -137,6 +137,7 @@ class TestProjects(LocalTestCase):
         projectUpdated = res['result'][0]
         self.assertEqual(rUpdated.status_code, 200)
 
+
         self.assertNotEqual(project, projectUpdated)
         self.assertCountEqual(projectUpdated['pi_users'], payload['pi_users'])
 
