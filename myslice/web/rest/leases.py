@@ -186,8 +186,7 @@ class LeasesHandler(Api):
 
     @gen.coroutine
     def delete(self, id, o=None):
-u = yield r.table('slices').get(data['slice_id']).run(self.dbconnection)
-            if self.get_current_user()['id'] not in u['users']:        """
+        """
         DELETE /leases/<id>
         :return:
         """
