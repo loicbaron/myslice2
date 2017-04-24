@@ -10,7 +10,10 @@ from tornado import gen
 from myslice.tests import LocalTestCase
 from myslice.tests.config import s, server
 
-from myslice.db.user import User
+from myslicelib.model.authority import Authority
+from myslicelib.model.project import Project
+from myslicelib.model.user import User
+from myslicelib.model.slice import Slice
 from myslicelib.query import q
 
 timeout = 10
