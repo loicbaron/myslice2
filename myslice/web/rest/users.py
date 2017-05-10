@@ -145,23 +145,26 @@ class UsersHandler(Api):
                 .pluck(self.fields['users']) \
                 .merge(lambda user: {
                     'authority': r.table('authorities').get(user['authority']) \
-                                                        .pluck(self.fields_short['authorities']) \
-                                                        .default({'id' : user['authority']})
+                                                       .pluck(self.fields_short['authorities']) \
+                                                       .default({'id' : user['authority']})
                 }) \
                 .merge(lambda user: {
                 'pi_authorities': r.table('authorities').get_all(r.args(user['pi_authorities'])) \
+                                                       .distinct() \
                                                        .pluck(self.fields_short['authorities']) \
                                                        .coerce_to('array')
                  }) \
                 .merge(lambda user: {
                     'projects': r.table('projects') \
                            .get_all(r.args(user['projects'])) \
+                           .distinct() \
                            .pluck(self.fields_short['projects']) \
                            .coerce_to('array')
                 }) \
                 .merge(lambda user: {
                     'slices': r.table('slices') \
                            .get_all(r.args(user['slices'])) \
+                           .distinct() \
                            .pluck(self.fields_short['slices']) \
                            .coerce_to('array')
                 }) \
@@ -190,19 +193,22 @@ class UsersHandler(Api):
                                                        .default({'id': user['authority']})
                 }) \
                 .merge(lambda user: {
-                'pi_authorities': r.table('authorities').get_all(r.args(user['pi_authorities'])) \
+                    'pi_authorities': r.table('authorities').get_all(r.args(user['pi_authorities'])) \
+                                                       .distinct() \
                                                        .pluck(self.fields_short['authorities']) \
                                                        .coerce_to('array')
                  }) \
                 .merge(lambda user: {
                     'projects': r.table('projects') \
                            .get_all(r.args(user['projects'])) \
+                           .distinct() \
                            .pluck(self.fields_short['projects']) \
                            .coerce_to('array')
                 }) \
                 .merge(lambda user: {
                     'slices': r.table('slices') \
                            .get_all(r.args(user['slices'])) \
+                           .distinct() \
                            .pluck(self.fields_short['slices']) \
                            .coerce_to('array')
                 }) \
@@ -232,6 +238,7 @@ class UsersHandler(Api):
                 .merge(lambda project: {
                     'slices': r.table('slices') \
                            .get_all(r.args(project['slices'])) \
+                           .distinct() \
                            .pluck(self.fields_short['slices']) \
                            .coerce_to('array')
                 }) \
@@ -680,12 +687,14 @@ class ProfileHandler(Api):
                     .merge(lambda user: {
                         'projects': r.table('projects') \
                                .get_all(r.args(user['projects'])) \
+                               .distinct() \
                                .pluck(self.fields_short['projects']) \
                                .coerce_to('array')
                     }) \
                     .merge(lambda user: {
                         'slices': r.table('slices') \
                                .get_all(r.args(user['slices'])) \
+                               .distinct() \
                                .pluck(self.fields_short['slices']) \
                                .coerce_to('array')
                     })
@@ -697,6 +706,7 @@ class ProfileHandler(Api):
             else:
                 profile = yield pQuery.merge(lambda user: {
                     'pi_authorities': r.table('authorities').get_all(r.args(user['pi_authorities'])) \
+                                                           .distinct() \
                                                            .pluck(self.fields_short['authorities']) \
                                                            .coerce_to('array')
                     }) \
