@@ -61,6 +61,7 @@ class SlicesHandler(Api):
                 }) \
                 .merge(lambda slice: {
                     'users': r.table('users').get_all(r.args(slice['users']), index="id") \
+                           .distinct() \
                            .pluck(self.fields_short['users']).coerce_to('array')
                 }) \
                 .merge(lambda slice: {
@@ -116,7 +117,8 @@ class SlicesHandler(Api):
         elif id and slice and o == 'users':
 
             response = yield r.table('users') \
-                .get_all(r.args(slice['users']), index='id') \
+                .get_all(r.args(slice['users'])['id'], index='id') \
+                .distinct() \
                 .pluck(self.fields['users']) \
                 .merge(lambda user: {
                     'authority': r.table('authorities').get(user['authority']) \
@@ -133,10 +135,10 @@ class SlicesHandler(Api):
         elif id and slice and o == 'resources':
 
             response = yield r.table('resources') \
-                .get_all(r.args(slice['resources']), index='id') \
-                .pluck(self.fields['resources']) \
+                .get_all(r.args(slice['resources'])['id'], index='id') \
+                .distinct() \
                 .merge(lambda resource: {
-                    'testbeds': r.table('testbeds').get(resource['testbed']) \
+                    'testbed': r.table('testbeds').get(resource['testbed']) \
                            .pluck(self.fields_short['testbeds']) \
                            .default({'id': resource['testbed']})
                 }) \
