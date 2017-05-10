@@ -52,18 +52,21 @@ class ProjectsHandler(Api):
                 .merge(lambda project: {
                     'slices': r.table('slices') \
                        .get_all(r.args(project['slices'])) \
+                       .distinct() \
                        .pluck(self.fields_short['slices']) \
                        .coerce_to('array')
                 }) \
                 .merge(lambda project: {
                     'pi_users': r.table('users') \
                            .get_all(r.args(project['pi_users'])) \
+                           .distinct() \
                            .pluck(self.fields_short['users']) \
                            .coerce_to('array')
                 }) \
                 .merge(lambda project: {
                     'users': r.table('users') \
                            .get_all(r.args(project['users'])) \
+                           .distinct() \
                            .pluck(self.fields_short['users']) \
                            .coerce_to('array')
                 }) \
