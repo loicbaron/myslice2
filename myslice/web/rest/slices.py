@@ -63,6 +63,12 @@ class SlicesHandler(Api):
                     'users': r.table('users').get_all(r.args(slice['users']), index="id") \
                            .pluck(self.fields_short['users']).coerce_to('array')
                 }) \
+                .merge(lambda slice: {
+                    'leases': r.table('leases').filter({'slice_id':slice['id']}).merge(lambda l: {
+                        'resources': l['resources'].map(lambda res: r.table('resources').get(res)) \
+                           .coerce_to('array')
+                        }).coerce_to('array')
+                }) \
                 .run(self.dbconnection)
             while (yield cursor.fetch_next()):
                 slice = yield cursor.next()
