@@ -12,7 +12,7 @@ type=AM
 timeout=30
 technologies="vm"
 hasLeases=false
-enabled=true
+enabled=false
 
 [fit-iot]
 name=FIT IoT-Lab
