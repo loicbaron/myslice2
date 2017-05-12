@@ -99,18 +99,21 @@ class AuthoritiesHandler(Api):
                             }) \
                             .merge(lambda user: {
                                 'pi_authorities': r.table('authorities').get_all(r.args(user['pi_authorities'])) \
+                                       .distinct() \
                                        .pluck(self.fields_short['authorities']) \
                                        .coerce_to('array')
                             }) \
                                 .merge(lambda user: {
                                 'projects': r.table('projects') \
                                        .get_all(r.args(user['projects'])) \
+                                       .distinct() \
                                        .pluck(self.fields_short['projects']) \
                                        .coerce_to('array')
                             }) \
                                 .merge(lambda user: {
                                 'slices': r.table('slices') \
                                        .get_all(r.args(user['slices'])) \
+                                       .distinct() \
                                        .pluck(self.fields_short['slices']) \
                                        .coerce_to('array')
                             }) \
@@ -149,18 +152,21 @@ class AuthoritiesHandler(Api):
                             }) \
                             .merge(lambda user: {
                             'pi_authorities': r.table('authorities').get_all(r.args(user['pi_authorities'])) \
+                                                                   .distinct() \
                                                                    .pluck(self.fields_short['authorities']) \
                                                                    .coerce_to('array')
                              }) \
                             .merge(lambda user: {
                                 'projects': r.table('projects') \
                                        .get_all(r.args(user['projects'])) \
+                                       .distinct() \
                                        .pluck(self.fields_short['projects']) \
                                        .coerce_to('array')
                             }) \
                             .merge(lambda user: {
                                 'slices': r.table('slices') \
                                        .get_all(r.args(user['slices'])) \
+                                       .distinct() \
                                        .pluck(self.fields_short['slices']) \
                                        .coerce_to('array')
                             }) \
