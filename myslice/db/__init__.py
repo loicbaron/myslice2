@@ -209,7 +209,8 @@ def syncLeases(leases):
         if not keep:
             # Synchronize the Slice if we have it locally
             if 'slice_id' in ll and r.db(s.db['name']).table('slices').get(ll['slice_id']).run(dbconnection):
-                slices.append(ll['slice_id'])
+                if ll['slice_id'] not in slices:
+                    slices.append(ll['slice_id'])
 
     for l in leases:
         if not isinstance(l, dict):
@@ -218,7 +219,8 @@ def syncLeases(leases):
         r.db(s.db['name']).table('leases').insert(l, conflict='update').run(dbconnection)
         # Synchronize the Slice if we have it locally
         if 'slice_id' in l and r.db(s.db['name']).table('slices').get(l['slice_id']).run(dbconnection):
-            slices.append(l['slice_id'])
+            if l['slice_id'] not in slices:
+                slices.append(l['slice_id'])
 
     return slices
 
