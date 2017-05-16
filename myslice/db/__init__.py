@@ -163,7 +163,8 @@ def syncResources(resources):
                 logger.info('deleting resource {} ({})'.format(lr['name'], lr['testbed']))
                 r.db(s.db['name']).table('resources').get(lr['id']).delete().run(dbconnection)
             else:
-                logger.info("resource {} missing not deleted".format(lr['name']))
+                logger.info("resource {} missing not deleted, but available = false".format(lr['name']))
+                r.db(s.db['name']).table('resources').get(lr['id']).update({"available":"false"}).run(dbconnection)
 
     # check new resources with the remaining elements
 
