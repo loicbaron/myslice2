@@ -85,6 +85,29 @@ class User(myslicelibUser):
 
         return False
 
+    def isAdmin(self):
+        auth_pattern = re.compile(r"(urn:publicid:IDN\+)(?P<hrn>[\:]*[a-zA-Z]*)(\+authority\+sa)")
+        flag = False
+        try:
+            # XXX not sure if it is a clean way to decide a admin
+            pi_auth = self.get('pi_authorities')
+            for auth in pi_auth:
+                m = auth_pattern.match(auth)
+                # User has only Projects and No Authorities under pi_authorities
+                if m is None:
+                    logger.debug("%s does not match regex" % auth)
+                    flag = False
+                else:
+                    hrn_length = len(m.group('hrn').split(':'))
+                    if hrn_length == 1:
+                        return True
+            return flag
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            self.serverError("unable to identify user permission")
+            return False
+
     # This functions keeps the locally stored private/public keys of the user
     def merge(self, dbconnection):
         db_user = db.get(dbconnection, table='users', id=self.id)
