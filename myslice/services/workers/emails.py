@@ -19,7 +19,7 @@ from myslice.email.message import Message, Mailer, build_subject_and_template
 
 import myslice.lib.log as logging
 
-logger = logging.getLogger("emails")
+logger = logging.getLogger()
 
 def confirmEmails(qConfirmEmails):
     """
@@ -27,7 +27,6 @@ def confirmEmails(qConfirmEmails):
     """
     # db connection is shared between threads
     dbconnection = connect()
-
     while True:
         try:
             event = Event(qConfirmEmails.get())
@@ -74,7 +73,6 @@ def confirmEmails(qConfirmEmails):
                 finally:
                     dispatch(dbconnection, event)
 
-
 def emails_run(qEmails):
     """
     Process Requests and send Emails accordingly
@@ -82,7 +80,6 @@ def emails_run(qEmails):
 
     # db connection is shared between threads
     dbconnection = connect()
-
     while True:
         try:
             event = Event(qEmails.get())
@@ -93,82 +90,80 @@ def emails_run(qEmails):
                 # We try to send the email only once
                 event.notify = False
 
-                try:
-                    # Recipients
-                    # TODO: Send specific emails
-                    # Status did NOT changed
-                    # Comments about an event with a message
-                    if event.status == event.previous_status:
-                        logger.warning("TODO: send specific emails with messages")
-                    recipients = set()
+                # Recipients
+                # TODO: Send specific emails
+                # Status did NOT changed
+                # Comments about an event with a message
+                if event.status == event.previous_status:
+                    logger.warning("TODO: send specific emails with messages")
+                recipients = set()
 
-                    url = s.web['url']
-                    if s.web['port'] and s.web['port'] != 80:
-                        url = url +':'+ s.web['port']
-                    
-                    buttonLabel = "View details"
-                    if event.object.type == ObjectType.PASSWORD:
-                        recipients.add(User(db.get(dbconnection, table='users', id=event.object.id)))
-                        url = url+'/password/'+event.data['hashing']
-                        subject, template = build_subject_and_template('password', event)
-                        buttonLabel = "Change password"
-                    else:
-                        if event.isPending():
+                url = s.web['url']
+                if s.web['port'] and s.web['port'] != 80:
+                    url = url +':'+ s.web['port']
 
-                            # Find the authority of the event object
-                            # Then according the authority, put the pi_emails in pis_email
-                            try:
-                                authority_id = event.data['authority']
-                            except KeyError:
-                                msg = 'Authority id not specified ({})'.format(event.id)
-                                logger.error(msg)
-                                event.logWarning('Authority not specified in event {}, email not sent'.format(event.id))
+                buttonLabel = "View details"
+                if event.object.type == ObjectType.PASSWORD:
+                    recipients.add(User(db.get(dbconnection, table='users', id=event.object.id)))
+                    url = url+'/password/'+event.data['hashing']
+                    subject, template = build_subject_and_template('password', event)
+                    buttonLabel = "Change password"
+                else:
+                    if event.isPending():
+                        # Find the authority of the event object
+                        # Then according the authority, put the pi_emails in pis_email
+                        try:
+                            authority_id = event.data['authority']
+                        except KeyError:
+                            msg = 'Authority id not specified ({})'.format(event.id)
+                            logger.error(msg)
+                            event.logWarning('Authority not specified in event {}, email not sent'.format(event.id))
 
-                            authority = Authority(db.get(dbconnection, table='authorities', id=authority_id))
-                            if not authority:
-                                # get admin users 
-                                cursor = yield r.table('users') \
-                                .filter(lambda u: u["pi_authorities"].contains(authority_id)) \
-                                .run(self.dbconnection)
-                                while (yield cursor.fetch_next()):
-                                    item = yield cursor.next()
-                                    recipients.append(item)
-                            else:
-                                for pi_id in authority.pi_users:
-                                    pi = User(db.get(dbconnection, table='users', id=pi_id))
-                                    recipients.add(pi)
-
-                            if not recipients:
-                                msg = 'Emails cannot be sent because no one is the PI of {}'.format(event.object.id)
-                                logger.error(msg)
-                                event.logWarning('No recipients could be found for event {}, email not sent'.format(event.id))
+                        authority = Authority(db.get(dbconnection, table='authorities', id=authority_id))
+                        if not authority:
+                            # get admin users
+                            users = db.get(dbconnection, table='users')
+                            for u in users:
+                                user = User(u)
+                                if user.isAdmin():
+                                    recipients.append(user)
                         else:
-                            # USER REQUEST in body
-                            if event.object.type == ObjectType.USER:
-                                recipients.add(User(event.data))
-                            elif event.object.type == ObjectType.AUTHORITY:
-                                # get admin users 
-                                cursor = yield r.table('users') \
-                                .filter(lambda u: u["pi_authorities"].contains(authority_id)) \
-                                .run(self.dbconnection)
-                                while (yield cursor.fetch_next()):
-                                    item = yield cursor.next()
-                                    recipients.append(item)
-                            # SLICE/ PROJECT REQUEST
-                            else:
-                                recipients.add(User(db.get(dbconnection, table='users', id=event.user)))
+                            for pi_id in authority.pi_users:
+                                pi = User(db.get(dbconnection, table='users', id=pi_id))
+                                recipients.add(pi)
 
-                        if event.isPending():
-                            subject, template = build_subject_and_template('request', event)
-                            buttonLabel = "Approve / Deny"
-                            url = url+'/activity'
+                        if not recipients:
+                            msg = 'Emails cannot be sent because no one is the PI of {}'.format(event.object.id)
+                            logger.error(msg)
+                            event.logWarning('No recipients could be found for event {}, email not sent'.format(event.id))
+                    else:
+                        # USER REQUEST in body
+                        if event.object.type == ObjectType.USER:
+                            recipients.add(User(event.data))
+                        elif event.object.type == ObjectType.AUTHORITY:
+                            # get admin users
+                            users = db.get(dbconnection, table='users')
+                            for u in users:
+                                user = User(u)
+                                if user.isAdmin():
+                                    recipients.append(user)
 
-                        elif event.isSuccess():
-                            subject, template = build_subject_and_template('approve', event)
+                        # SLICE/ PROJECT REQUEST
+                        else:
+                            recipients.add(User(db.get(dbconnection, table='users', id=event.user)))
 
-                        elif event.isDenied():
-                            subject, template = build_subject_and_template('deny', event)
+                    if event.isPending():
+                        subject, template = build_subject_and_template('request', event)
+                        buttonLabel = "Approve / Deny"
+                        url = url+'/activity'
 
+                    elif event.isSuccess():
+                        subject, template = build_subject_and_template('approve', event)
+
+                    elif event.isDenied():
+                        subject, template = build_subject_and_template('deny', event)
+
+                try:
                     sendEmail(event, recipients, subject, template, url, buttonLabel)
                 except Exception as e:
                     import traceback
