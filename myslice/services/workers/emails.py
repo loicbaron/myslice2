@@ -37,6 +37,7 @@ def confirmEmails(qConfirmEmails):
             if event.notify:
                 # We try to send the email only once
                 event.notify = False
+                dispatch(dbconnection, event)
                 try:
                     # Recipients
                     # Status did NOT changed
@@ -89,6 +90,7 @@ def emails_run(qEmails):
             if event.notify:
                 # We try to send the email only once
                 event.notify = False
+                dispatch(dbconnection, event)
 
                 # Recipients
                 # TODO: Send specific emails
