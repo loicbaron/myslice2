@@ -63,6 +63,9 @@ def run():
     ##
     # Watch for changes on the activity table
     feed = r.db('myslice').table('activity').changes().run(dbconnection)
+        # .filter(lambda change: change['new_val']['status'] == status) \
+        # .filter(lambda change: change['new_val']['status'] == status) \
+
     #feed = changes(dbconnection, table='activity', status=["WAITING", "APPROVED"])
 
     ##
@@ -87,8 +90,10 @@ def run():
 
     for activity in feed:
         try:
-            if activity['new_val']['status'] in ["WAITING","APPROVED"]:
-                event = Event(activity['new_val'])
+            event = Event(activity['new_val'])
+
+            if event.isReady():
+
                 if event.object.type == ObjectType.USER:
                     logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
                     qUserEvents.put(event)
@@ -96,6 +101,7 @@ def run():
                 if event.object.type == ObjectType.PASSWORD:
                     logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
                     qPasswordEvents.put(event)
+
         except Exception as e:
             import traceback
             traceback.print_exc()
