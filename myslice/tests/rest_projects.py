@@ -108,7 +108,6 @@ class TestProjects(LocalTestCase):
 
     def test_4_putProject(self):
         id = self.__class__.created_project
-
         if not id:
             self.assertEqual(id, "Project was not created in previous test, we cannot continue this test")
         rGet = requests.get('http://'+server+':8111/api/v1/projects/'+id, cookies=self.cookies)
@@ -138,11 +137,13 @@ class TestProjects(LocalTestCase):
         projectUpdated = res['result'][0]
         self.assertEqual(rUpdated.status_code, 200)
 
+
         self.assertNotEqual(project, projectUpdated)
         self.assertCountEqual(projectUpdated['pi_users'], payload['pi_users'])
 
     def test_5_deleteProject(self):
         id = self.__class__.created_project
+
         if not id:
             self.assertEqual(id, "Project was not created in previous test, we cannot continue this test")
         rDelete = requests.delete('http://'+server+':8111/api/v1/projects/'+id, cookies=self.cookies)

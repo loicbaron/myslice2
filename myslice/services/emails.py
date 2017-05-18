@@ -32,7 +32,7 @@ def run():
     qEmails = Queue()
 
     threads = []
-    for y in range(1):
+    for y in range(10):
         t = threading.Thread(target=manageEmails, args=(qEmails,))
         t.daemon = True
         threads.append(t)

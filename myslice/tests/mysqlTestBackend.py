@@ -1,3 +1,5 @@
+#!/usr/bin/env python3.5
+
 import pymysql
 from datetime import datetime
 from time import time

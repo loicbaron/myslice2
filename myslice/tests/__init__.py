@@ -78,8 +78,10 @@ class LocalTestCase(unittest.TestCase):
         data = json.loads(r.text)
         if len(data['result']) > 0:
             return data['result'][0]['id']
+
         else:
             return self.createSlice()['id']
+
 
     def createSlice(self):
         name = 'autotest_' + str(randint(0,10000))
@@ -114,9 +116,9 @@ class LocalTestCase(unittest.TestCase):
         if initial_status:
             final_status = list(set(final_status) - {initial_status})
 
-        # If processing the event takes more than 5 min = test failed
-        while(i < 60 and status not in final_status):
-            time.sleep(5)
+        # If processing the event takes more than 10 min = test failed
+        while(i < 80 and status not in final_status):
+            time.sleep(10)
             i = i + 1
             rActivity = requests.get('http://'+server+':8111/api/v1/activity/'+event, cookies=self.cookies)
             if rActivity.status_code == 200:

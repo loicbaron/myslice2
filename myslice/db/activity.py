@@ -9,6 +9,8 @@
 import logging
 from enum import Enum
 from myslice.lib.util import format_date
+import sys
+import traceback
 
 logger = logging.getLogger("myslice.activity")
 
@@ -150,7 +152,8 @@ class Object(Dict):
         try:
             self.id = obj['id']
         except KeyError:
-            raise Exception('Object Id not specified')
+            raise Exception('Object Id not specified', sys.exc_info())
+
     
     ##
     # ID of the object type

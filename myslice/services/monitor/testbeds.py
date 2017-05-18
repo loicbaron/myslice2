@@ -4,15 +4,14 @@ import myslice.db as db
 from myslicelib.model.testbed import Testbed
 from myslicelib.query import q
 
+logger = logging.getLogger('myslice.monitor.testbeds')
+
 def run():
     """
     Monitor Testbeds status (AM)
 
     :return:
     """
-
-    logger = logging.getLogger('myslice.monitor.testbeds')
-
     while True:
         logger.info("syncing")
         syncTestbeds()

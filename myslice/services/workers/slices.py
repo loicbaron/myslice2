@@ -67,7 +67,10 @@ def events_run(qSliceEvents):
 
                     if event.creatingObject(): 
                         sli = Slice(event.data)
+
+                        # XXX To be checked
                         sli.id = event.object.id
+
                         # Add all Project PIs to the Slice
                         project = db.get(dbconnection, table='projects', id=sli.project)
                         for us in project['pi_users']:
@@ -230,7 +233,7 @@ def remove_resources(data, slice):
         if resource_id not in data_resources:
             # remove resource from slice
             res = Resource(db.get(dbconnection, table='resources', id=resource_id))
-            slice.removeUser(res)
+            slice.removeResource(res)
     return slice
 
 def sync():

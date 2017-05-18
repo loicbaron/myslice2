@@ -211,7 +211,7 @@ def sendEmail(event, recipients, subject, template, url, buttonLabel):
     # use premailer module to get CSS inline
     mail_body_inline = transform(mail_body.decode())
 
-    m = Message(mail_from=['OneLab Support', s.email['sender']],
+    m = Message(mail_from=[s.email['name']+' Support', s.email['sender']],
                 mail_to = mail_to,
                 subject = subject,
                 html_content = mail_body_inline

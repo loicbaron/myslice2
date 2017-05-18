@@ -10,6 +10,12 @@ from tornado import gen
 from myslice.tests import LocalTestCase
 from myslice.tests.config import s, server
 
+from myslicelib.model.authority import Authority
+from myslicelib.model.project import Project
+from myslicelib.model.user import User
+from myslicelib.model.slice import Slice
+from myslicelib.query import q
+
 timeout = 10
 cookies = s['cookies']
 s['automate_test'] = False
@@ -35,6 +41,13 @@ def clean(cookies, objectType):
                 else:
                     print("could not delete %s %s" % (objectType,o['hrn']))
 
+
+def cleanRegistry(objects):
+    for o in objects:
+        if "autotest" in o.id:
+            print("Deleting %s in Registry" % o.id)
+            o.delete()
+
 @gen.coroutine
 def main(argv):
     try:
@@ -43,23 +56,29 @@ def main(argv):
             print("clean.py all|authorities|projects|users|slices")
             sys.exit(2)
 
-
-
         if argv[0].startswith('auth') or argv[0] == 'all':
             print("clean authorities...")
             clean(cookies, 'authorities')
+            objects = q(Authority).get()
+            cleanRegistry(objects)
 
         if argv[0].startswith('p') or argv[0] == 'all':
             print("clean projects...")
             clean(cookies, 'projects')
+            objects = q(Project).get()
+            cleanRegistry(objects)
 
         if argv[0].startswith('u') or argv[0] == 'all':
             print("clean users...")
             clean(cookies, 'users')
+            objects = q(User).get()
+            cleanRegistry(objects)
 
         if argv[0].startswith('s') or argv[0] == 'all':
             print("clean slices...")
             clean(cookies, 'slices')
+            objects = q(Slice).get()
+            cleanRegistry(objects)
 
     except Exception as e:
         import traceback

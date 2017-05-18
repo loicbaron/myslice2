@@ -122,6 +122,7 @@ class TestLeases(LocalTestCase):
         ts_end = int(time.time()) + 3600
         # Get resources available in the coming 1h
         testbedsLeases = self.__class__.testbedsLeases
+        pprint(testbedsLeases)
         self.assertGreater(len(testbedsLeases), 0)
         # 1 testbed per lease
         # -----------------------------------
@@ -148,6 +149,7 @@ class TestLeases(LocalTestCase):
         #   "end_time": 1475718194,
         #}
         # Create a Lease for 5 minutes starting now
+        pprint(self.getSliceId())
         payload = {
            "slice_id": self.getSliceId(), 
            "resources": selectedResources, 

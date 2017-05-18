@@ -149,16 +149,15 @@ def syncResources(resources):
     missingTestbeds = list(set(onlineTestbeds) - set(testbedsInResources))
     logger.info("missing testbeds : {}".format(missingTestbeds))
 
+    # Insert / Update resources
+    for n in resources:
+        # new
+        logger.info('insert/update resource {} ({})'.format(n.name, n.testbed))
+        r.db(s.db['name']).table('resources').insert(n.dict(), conflict='update').run(dbconnection)
+
     # sync
     for lr in localResources:
-        rs = resources.get(lr['id'])
-        if rs is not None:
-            # update
-            logger.info('updating resource {} ({})'.format(rs.name, rs.testbed))
-            r.db(s.db['name']).table('resources').update(rs.dict()).run(dbconnection)
-            # remove the element from the working set
-            resources.remove(rs)
-        else:
+        if not resources.get(lr['id']):
             # delete
             if lr['testbed'] not in missingTestbeds:
                 logger.info('deleting resource {} ({})'.format(lr['name'], lr['testbed']))
@@ -167,10 +166,6 @@ def syncResources(resources):
                 logger.info("resource {} missing not deleted".format(lr['name']))
 
     # check new resources with the remaining elements
-    for n in resources:
-        # new
-        logger.info('new resource {} ({})'.format(n.name, n.testbed))
-        r.db(s.db['name']).table('resources').insert(n.dict(), conflict='update').run(dbconnection)
 
 def getResources():
     """
@@ -214,7 +209,8 @@ def syncLeases(leases):
         if not keep:
             # Synchronize the Slice if we have it locally
             if 'slice_id' in ll and r.db(s.db['name']).table('slices').get(ll['slice_id']).run(dbconnection):
-                slices.append(ll['slice_id'])
+                if ll['slice_id'] not in slices:
+                    slices.append(ll['slice_id'])
 
     for l in leases:
         if not isinstance(l, dict):
@@ -223,7 +219,8 @@ def syncLeases(leases):
         r.db(s.db['name']).table('leases').insert(l, conflict='update').run(dbconnection)
         # Synchronize the Slice if we have it locally
         if 'slice_id' in l and r.db(s.db['name']).table('slices').get(l['slice_id']).run(dbconnection):
-            slices.append(l['slice_id'])
+            if l['slice_id'] not in slices:
+                slices.append(l['slice_id'])
 
     return slices
 

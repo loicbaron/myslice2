@@ -35,8 +35,9 @@ class Live {
         this.ws = new SockJS(this.url + '/api/v1/live');
 
         this.ws.onmessage = function(e) {
-
+            console.log("message");
             let data = JSON.parse(e.data);
+            console.log(data);
 
             if (data.hasOwnProperty('result')) {
                 // this is a result for a previous command
@@ -51,6 +52,7 @@ class Live {
         this.ws.onopen = function() {
             console.log('opening ws...');
             this.authenticate(token);
+            console.log("authenticated ws");
         }.bind(this);
 
         this.ws.onerror = function(error) {
@@ -84,8 +86,11 @@ class Live {
         ));
     }
 
-    watch(object) {
+    watch(object, filter=null) {
         this.command('watch', object);
+        if(filter){
+            this.command('filter', filter);
+        }
     }
 
     unwatch(object) {
@@ -96,14 +101,19 @@ class Live {
         this.command('count', object);
     }
 
+    filter(params) {
+        this.command('filter', params);
+    }
     /*
-        Register a callback that will receive messageg
+        Register a callback that will receive messages
         as they arrive from the websocket
         Will send a request for watching changes
      */
-    register(watchObject, callback) {
+    register(watchObject, filter=null, callback) {
+        console.log("register " + watchObject);
         this.watchers.push({
             object: watchObject,
+            filter: filter,
             callback: callback
         });
     }
@@ -113,7 +123,7 @@ class Live {
      */
     init() {
         this.watchers.map(function(w) {
-            this.watch(w.object);
+            this.watch(w.object, w.filter);
         }.bind(this));
     }
 

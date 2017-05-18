@@ -9,6 +9,9 @@ class Object(Enum):
     users = "users"
     resources = "resources"
     activities = "activity"
+    # F-Interop
+    sessions = "sessions"
+    messages = "messages"
 
     def __str__(self):
         return str(self.value)
@@ -18,6 +21,7 @@ class Command(Enum):
     watch = "watch"
     unwatch = "unwatch"
     count = "count"
+    filter = "filter"
 
 class Event(Enum):
     created = "created"
@@ -34,7 +38,13 @@ class Message(dict):
         except KeyError:
             raise Exception("Command not specified")
 
-        if not self.command == Command.authenticate:
+        if self.command == Command.filter:
+            try:
+                self.filter = self._payload['object']
+            except KeyError:
+                raise Exception("Filter not specified")
+
+        elif not self.command == Command.authenticate:
             try:
                 self.object = self._payload['object']
             except KeyError:
@@ -88,6 +98,15 @@ class Message(dict):
         else:
             raise Exception("Object not valid")
 
+    ##
+    # Filter
+    @property
+    def filter(self):
+        return self['filter']
+
+    @filter.setter
+    def filter(self, value):
+        self['filter'] = value
 
 class Request(Message):
 
@@ -122,6 +141,8 @@ class Request(Message):
     def isCounting(self):
         return self.command == Command.count
 
+    def isFiltering(self):
+        return self.command == Command.filter
 
 class Response(Message):
 

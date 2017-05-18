@@ -65,8 +65,10 @@ class WebsocketsHandler(SockJSConnection):
     clients = set()
     context = zmq.Context()
     watch = ['projects', 'activity', 'requests', 'sessions', 'messages']
+    filter = None
 
     def on_open(self, request):
+        logger.debug(request)
         self.authenticated = False
         self.clients.add(self)
 
@@ -77,10 +79,11 @@ class WebsocketsHandler(SockJSConnection):
         self.send(payload.json())
 
     def api_error(self, payload):
-        self.send(payload.json())
+        logger.debug("api_error: %s" % payload)
+        self.send(payload)
 
     def api_fatal(self, payload):
-        self.api_error(payload.json())
+        self.api_error(payload)
         #self.close()
 
     def on_message(self, message):
@@ -96,6 +99,8 @@ class WebsocketsHandler(SockJSConnection):
             ##
             # API protocol failure (bad command)
             # TODO: Create specific exceptions
+            import traceback
+            traceback.print_exc()
             self.api_fatal(json.dumps({ "result": { "code": -1, "message": "API error: {}".format(str(e)) }} ))
         else:
             if request.isAuthenticating():
@@ -127,6 +132,9 @@ class WebsocketsHandler(SockJSConnection):
                     pass
                 elif request.isCounting():
                     pass
+                elif request.isFiltering():
+                    logger.info("user {} is filtering {}".format(self.authenticated_user['id'], request.filter))
+                    self.filter = request.filter
 
             else:
                 ##
@@ -154,14 +162,28 @@ class WebsocketsHandler(SockJSConnection):
         :param message:
         :return:
         '''
+        logger.debug("got message")
         logger.info(zmqmessage)
         object = zmqmessage[0].decode('utf-8')
         change = json.loads(zmqmessage[1].decode('utf-8'))
 
-        stream = Stream(
-            command="watch",
-            object=object,
-            data=change,
-            event="updated"
-        )
-        self.send(stream.json().encode('utf8'))
+        # XXX WIP FILTER 
+        if self.filter:
+            flag = False
+            for key, value in self.filter.items():
+                if key in change and change[key] == value:
+                    flag = True
+                    break
+                else:
+                    flag = False
+        else:
+            flag = True
+
+        if flag:
+            stream = Stream(
+                command="watch",
+                object=object,
+                data=change,
+                event="updated"
+            )
+            self.send(stream.json().encode('utf8'))

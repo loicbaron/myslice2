@@ -5,15 +5,14 @@ from myslicelib.query import q
 
 from myslice import db as db
 
+logger = logging.getLogger('myslice.monitor.resources')
+
 def run():
     """
     Monitor Resources status (Availability)
 
     :return:
     """
-
-    logger = logging.getLogger('myslice.monitor.resources')
-
     while True:
         logger.info("syncing")
         syncResources()

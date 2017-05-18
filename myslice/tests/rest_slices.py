@@ -64,12 +64,12 @@ class TestSlices(LocalTestCase):
         self.assertEqual(r.status_code, 200)
 
         self.__class__.project = project
+        print("project = %s" % self.__class__.project)
 
     def test_2_postWrongSlice(self):
         payload = {}
         r = requests.post('http://'+server+':8111/api/v1/slices', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
         self.assertEqual(r.status_code, 400)
-
     def test_2_postSlice(self):
         tock = datetime.now()
         name = 'autotest_' + str(randint(0,10000))
@@ -85,8 +85,7 @@ class TestSlices(LocalTestCase):
             self.assertEqual(res['status'], "SUCCESS")
             self.__class__.created_slice = res['data']['id']
         pprint(self.__class__.created_slice)
-        print(datetime.now()-tock)
-
+        #print(datetime.now()-tock)
     def test_3_getSliceId(self):
         id = self.__class__.created_slice
         if not id:
@@ -142,43 +141,44 @@ class TestSlices(LocalTestCase):
         self.__class__.testbedsLeases = testbedsLeases
         self.__class__.testbeds = testbeds
 
-    def test_6_putSliceResources(self):
-        id = self.__class__.created_slice
-        if not id:
-            self.assertEqual(id, "expected created_slice but got none")
-        rGet = requests.get('http://'+server+':8111/api/v1/slices/'+id, cookies=self.cookies)
-        self.assertEqual(rGet.status_code, 200)
-        slice = json.loads(rGet.text)['result'][0]
+    #def test_6_putSliceResources(self):
+    #    id = self.__class__.created_slice
+    #    if not id:
+    #        self.assertEqual(id, "expected created_slice but got none")
+    #    rGet = requests.get('http://'+server+':8111/api/v1/slices/'+id, cookies=self.cookies)
+    #    self.assertEqual(rGet.status_code, 200)
+    #    slice = json.loads(rGet.text)['result'][0]
 
-        testbeds = self.__class__.testbeds
-        if not testbeds:
-            self.assertEqual(testbeds, "List of testbeds was not set, can't continue this test")
-        r = requests.get('http://'+server+':8111/api/v1/testbeds/'+testbeds[0]+'/resources', cookies=self.cookies)
-        self.assertEqual(r.status_code, 200)
-        resources = json.loads(r.text)['result']
-        self.assertGreater(len(resources),0)
+    #    testbeds = self.__class__.testbeds
+    #    if not testbeds:
+    #        self.assertEqual(testbeds, "List of testbeds was not set, can't continue this test")
+    #    r = requests.get('http://'+server+':8111/api/v1/testbeds/'+testbeds[0]+'/resources', cookies=self.cookies)
+    #    self.assertEqual(r.status_code, 200)
+    #    resources = json.loads(r.text)['result']
+    #    self.assertGreater(len(resources),0)
 
-        slice['resources'].append(resources[0]['id'])
-        slice['resources'].append(resources[1]['id'])
+    #    slice['resources'].append(resources[0]['id'])
+    #    slice['resources'].append(resources[1]['id'])
 
-        rPut = requests.put('http://'+server+':8111/api/v1/slices/'+id, headers={str('Content-Type'):'application/json'}, data=json.dumps(slice), cookies=self.cookies, timeout=self.timeout)
-        pprint(rPut.text)
-        self.assertEqual(rPut.status_code, 200)
-        result = json.loads(rPut.text)
-        self.assertEqual(result['result'], "success")
-        for event in result['events']:
-            res = self.checkEvent(event)
-            self.assertEqual(res['status'], "SUCCESS")
+    #    rPut = requests.put('http://'+server+':8111/api/v1/slices/'+id, headers={str('Content-Type'):'application/json'}, data=json.dumps(slice), cookies=self.cookies, timeout=self.timeout)
+    #    pprint(rPut.text)
+    #    self.assertEqual(rPut.status_code, 200)
+    #    result = json.loads(rPut.text)
+    #    self.assertEqual(result['result'], "success")
+    #    for event in result['events']:
+    #        res = self.checkEvent(event)
+    #        self.assertEqual(res['status'], "SUCCESS")
 
-        rUpdated = requests.get('http://'+server+':8111/api/v1/slices/'+id, cookies=self.cookies)
-        self.assertEqual(rUpdated.status_code, 200)
-        sliceUpdated = json.loads(rUpdated.text)['result'][0]
+    #    rUpdated = requests.get('http://'+server+':8111/api/v1/slices/'+id, cookies=self.cookies)
+    #    self.assertEqual(rUpdated.status_code, 200)
+    #    sliceUpdated = json.loads(rUpdated.text)['result'][0]
 
-        self.assertNotEqual(slice, sliceUpdated)
-        self.assertEqual([x['id'] for x in sliceUpdated['resources']], slice['resources'])
+    #    self.assertNotEqual(slice, sliceUpdated)
+    #    self.assertEqual([x['id'] for x in sliceUpdated['resources']], slice['resources'])
 
     def test_7_deleteSlice(self):
         id = self.__class__.created_slice
+        pprint(id)
         if not id:
             self.assertEqual(id, "expected created_slice but got none")
         rDelete = requests.delete('http://'+server+':8111/api/v1/slices/'+id, cookies=self.cookies)
@@ -194,7 +194,9 @@ class TestSlices(LocalTestCase):
         rGet = requests.get('http://'+server+':8111/api/v1/slices/'+id, cookies=self.cookies)
         res = json.loads(rGet.text)
         slice = res['result']
+        pprint(slice)
         self.assertEqual(rGet.status_code, 200)
+
 
 if __name__ == '__main__':
     unittest.main()
