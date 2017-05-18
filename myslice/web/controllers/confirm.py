@@ -16,6 +16,7 @@ class Index(BaseController):
                 raise ValueError("event id is not valid")
             event = Event(ev)
             event.setPending()
+            event.logInfo("Event is pending, a manager will validate your request")
             msg = "Your email is confirmed. "
             msg += "A request has been sent to a manager. "
             msg += "You will be informed as soon as your account will be validated."
