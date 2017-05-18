@@ -38,6 +38,7 @@ class ZMQPubSub(object):
         return self
 
     def subscribe(self, table=''):
+        logger.info("subscribing to: {}".format(table))
         self.socket.setsockopt_string(zmq.SUBSCRIBE, table)
         return self
 
@@ -123,7 +124,8 @@ class WebsocketsHandler(SockJSConnection):
                 # User is already authenticated
                 if request.isWatching():
                     logger.info("user {} is watching {}".format(self.authenticated_user['id'], request.object))
-                    self.pubsub = ZMQPubSub(self.context, self.on_change).connect().subscribe(u"".format(request.object))
+                    logger.info(type(request.object))
+                    self.pubsub = ZMQPubSub(self.context, self.on_change).connect().subscribe(request.object.__str__())
                     self.api_message(
                         Response(request, "watching {}".format(request.object))
                     )
@@ -166,6 +168,11 @@ class WebsocketsHandler(SockJSConnection):
         logger.info(zmqmessage)
         object = zmqmessage[0].decode('utf-8')
         change = json.loads(zmqmessage[1].decode('utf-8'))
+
+        # dirty work around to prevent processing empty
+        # objects (during delete)
+        if not change:
+            return
 
         # XXX WIP FILTER 
         if self.filter:
