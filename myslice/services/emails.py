@@ -29,9 +29,9 @@ def run():
     signal.signal(signal.SIGTERM, receive_signal)
     signal.signal(signal.SIGHUP, receive_signal)
 
-    qEmails = Queue()
-
     threads = []
+
+    qEmails = Queue()
     for y in range(10):
         t = threading.Thread(target=manageEmails, args=(qEmails,))
         t.daemon = True
@@ -39,8 +39,6 @@ def run():
         t.start()
 
     qConfirmEmails = Queue()
-
-    threads = []
     for y in range(1):
         t = threading.Thread(target=confirmEmails, args=(qConfirmEmails,))
         t.daemon = True
