@@ -1,4 +1,5 @@
 import logging
+import re
 
 from myslicelib.model.user import User as myslicelibUser
 from xmlrpc.client import Fault as SFAError
@@ -90,7 +91,7 @@ class User(myslicelibUser):
         flag = False
         try:
             # XXX not sure if it is a clean way to decide a admin
-            pi_auth = self.get('pi_authorities')
+            pi_auth = self.pi_authorities
             for auth in pi_auth:
                 m = auth_pattern.match(auth)
                 # User has only Projects and No Authorities under pi_authorities
