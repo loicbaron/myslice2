@@ -19,7 +19,7 @@ from myslice.email.message import Message, Mailer, build_subject_and_template
 
 import myslice.lib.log as logging
 
-logger = logging.getLogger()
+logger = logging.getLogger("emails")
 
 def confirmEmails(qConfirmEmails):
     """
@@ -60,6 +60,7 @@ def confirmEmails(qConfirmEmails):
                         for user in event.data['pi_users']:
                             if isinstance(user, dict):
                                 recipients.add(User({'email':user['email'], 'first_name':user['first_name'], 'last_name':user['last_name']}))
+
                     url = url+'/confirm/'+event.id
                     subject, template = build_subject_and_template('confirm', event)
                     buttonLabel = "Confirm Email"
@@ -128,7 +129,8 @@ def emails_run(qEmails):
                             for u in users:
                                 user = User(u)
                                 if user.isAdmin():
-                                    recipients.append(user)
+                                    logger.debug("user %s is admin" % user.id)
+                                    recipients.add(user)
                         else:
                             for pi_id in authority.pi_users:
                                 pi = User(db.get(dbconnection, table='users', id=pi_id))
@@ -139,20 +141,20 @@ def emails_run(qEmails):
                             logger.error(msg)
                             event.logWarning('No recipients could be found for event {}, email not sent'.format(event.id))
                     else:
-                        # USER REQUEST in body
-                        if event.object.type == ObjectType.USER:
-                            recipients.add(User(event.data))
-                        elif event.object.type == ObjectType.AUTHORITY:
-                            # get admin users
-                            users = db.get(dbconnection, table='users')
-                            for u in users:
-                                user = User(u)
-                                if user.isAdmin():
-                                    recipients.append(user)
-
-                        # SLICE/ PROJECT REQUEST
-                        else:
+                        if event.user:
                             recipients.add(User(db.get(dbconnection, table='users', id=event.user)))
+                        else:
+                            # Look for the user email in the Event
+                            if event.object.type == ObjectType.USER:
+                                recipients.add(User({'email':event.data['email'], 'first_name':event.data['first_name'], 'last_name':event.data['last_name']}))
+                            elif event.object.type == ObjectType.AUTHORITY:
+                                for user in event.data['users']:
+                                    if isinstance(user, dict):
+                                        recipients.add(User({'email':user['email'], 'first_name':user['first_name'], 'last_name':user['last_name']}))
+                            else:
+                                for user in event.data['pi_users']:
+                                    if isinstance(user, dict):
+                                        recipients.add(User({'email':user['email'], 'first_name':user['first_name'], 'last_name':user['last_name']}))
 
                     if event.isPending():
                         subject, template = build_subject_and_template('request', event)
