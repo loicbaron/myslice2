@@ -1,13 +1,13 @@
 import json
-import re
 import logging
+import re
 import tornado_cors as cors
 from tornado import web
-import re
 
 import rethinkdb as r
 
 from myslice.db.activity import Event, EventAction, ObjectType, DataType
+from myslice.db.user import User
 from myslice.lib.util import myJSONEncoder
 
 logger = logging.getLogger(__name__)
