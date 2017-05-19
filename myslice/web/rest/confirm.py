@@ -24,6 +24,7 @@ class ConfirmHandler(Api):
                 raise ValueError("event id is not valid")
             event = Event(ev)
             event.setPending()
+            dispatch(self.application.dbconnection, event)
             event.logInfo("Event is pending, a manager will validate your request")
             self.finish(json.dumps({"result": ["your email is confirmed"]}, cls=myJSONEncoder))
         except Exception as e:
