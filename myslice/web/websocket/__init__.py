@@ -66,7 +66,7 @@ class WebsocketsHandler(SockJSConnection):
     clients = set()
     context = zmq.Context()
     watch = ['projects', 'activity', 'requests', 'sessions', 'messages']
-    filter = None
+    filter = {}
 
     def on_open(self, request):
         logger.debug(request)
@@ -125,6 +125,9 @@ class WebsocketsHandler(SockJSConnection):
                 if request.isWatching():
                     logger.info("user {} is watching {}".format(self.authenticated_user['id'], request.object))
                     logger.info(type(request.object))
+                    if request.object == "activity":
+                        f = {"user":self.authenticated_user['id']}
+                        self.filter = {**self.filter, **f} 
                     self.pubsub = ZMQPubSub(self.context, self.on_change).connect().subscribe(request.object.__str__())
                     self.api_message(
                         Response(request, "watching {}".format(request.object))
@@ -136,8 +139,7 @@ class WebsocketsHandler(SockJSConnection):
                     pass
                 elif request.isFiltering():
                     logger.info("user {} is filtering {}".format(self.authenticated_user['id'], request.filter))
-                    self.filter = request.filter
-
+                    self.filter = {**self.filter, **request.filter} 
             else:
                 ##
                 # User is not authenticated (error)
