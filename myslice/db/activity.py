@@ -220,6 +220,7 @@ class Event(Dict):
     
         self['messages'] = event.get('messages', [])
         self['log'] = event.get('log', [])
+        self['manager'] = event.get('manager', None)
         
         ##
         # Default status when creating the event is NEW
@@ -286,11 +287,6 @@ class Event(Dict):
             self.notify = event['notify']
         except KeyError:
             self.notify = False
-
-        try:
-            self.manager = event['manager']
-        except KeyError:
-            self.manager = None
 
     @property
     def notify(self):
@@ -438,12 +434,7 @@ class Event(Dict):
     ##
     # Manager that approve / deny the Event
     # Used to save the object using manager's credentials
-    @property
-    def manager(self):
-        return self['manager']
-
-    @manager.setter
-    def manager(self, user_id):
+    def setManager(self, user_id):
         self['manager'] = user_id
 
     ##
