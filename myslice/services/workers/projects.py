@@ -51,15 +51,18 @@ def events_run(lock, qProjectEvents):
 
             with lock:
                 try:
+                    if event.isApproved():
+                        user_id = event.manager
+                    else:
+                        user_id = event.user
+                    u = User(db.get(dbconnection, table='users', id=user_id))
+                    # Registry Only
+                    user_setup = UserSetup(u, myslicelibsetup.registry_endpoints)
+
                     event.setRunning()
                     event.logInfo("Event is running")
                     logger.debug("Event %s is running" % event.id)
                     isSuccess = False
-
-                    u = User(db.get(dbconnection, table='users', id=event.user))
-                    # Registry Only
-                    user_setup = UserSetup(u, myslicelibsetup.registry_endpoints)
-                    #user_setup = UserSetup(u, myslicelibsetup.endpoints)
 
                     if event.creatingObject() or event.updatingObject():
                         logger.info("creating or updating the object project {}".format(event.data)) 
@@ -68,7 +71,7 @@ def events_run(lock, qProjectEvents):
                         proj.id = event.object.id
 
                         # XXX CASES TO BE CHECKED
-                        if u.id not in proj.pi_users:
+                        if event.user not in proj.pi_users:
                             pi = User(db.get(dbconnection, table='users', id=event.user))
                             proj.addPi(pi)
                         isSuccess = proj.save(dbconnection, user_setup)
@@ -110,17 +113,17 @@ def events_run(lock, qProjectEvents):
                     logger.error("Problem with event {}: {}".format(event.id,e))
                     event.logError("Error in worker projects: {}".format(e))
                     event.setError()
-
-                if isSuccess:
-                    event.setSuccess()
-                    event.logInfo("Event success")
-                    logger.debug("Event %s Success" % event.id)
                 else:
-                    logger.error("Error event {}: action failed".format(event.id))
-                    event.setError()
-                    event.logError("Error in worker projects: action failed")
-                
-                db.dispatch(dbconnection, event)
+                    if isSuccess:
+                        event.setSuccess()
+                        event.logInfo("Event success")
+                        logger.debug("Event %s Success" % event.id)
+                    else:
+                        logger.error("Error event {}: action failed".format(event.id))
+                        event.setError()
+                        event.logError("Error in worker projects: action failed")
+                finally:
+                    db.dispatch(dbconnection, event)
 
 def sync(lock):
     """
