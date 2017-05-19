@@ -126,6 +126,12 @@ class RequestsHandler(Api):
         { action: <approve|deny|message>, message: <string> }
         :return:
         """
+        current_user = self.get_current_user()
+        if not current_user:
+            self.userError("not authenticated")
+            return
+
+        user = User(current_user)
 
         if id is None:
             self.userError("wrong ID missing")
@@ -160,15 +166,14 @@ class RequestsHandler(Api):
             self.serverError("malformed request")
             return
 
-        user = User(self.get_current_user())
-        
+        # TODO: if message, user that created Event can send a message 
         if not user.has_privilege(event):
             self.userError("Permission denied")
             return
 
         # Manager that approve / deny the Event
         # Used to save the object using manager's credentials
-        event.manager(user.id)
+        event.setManager(user.id)
 
         if action == 'approve':
             event.setApproved()
