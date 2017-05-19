@@ -8,6 +8,9 @@ from myslice.db.user import User
 from myslice.lib.util import myJSONEncoder
 from myslice.web.rest import Api
 from tornado import gen, escape
+import myslice.lib.log as logging
+
+logger = logging.getLogger()
 
 class RequestsHandler(Api):
 
@@ -163,6 +166,10 @@ class RequestsHandler(Api):
             self.userError("Permission denied")
             return
 
+        # Manager that approve / deny the Event
+        # Used to save the object using manager's credentials
+        event.manager(user.id)
+
         if action == 'approve':
             event.setApproved()
 
@@ -172,7 +179,7 @@ class RequestsHandler(Api):
         event.notify = True
 
         if message:
-            event.message(self.get_current_user()['id'], message)
+            event.message(user.id, message)
 
         yield dispatch(self.dbconnection, event)
 

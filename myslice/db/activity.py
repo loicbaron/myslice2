@@ -211,6 +211,7 @@ class Event(Dict):
             created: <date>
             updated: <date>
             notify: true|false (if true notify user by email)
+            manager: <String>
         }
 
     """
@@ -218,7 +219,6 @@ class Event(Dict):
     def __init__(self, event):
     
         self['messages'] = event.get('messages', [])
-
         self['log'] = event.get('log', [])
         
         ##
@@ -287,6 +287,10 @@ class Event(Dict):
         except KeyError:
             self.notify = False
 
+        try:
+            self.manager = event['manager']
+        except KeyError:
+            self.manager = None
 
     @property
     def notify(self):
@@ -430,6 +434,17 @@ class Event(Dict):
             'message': message,
             'timestamp': format_date(),
         })
+
+    ##
+    # Manager that approve / deny the Event
+    # Used to save the object using manager's credentials
+    @property
+    def manager(self):
+        return self['manager']
+
+    @manager.setter
+    def manager(self, user_id):
+        self['manager'] = user_id
 
     ##
     # Logging
