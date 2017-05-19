@@ -8,7 +8,7 @@ class Object(Enum):
     slices = "slices"
     users = "users"
     resources = "resources"
-    activities = "activity"
+    activity = "activity"
     # F-Interop
     sessions = "sessions"
     messages = "messages"
