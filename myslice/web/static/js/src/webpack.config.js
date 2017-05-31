@@ -21,7 +21,7 @@ module.exports = {
     },
     output: {
         filename: "[name].js",
-        path: "./../build/",
+        path: "/root/myslice/myslice/web/static/js/build/",
     },
     module: {
     loaders: [
