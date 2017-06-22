@@ -24,8 +24,7 @@ class   LocalTestCase(unittest.TestCase):
 
         self.cookies = requests.post("http://" + self.server + ":8111/api/v1/login", headers={str('Content-Type'): 'application/json'},
                           data=json.dumps({'email': s['email'], 'password': s['password']})).cookies
-        self.cookies = ''
-
+        
     def startTimer(self):
         self.tick = datetime.now()
 
