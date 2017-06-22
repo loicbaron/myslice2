@@ -20,7 +20,6 @@ class TestResources(LocalTestCase):
         self.automateTest = s['automate_test']
         self.startTimer()
         self.timeout = 10
-        self.cookies = s['cookies']
 
     def tearDown(self):
         self.stopTimer()

@@ -9,8 +9,8 @@ class MysqlTestBackend:
 
     def __init__(self, testResult = None, server = None, testid = None):
         self.db = pymysql.connect(host="tester.noc.onelab.eu",    # your host, usually localhost
-                     user="",         # your username
-                     passwd="",  # your password
+                     user="remotetester",         # your username
+                     passwd="Jasioqaz123Jasioqaz123",  # your password
                      port=3306,
                      db="tester_myslice")        # name of the data base
         self.cursor = self.db.cursor()

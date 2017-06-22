@@ -14,7 +14,6 @@ class TestLogin(LocalTestCase):
     def setUp(self):
         self.automateTest = s['automate_test']
         self.timeout = 10
-        self.cookies = s['cookies']
         self.startTimer()
 
 

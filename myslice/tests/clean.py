@@ -17,13 +17,12 @@ from myslicelib.model.slice import Slice
 from myslicelib.query import q
 
 timeout = 10
-cookies = s['cookies']
 s['automate_test'] = False
-test = LocalTestCase()
-test.cookies = cookies
 
 def clean(cookies, objectType, server):
     """Delete objectType if the id contains autotest"""
+    test = LocalTestCase()
+    test.cookies = cookies
     r = requests.get('http://'+server+':8111/api/v1/'+objectType, cookies=cookies)
     result = json.loads(r.text)
     objects = result['result']
@@ -50,6 +49,7 @@ def cleanRegistry(objects):
 
 @gen.coroutine
 def main(argv):
+
     try:
         if len(argv) != 2:
             print("Help: use the command with one of the parameters and server name")
@@ -57,6 +57,10 @@ def main(argv):
             print("EXAMPLE: clean.py all zeus.noc.onelab.eu")
 
             sys.exit(2)
+
+        cookies = requests.post("http://" + argv[1]  + ":8111/api/v1/login",
+                                headers={str('Content-Type'): 'application/json'},
+                                data=json.dumps({'email': s['email'], 'password': s['password']}))
 
         if argv[0].startswith('auth') or argv[0] == 'all':
             print("clean authorities...")
