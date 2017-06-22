@@ -13,11 +13,14 @@ import rethinkdb as r
 
 from myslice.tests.config import authority
 
-class LocalTestCase(unittest.TestCase):
+class   LocalTestCase(unittest.TestCase):
+
+    SERVER = None
 
     def __init__(self, *args, **kwargs):
         super(LocalTestCase, self).__init__(*args, **kwargs)
         self.automateTest = False
+        self.server = self.SERVER if self.SERVER else server
 
 
     def startTimer(self):
@@ -43,7 +46,7 @@ class LocalTestCase(unittest.TestCase):
         by default it takes first project on the list 
         if the user has no project, create one
         """
-        r = requests.get('http://' + server + ':8111/api/v1/users/projects', cookies=self.cookies)
+        r = requests.get('http://' + self.server + ':8111/api/v1/users/projects', cookies=self.cookies)
         data = json.loads(r.text)
         #from pprint import pprint
         #pprint(data)
@@ -55,7 +58,7 @@ class LocalTestCase(unittest.TestCase):
     def createProject(self):
         name = 'autotest_' + str(randint(0,10000))
         payload = {'name': name, 'description': 'this is an automated project', 'authority':authority}
-        r = requests.post('http://'+server+':8111/api/v1/projects', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
+        r = requests.post('http://'+self.server+':8111/api/v1/projects', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
         pprint(r.text)
         self.assertEqual(r.status_code, 200)
         # Event status = SUCCESS
@@ -74,7 +77,7 @@ class LocalTestCase(unittest.TestCase):
         by default it takes first slice on the list 
         if the user has no slice, create one
         """
-        r = requests.get('http://' + server + ':8111/api/v1/users/slices', cookies=self.cookies)
+        r = requests.get('http://' + self.server + ':8111/api/v1/users/slices', cookies=self.cookies)
         data = json.loads(r.text)
         if len(data['result']) > 0:
             return data['result'][0]['id']
@@ -87,7 +90,7 @@ class LocalTestCase(unittest.TestCase):
         name = 'autotest_' + str(randint(0,10000))
         project = self.getProjectId()
         payload = {'shortname': name, 'name': name, 'project': {'id': project}}
-        r = requests.post('http://'+server+':8111/api/v1/slices', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
+        r = requests.post('http://'+self.server+':8111/api/v1/slices', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
         pprint(r.text)
         self.assertEqual(r.status_code, 200)
         result = json.loads(r.text)
@@ -99,7 +102,7 @@ class LocalTestCase(unittest.TestCase):
         return None
       
     def getProfile(self):
-        r = requests.get('http://'+server+':8111/api/v1/profile', cookies=self.cookies)
+        r = requests.get('http://'+self.server+':8111/api/v1/profile', cookies=self.cookies)
         self.assertEqual(r.status_code, 200)
         result = json.loads(r.text)
         return result['result']
@@ -117,10 +120,10 @@ class LocalTestCase(unittest.TestCase):
             final_status = list(set(final_status) - {initial_status})
 
         # If processing the event takes more than 10 min = test failed
-        while(i < 80 and status not in final_status):
+        while(i < 5 and status not in final_status):
             time.sleep(10)
             i = i + 1
-            rActivity = requests.get('http://'+server+':8111/api/v1/activity/'+event, cookies=self.cookies)
+            rActivity = requests.get('http://'+self.server+':8111/api/v1/activity/'+event, cookies=self.cookies)
             if rActivity.status_code == 200:
                 resActivity = json.loads(rActivity.text)
                 if 'result' in resActivity:

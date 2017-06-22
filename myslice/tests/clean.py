@@ -8,7 +8,7 @@ from pprint import pprint
 from tornado import gen
 
 from myslice.tests import LocalTestCase
-from myslice.tests.config import s, server
+from myslice.tests.config import s
 
 from myslicelib.model.authority import Authority
 from myslicelib.model.project import Project
@@ -22,7 +22,7 @@ s['automate_test'] = False
 test = LocalTestCase()
 test.cookies = cookies
 
-def clean(cookies, objectType):
+def clean(cookies, objectType, server):
     """Delete objectType if the id contains autotest"""
     r = requests.get('http://'+server+':8111/api/v1/'+objectType, cookies=cookies)
     result = json.loads(r.text)
@@ -51,32 +51,34 @@ def cleanRegistry(objects):
 @gen.coroutine
 def main(argv):
     try:
-        if len(argv) != 1:
-            print("Help: use the command with one of the parameters")
-            print("clean.py all|authorities|projects|users|slices")
+        if len(argv) != 2:
+            print("Help: use the command with one of the parameters and server name")
+            print("clean.py all|authorities|projects|users|slices <server.fqdn.or.ip>")
+            print("EXAMPLE: clean.py all zeus.noc.onelab.eu")
+
             sys.exit(2)
 
         if argv[0].startswith('auth') or argv[0] == 'all':
             print("clean authorities...")
-            clean(cookies, 'authorities')
+            clean(cookies, 'authorities', argv[1])
             objects = q(Authority).get()
             cleanRegistry(objects)
 
         if argv[0].startswith('p') or argv[0] == 'all':
             print("clean projects...")
-            clean(cookies, 'projects')
+            clean(cookies, 'projects', argv[1])
             objects = q(Project).get()
             cleanRegistry(objects)
 
         if argv[0].startswith('u') or argv[0] == 'all':
             print("clean users...")
-            clean(cookies, 'users')
+            clean(cookies, 'users', argv[1])
             objects = q(User).get()
             cleanRegistry(objects)
 
         if argv[0].startswith('s') or argv[0] == 'all':
             print("clean slices...")
-            clean(cookies, 'slices')
+            clean(cookies, 'slices', argv[1])
             objects = q(Slice).get()
             cleanRegistry(objects)
 

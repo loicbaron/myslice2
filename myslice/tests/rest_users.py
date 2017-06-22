@@ -8,7 +8,7 @@ from pprint import pprint
 from random import randint
 
 from myslice.tests import LocalTestCase
-from myslice.tests.config import s, server, authority
+from myslice.tests.config import s, authority
 
 class TestUsers(LocalTestCase):
 
@@ -24,31 +24,31 @@ class TestUsers(LocalTestCase):
         self.stopTimer()
 
     def test_0_getNoAuth(self):
-        r = requests.get('http://'+server+':8111/api/v1/users')
+        r = requests.get('http://'+self.server+':8111/api/v1/users')
         self.assertEqual(r.status_code, 400)
 
     def test_0_postNoAuth(self):
-        r = requests.post('http://'+server+':8111/api/v1/users')
+        r = requests.post('http://'+self.server+':8111/api/v1/users')
         self.assertEqual(r.status_code, 400)
 
     def test_0_putNoAuth(self):
-        r = requests.put('http://'+server+':8111/api/v1/users')
+        r = requests.put('http://'+self.server+':8111/api/v1/users')
         self.assertEqual(r.status_code, 400)
 
 
     def test_1_getUsers(self):
-        r = requests.get('http://'+server+':8111/api/v1/users', cookies=self.cookies)
+        r = requests.get('http://'+self.server+':8111/api/v1/users', cookies=self.cookies)
         self.assertEqual(r.status_code, 200)
 
     def test_2_postWrongUser(self):
         payload = {}
-        r = requests.post('http://'+server+':8111/api/v1/users', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
+        r = requests.post('http://'+self.server+':8111/api/v1/users', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
         self.assertEqual(r.status_code, 400)
 
     def test_3_postUserNoAuth(self):
         email = "onelab_autotest_"+str(randint(0,10000))+"@yopmail.com"
         payload = { 'authority': authority, 'first_name': 'radomir', 'last_name': 'autotest', 'email': email, 'password': '12341234', 'terms': True }
-        r = requests.post('http://'+server+':8111/api/v1/users', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
+        r = requests.post('http://'+self.server+':8111/api/v1/users', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
         pprint(r.text)
         if r.status_code == 400:
             res = json.loads(r.text)
@@ -63,7 +63,7 @@ class TestUsers(LocalTestCase):
             res = self.checkEvent(event)
             self.assertEqual(res['status'], "CONFIRM")
 
-            rConfirm = requests.get('http://'+server+':8111/confirm/'+event)
+            rConfirm = requests.get('http://'+self.server+':8111/confirm/'+event)
             self.assertEqual(rConfirm.status_code, 200)
 
             res = self.checkEvent(event, initial_status="CONFIRM")
@@ -78,14 +78,14 @@ class TestUsers(LocalTestCase):
 
             deny = {'action':'deny', 'message':'automated test denied this request'}
             print(json.dumps(deny))
-            rRequest = requests.put('http://'+server+':8111/api/v1/requests/'+event, headers={str('Content-Type'):'application/json'}, data=json.dumps(deny), cookies=self.cookies)
+            rRequest = requests.put('http://'+self.server+':8111/api/v1/requests/'+event, headers={str('Content-Type'):'application/json'}, data=json.dumps(deny), cookies=self.cookies)
             print(rRequest.text)
             self.assertEqual(rRequest.status_code, 200)
 
     def test_4_postUser(self):
         email = "onelab_autotest_"+str(randint(0,10000))+"@yopmail.com"
         payload = { 'authority': authority, 'first_name': 'auto', 'last_name': 'test', 'email': email, 'password': '12341234', 'terms': True }
-        r = requests.post('http://'+server+':8111/api/v1/users', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
+        r = requests.post('http://'+self.server+':8111/api/v1/users', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
         pprint(r.text)
         if r.status_code == 400:
             res = json.loads(r.text)
@@ -105,7 +105,7 @@ class TestUsers(LocalTestCase):
     def test_5_getUserId(self):
         id = self.__class__.created_user
         if id:
-            r = requests.get('http://'+server+':8111/api/v1/users/'+id, cookies=self.cookies)
+            r = requests.get('http://'+self.server+':8111/api/v1/users/'+id, cookies=self.cookies)
             self.assertEqual(r.status_code, 200)
             res = json.loads(r.text)
             self.assertGreater(len(res['result']),0)
@@ -117,7 +117,7 @@ class TestUsers(LocalTestCase):
     def test_6_putUser(self):
         id = self.__class__.created_user
         if id:
-            rGet = requests.get('http://'+server+':8111/api/v1/users/'+id, cookies=self.cookies)
+            rGet = requests.get('http://'+self.server+':8111/api/v1/users/'+id, cookies=self.cookies)
             self.assertEqual(rGet.status_code, 200)
             res = json.loads(rGet.text)
             self.assertGreater(len(res['result']),0)
@@ -126,7 +126,7 @@ class TestUsers(LocalTestCase):
 
             payload = user
             payload['first_name'] = "toto"
-            rPut = requests.put('http://'+server+':8111/api/v1/users/'+id, headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
+            rPut = requests.put('http://'+self.server+':8111/api/v1/users/'+id, headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
             pprint(rPut.text)
             self.assertEqual(rPut.status_code, 200)
             result = json.loads(rPut.text)
@@ -135,7 +135,7 @@ class TestUsers(LocalTestCase):
                 res = self.checkEvent(event)
                 self.assertEqual(res['status'], "SUCCESS")
 
-            rUpdated = requests.get('http://'+server+':8111/api/v1/users/'+id, cookies=self.cookies)
+            rUpdated = requests.get('http://'+self.server+':8111/api/v1/users/'+id, cookies=self.cookies)
             res = json.loads(rUpdated.text)
             userUpdated = res['result'][0]
             self.assertEqual(rUpdated.status_code, 200)
@@ -149,7 +149,7 @@ class TestUsers(LocalTestCase):
         id = self.__class__.created_user
         if id:
 
-            rDelete = requests.delete('http://'+server+':8111/api/v1/users/'+id, cookies=self.cookies)
+            rDelete = requests.delete('http://'+self.server+':8111/api/v1/users/'+id, cookies=self.cookies)
             pprint(rDelete.text)
             self.assertEqual(rDelete.status_code, 200)
 
@@ -159,7 +159,7 @@ class TestUsers(LocalTestCase):
                 res = self.checkEvent(event)
                 self.assertEqual(res['status'], "SUCCESS")
 
-            rGet = requests.get('http://'+server+':8111/api/v1/users/'+id, cookies=self.cookies)
+            rGet = requests.get('http://'+self.server+':8111/api/v1/users/'+id, cookies=self.cookies)
             res = json.loads(rGet.text)
             user = res['result']
             self.assertEqual(rGet.status_code, 200)
