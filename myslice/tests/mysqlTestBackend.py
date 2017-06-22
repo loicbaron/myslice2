@@ -8,9 +8,10 @@ import sys
 class MysqlTestBackend:
 
     def __init__(self, testResult = None, server = None, testid = None):
-        self.db = pymysql.connect(host="localhost",    # your host, usually localhost
+        self.db = pymysql.connect(host="tester.noc.onelab.eu",    # your host, usually localhost
                      user="",         # your username
                      passwd="",  # your password
+                     port=3306,
                      db="tester_myslice")        # name of the data base
         self.cursor = self.db.cursor()
         self.timestamp = datetime.now()
@@ -25,12 +26,33 @@ class MysqlTestBackend:
         self.db.close()
 
     def newTestRun(self):
-
+        """
+            Generate test id
+            Returns test id
+        """
         sql = "INSERT INTO testrun VALUES (NULL, %s)"
         self.cursor.execute(sql, (self.timestamp,))
         self.db.commit()
         self.testid = self.cursor.lastrowid
 
+    def updateTestDefinitions(self, suites):
+        """
+            Update database, so we have definition for each of the tests
+            Returns nothing
+        """
+        for test in suites:
+            print(test)
+            for t in test._tests:
+                print(type(t))
+                testFunction = t.id().split('.')[-1]
+                testClassName = t.id().split('.')[-2]
+                sql = "SELECT * FROM tests WHERE testClassName = %s AND testFunction = %s AND server = %s"
+                data = self.cursor.execute(sql, (testClassName, testFunction, self.server))
+                if not data:
+                    sql = "INSERT INTO tests(testClassName, testFunction, server) VALUES(%s, %s, %s)"
+                    self.cursor.execute(sql, (testClassName, testFunction, self.server))
+                    self.db.commit()
+                    print('some')
 
     def saveTestResults(self):
 

@@ -1,7 +1,6 @@
 #!/usr/bin/env python3.5
 import sys
 import unittest
-
 from myslice.tests.rest_authorities import TestAuthority
 from myslice.tests.rest_login import TestLogin
 from myslice.tests.rest_projects import TestProjects
@@ -9,14 +8,14 @@ from myslice.tests.rest_users import TestUsers
 from myslice.tests.rest_slices import TestSlices
 from myslice.tests.rest_leases import TestLeases
 from myslice.tests.tools import send_email
+from myslice.tests.config import s, server
 
-import rethinkdb as r
-from myslice.tests.config import s
-from datetime import datetime
+if __name__ == '__main__':
 
+    # we expect to have FQDN of the server we want to test,
+    # otherwise FQDN will be taken from config file
 
-def runTest():
-
+    #define server you want to test
     if len(sys.argv) == 2:
         servername = sys.argv.pop()
         TestLogin.SERVER = servername
@@ -24,71 +23,35 @@ def runTest():
         TestProjects.SERVER = servername
         TestUsers.SERVER = servername
         TestLeases.SERVER = servername
+    else:
+        servername = server
 
-
-
+    #define tests you want to run
     suites = [unittest.TestLoader().loadTestsFromTestCase(TestLogin),
-              # unittest.TestLoader().loadTestsFromTestCase(TestAuthority),
+              #unittest.TestLoader().loadTestsFromTestCase(TestAuthority),
               # unittest.TestLoader().loadTestsFromTestCase(TestProjects),
               # unittest.TestLoader().loadTestsFromTestCase(TestUsers),
               # unittest.TestLoader().loadTestsFromTestCase(TestSlices),
               # unittest.TestLoader().loadTestsFromTestCase(TestLeases)
               ]
+    testSuite = unittest.TestSuite(suites)
 
-    testResults = unittest.TextTestRunner(verbosity=0).run(unittest.TestSuite(suites))
-
-    return testResults
-
-
-
-
-    # saving data for automate tests
-    # if s['automate_test']:
-    #     r.connect("localhost", 28015).repl()
-    #     r.table('turtles').insert({
-    #         "status": status,
-    #         "failures": fail,
-    #         "tests": testResult.testsRun,
-    #         "errors": err,
-    #         "failno": len(fail),
-    #         "errno": len(err),
-    #         "timestamp": datetime.now(r.make_timezone('00:00')),
-    #     }).run()
-    #
-    # # sending email if test failed
-    # if s['automate_test'] and not testResult.wasSuccessful() and testResult.wasSuccessful() == 'aaa':
-    #     for f in fail:
-    #         subject = "ERR: " + f['module']
-    #
-    #         body = "Testing server: "\
-    #                + server \
-    #                + " \n " \
-    #                + f['details'] + \
-    #                "\n more info: http://132.227.122.107:8080/#dataexplorer"
-    #
-    #         to = ['pauline.gaudet-chardonnet@lip6.fr',
-    #               'radomir.klacza@lip6.fr',
-    #               'loic.baron@lip6.fr',
-    #               'amira.bradai@lip6.fr']
-    #
-    #
-    #         for t in to:
-    #             send_email(subject, body,  t)
-    #         # send_email(subject, body,  'radomir.klacza@lip6.fr')
-
-
-if __name__ == '__main__':
-    #run tests# #
-    print('Number of arguments:', len(sys.argv), 'arguments.')
-    print('Argument List:', str(sys.argv))
-    if len(sys.argv) == 2:
-        srv = sys.argv[1]
-    testResult = runTest()
-
+    #update test defitnitions in MySQL for the server
+    # this is quite nasty - to be updated :/
     if s['automate_test']:
         from myslice.tests.mysqlTestBackend import MysqlTestBackend
+        database = MysqlTestBackend(server = servername)
+        database.updateTestDefinitions(testSuite)
+        database.close()
+
+
+    #run tests and collect output
+    testResult = unittest.TextTestRunner(verbosity=0).run(unittest.TestSuite(suites))
+
+    if s['automate_test']:
+
         #save results to db
-        database = MysqlTestBackend(testResult, srv)
+        database = MysqlTestBackend(testResult, servername)
         database.newTestRun()
         database.saveTestResults()
 
@@ -120,10 +83,3 @@ if __name__ == '__main__':
         database.close()
 
 
-
-
-        # from multiprocessing import Process
-    # for i in range(1):
-    #     print("startingg")
-    #     p = Process(target=runTest)
-    #     p.start()
