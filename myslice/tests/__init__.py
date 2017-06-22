@@ -21,8 +21,10 @@ class   LocalTestCase(unittest.TestCase):
         super(LocalTestCase, self).__init__(*args, **kwargs)
         self.automateTest = False
         self.server = self.SERVER if self.SERVER else server
+
         self.cookies = requests.post("http://" + self.server + ":8111/api/v1/login", headers={str('Content-Type'): 'application/json'},
-                          data=json.dumps({'email': s['email'], 'password': s['password']}))
+                          data=json.dumps({'email': s['email'], 'password': s['password']})).cookies
+        self.cookies = ''
 
     def startTimer(self):
         self.tick = datetime.now()
