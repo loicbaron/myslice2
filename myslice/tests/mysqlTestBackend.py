@@ -30,8 +30,8 @@ class MysqlTestBackend:
             Generate test id
             Returns test id
         """
-        sql = "INSERT INTO testrun VALUES (NULL, %s)"
-        self.cursor.execute(sql, (self.timestamp,))
+        sql = "INSERT INTO testrun VALUES (NULL, %s, %s)"
+        self.cursor.execute(sql, (self.timestamp, self.server))
         self.db.commit()
         self.testid = self.cursor.lastrowid
 
