@@ -1,4 +1,5 @@
 #!/usr/bin/env python3.5
+import sys
 import unittest
 
 from myslice.tests.rest_authorities import TestAuthority
@@ -13,16 +14,25 @@ import rethinkdb as r
 from myslice.tests.config import s
 from datetime import datetime
 
-from myslice.tests.config import server
 
 def runTest():
 
+    if len(sys.argv) == 2:
+        servername = sys.argv.pop()
+        TestLogin.SERVER = servername
+        TestAuthority.SERVER = servername
+        TestProjects.SERVER = servername
+        TestUsers.SERVER = servername
+        TestLeases.SERVER = servername
+
+
+
     suites = [unittest.TestLoader().loadTestsFromTestCase(TestLogin),
-              unittest.TestLoader().loadTestsFromTestCase(TestAuthority),
-              unittest.TestLoader().loadTestsFromTestCase(TestProjects),
-              unittest.TestLoader().loadTestsFromTestCase(TestUsers),
-              unittest.TestLoader().loadTestsFromTestCase(TestSlices),
-              unittest.TestLoader().loadTestsFromTestCase(TestLeases)
+              # unittest.TestLoader().loadTestsFromTestCase(TestAuthority),
+              # unittest.TestLoader().loadTestsFromTestCase(TestProjects),
+              # unittest.TestLoader().loadTestsFromTestCase(TestUsers),
+              # unittest.TestLoader().loadTestsFromTestCase(TestSlices),
+              # unittest.TestLoader().loadTestsFromTestCase(TestLeases)
               ]
 
     testResults = unittest.TextTestRunner(verbosity=0).run(unittest.TestSuite(suites))
@@ -68,13 +78,17 @@ def runTest():
 
 
 if __name__ == '__main__':
-    #run tests
+    #run tests# #
+    print('Number of arguments:', len(sys.argv), 'arguments.')
+    print('Argument List:', str(sys.argv))
+    if len(sys.argv) == 2:
+        srv = sys.argv[1]
     testResult = runTest()
 
     if s['automate_test']:
         from myslice.tests.mysqlTestBackend import MysqlTestBackend
         #save results to db
-        database = MysqlTestBackend(testResult, server)
+        database = MysqlTestBackend(testResult, srv)
         database.newTestRun()
         database.saveTestResults()
 

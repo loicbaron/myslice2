@@ -9,7 +9,7 @@ from pprint import pprint
 from random import randint
 
 from myslice.tests import LocalTestCase
-from myslice.tests.config import s, rootAuthority, server
+from myslice.tests.config import s, rootAuthority
 
 class TestAuthority(LocalTestCase):
 
@@ -26,16 +26,17 @@ class TestAuthority(LocalTestCase):
 
     # Open to non authenticated user get all authorities in the registration
     def test_0_getNoAuth(self):
-        r = requests.get('http://'+server+':8111/api/v1/authorities')
+        print(self.server)
+        r = requests.get('http://'+self.server+':8111/api/v1/authorities')
         self.assertEqual(r.status_code, 200)
 
     def test_1_getAuthorities (self):
-        r= requests.get('http://'+server+':8111/api/v1/authorities', cookies=self.cookies)
+        r= requests.get('http://'+self.server+':8111/api/v1/authorities', cookies=self.cookies)
         self.assertEqual(r.status_code, 200)
 
     def test_2_postWrongAuthority(self):
         payload = {}
-        r = requests.post('http://'+server+':8111/api/v1/authorities', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
+        r = requests.post('http://'+self.server+':8111/api/v1/authorities', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
         self.assertEqual(r.status_code, 400)
 
     def test_3_postAuthorityNoAuth_AndDeny(self):
@@ -49,7 +50,8 @@ class TestAuthority(LocalTestCase):
                                'email': 'deeeb@wp.pl',
                                'terms': 'true'}],
                     'pi_users': [{'email': 'deeeb@wp.pl'}]}
-        r = requests.post('http://'+server+':8111/api/v1/authorities', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
+        print("sending request")
+        r = requests.post('http://'+self.server+':8111/api/v1/authorities', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
         print(r.text)
         self.assertEqual(r.status_code, 200)
         #
@@ -63,12 +65,12 @@ class TestAuthority(LocalTestCase):
             res = self.checkEvent(event, expected_status="CONFIRM")
             print("event: ", res)
             self.assertEqual("CONFIRM", res['status'])
-            r = requests.get('http://' + server + ':8111/confirm/' + event)
+            r = requests.get('http://' + self.server + ':8111/confirm/' + event)
             print(r.text)
             res = self.checkEvent(event, expected_status="PENDING")
             self.assertEqual("PENDING", res['status'])
             deny = {'action':'deny', 'message':'automated test denied this request'}
-            r = requests.put('http://'+server+':8111/api/v1/requests/'+event, headers={str('Content-Type'):'application/json'}, data=json.dumps(deny), cookies=self.cookies)
+            r = requests.put('http://'+self.server+':8111/api/v1/requests/'+event, headers={str('Content-Type'):'application/json'}, data=json.dumps(deny), cookies=self.cookies)
             print(self.cookies)
             print(r.text)
             self.assertEqual(r.status_code, 200)
@@ -79,7 +81,7 @@ class TestAuthority(LocalTestCase):
         """ A registered user can create new authority??!!"""
         name = 'autotest_' + str(randint(0, 10000))
         payload = { 'authority': rootAuthority, 'name': 'Authotrity Auto 2', 'shortname': name}
-        r = requests.post('http://'+server+':8111/api/v1/authorities', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
+        r = requests.post('http://'+self.server+':8111/api/v1/authorities', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
         print("postAuthority -> success, ", r.text)
         self.assertEqual(r.status_code, 200)
 
@@ -96,7 +98,7 @@ class TestAuthority(LocalTestCase):
             self.assertEqual(res['status'], expectedStatus)
         if expectedStatus == 'PENDING':
             approve = {'action':'approve', 'message':'automated test approved this request'}
-            r = requests.put('http://'+server+':8111/api/v1/requests/'+event, headers={str('Content-Type'):'application/json'}, data=json.dumps(approve), cookies=self.cookies)
+            r = requests.put('http://'+self.server+':8111/api/v1/requests/'+event, headers={str('Content-Type'):'application/json'}, data=json.dumps(approve), cookies=self.cookies)
             self.assertEqual(r.status_code, 200)
             res = self.checkEvent(event, expected_status="SUCCESS")
             self.assertEqual("SUCCESS", res['status'])
@@ -108,7 +110,7 @@ class TestAuthority(LocalTestCase):
         id = self.__class__.created_authority
         if id:
             print("deleting %s" % id)
-            rDelete = requests.delete('http://' + server + ':8111/api/v1/authorities/' + id, cookies=self.cookies)
+            rDelete = requests.delete('http://' + self.server + ':8111/api/v1/authorities/' + id, cookies=self.cookies)
             self.assertEqual(rDelete.status_code, 200)
             result = json.loads(rDelete.text)
             pprint(result)
@@ -117,7 +119,7 @@ class TestAuthority(LocalTestCase):
                 res = self.checkEvent(event)
                 self.assertEqual(res['status'], "SUCCESS")
 
-            rGet = requests.get('http://' + server + ':8111/api/v1/authorities/' + id, cookies=self.cookies)
+            rGet = requests.get('http://' + self.server + ':8111/api/v1/authorities/' + id, cookies=self.cookies)
             self.assertEqual(rGet.status_code, 400)
         else:
             self.assertEqual(id, "Authority was not created in previous test, we cannot continue this test")
@@ -148,7 +150,7 @@ class TestAuthority(LocalTestCase):
            ]
         }
         user_email = email
-        r = requests.post('http://'+server+':8111/api/v1/authorities', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
+        r = requests.post('http://'+self.server+':8111/api/v1/authorities', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
         print("postAuthority with user -> approve")
         self.assertEqual(r.status_code, 200)
 
@@ -160,19 +162,19 @@ class TestAuthority(LocalTestCase):
             res = self.checkEvent(event, expected_status="CONFIRM")
             print("event: ", res)
             self.assertEqual("CONFIRM", res['status'])
-            r = requests.get('http://' + server + ':8111/confirm/' + event)
+            r = requests.get('http://' + self.server + ':8111/confirm/' + event)
             print(r.text)
             res = self.checkEvent(event, expected_status="PENDING")
             self.assertEqual(res['status'], "PENDING")
 
             approve = {'action':'approve', 'message':'automated test approved this request'}
-            r = requests.put('http://'+server+':8111/api/v1/requests/'+event, headers={str('Content-Type'):'application/json'}, data=json.dumps(approve), cookies=self.cookies)
+            r = requests.put('http://'+self.server+':8111/api/v1/requests/'+event, headers={str('Content-Type'):'application/json'}, data=json.dumps(approve), cookies=self.cookies)
             self.assertEqual(r.status_code, 200)
             res = self.checkEvent(event, expected_status="SUCCESS")
             self.__class__.created_authority = res['data']['id']
             self.assertEqual(res['status'], "SUCCESS")
 
-        rCreated = requests.get('http://'+server+':8111/api/v1/users/'+user_email, cookies=self.cookies)
+        rCreated = requests.get('http://'+self.server+':8111/api/v1/users/'+user_email, cookies=self.cookies)
         res = json.loads(rCreated.text)
         userCreated = res['result'][0]
         self.assertEqual(rCreated.status_code, 200)
@@ -182,14 +184,14 @@ class TestAuthority(LocalTestCase):
         print("start test 7 - PUT Authority")
         id = self.__class__.created_authority
         if id:
-            rGet = requests.get('http://'+server+':8111/api/v1/authorities/'+id, cookies=self.cookies)
+            rGet = requests.get('http://'+self.server+':8111/api/v1/authorities/'+id, cookies=self.cookies)
             res = json.loads(rGet.text)
             pprint(id)
             pprint(res)
             authority = res['result'][0]
             self.assertEqual(rGet.status_code, 200)
 
-            rGetUser = requests.get('http://'+server+':8111/api/v1/users', cookies=self.cookies)
+            rGetUser = requests.get('http://'+self.server+':8111/api/v1/users', cookies=self.cookies)
             res = json.loads(rGetUser.text)
             otherUser = res['result'][0]
             print("Other User to be added to authority {}".format(otherUser))
@@ -198,7 +200,7 @@ class TestAuthority(LocalTestCase):
             payload = authority
             payload['pi_users'].append(otherUser['id'])
             print("Sending PUT {}".format(payload))
-            rPut = requests.put('http://'+server+':8111/api/v1/authorities/'+id, headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
+            rPut = requests.put('http://'+self.server+':8111/api/v1/authorities/'+id, headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
             pprint(rPut.text)
             self.assertEqual(rPut.status_code, 200)
             result = json.loads(rPut.text)
@@ -207,7 +209,7 @@ class TestAuthority(LocalTestCase):
                 res = self.checkEvent(event)
                 self.assertEqual(res['status'], "SUCCESS")
 
-            rUpdated = requests.get('http://'+server+':8111/api/v1/authorities/'+id, cookies=self.cookies)
+            rUpdated = requests.get('http://'+self.server+':8111/api/v1/authorities/'+id, cookies=self.cookies)
             res = json.loads(rUpdated.text)
             authorityUpdated = res['result'][0]
             self.assertEqual(rUpdated.status_code, 200)
@@ -223,7 +225,7 @@ class TestAuthority(LocalTestCase):
 
         if id:
 
-            rDelete = requests.delete('http://'+server+':8111/api/v1/authorities/'+id, cookies=self.cookies)
+            rDelete = requests.delete('http://'+self.server+':8111/api/v1/authorities/'+id, cookies=self.cookies)
 
             print("deleteAuthority -> success")
             self.assertEqual(rDelete.status_code, 200)
@@ -234,7 +236,7 @@ class TestAuthority(LocalTestCase):
                 res = self.checkEvent(event)
                 self.assertEqual(res['status'], "SUCCESS")
 
-            rGet = requests.get('http://'+server+':8111/api/v1/authorities/'+id, cookies=self.cookies)
+            rGet = requests.get('http://'+self.server+':8111/api/v1/authorities/'+id, cookies=self.cookies)
             self.assertEqual(rGet.status_code, 400)
         else:
             self.assertEqual(id, "Authority was not created in previous test, we cannot continue this test")

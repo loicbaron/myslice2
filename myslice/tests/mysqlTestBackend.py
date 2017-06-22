@@ -9,8 +9,8 @@ class MysqlTestBackend:
 
     def __init__(self, testResult = None, server = None, testid = None):
         self.db = pymysql.connect(host="localhost",    # your host, usually localhost
-                     user="root",         # your username
-                     passwd="astmde21",  # your password
+                     user="",         # your username
+                     passwd="",  # your password
                      db="tester_myslice")        # name of the data base
         self.cursor = self.db.cursor()
         self.timestamp = datetime.now()
