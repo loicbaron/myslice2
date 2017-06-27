@@ -80,8 +80,8 @@ class MysqlTestBackend:
         # The two SQL one can combine into one...
         allissues = []
 
-        sql = "SELECT id, testClassName, testFunction, server, lastRun FROM tests WHERE status = 'FAILED' and (email_sent IS NULL OR email_sent = 0)"
-        self.cursor.execute(sql)
+        sql = "SELECT id, testClassName, testFunction, server, lastRun FROM tests WHERE status = 'FAILED' and (email_sent IS NULL OR email_sent = 0) and server = %s"
+        self.cursor.execute(sql, (self.server,))
         data = self.cursor.fetchall()
 
         for record in data:
