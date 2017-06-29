@@ -111,7 +111,7 @@ def events_run(lock, qProjectEvents):
                     import traceback
                     traceback.print_exc()
                     logger.error("Problem with event {}: {}".format(event.id,e))
-                    event.logError("Error in worker projects: {}".format(e))
+                    event.logError("Error in worker projects: {}, traceback: {}".format(e,traceback.print_exc()))
                     event.setError()
                 else:
                     if isSuccess:

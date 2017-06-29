@@ -25,8 +25,6 @@ class TestSlices(LocalTestCase):
         self.startTimer()
         self.timeout = 10
 
-        self.cookies = s['cookies']
-
         r = requests.get('http://'+self.server+':8111/api/v1/profile', cookies=self.cookies)
         result = json.loads(r.text)
         self.user = result['result']

@@ -32,7 +32,7 @@ def run():
     threads = []
 
     qEmails = Queue()
-    for y in range(10):
+    for y in range(1):
         t = threading.Thread(target=manageEmails, args=(qEmails,))
         t.daemon = True
         threads.append(t)
@@ -49,8 +49,8 @@ def run():
 
     ##
     # Watch for changes on the activity table
-    feed = r.db('myslice').table('activity').changes().run(dbconnection)
-    #feed = changes(table='activity')
+    #feed = r.db('myslice').table('activity').changes().run(dbconnection)
+    feed = changes(dbconnection, table='activity', status=['PENDING', 'CONFIRM', 'DENIED', 'SUCCESS'])
 
     ##
     # Process events that were not watched 

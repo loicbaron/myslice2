@@ -9,8 +9,8 @@ class MysqlTestBackend:
 
     def __init__(self, testResult = None, server = None, testid = None):
         self.db = pymysql.connect(host="tester.noc.onelab.eu",    # your host, usually localhost
-                     user="",         # your username
-                     passwd="",  # your password
+                     user="remotetester",         # your username
+                     passwd="Jasioqaz123Jasioqaz123",  # your password
                      port=3306,
                      db="tester_myslice")        # name of the data base
         self.cursor = self.db.cursor()
@@ -80,8 +80,8 @@ class MysqlTestBackend:
         # The two SQL one can combine into one...
         allissues = []
 
-        sql = "SELECT id, testClassName, testFunction, server, lastRun FROM tests WHERE status = 'FAILED' and (email_sent IS NULL OR email_sent = 0)"
-        self.cursor.execute(sql)
+        sql = "SELECT id, testClassName, testFunction, server, lastRun FROM tests WHERE status = 'FAILED' and (email_sent IS NULL OR email_sent = 0) and server = %s"
+        self.cursor.execute(sql, (self.server,))
         data = self.cursor.fetchall()
 
         for record in data:

@@ -43,7 +43,7 @@ def run():
     threads = []
 
     # projects manager
-    for y in range(10):
+    for y in range(1):
         t = threading.Thread(target=manageProjects, args=(lockProjects, qProjects))
         t.daemon = True
         threads.append(t)
@@ -77,8 +77,8 @@ def run():
     ##
     # will watch for incoming events/requests and pass them to
     # the appropriate thread group
-    feed = r.db('myslice').table('activity').changes().run(dbconnection)
-    #feed = changes(dbconnection, table='activity', status=['WAITING', 'APPROVED'])
+    # feed = r.db('myslice').table('activity').changes().run(dbconnection)
+    feed = changes(dbconnection, table='activity', status=['WAITING', 'APPROVED'])
 
     ##
     # Process events that were not watched 
