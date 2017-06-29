@@ -54,8 +54,8 @@ def run():
     ##
     # will watch for incoming events/requests and pass them to
     # the appropriate thread group
-    feed = r.db('myslice').table('activity').changes().run(dbconnection)
-    #feed = changes(dbconnection, table='activity', status=["WAITING", "APPROVED"])
+    #feed = r.db('myslice').table('activity').changes().run(dbconnection)
+    feed = changes(dbconnection, table='activity', status=["WAITING", "APPROVED"])
 
     ##
     # Process events that were not watched 

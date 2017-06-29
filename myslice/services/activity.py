@@ -48,8 +48,8 @@ def run():
     # to the running threads (via Queue).
     # A global watch feed is needed to permit spawning more threads to manage
     # events and requests
-    feed = r.db('myslice').table('activity').changes().run(dbconnection)
-    #feed = changes(dbconnection, table='activity', status="NEW")
+    #feed = r.db('myslice').table('activity').changes().run(dbconnection)
+    feed = changes(dbconnection, table='activity', status="NEW")
 
     ##
     # Process events that were not watched 
