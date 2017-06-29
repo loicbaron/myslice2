@@ -3,12 +3,11 @@
 import json
 import requests
 import sys
-from datetime import datetime
 from pprint import pprint
 from tornado import gen
 
 from myslice.tests import LocalTestCase
-from myslice.tests.config import s, server
+from myslice.tests.config import s
 
 from myslicelib.model.authority import Authority
 from myslicelib.model.project import Project
@@ -17,20 +16,19 @@ from myslicelib.model.slice import Slice
 from myslicelib.query import q
 
 timeout = 10
-cookies = s['cookies']
 s['automate_test'] = False
-test = LocalTestCase()
-test.cookies = cookies
 
-def clean(cookies, objectType):
+def clean(objectType, server):
     """Delete objectType if the id contains autotest"""
-    r = requests.get('http://'+server+':8111/api/v1/'+objectType, cookies=cookies)
+    LocalTestCase.SERVER = server
+    test = LocalTestCase()
+    r = requests.get('http://'+test.server+':8111/api/v1/'+objectType, cookies=test.cookies)
     result = json.loads(r.text)
     objects = result['result']
     for o in objects:
         if "autotest" in o['id']:
             print("deleting %s %s" % (objectType,o['hrn']))
-            rDelete = requests.delete('http://'+server+':8111/api/v1/'+objectType+'/'+o['id'], cookies=cookies)
+            rDelete = requests.delete('http://'+test.server+':8111/api/v1/'+objectType+'/'+o['id'], cookies=test.cookies)
             pprint(rDelete.text)
 
             result = json.loads(rDelete.text)
@@ -50,41 +48,49 @@ def cleanRegistry(objects):
 
 @gen.coroutine
 def main(argv):
+
     try:
-        if len(argv) != 1:
-            print("Help: use the command with one of the parameters")
-            print("clean.py all|authorities|projects|users|slices")
+        if len(argv) != 2:
+            print("Help: use the command with one of the parameters and server name")
+            print("clean.py all|authorities|projects|users|slices <server.fqdn.or.ip>")
+            print("EXAMPLE: clean.py all zeus.noc.onelab.eu")
+
             sys.exit(2)
 
         if argv[0].startswith('auth') or argv[0] == 'all':
             print("clean authorities...")
-            clean(cookies, 'authorities')
+            clean('authorities', argv[1])
+            # clean(cookies, 'authorities', argv[1])
             objects = q(Authority).get()
             cleanRegistry(objects)
 
         if argv[0].startswith('p') or argv[0] == 'all':
             print("clean projects...")
-            clean(cookies, 'projects')
+            clean( 'projects', argv[1])
+            # clean(cookies, 'projects', argv[1])
             objects = q(Project).get()
             cleanRegistry(objects)
 
         if argv[0].startswith('u') or argv[0] == 'all':
             print("clean users...")
-            clean(cookies, 'users')
+            clean( 'users', argv[1])
+            # clean(cookies, 'users', argv[1])
             objects = q(User).get()
             cleanRegistry(objects)
 
         if argv[0].startswith('s') or argv[0] == 'all':
             print("clean slices...")
-            clean(cookies, 'slices')
+            clean('slices', argv[1])
+            # clean(cookies, 'slices', argv[1])
             objects = q(Slice).get()
             cleanRegistry(objects)
 
     except Exception as e:
         import traceback
         traceback.print_exc()
-        print("Help: use the command with one of the parameters")
-        print("clean.py all|authorities|projects|users|slices")
+        print("Help: use the command with one of the parameters and server name")
+        print("clean.py all|authorities|projects|users|slices <server.fqdn.or.ip>")
+        print("EXAMPLE: clean.py all zeus.noc.onelab.eu")
         sys.exit(2)
 
 if __name__ == '__main__':

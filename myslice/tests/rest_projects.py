@@ -9,7 +9,7 @@ from pprint import pprint
 from random import randint
 
 from myslice.tests import LocalTestCase
-from myslice.tests.config import s, authority, server
+from myslice.tests.config import s, authority
 from datetime import datetime
 
 class TestProjects(LocalTestCase):
@@ -22,9 +22,7 @@ class TestProjects(LocalTestCase):
         self.startTimer()
         self.timeout = 10
 
-        self.cookies = s['cookies']
-
-        r = requests.get('http://'+server+':8111/api/v1/profile', cookies=self.cookies)
+        r = requests.get('http://'+self.server+':8111/api/v1/profile', cookies=self.cookies)
         result = json.loads(r.text)
         self.user = result['result']
 
@@ -35,24 +33,24 @@ class TestProjects(LocalTestCase):
         self.stopTimer()
 
     def test_0_getNoAuth(self):
-        r = requests.get('http://'+server+':8111/api/v1/projects')
+        r = requests.get('http://'+self.server+':8111/api/v1/projects')
         self.assertEqual(r.status_code, 400)
 
     def test_0_postNoAuth(self):
-        r = requests.post('http://'+server+':8111/api/v1/projects')
+        r = requests.post('http://'+self.server+':8111/api/v1/projects')
         self.assertEqual(r.status_code, 400)
 
     def test_0_putNoAuth(self):
-        r = requests.put('http://'+server+':8111/api/v1/projects')
+        r = requests.put('http://'+self.server+':8111/api/v1/projects')
         self.assertEqual(r.status_code, 400)
 
     def test_1_getProjects(self):
-        r = requests.get('http://'+server+':8111/api/v1/projects', cookies=self.cookies)
+        r = requests.get('http://'+self.server+':8111/api/v1/projects', cookies=self.cookies)
         self.assertEqual(r.status_code, 200)
 
     def test_2_postWrongProject(self):
         payload = {}
-        r = requests.post('http://'+server+':8111/api/v1/projects', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
+        r = requests.post('http://'+self.server+':8111/api/v1/projects', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
         self.assertEqual(r.status_code, 400)
         res = json.loads(r.text)
         self.assertEqual("Project name must be specified", res['error'])
@@ -62,7 +60,7 @@ class TestProjects(LocalTestCase):
 
     #def test_2_postProjectSimpleUser(self):
     #    payload = { 'authority': authority, 'name': 'project_auto', 'description': 'this is an automated project', 'pi_users':[self.user['id']] }
-    #    r = requests.post('http://'+server+':8111/api/v1/projects', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
+    #    r = requests.post('http://'+self.server+':8111/api/v1/projects', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
     #    self.assertEqual(r.status_code, 200)
 
     #    result = json.loads(r.text)
@@ -74,14 +72,14 @@ class TestProjects(LocalTestCase):
     #        self.assertEqual(res['status'], "PENDING")
 
     #        deny = {'action':'deny', 'message':'automated test denied this request'}
-    #        rRequest = requests.put('http://'+server+':8111/api/v1/requests/'+event, headers={str('Content-Type'):'application/json'}, data=json.dumps(deny), cookies=self.cookies)
+    #        rRequest = requests.put('http://'+self.server+':8111/api/v1/requests/'+event, headers={str('Content-Type'):'application/json'}, data=json.dumps(deny), cookies=self.cookies)
     #        self.assertEqual(rRequest.status_code, 200)
 
     def test_2_postProject(self):
         tock = datetime.now()
         name = 'autotest_' + str(randint(0,10000))
         payload = {'authority': {"id": authority}, 'name': name, 'description': 'this is an automated project', 'pi_users':[self.user['id']] }
-        r = requests.post('http://'+server+':8111/api/v1/projects', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
+        r = requests.post('http://'+self.server+':8111/api/v1/projects', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
         self.assertEqual(r.status_code, 200)
         # Event status = SUCCESS
         pprint(r.text)
@@ -100,7 +98,7 @@ class TestProjects(LocalTestCase):
         if not id:
             self.assertEqual(id, "expected created_project, but got non")
         # print(id)
-        r = requests.get('http://'+server+':8111/api/v1/projects/'+id, cookies=self.cookies)
+        r = requests.get('http://'+self.server+':8111/api/v1/projects/'+id, cookies=self.cookies)
         #pprint(r.text)
         self.assertEqual(r.status_code, 200)
         res = json.loads(r.text)
@@ -110,20 +108,20 @@ class TestProjects(LocalTestCase):
         id = self.__class__.created_project
         if not id:
             self.assertEqual(id, "Project was not created in previous test, we cannot continue this test")
-        rGet = requests.get('http://'+server+':8111/api/v1/projects/'+id, cookies=self.cookies)
+        rGet = requests.get('http://'+self.server+':8111/api/v1/projects/'+id, cookies=self.cookies)
         res = json.loads(rGet.text)
         self.assertGreater(len(res['result']),0)
         project = res['result'][0]
         self.assertEqual(rGet.status_code, 200)
 
-        rGetUser = requests.get('http://'+server+':8111/api/v1/users', cookies=self.cookies)
+        rGetUser = requests.get('http://'+self.server+':8111/api/v1/users', cookies=self.cookies)
         res = json.loads(rGetUser.text)
         otherUser = res['result'][0]
         self.assertEqual(rGet.status_code, 200)
 
         payload = project
         payload['pi_users'].append(otherUser['id'])
-        rPut = requests.put('http://'+server+':8111/api/v1/projects/'+id, headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
+        rPut = requests.put('http://'+self.server+':8111/api/v1/projects/'+id, headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
         pprint(rPut.text)
         self.assertEqual(rPut.status_code, 200)
         result = json.loads(rPut.text)
@@ -132,7 +130,7 @@ class TestProjects(LocalTestCase):
             res = self.checkEvent(event)
             self.assertEqual(res['status'], "SUCCESS")
 
-        rUpdated = requests.get('http://'+server+':8111/api/v1/projects/'+id, cookies=self.cookies)
+        rUpdated = requests.get('http://'+self.server+':8111/api/v1/projects/'+id, cookies=self.cookies)
         res = json.loads(rUpdated.text)
         projectUpdated = res['result'][0]
         self.assertEqual(rUpdated.status_code, 200)
@@ -146,7 +144,7 @@ class TestProjects(LocalTestCase):
 
         if not id:
             self.assertEqual(id, "Project was not created in previous test, we cannot continue this test")
-        rDelete = requests.delete('http://'+server+':8111/api/v1/projects/'+id, cookies=self.cookies)
+        rDelete = requests.delete('http://'+self.server+':8111/api/v1/projects/'+id, cookies=self.cookies)
         pprint(rDelete.text)
         self.assertEqual(rDelete.status_code, 200)
 
@@ -156,7 +154,7 @@ class TestProjects(LocalTestCase):
             res = self.checkEvent(event)
             self.assertEqual(res['status'], "SUCCESS")
 
-        rGet = requests.get('http://'+server+':8111/api/v1/projects/'+id, cookies=self.cookies)
+        rGet = requests.get('http://'+self.server+':8111/api/v1/projects/'+id, cookies=self.cookies)
         res = json.loads(rGet.text)
         project = res['result']
         self.assertEqual(rGet.status_code, 200)

@@ -484,8 +484,8 @@ def changes(dbconnection=None, table=None, status=None, action=None, obj_type=No
     if status:
         if isinstance(status, str) or len(status) == 1:
             req = req.filter(lambda change: change['new_val']['status'] == status)
-        elif isinstance(status, list) and len(status) == 2:
-            req = req.filter(lambda event: (event['new_val']['status'] == status[0]) | (event['new_val']['status'] == status[1]))
+        elif isinstance(status, list):
+            req = req.filter(lambda change: change['new_val']['status'] in status)
         else:
             raise Exception('status filter fields too much')
 

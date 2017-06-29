@@ -9,7 +9,7 @@ from pprint import pprint
 from random import randint
 
 from myslice.tests import LocalTestCase
-from myslice.tests.config import s, authority, server, project
+from myslice.tests.config import s
 from datetime import datetime
 
 class TestLeases(LocalTestCase):
@@ -26,9 +26,7 @@ class TestLeases(LocalTestCase):
         self.startTimer()
         self.timeout = 10
 
-        self.cookies = s['cookies']
-
-        r = requests.get('http://'+server+':8111/api/v1/profile', cookies=self.cookies)
+        r = requests.get('http://'+self.server+':8111/api/v1/profile', cookies=self.cookies)
         result = json.loads(r.text)
         self.user = result['result']
 
@@ -36,16 +34,16 @@ class TestLeases(LocalTestCase):
         self.stopTimer()
 
     def test_0_getNoAuth(self):
-        r = requests.get('http://'+server+':8111/api/v1/leases')
+        r = requests.get('http://'+self.server+':8111/api/v1/leases')
         self.assertEqual(r.status_code, 400)
 
     def test_0_postNoAuth(self):
         payload = {}
-        r = requests.post('http://'+server+':8111/api/v1/leases', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
+        r = requests.post('http://'+self.server+':8111/api/v1/leases', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), timeout=self.timeout)
         self.assertEqual(r.status_code, 400)
 
     def test_1_getLeases(self):
-        r = requests.get('http://'+server+':8111/api/v1/leases', cookies=self.cookies)
+        r = requests.get('http://'+self.server+':8111/api/v1/leases', cookies=self.cookies)
         self.assertEqual(r.status_code, 200)
         print("Found %s Leases" % len(json.loads(r.text)['result']))
         for l in json.loads(r.text)['result']:
@@ -58,7 +56,7 @@ class TestLeases(LocalTestCase):
         ts_start = int(time.time()) - 7200
         # 2h after now
         ts_end = int(time.time()) + 7200
-        r = requests.get('http://'+server+':8111/api/v1/leases?timestamp_start='+str(ts_start)+'&timestamp_end='+str(ts_end), cookies=self.cookies)
+        r = requests.get('http://'+self.server+':8111/api/v1/leases?timestamp_start='+str(ts_start)+'&timestamp_end='+str(ts_end), cookies=self.cookies)
         self.assertEqual(r.status_code, 200)
         print("Found %s Leases" % len(json.loads(r.text)['result']))
         for l in json.loads(r.text)['result']:
@@ -66,7 +64,7 @@ class TestLeases(LocalTestCase):
             self.assertLessEqual(l['end_time'], ts_end)
 
     def test_2_getTestbeds(self):
-        r = requests.get('http://'+server+':8111/api/v1/testbeds', cookies=self.cookies)
+        r = requests.get('http://'+self.server+':8111/api/v1/testbeds', cookies=self.cookies)
         self.assertEqual(r.status_code, 200)
         data = json.loads(r.text)
         pprint(data)
@@ -84,7 +82,7 @@ class TestLeases(LocalTestCase):
     def test_3_getTestbedLeases(self):
         testbedsLeases = self.__class__.testbedsLeases
         self.assertGreater(len(testbedsLeases), 0)
-        r = requests.get('http://'+server+':8111/api/v1/testbeds/'+testbedsLeases[0]+'/leases', cookies=self.cookies)
+        r = requests.get('http://'+self.server+':8111/api/v1/testbeds/'+testbedsLeases[0]+'/leases', cookies=self.cookies)
         print("Found %s Leases" % len(json.loads(r.text)['result']))
         self.assertEqual(r.status_code, 200)
 
@@ -95,7 +93,7 @@ class TestLeases(LocalTestCase):
         ts_end = int(time.time()) + 7200
         testbedsLeases = self.__class__.testbedsLeases
         self.assertGreater(len(testbedsLeases), 0)
-        r = requests.get('http://'+server+':8111/api/v1/testbeds/'+testbedsLeases[0]+'/leases?timestamp_start='+str(ts_start)+'&timestamp_end='+str(ts_end), cookies=self.cookies)
+        r = requests.get('http://'+self.server+':8111/api/v1/testbeds/'+testbedsLeases[0]+'/leases?timestamp_start='+str(ts_start)+'&timestamp_end='+str(ts_end), cookies=self.cookies)
         self.assertEqual(r.status_code, 200)
         print("Found %s Leases" % len(json.loads(r.text)['result']))
         for l in json.loads(r.text)['result']:
@@ -107,7 +105,7 @@ class TestLeases(LocalTestCase):
         resource = self.__class__.resource
         if not resource:
             self.assertEqual(resource, "expected resource but got none")
-        r = requests.get('http://'+server+':8111/api/v1/resources/'+resource+'/leases', cookies=self.cookies)
+        r = requests.get('http://'+self.server+':8111/api/v1/resources/'+resource+'/leases', cookies=self.cookies)
         self.assertEqual(r.status_code, 200)
         print("Found %s Leases" % len(json.loads(r.text)['result']))
         for l in json.loads(r.text)['result']:
@@ -128,7 +126,7 @@ class TestLeases(LocalTestCase):
         # -----------------------------------
         # TODO: post a lease with resources from different testbeds (without testbed optional param)
         # -----------------------------------
-        r = requests.get('http://'+server+':8111/api/v1/testbeds/'+testbedsLeases[0]+'/resources?timestamp_start='+str(ts_start)+'&timestamp_end='+str(ts_end), cookies=self.cookies)
+        r = requests.get('http://'+self.server+':8111/api/v1/testbeds/'+testbedsLeases[0]+'/resources?timestamp_start='+str(ts_start)+'&timestamp_end='+str(ts_end), cookies=self.cookies)
         self.assertEqual(r.status_code, 200)
         resources = json.loads(r.text)['result']
         # Check if resources are available
@@ -156,7 +154,7 @@ class TestLeases(LocalTestCase):
            "testbed": testbedsLeases[0],
            "duration": 300,
         }
-        r = requests.post('http://'+server+':8111/api/v1/leases', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
+        r = requests.post('http://'+self.server+':8111/api/v1/leases', headers={str('Content-Type'):'application/json'}, data=json.dumps(payload), cookies=self.cookies, timeout=self.timeout)
         pprint(r.text)
         self.assertEqual(r.status_code, 200)
         result = json.loads(r.text)
