@@ -42,7 +42,7 @@ def run():
     threads = []
 
     # leases manager
-    for y in range(10):
+    for y in range(1):
         t = threading.Thread(target=manageLeases, args=(lock, qLeases))
         t.daemon = True
         threads.append(t)
