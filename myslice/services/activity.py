@@ -51,7 +51,7 @@ def run():
     # A global watch feed is needed to permit spawning more threads to manage
     # events and requests
     #feed = r.db('myslice').table('activity').changes().run(dbconnection)
-    logger.debug("Starting to listen for the changes {}".format(random.randrange(0, 101, 2)))
+    logger.debug("Starting to listen for the changes {}".format(random.random()))
     feed = changes(dbconnection, table='activity', status="NEW")
 
     ##
