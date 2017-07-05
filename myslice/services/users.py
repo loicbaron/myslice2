@@ -62,11 +62,11 @@ def run():
 
     ##
     # Watch for changes on the activity table
-    #feed = r.db('myslice').table('activity').changes().run(dbconnection)
+    feed = r.db('myslice').table('activity').changes().run(dbconnection)
         # .filter(lambda change: change['new_val']['status'] == status) \
         # .filter(lambda change: change['new_val']['status'] == status) \
 
-    feed = changes(dbconnection, table='activity', status=["WAITING", "APPROVED"])
+    #feed = changes(dbconnection, table='activity', status=["WAITING", "APPROVED"])
 
     ##
     # Process events that were not watched 

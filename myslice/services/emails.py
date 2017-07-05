@@ -49,8 +49,8 @@ def run():
 
     ##
     # Watch for changes on the activity table
-    #feed = r.db('myslice').table('activity').changes().run(dbconnection)
-    feed = changes(dbconnection, table='activity', status=['PENDING', 'CONFIRM', 'DENIED', 'SUCCESS'])
+    feed = r.db('myslice').table('activity').changes().run(dbconnection)
+    #feed = changes(dbconnection, table='activity', status=['PENDING', 'CONFIRM', 'DENIED', 'SUCCESS'])
 
     ##
     # Process events that were not watched 
