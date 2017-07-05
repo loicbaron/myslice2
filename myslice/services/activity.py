@@ -55,17 +55,17 @@ def run():
     # Process events that were not watched 
     # while Server process was not running
     # myslice/bin/myslice-server
-    new_events = events(dbconnection, status="NEW")
-    for ev in new_events:
-        try:
-            event = Event(ev)
-            if event.status != event.previous_status:
-                logger.debug("Add event %s to Events queue" % (event.id))
-                qEvents.put(event)
-        except Exception as e:
-            logger.exception(e)
-            if 'id' in ev:
-                logger.error("Problem with event: {}".format(ev['id']))
+    # new_events = events(dbconnection, status="NEW")
+    # for ev in new_events:
+    #     try:
+    #         event = Event(ev)
+    #         if event.status != event.previous_status:
+    #             logger.debug("Add event %s to Events queue" % (event.id))
+    #             qEvents.put(event)
+    #     except Exception as e:
+    #         logger.exception(e)
+    #         if 'id' in ev:
+    #             logger.error("Problem with event: {}".format(ev['id']))
 
     for activity in feed:
         logger.debug("Change in activity feed")

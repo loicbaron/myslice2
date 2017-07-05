@@ -72,21 +72,21 @@ def run():
     # Process events that were not watched 
     # while Server process was not running
     # myslice/bin/myslice-server
-    new_events = events(dbconnection, status=["WAITING", "APPROVED"])
-    for ev in new_events:
-        try:
-            event = Event(ev)
-        except Exception as e:
-            logger.exception(e)
-            logger.error("Problem with event: {}".format(e))
-        else:
-            if event.object.type == ObjectType.USER:
-                logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
-                qUserEvents.put(event)
-
-            if event.object.type == ObjectType.PASSWORD:
-                logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
-                qPasswordEvents.put(event)
+    # new_events = events(dbconnection, status=["WAITING", "APPROVED"])
+    # for ev in new_events:
+    #     try:
+    #         event = Event(ev)
+    #     except Exception as e:
+    #         logger.exception(e)
+    #         logger.error("Problem with event: {}".format(e))
+    #     else:
+    #         if event.object.type == ObjectType.USER:
+    #             logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
+    #             qUserEvents.put(event)
+    #
+    #         if event.object.type == ObjectType.PASSWORD:
+    #             logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
+    #             qPasswordEvents.put(event)
 
     for activity in feed:
         try:

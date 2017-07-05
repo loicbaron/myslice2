@@ -47,7 +47,7 @@ def events_run(lock, qProjectEvents):
             event.setError()
             dispatch(dbconnection, event)
         else:
-            logger.info("Processing event from user {}".format(event.user))
+            logger.info("Processing event: {} from user {}".format(event.id, event.user))
 
             with lock:
                 try:
