@@ -20,7 +20,41 @@ from myslice.db.activity import Event, EventStatus
 from myslice.services.workers.events import run as manageEvents
 import myslice.lib.log as logging
 
+# Setup ZMQ with tornado event loop support
+import zmq
+from zmq.eventloop import ioloop
+from zmq.eventloop.zmqstream import ZMQStream
+import json
+
 logger = logging.getLogger("activity")
+
+ioloop.install()
+qEvents = Queue()
+
+class ZMQPubSub(object):
+
+    def __init__(self, context, callback):
+        self.context = context
+        self.callback = callback
+
+    def connect(self):
+        self.socket = self.context.socket(zmq.SUB)
+        self.socket.connect('tcp://127.0.0.1:6001')
+        self.stream = ZMQStream(self.socket)
+        self.stream.on_recv(self.callback)
+        return self
+
+    def subscribe(self, table=''):
+        logger.info("subscribing to: {}".format(table))
+        self.socket.setsockopt_string(zmq.SUBSCRIBE, table)
+        return self
+
+    def disconnect(self):
+        self.socket.close()
+
+    def isConnected(self):
+        return not self.socket.closed
+
 
 def receive_signal(signum, stack):
     logger.info('Received signal %s', signum)
@@ -34,7 +68,7 @@ def run():
     signal.signal(signal.SIGTERM, receive_signal)
     signal.signal(signal.SIGHUP, receive_signal)
 
-    qEvents = Queue()
+
 
     threads = []
     for y in range(10):
@@ -43,14 +77,23 @@ def run():
         threads.append(t)
         t.start()
 
-    dbconnection = connect()
+    context = zmq.Context()
+    ZMQPubSub(context, on_change).connect().subscribe('activity')
+
+    logger.critical("Service activity stopped")
+    # waits for the thread to finish
+    for x in threads:
+        x.join()
+
 
     ##
     # Watch for changes on the activity table and send the event/request
     # to the running threads (via Queue).
     # A global watch feed is needed to permit spawning more threads to manage
     # events and requests
-    feed = r.db('myslice').table('activity').changes().run(dbconnection)
+
+    # feed = r.db('myslice').table('activity').changes().run(dbconnection)
+
     # feed = changes(dbconnection, table='activity', status="NEW")
 
     ##
@@ -69,24 +112,29 @@ def run():
     #         if 'id' in ev:
     #             logger.error("Problem with event: {}".format(ev['id']))
 
-    for activity in feed:
-        logger.debug("Change in activity feed")
-        try:
-            if activity['new_val']['status'] == "NEW":
-                logger.debug("NEW event in activity feed")
-                event = Event(activity['new_val'])
-                # If the status of the event changes then process it
-                if event.status != event.previous_status:
-                    logger.debug("Add event %s to Events queue" % (event.id))
-                    qEvents.put(event)
-        except Exception as e:
-            import traceback
-            traceback.print_exc()
-            logger.exception(e)
-            if 'new_val' in activity and 'id' in activity['new_val']:
-                logger.error("Problem with event: {}".format(activity['new_val']['id']))
+    # for activity in feed:
+def on_change(zmqmessage):
 
-    logger.critical("Service activity stopped")
-    # waits for the thread to finish
-    for x in threads:
-        x.join()
+    logger.debug("got message")
+    logger.info(zmqmessage)
+    object = zmqmessage[0].decode('utf-8')
+    activity = json.loads(zmqmessage[1].decode('utf-8'))
+
+    logger.debug("Change in activity feed")
+
+    try:
+        if activity['new_val']['status'] == "NEW":
+            logger.debug("NEW event in activity feed")
+            event = Event(activity['new_val'])
+            # If the status of the event changes then process it
+            if event.status != event.previous_status:
+                logger.debug("Add event %s to Events queue" % (event.id))
+                qEvents.put(event)
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        logger.exception(e)
+        if 'new_val' in activity and 'id' in activity['new_val']:
+            logger.error("Problem with event: {}".format(activity['new_val']['id']))
+
+
