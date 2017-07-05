@@ -41,7 +41,7 @@ def run():
     lock = threading.Lock()
 
     threads = []
-    for y in range(10):
+    for y in range(1):
         t = threading.Thread(target=manageUsersEvents, args=(lock, qUserEvents))
         t.daemon = True
         threads.append(t)
