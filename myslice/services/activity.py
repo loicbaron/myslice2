@@ -74,7 +74,7 @@ def run():
 
     context = zmq.Context()
     socket = context.socket(zmq.SUB)
-    socket.setsockopt_string(zmq.SUBSCRIBE, channel)
+    socket.setsockopt_string(zmq.SUBSCRIBE, 'activity')
     socket.connect("tcp://localhost:6002")
     logger.info("Collecting updates from ZMQ bus for activity")
 
