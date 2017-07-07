@@ -30,7 +30,7 @@ from zmq.utils.strtypes import asbytes
 from myslice.lib.util import myJSONEncoder
 from myslice.db import connect, changes, tables
 
-logger = logging.getLogger()
+logger = logging.getLogger('myslice-router')
 
 
 def receive_signal(signum, stack):
@@ -64,13 +64,14 @@ if __name__ == '__main__':
         feed = r.db('myslice').table('activity').changes().run(dbconnection)
 
         for change in feed:
+            logger.info("Got the message from the Rethinkdb {}".format(change))
 
             channel = None
             # logger.info('change: {}'.format(change))
 
             #filtering
             if change['new_val']['status'] == "NEW":
-                channel = 'activity'
+                channel = 'test'
 
             else:
                 logger.info('Channel not found for the message with status {}'.format(change['new_val']['status']))
@@ -81,6 +82,7 @@ if __name__ == '__main__':
                 serialized_c = asbytes(json.dumps(change, ensure_ascii=False, cls=myJSONEncoder))
 
                 #sending to a channel:
+                # channel = 'activity'
                 sock.send_multipart([channel, serialized_c])
 
 
