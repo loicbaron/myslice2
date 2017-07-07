@@ -78,10 +78,11 @@ def run():
     socket.connect("tcp://localhost:6002")
     logger.info("Collecting updates from ZMQ bus for activity")
 
+    topic, zmqmessage = socket.recv_multipart()
 
-    while True:
+    while zmqmessage:
         logger.debug("Change in activity feed")
-        topic, zmqmessage = socket.recv_multipart()
+
         logger.debug("{0}: {1}".format(topic, zmqmessage.decode('utf-8')))
         activity = json.loads(zmqmessage.decode('utf-8'))
         logger.debug(type(activity))
