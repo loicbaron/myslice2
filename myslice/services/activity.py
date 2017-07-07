@@ -82,11 +82,12 @@ def run():
     while True:
         logger.debug("Change in activity feed")
         topic, zmqmessage = socket.recv_multipart()
-        print("{0}: {1}".format(topic, zmqmessage.decode('utf-8')))
+        logger.debug("{0}: {1}".format(topic, zmqmessage.decode('utf-8')))
         activity = json.loads(zmqmessage.decode('utf-8'))
-        print(type(activity))
-        print(activity)
+        logger.debug(type(activity))
+        logger.debug(activity)
         try:
+            logger.debug("activity {}".format(activity['new_val']['status']))
             if activity['new_val']['status'] == "NEW":
                 logger.debug("NEW event in activity feed")
                 event = Event(activity['new_val'])
