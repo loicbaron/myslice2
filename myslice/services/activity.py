@@ -87,21 +87,20 @@ def run():
         activity = json.loads(zmqmessage.decode('utf-8'))
         logger.debug(type(activity))
         logger.debug(activity)
-        try:
-            logger.debug("activity {}".format(activity['new_val']['status']))
-            if activity['new_val']['status'] == "NEW":
-                logger.debug("NEW event in activity feed")
-                event = Event(activity['new_val'])
-                # If the status of the event changes then process it
-                if event.status != event.previous_status:
-                    logger.debug("Add event %s to Events queue" % (event.id))
-                    qEvents.put(event)
-        except Exception as e:
-            import traceback
-            traceback.print_exc()
-            logger.exception(e)
-            if 'new_val' in activity and 'id' in activity['new_val']:
-                logger.error("Problem with event: {}".format(activity['new_val']['id']))
+        logger.debug("activity {}".format(activity['new_val']['status']))
+        if activity['new_val']['status'] == "NEW":
+            logger.debug("NEW event in activity feed")
+            event = Event(activity['new_val'])
+            # If the status of the event changes then process it
+            if event.status != event.previous_status:
+                logger.debug("Add event %s to Events queue" % (event.id))
+                qEvents.put(event)
+        # except Exception as e:
+        #     import traceback
+        #     traceback.print_exc()
+        #     logger.exception(e)
+        #     if 'new_val' in activity and 'id' in activity['new_val']:
+        #         logger.error("Problem with event: {}".format(activity['new_val']['id']))
 
     logger.critical("Service activity stopped")
     # waits for the thread to finish
