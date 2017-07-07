@@ -3,6 +3,7 @@ import zmq
 from multiprocessing import Process
 
 import json
+import pickle
 
 def on_message(message):
     print(message)
@@ -19,8 +20,9 @@ def client():
     should_continue = True
     while should_continue:
         topic, msg = socket.recv_multipart()
-        print("{0}: {1}".format(topic, msg.decode('utf-8')))
-        change = json.loads(msg.decode('utf-8'))
+        change = pickle.loads(msg)
+        print("{0}: {1}".format(topic, change))
+        print("{0}: {1}".format(type(topic), type(change)))
         print(type(change))
         print(change)
 

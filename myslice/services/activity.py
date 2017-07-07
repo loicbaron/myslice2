@@ -5,7 +5,7 @@
 #
 #   (c) 2016 Ciro Scognamiglio <ciro.scognamiglio@lip6.fr>
 ##
-
+from multiprocessing import Process
 import signal
 import threading
 from queue import Queue
@@ -21,10 +21,11 @@ from myslice.services.workers.events import run as manageEvents
 import myslice.lib.log as logging
 
 import zmq
+import pickle
 import json
 
 
-logger = logging.getLogger("activity")
+logger = logging.getLogger()
 
 
 def receive_signal(signum, stack):
@@ -68,23 +69,18 @@ def run():
     #         if 'id' in ev:
     #             logger.error("Problem with event: {}".format(ev['id']))
 
-
-    # zmq channel that we will listen on
-    channel = 'activity'
-
     context = zmq.Context()
     socket = context.socket(zmq.SUB)
     socket.setsockopt_string(zmq.SUBSCRIBE, 'activity')
     socket.connect("tcp://localhost:6002")
     logger.info("Collecting updates from ZMQ bus for activity")
 
-
-
-    while True:
+    should_continue = True
+    while should_continue:
         logger.debug("Change in activity feed")
         topic, zmqmessage = socket.recv_multipart()
-        logger.debug("{0}: {1}".format(topic, zmqmessage.decode('utf-8')))
-        activity = json.loads(zmqmessage.decode('utf-8'))
+        activity = pickle.loads(zmqmessage)
+        logger.debug("{0}: {1}".format(topic, activity))
         logger.debug(type(activity))
         logger.debug(activity)
         logger.debug("activity {}".format(activity['new_val']['status']))
@@ -106,3 +102,6 @@ def run():
     # waits for the thread to finish
     for x in threads:
         x.join()
+
+if __name__ == '__main__':
+    Process(target=run,).start()

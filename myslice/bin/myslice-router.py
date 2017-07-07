@@ -26,6 +26,7 @@ import rethinkdb as r
 from pprint import pprint
 
 from zmq.utils.strtypes import asbytes
+import pickle
 
 from myslice.lib.util import myJSONEncoder
 from myslice.db import connect, changes, tables
@@ -71,19 +72,19 @@ if __name__ == '__main__':
 
             #filtering
             if change['new_val']['status'] == "NEW":
-                channel = 'activity'
+                channel = b'activity'
 
             else:
                 logger.info('Channel not found for the message with status {}'.format(change['new_val']['status']))
 
             # serialize for zeromq
             if channel:
-                channel = asbytes(channel)
+                # channel = asbytes(channel)
                 serialized_c = asbytes(json.dumps(change, ensure_ascii=False, cls=myJSONEncoder))
 
                 #sending to a channel:
-                # channel = 'activity'
-                sock.send_multipart([channel, serialized_c])
+                sock.send_multipart([channel, pickle.dumps(change)])
+
 
 
     except SystemExit:
