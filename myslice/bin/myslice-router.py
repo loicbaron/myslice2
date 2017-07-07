@@ -71,7 +71,7 @@ if __name__ == '__main__':
 
             #filtering
             if change['new_val']['status'] == "NEW":
-                channel = 'test'
+                channel = 'activity'
 
             else:
                 logger.info('Channel not found for the message with status {}'.format(change['new_val']['status']))
