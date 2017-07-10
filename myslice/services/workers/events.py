@@ -3,7 +3,7 @@
 #
 #   Events thread worker
 #
-#   (c) 2016 Ciro Scognamiglio <ciro.scognamiglio@lip6.fr>
+#   (c) 2016 Ciro Scognamiglio <ciro.scognamiglio@lip6.fr>, Radomir Klacza <radomir.klacza@lip6.fr>
 ##
 
 import myslice.db as db
@@ -34,25 +34,38 @@ def run(q):
             event.setError()
             dispatch(dbconnection, event)
         else:
-            try:
-                logger.debug("%s - Manage event" % event.id)
-                # TODO: if event.creatingObject()
-                # Check if the event.object.id already exists or not
-                # if it exists -> add a numer to the id & hrn to make it unique
+            logger.debug("%s - Manage event".format(event.id))
+            # TODO: if event.creatingObject()
+            # Check if the event.object.id already exists or not
+            # if it exists -> add a numer to the id & hrn to make it unique
 
-                if event.object.type == ObjectType.PASSWORD:
+            if event.object.type == ObjectType.PASSWORD:
+                try:
                     event.setPending()
                     event.logInfo("Event is pending, please check your email")
                     logger.debug("Event %s is pending" % event.id)
-                # Register a new object for a new user
-                # id should be generated into the web to avoid duplicates
-                elif event.isNew() and event.object.type in [ObjectType.USER, ObjectType.AUTHORITY] and event.user is None and event.creatingObject():
+                except Exception as e:
+                    logger.error("Error in processing Event (1): {}".format(event))
+                    logger.error("Error while processing: {}".format(e))
+                    event.logError(str(e))
+
+
+            # Register a new object for a new user
+            # id should be generated into the web to avoid duplicates
+            elif event.isNew() and event.object.type in [ObjectType.USER, ObjectType.AUTHORITY] and event.user is None and event.creatingObject():
+                try:
                     # The user must confirm his/her email
-                    print("Event Type: %s" % type(event))
+                    logger.debug("Event Type: {}".format(type(event)))
                     event.setConfirm()
                     logger.debug("Event %s is confirm" % event.id)
                     event.logInfo("Event is expecting your confirmation, please check your email")
-                else:
+                except Exception as e:
+                    logger.error("Error in processing Event (2): {}".format(event))
+                    logger.error("Error while processing: {}".format(e))
+                    event.logError(str(e))
+
+            else:
+                try:
                     logger.debug("%s - get user %s" % (event.id,event.user))
                     db_user = db.get(dbconnection, table='users', id=event.user)
                     if db_user:
@@ -72,16 +85,16 @@ def run(q):
                         event.logError("User %s not found" % event.user)
                         # raising an Exception here, blocks the REST API
                         #raise Exception("User %s not found" % event.user)
-            except Exception as e:
-                logger.error("Error processing Event")
-                logger.error(event)
-                import traceback
-                logger.error(traceback.print_exc())
-                traceback.print_exc()
-                event.setError()
-                event.logError(str(e))
-                logger.error("Unable to fetch the user {} from db".format(event.user))
-                logger.exception(e)
+                except Exception as e:
+                    logger.error("Error processing Event")
+                    logger.error(event)
+                    import traceback
+                    logger.error(traceback.print_exc())
+                    traceback.print_exc()
+                    event.setError()
+                    event.logError(str(e))
+                    logger.error("Unable to fetch the user {} from db".format(event.user))
+                    logger.exception(e)
 
             # dispatch the updated event
             dispatch(dbconnection, event)
