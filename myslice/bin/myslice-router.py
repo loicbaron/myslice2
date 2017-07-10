@@ -77,11 +77,11 @@ def handle_unhandled_activities(dbconnection):
             event = Event(change['new_val'])
         except:
             logger.error("[myslice-router] Unhandled message was not correct event object {}".format(change))
+        else:
+            channels = filter_channels(event)
 
-        channels = filter_channels(event)
-
-        for channel in channels:
-            sock.send_multipart([channel, pickle.dumps(change)])
+            for channel in channels:
+                sock.send_multipart([channel, pickle.dumps(change)])
 
 
 if __name__ == '__main__':
@@ -119,11 +119,11 @@ if __name__ == '__main__':
                 event = Event(change['new_val'])
             except:
                 logger.error("[myslice-router] Message was not correct event object {}".format(change))
+            else:
+                channels = filter_channels(event)
 
-            channels = filter_channels(event)
-
-            for channel in channels:
-                sock.send_multipart([channel, pickle.dumps(change)])
+                for channel in channels:
+                    sock.send_multipart([channel, pickle.dumps(change)])
 
     except SystemExit:
         logger.error("there was an error with router - exiting")

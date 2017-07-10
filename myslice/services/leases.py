@@ -66,7 +66,7 @@ def run():
 
     should_continue = True
     while should_continue:
-        logger.debug("[leases]Change in emails feed")
+        logger.debug("[leases]Change in leases feed")
 
         topic, zmqmessage = socket.recv_multipart()
         activity = pickle.loads(zmqmessage)
