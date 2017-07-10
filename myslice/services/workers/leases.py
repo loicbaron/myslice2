@@ -46,7 +46,7 @@ def events_run(lock, qLeasesEvents):
             logger.error("Problem with event: {}".format(e))
             event.logError("Error in worker leases: {}".format(e))
             event.setError()
-            dispatch(dbconnection, event)
+            db.dispatch(dbconnection, event)
         else:
             logger.info("Processing event from user {}".format(event.user))
             try:

@@ -76,6 +76,7 @@ def run(q):
                 logger.error("Error processing Event")
                 logger.error(event)
                 import traceback
+                logger.error(traceback.print_exc())
                 traceback.print_exc()
                 event.setError()
                 event.logError(str(e))
