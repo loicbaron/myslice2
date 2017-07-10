@@ -17,6 +17,9 @@ from myslice.services.workers.authorities import sync as syncAuthorities
 import myslice.lib.log as logging
 from myslice import config
 
+import zmq
+import pickle
+
 logger = logging.getLogger("authorities")
 
 def receive_signal(signum, stack):
@@ -50,11 +53,11 @@ def run():
             threads.append(t)
             t.start()
 
-    dbconnection = connect()
+    # dbconnection = connect()
     ##
     # will watch for incoming events/requests and pass them to
     # the appropriate thread group
-    feed = r.db('myslice').table('activity').changes().run(dbconnection)
+    # feed = r.db('myslice').table('activity').changes().run(dbconnection)
     #feed = changes(dbconnection, table='activity', status=["WAITING", "APPROVED"])
 
     ##
@@ -72,24 +75,42 @@ def run():
     #         if event.object.type == ObjectType.AUTHORITY:
     #             logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
     #             qAuthorityEvents.put(event)
+    context = zmq.Context()
+    socket = context.socket(zmq.SUB)
+    socket.setsockopt_string(zmq.SUBSCRIBE, 'authorities')
+    socket.connect("tcp://localhost:6002")
+    logger.info("[authorities] Collecting updates from ZMQ bus for activity")
 
-    for activity in feed:
+    should_continue = True
+    while should_continue:
+        logger.debug("[authorities]Change in authorities feed")
+
+        topic, zmqmessage = socket.recv_multipart()
+        activity = pickle.loads(zmqmessage)
+
+        logger.debug("[authorities]{0}: {1}".format(topic, activity))
+
         try:
-            if activity['new_val']['status'] in ["WAITING","APPROVED"]:
-                event = Event(activity['new_val'])
-                if event.object.type == ObjectType.AUTHORITY:
-                    # event.isReady() = Request APPROVED or Event WAITING
-                    logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
-                    qAuthorityEvents.put(event)
+            event = Event(activity['new_val'])
+            logger.debug("[authorities] Add event %s to %s queue" % (event.id, event.object.type))
+            qAuthorityEvents.put(event)
+
+            # if activity['new_val']['status'] in ["WAITING","APPROVED"]:
+            #     event = Event(activity['new_val'])
+            #     if event.object.type == ObjectType.AUTHORITY:
+            #         # event.isReady() = Request APPROVED or Event WAITING
+
         except Exception as e:
             import traceback
             traceback.print_exc()
             logger.exception(e)
             if 'new_val' in activity and 'id' in activity['new_val']:
-                logger.error("Problem with event: {}".format(activity['new_val']['id']))
+                logger.error("[authorities] Problem with event: {}".format(activity['new_val']['id']))
+            else:
+                logger.error("[authorities] Event is malformed: {}".format(activity))
 
 
-    logger.critical("Service authorities stopped")
+    logger.critical("[authorities] Service authorities stopped")
     for x in threads:
         x.join()
 

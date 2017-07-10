@@ -18,6 +18,8 @@ from myslice.db.activity import Event, ObjectType
 from myslice.services.workers.leases import events_run as manageLeases, sync as syncLeases
 import myslice.lib.log as logging
 from myslice import config
+import zmq
+import pickle
 
 logger = logging.getLogger("leases")
 
@@ -56,12 +58,12 @@ def run():
             threads.append(t)
             t.start()
 
-    dbconnection = connect()
+    # dbconnection = connect()
 
     ##
     # will watch for incoming events/requests and pass them to
     # the appropriate thread group
-    feed = r.db('myslice').table('activity').changes().run(dbconnection)
+    # feed = r.db('myslice').table('activity').changes().run(dbconnection)
     #feed = changes(dbconnection, table='activity', status=['WAITING', 'APPROVED'])
 
     ##
@@ -80,13 +82,24 @@ def run():
     #             logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
     #             qLeases.put(event)
 
-    for activity in feed:
+    context = zmq.Context()
+    socket = context.socket(zmq.SUB)
+    socket.setsockopt_string(zmq.SUBSCRIBE, 'leases')
+    socket.connect("tcp://localhost:6002")
+    logger.info("[leases] Collecting updates from ZMQ bus for activity")
+
+    should_continue = True
+    while should_continue:
+        logger.debug("[leases]Change in emails feed")
+
+        topic, zmqmessage = socket.recv_multipart()
+        activity = pickle.loads(zmqmessage)
+
+        logger.debug("[leases]{0}: {1}".format(topic, activity))
         try:
-            if activity['new_val']['status'] in ["WAITING","APPROVED"]:
-                event = Event(activity['new_val'])
-                if event.object.type == ObjectType.LEASE:
-                    logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
-                    qLeases.put(event)
+            event = Event(activity['new_val'])
+            logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
+            qLeases.put(event)
         except Exception as e:
             import traceback
             traceback.print_exc()

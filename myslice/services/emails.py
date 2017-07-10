@@ -15,6 +15,9 @@ from myslice.db.activity import Event
 from myslice.services.workers.emails import emails_run as manageEmails, confirmEmails
 import myslice.lib.log as logging
 
+import zmq
+import pickle
+
 logger = logging.getLogger("emails")
 
 def receive_signal(signum, stack):
@@ -45,11 +48,11 @@ def run():
         threads.append(t)
         t.start()
 
-    dbconnection = connect()
-
-    ##
-    # Watch for changes on the activity table
-    feed = r.db('myslice').table('activity').changes().run(dbconnection)
+    # dbconnection = connect()
+    #
+    # ##
+    # # Watch for changes on the activity table
+    # feed = r.db('myslice').table('activity').changes().run(dbconnection)
     #feed = changes(dbconnection, table='activity', status=['PENDING', 'CONFIRM', 'DENIED', 'SUCCESS'])
 
     ##
@@ -78,7 +81,23 @@ def run():
     #             logger.debug("Add event %s to Confirm Email queue" % (event.id))
     #             qConfirmEmails.put(event)
 
-    for activity in feed:
+    # for activity in feed:
+
+    context = zmq.Context()
+    socket = context.socket(zmq.SUB)
+    socket.setsockopt_string(zmq.SUBSCRIBE, 'emails')
+    socket.connect("tcp://localhost:6002")
+    logger.info("[emails] Collecting updates from ZMQ bus for activity")
+
+    should_continue = True
+    while should_continue:
+        logger.debug("[emails]Change in emails feed")
+
+        topic, zmqmessage = socket.recv_multipart()
+        activity = pickle.loads(zmqmessage)
+
+        logger.debug("[emails]{0}: {1}".format(topic, activity))
+
         try:
             event = Event(activity['new_val'])
         except Exception as e:

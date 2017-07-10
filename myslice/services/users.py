@@ -18,6 +18,8 @@ from myslice.services.workers.password import events_run as managePasswordEvents
 from myslice.services.workers.users import sync as syncUsers
 import myslice.lib.log as logging
 from myslice import config
+import zmq
+import pickle
 
 logger = logging.getLogger("users")
 
@@ -34,7 +36,7 @@ def run():
     signal.signal(signal.SIGTERM, receive_signal)
     signal.signal(signal.SIGHUP, receive_signal)
 
-    dbconnection = connect()
+    # dbconnection = connect()
     # db connection is shared between threads
     qUserEvents = Queue()
     qPasswordEvents = Queue()
@@ -62,7 +64,7 @@ def run():
 
     ##
     # Watch for changes on the activity table
-    feed = r.db('myslice').table('activity').changes().run(dbconnection)
+    # feed = r.db('myslice').table('activity').changes().run(dbconnection)
         # .filter(lambda change: change['new_val']['status'] == status) \
         # .filter(lambda change: change['new_val']['status'] == status) \
 
@@ -88,7 +90,20 @@ def run():
     #             logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
     #             qPasswordEvents.put(event)
 
-    for activity in feed:
+    context = zmq.Context()
+    socket = context.socket(zmq.SUB)
+    socket.setsockopt_string(zmq.SUBSCRIBE, 'users')
+    socket.connect("tcp://localhost:6002")
+    logger.info("[emails] Collecting updates from ZMQ bus for activity")
+
+    should_continue = True
+    while should_continue:
+        logger.debug("[users] Change in emails feed")
+
+        topic, zmqmessage = socket.recv_multipart()
+        activity = pickle.loads(zmqmessage)
+
+        logger.debug("[users] {0}: {1}".format(topic, activity))
         try:
             event = Event(activity['new_val'])
 

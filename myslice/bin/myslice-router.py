@@ -46,7 +46,7 @@ def filter_channels(event):
 
     channels = []
 
-    if event.isNew():
+    if event.isNew() and event.status != event.previous_status:
         channels.append(b'activity')
 
     if event.isWaiting() or event.isApproved():

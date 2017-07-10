@@ -18,6 +18,8 @@ from myslice.services.workers.projects import events_run as manageProjects, sync
 from myslice.services.workers.slices import events_run as manageSlices, sync as syncSlices
 import myslice.lib.log as logging
 from myslice import config
+import zmq
+import pickle
 
 logger = logging.getLogger("experiments")
 
@@ -72,12 +74,12 @@ def run():
             threads.append(t)
             t.start()
 
-    dbconnection = connect()
+    # dbconnection = connect()
 
     ##
     # will watch for incoming events/requests and pass them to
     # the appropriate thread group
-    feed = r.db('myslice').table('activity').changes().run(dbconnection)
+    # feed = r.db('myslice').table('activity').changes().run(dbconnection)
     #feed = changes(dbconnection, table='activity', status=['WAITING', 'APPROVED'])
 
     ##
@@ -99,17 +101,30 @@ def run():
     #             logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
     #             qSlices.put(event)
 
-    for activity in feed:
-        #logger.debug("Change detected in activity table %s" % activity["new_val"]["id"])
+    context = zmq.Context()
+    socket = context.socket(zmq.SUB)
+    socket.setsockopt_string(zmq.SUBSCRIBE, 'experiments')
+    socket.connect("tcp://localhost:6002")
+    logger.info("[emails] Collecting updates from ZMQ bus for activity")
+
+    should_continue = True
+    while should_continue:
+        logger.debug("[emails]Change in emails feed")
+
+        topic, zmqmessage = socket.recv_multipart()
+        activity = pickle.loads(zmqmessage)
+
+        logger.debug("[emails]{0}: {1}".format(topic, activity))
+
         try:
-            if activity['new_val']['status'] in ["WAITING","APPROVED"]:
-                event = Event(activity['new_val'])
-                if event.object.type == ObjectType.PROJECT:
-                    logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
-                    qProjects.put(event)
-                if event.object.type == ObjectType.SLICE:
-                    logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
-                    qSlices.put(event)
+            # if activity['new_val']['status'] in ["WAITING","APPROVED"]:
+            event = Event(activity['new_val'])
+            if event.object.type == ObjectType.PROJECT:
+                logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
+                qProjects.put(event)
+            if event.object.type == ObjectType.SLICE:
+                logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
+                qSlices.put(event)
         except Exception as e:
             import traceback
             traceback.print_exc()

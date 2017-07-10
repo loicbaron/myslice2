@@ -86,9 +86,12 @@ def run():
         try:
             event = Event(activity['new_val'])
             # If the status of the event changes then process it
-            if event.status != event.previous_status:
-                logger.debug("[activity] Adding event %s to Events queue" % (event.id))
-                qEvents.put(event)
+            # if event.status != event.previous_status:
+            logger.debug("[activity] Adding event %s to Events queue" % (event.id))
+            qEvents.put(event)
+
+            #for debbuging purposes
+
         except Exception as e:
             import traceback
             traceback.print_exc()
