@@ -10,22 +10,12 @@
 '''
 
 import myslice.lib.log as logging
-import json
 import signal
-import threading
-import zmq
-from queue import Queue
 from myslice.db.activity import Event, ObjectType
-
 import rethinkdb as r
-
-from pprint import pprint
-
-from zmq.utils.strtypes import asbytes
+import zmq
 import pickle
-
-from myslice.lib.util import myJSONEncoder
-from myslice.db import connect, changes, tables
+from myslice.db import connect, changes, tables, events
 
 logger = logging.getLogger('myslice-router')
 
@@ -70,6 +60,30 @@ def filter_channels(event):
     return channels
 
 
+def handle_unhandled_activities(dbconnection):
+
+    """
+         Process events that were not watched
+         while Server process was not running
+         :param dbconnection: 
+         :return: 
+    """
+
+
+    unhandled_events = events(dbconnection, status="NEW")
+
+    for event in unhandled_events:
+        try:
+            event = Event(change['new_val'])
+        except:
+            logger.error("[myslice-router] Unhandled message was not correct event object {}".format(change))
+
+        channels = filter_channels(event)
+
+        for channel in channels:
+            sock.send_multipart([channel, pickle.dumps(change)])
+
+
 if __name__ == '__main__':
 
     signal.signal(signal.SIGINT, receive_signal)
@@ -91,6 +105,8 @@ if __name__ == '__main__':
         sock.close()
         context.term()
 
+    # uncomment this if you want to process all unprocessed events from activity table
+    #handle_unhandled_activities(dbconnection)
 
     try:
         # Watch for changes on the activity table
@@ -106,12 +122,7 @@ if __name__ == '__main__':
 
             channels = filter_channels(event)
 
-            # serialize for zeromq
             for channel in channels:
-                # channel = asbytes(channel)
-                # serialized_c = asbytes(json.dumps(change, ensure_ascii=False, cls=myJSONEncoder))
-
-                #sending to a channel:
                 sock.send_multipart([channel, pickle.dumps(change)])
 
     except SystemExit:
