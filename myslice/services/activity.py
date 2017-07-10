@@ -52,8 +52,6 @@ def run():
     # Rethinkdb conncection
     # dbconnection = connect()
     #
-    ##
-
     # Process events that were not watched
     # while Server process was not running
     # myslice/bin/myslice-server
@@ -73,30 +71,30 @@ def run():
     socket = context.socket(zmq.SUB)
     socket.setsockopt_string(zmq.SUBSCRIBE, 'activity')
     socket.connect("tcp://localhost:6002")
-    logger.info("Collecting updates from ZMQ bus for activity")
+    logger.info("[activity] Collecting updates from ZMQ bus for activity")
 
     should_continue = True
     while should_continue:
-        logger.debug("Change in activity feed")
+        logger.debug("[activity]Change in activity feed")
+
         topic, zmqmessage = socket.recv_multipart()
         activity = pickle.loads(zmqmessage)
-        logger.debug("{0}: {1}".format(topic, activity))
-        logger.debug(type(activity))
-        logger.debug(activity)
-        logger.debug("activity {}".format(activity['new_val']['status']))
-        if activity['new_val']['status'] == "NEW":
-            logger.debug("NEW event in activity feed")
+
+
+        logger.debug("[activity]{0}: {1}".format(topic, activity))
+
+        try:
             event = Event(activity['new_val'])
             # If the status of the event changes then process it
             if event.status != event.previous_status:
-                logger.debug("Add event %s to Events queue" % (event.id))
+                logger.debug("[activity] Adding event %s to Events queue" % (event.id))
                 qEvents.put(event)
-        # except Exception as e:
-        #     import traceback
-        #     traceback.print_exc()
-        #     logger.exception(e)
-        #     if 'new_val' in activity and 'id' in activity['new_val']:
-        #         logger.error("Problem with event: {}".format(activity['new_val']['id']))
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            logger.exception(e)
+            if 'new_val' in activity and 'id' in activity['new_val']:
+                logger.error("[activity] Problem with event: {}".format(activity['new_val']['id']))
 
     logger.critical("Service activity stopped")
     # waits for the thread to finish

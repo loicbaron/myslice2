@@ -6,11 +6,6 @@
     This service will run multiple threads responsible for watching for changes
     to rethinkdb and broadcast to connected clients with ZeroMQ
 
-    check more info: 
-    http://zguide.zeromq.org/php:chapter5
-    https://github.com/zeromq/pyzmq/blob/master/examples/pubsub/
-    https://pyzmq.readthedocs.io/en/latest/api/index.html
-
     (c) 2017 Radomir Klacza <radomir.klacza@lip6.fr>
 '''
 
@@ -20,6 +15,7 @@ import signal
 import threading
 import zmq
 from queue import Queue
+from myslice.db.activity import Event, ObjectType
 
 import rethinkdb as r
 
@@ -38,6 +34,42 @@ def receive_signal(signum, stack):
     logger.info('Received signal %s', signum)
     raise SystemExit('Exiting')
 
+
+
+def filter_channels(event):
+
+    """
+    findings all channels that message needs to be send to
+    :param event: 
+    :return:[] of channels that we need to send messages to 
+    """
+
+    channels = []
+
+    if event.isNew():
+        channels.append(b'activity')
+
+    if event.isWaiting() or event.isApproved():
+        if event.object.type == ObjectType.AUTHORITY:
+            channels.append(b'authorities')
+        elif event.object.type in [ObjectType.PROJECT, ObjectType.SLICE]:
+            channels.append(b'experiments')
+        elif event.object.type == ObjectType.LEASE:
+            channels.append(b'leases')
+
+    if event.isReady():
+        if event.object.type in [ObjectType.USER, ObjectType.PASSWORD]:
+            channels.append(b'users')
+
+    if event.notify:
+        channels.append(b'emails')
+
+    if not channels and not event.isSuccess:
+        logger.error('[myslice-router] Channel not found for the message with status {}'.format(change['new_val']['status']))
+
+    return channels
+
+
 if __name__ == '__main__':
 
     signal.signal(signal.SIGINT, receive_signal)
@@ -47,7 +79,7 @@ if __name__ == '__main__':
     # RethinkDB connection
     dbconnection = connect()
 
-    logger.info("watching changes on the activity")
+    logger.info("[myslice-router] Watching changes on the activity")
 
     try:
         context = zmq.Context()
@@ -65,30 +97,26 @@ if __name__ == '__main__':
         feed = r.db('myslice').table('activity').changes().run(dbconnection)
 
         for change in feed:
-            logger.info("Got the message from the Rethinkdb {}".format(change))
+            logger.info("[myslice-router] Got the message from the Rethinkdb {}".format(change))
 
-            channel = None
-            # logger.info('change: {}'.format(change))
+            try:
+                event = Event(change['new_val'])
+            except:
+                logger.error("[myslice-router] Message was not correct event object {}".format(change))
 
-            #filtering
-            if change['new_val']['status'] == "NEW":
-                channel = b'activity'
-
-            else:
-                logger.info('Channel not found for the message with status {}'.format(change['new_val']['status']))
+            channels = filter_channels(event)
 
             # serialize for zeromq
-            if channel:
+            for channel in channels:
                 # channel = asbytes(channel)
-                serialized_c = asbytes(json.dumps(change, ensure_ascii=False, cls=myJSONEncoder))
+                # serialized_c = asbytes(json.dumps(change, ensure_ascii=False, cls=myJSONEncoder))
 
                 #sending to a channel:
                 sock.send_multipart([channel, pickle.dumps(change)])
 
-
-
     except SystemExit:
         logger.error("there was an error with router - exiting")
+
 
 
 
