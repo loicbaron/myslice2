@@ -60,7 +60,7 @@ def run():
             t.start()
 
     # slices manager
-    for y in range(10):
+    for y in range(1):
         t = threading.Thread(target=manageSlices, args=(qSlices,))
         t.daemon = True
         threads.append(t)
