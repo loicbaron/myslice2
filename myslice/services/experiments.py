@@ -74,33 +74,6 @@ def run():
             threads.append(t)
             t.start()
 
-    # dbconnection = connect()
-
-    ##
-    # will watch for incoming events/requests and pass them to
-    # the appropriate thread group
-    # feed = r.db('myslice').table('activity').changes().run(dbconnection)
-    #feed = changes(dbconnection, table='activity', status=['WAITING', 'APPROVED'])
-
-    ##
-    # Process events that were not watched 
-    # while Server process was not running
-    # myslice/bin/myslice-server
-    # wa_events = events(dbconnection, status=['WAITING', 'APPROVED'])
-    # for ev in wa_events:
-    #     try:
-    #         event = Event(ev)
-    #     except Exception as e:
-    #         logger.exception(e)
-    #         logger.error("Problem with event: {}".format(e))
-    #     else:
-    #         if event.object.type == ObjectType.PROJECT:
-    #             logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
-    #             qProjects.put(event)
-    #         if event.object.type == ObjectType.SLICE:
-    #             logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
-    #             qSlices.put(event)
-
     context = zmq.Context()
     socket = context.socket(zmq.SUB)
     socket.setsockopt_string(zmq.SUBSCRIBE, 'experiments')

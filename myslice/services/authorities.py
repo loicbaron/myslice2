@@ -53,28 +53,6 @@ def run():
             threads.append(t)
             t.start()
 
-    # dbconnection = connect()
-    ##
-    # will watch for incoming events/requests and pass them to
-    # the appropriate thread group
-    # feed = r.db('myslice').table('activity').changes().run(dbconnection)
-    #feed = changes(dbconnection, table='activity', status=["WAITING", "APPROVED"])
-
-    ##
-    # Process events that were not watched 
-    # while Server process was not running
-    # myslice/bin/myslice-server
-    # new_events = events(dbconnection, status=["WAITING", "APPROVED"])
-    # for ev in new_events:
-    #     try:
-    #         event = Event(ev)
-    #     except Exception as e:
-    #         logger.exception(e)
-    #         logger.error("Problem with event: {}".format(e))
-    #     else:
-    #         if event.object.type == ObjectType.AUTHORITY:
-    #             logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
-    #             qAuthorityEvents.put(event)
     context = zmq.Context()
     socket = context.socket(zmq.SUB)
     socket.setsockopt_string(zmq.SUBSCRIBE, 'authorities')
@@ -95,10 +73,6 @@ def run():
             logger.debug("[authorities] Add event %s to %s queue" % (event.id, event.object.type))
             qAuthorityEvents.put(event)
 
-            # if activity['new_val']['status'] in ["WAITING","APPROVED"]:
-            #     event = Event(activity['new_val'])
-            #     if event.object.type == ObjectType.AUTHORITY:
-            #         # event.isReady() = Request APPROVED or Event WAITING
 
         except Exception as e:
             import traceback

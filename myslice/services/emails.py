@@ -48,41 +48,6 @@ def run():
         threads.append(t)
         t.start()
 
-    # dbconnection = connect()
-    #
-    # ##
-    # # Watch for changes on the activity table
-    # feed = r.db('myslice').table('activity').changes().run(dbconnection)
-    #feed = changes(dbconnection, table='activity', status=['PENDING', 'CONFIRM', 'DENIED', 'SUCCESS'])
-
-    ##
-    # Process events that were not watched 
-    # while Server process was not running
-    # myslice/bin/myslice-server
-    # new_events = events(dbconnection, status="PENDING")
-    # for ev in new_events:
-    #     try:
-    #         event = Event(ev)
-    #     except Exception as e:
-    #         logger.error("Problem with event: {}".format(e))
-    #     else:
-    #         if event.notify:
-    #             logger.debug("Add event %s to Email queue" % (event.id))
-    #             qEmails.put(event)
-    #
-    # new_confirmations = events(dbconnection, status="CONFIRM")
-    # for ev in new_confirmations:
-    #     try:
-    #         event = Event(ev)
-    #     except Exception as e:
-    #         logger.error("Problem with event: {}".format(e))
-    #     else:
-    #         if event.notify:
-    #             logger.debug("Add event %s to Confirm Email queue" % (event.id))
-    #             qConfirmEmails.put(event)
-
-    # for activity in feed:
-
     context = zmq.Context()
     socket = context.socket(zmq.SUB)
     socket.setsockopt_string(zmq.SUBSCRIBE, 'emails')

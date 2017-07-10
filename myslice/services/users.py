@@ -36,8 +36,6 @@ def run():
     signal.signal(signal.SIGTERM, receive_signal)
     signal.signal(signal.SIGHUP, receive_signal)
 
-    # dbconnection = connect()
-    # db connection is shared between threads
     qUserEvents = Queue()
     qPasswordEvents = Queue()
     lock = threading.Lock()
@@ -62,34 +60,6 @@ def run():
             threads.append(t)
             t.start()
 
-    ##
-    # Watch for changes on the activity table
-    # feed = r.db('myslice').table('activity').changes().run(dbconnection)
-        # .filter(lambda change: change['new_val']['status'] == status) \
-        # .filter(lambda change: change['new_val']['status'] == status) \
-
-    #feed = changes(dbconnection, table='activity', status=["WAITING", "APPROVED"])
-
-    ##
-    # Process events that were not watched 
-    # while Server process was not running
-    # myslice/bin/myslice-server
-    # new_events = events(dbconnection, status=["WAITING", "APPROVED"])
-    # for ev in new_events:
-    #     try:
-    #         event = Event(ev)
-    #     except Exception as e:
-    #         logger.exception(e)
-    #         logger.error("Problem with event: {}".format(e))
-    #     else:
-    #         if event.object.type == ObjectType.USER:
-    #             logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
-    #             qUserEvents.put(event)
-    #
-    #         if event.object.type == ObjectType.PASSWORD:
-    #             logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
-    #             qPasswordEvents.put(event)
-
     context = zmq.Context()
     socket = context.socket(zmq.SUB)
     socket.setsockopt_string(zmq.SUBSCRIBE, 'users')
@@ -107,15 +77,13 @@ def run():
         try:
             event = Event(activity['new_val'])
 
-            if event.isReady():
+            if event.object.type == ObjectType.USER:
+                logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
+                qUserEvents.put(event)
 
-                if event.object.type == ObjectType.USER:
-                    logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
-                    qUserEvents.put(event)
-
-                if event.object.type == ObjectType.PASSWORD:
-                    logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
-                    qPasswordEvents.put(event)
+            if event.object.type == ObjectType.PASSWORD:
+                logger.debug("Add event %s to %s queue" % (event.id, event.object.type))
+                qPasswordEvents.put(event)
 
         except Exception as e:
             import traceback
