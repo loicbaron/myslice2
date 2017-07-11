@@ -186,12 +186,12 @@ class Config(object):
                 "theme": self._config["main"].get("email", "theme", fallback="onelab"),
                 "name": self._config["main"].get("email", "name", fallback="OneLab"),
                 "domain": self._config["main"].get("email", "domain", fallback="onelab.eu"),
-                "host": self._config["main"].get("email", "host", fallback="smtp.gmail.com"),
-                "port": self._config["main"].get("email", "port", fallback="587"),
-                "ssl": self._config["main"].get("email", "ssl", fallback=True),
-                "user": self._config["main"].get("email", "user", fallback="zhouquantest16@gmail.com"),
-                "sender": self._config["main"].get("email", "sender", fallback="zhouquantest16@gmail.com"),
-                "password": self._config["main"].get("email", "password", fallback="zqtest123"),
+                "host": self._config["main"].get("email", "host", fallback="localhost"),
+                "port": self._config["main"].get("email", "port", fallback="25"),
+                "ssl": self._config["main"].get("email", "ssl", fallback=None),
+                "user": self._config["main"].get("email", "user", fallback=None),
+                "sender": self._config["main"].get("email", "sender", fallback=None),
+                "password": self._config["main"].get("email", "password", fallback=None),
             }
         else:
             exit("no email configuration section found in %s/main.cfg" % self._path)
