@@ -127,11 +127,13 @@ def build_subject_and_template( action,
 class Mailer(object):
 
     def __init__(self):
+        logger.debug("Sending email")
         #smtp server mailer needs optimatization
         self.server = smtplib.SMTP(s.email['host'], s.email['port'])
 
     def send(self, message):
-        
+        logger.debug("Sending email - send method {}".format(message))
+
         if s.email['ssl'] is not None:
             logger.debug("start SSL {}".format(s.email['ssl']))
             self.server.starttls()
