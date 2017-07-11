@@ -210,7 +210,7 @@ def sendEmail(event, recipients, subject, template, url, buttonLabel):
     logger.debug("about mail body inline")
     # use premailer module to get CSS inline
     mail_body_inline = transform(mail_body.decode())
-    logger.log("about mail Message")
+    logger.debug("about mail Message")
     m = Message(mail_from=[s.email['name']+' Support', s.email['sender']],
                 mail_to = mail_to,
                 subject = subject,
