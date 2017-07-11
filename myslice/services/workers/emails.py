@@ -172,7 +172,7 @@ def emails_run(qEmails):
                 except Exception as e:
                     import traceback
                     traceback.print_exc()
-                    msg = "Error in event {} while trying to send an email: {}".format(event.id, e)
+                    msg = "Error in event {} while trying to send an email: {} {}".format(event.id, e, traceback.print_exc())
                     logger.error(msg)
                     event.logWarning(msg)
                 finally:
