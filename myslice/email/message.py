@@ -132,16 +132,22 @@ class Mailer(object):
         self.server = smtplib.SMTP(s.email['host'], s.email['port'])
 
     def send(self, message):
-        logger.debug("Sending email - send method {}".format(message))
+        logger.debug("Sending email - send method {}".format(message.as_string))
 
         if s.email['ssl'] is not None:
             logger.debug("start SSL {}".format(s.email['ssl']))
             self.server.starttls()
         #self.server.set_debuglevel(1)
+        logger.debug("Sending email - send method 1{}".format(message.as_string))
+
         if s.email['password'] is not None:
             logger.debug("logging with username and password {} ".format(s.email['password']))
             self.server.login(s.email['user'], s.email['password'])
-        self.server.sendmail(s.email['sender'], message.mail_to , message.as_string())
+        logger.debug("Sending email - send method 2{}".format(message.as_string))
+
+        self.server.sendmail(s.email['sender'], message.mail_to , "Test")
+        logger.debug("Sending email - send method 3{}".format(message.as_string))
+
         self.server.quit()
         
 
