@@ -180,7 +180,7 @@ def emails_run(qEmails):
 
 def sendEmail(event, recipients, subject, template, url, buttonLabel):
     # db connection is shared between threads
-    dbconnection = connect()
+    # dbconnection = connect()
     mail_to = []
     for r in recipients:
         try:

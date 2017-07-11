@@ -129,12 +129,20 @@ class Mailer(object):
 
     def send(self, message):
         
-        self.server.starttls()
+        if s.email['ssl']:
+            self.server.starttls()
         #self.server.set_debuglevel(1)
-        self.server.login(s.email['user'], s.email['password'])
+        if s.email['password']:
+            self.server.login(s.email['user'], s.email['password'])
         self.server.sendmail(s.email['sender'], message.mail_to , message.as_string())
         self.server.quit()
         
 
 if __name__ == '__main__':
+    # mail = Mailer()
+    # m = Message(mail_from=[s.email['name'] + ' Support', s.email['sender']],
+    #             mail_to="cos@lip6.fr",
+    #             subject="Just testing",
+    #             html_content="this is body")
+    # mail.send(m)
     pass
