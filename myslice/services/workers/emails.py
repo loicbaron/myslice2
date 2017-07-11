@@ -167,16 +167,16 @@ def emails_run(qEmails):
                     elif event.isDenied():
                         subject, template = build_subject_and_template('deny', event)
 
-                try:
-                    sendEmail(event, recipients, subject, template, url, buttonLabel)
-                except Exception as e:
-                    import traceback
-                    traceback.print_exc()
-                    msg = "Error in event {} while trying to send an email: {}".format(event.id, e)
-                    logger.error(msg)
-                    event.logWarning(msg)
-                finally:
-                    dispatch(dbconnection, event)
+                # try:
+                sendEmail(event, recipients, subject, template, url, buttonLabel)
+                # except Exception as e:
+                #     import traceback
+                #     traceback.print_exc()
+                #     msg = "Error in event {} while trying to send an email: {}".format(event.id, e)
+                #     logger.error(msg)
+                #     event.logWarning(msg)
+                # finally:
+                dispatch(dbconnection, event)
 
 def sendEmail(event, recipients, subject, template, url, buttonLabel):
     # db connection is shared between threads
