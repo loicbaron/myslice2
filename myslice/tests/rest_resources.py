@@ -25,21 +25,21 @@ class TestResources(LocalTestCase):
         self.stopTimer()
 
     def test_0_getNoAuth(self):
-        r = requests.get('http://'+self.server+':8111/api/v1/resources')
+        r = requests.get('http://'+self.server+'/api/v1/resources')
         self.assertEqual(r.status_code, 400)
 
     def test_1_getAllResources(self):
-        r = requests.get('http://'+self.server+':8111/api/v1/resources', cookies=self.cookies)
+        r = requests.get('http://'+self.server+'/api/v1/resources', cookies=self.cookies)
         self.assertEqual(r.status_code, 200)
 
     def test_1_getTestbeds(self):
-        r = requests.get('http://'+self.server+':8111/api/v1/testbeds', cookies=self.cookies)
+        r = requests.get('http://'+self.server+'/api/v1/testbeds', cookies=self.cookies)
         self.assertEqual(r.status_code, 200)
         data = json.loads(r.text)
         self.__class__.testbed = data['result'][0]
 
     def test_2_getTestbedResources(self):
         testbed = self.__class__.testbed
-        r = requests.get('http://'+self.server+':8111/api/v1/testbeds/'+testbed+'/resources', cookies=self.cookies)
+        r = requests.get('http://'+self.server+'/api/v1/testbeds/'+testbed+'/resources', cookies=self.cookies)
         self.assertEqual(r.status_code, 200)
 

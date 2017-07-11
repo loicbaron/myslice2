@@ -22,13 +22,13 @@ def clean(objectType, server):
     """Delete objectType if the id contains autotest"""
     LocalTestCase.SERVER = server
     test = LocalTestCase()
-    r = requests.get('http://'+test.server+':8111/api/v1/'+objectType, cookies=test.cookies)
+    r = requests.get('http://'+test.server+'/api/v1/'+objectType, cookies=test.cookies)
     result = json.loads(r.text)
     objects = result['result']
     for o in objects:
         if "autotest" in o['id']:
             print("deleting %s %s" % (objectType,o['hrn']))
-            rDelete = requests.delete('http://'+test.server+':8111/api/v1/'+objectType+'/'+o['id'], cookies=test.cookies)
+            rDelete = requests.delete('http://'+test.server+'/api/v1/'+objectType+'/'+o['id'], cookies=test.cookies)
             pprint(rDelete.text)
 
             result = json.loads(rDelete.text)

@@ -93,7 +93,7 @@ class TestUser(unittest.TestCase):
                     }
                 }
             }
-        r = requests.post("http://"+server+":8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload))
+        r = requests.post("http://"+server+"/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload))
         self.assertEqual(r.status_code, 200)
         result = json.loads(r.text)
         self.assertEqual(result['return']['messages']['object'], payload['event']['object'])
@@ -113,7 +113,7 @@ class TestUser(unittest.TestCase):
                     }
                 }
             }
-        r = requests.post("http://"+server+":8111/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload))
+        r = requests.post("http://"+server+"/api/v1/activity", headers={str('Content-Type'):'application/json'}, data=json.dumps(payload))
         self.assertEqual(r.status_code, 200)
         result = json.loads(r.text)
         self.assertEqual(result['return']['messages']['object'], payload['event']['object'])

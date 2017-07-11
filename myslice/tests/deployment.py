@@ -12,7 +12,7 @@ from myslice.tests.config import s, server
 class TestDeployment(unittest.TestCase):
 
     def test_0_MySliceWeb(self):
-        r = requests.get('http://'+server+':8111')
+        r = requests.get('http://'+server+'')
         self.assertEqual(r.status_code, 200)
         #print(r.text)
 
