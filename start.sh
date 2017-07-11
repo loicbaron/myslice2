@@ -6,7 +6,8 @@
 DIR=$(dirname "$0")
 
 # As deamon 
-$DIR/myslice/bin/myslice-server &
+$DIR/myslice/bin/myslice-router.py &
+$DIR/myslice/bin/myslice-server >> /var/log/myslice/server-stdout-stderr.log 2>1 &
 # As deamon 
 $DIR/myslice/bin/myslice-monitor &
 
