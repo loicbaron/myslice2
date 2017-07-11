@@ -180,7 +180,7 @@ def emails_run(qEmails):
 
 def sendEmail(event, recipients, subject, template, url, buttonLabel):
     # db connection is shared between threads
-    # dbconnection = connect()
+    dbconnection = connect()
     mail_to = []
     for r in recipients:
         try:
@@ -196,7 +196,7 @@ def sendEmail(event, recipients, subject, template, url, buttonLabel):
             username = ""
 
         mail_to.append("{} <{}>".format(username, r.email))
-
+    logger.log("about mail body")
     mail_body = template.generate(
                     title = subject,
                     entity = str(event.object.type),
@@ -207,12 +207,14 @@ def sendEmail(event, recipients, subject, template, url, buttonLabel):
                     url = url,
                     buttonLabel = buttonLabel,
                     )
+    logger.log("about mail body inline")
     # use premailer module to get CSS inline
     mail_body_inline = transform(mail_body.decode())
-
+    logger.log("about mail Message")
     m = Message(mail_from=[s.email['name']+' Support', s.email['sender']],
                 mail_to = mail_to,
                 subject = subject,
                 html_content = mail_body_inline
                 )
+    logger.log("about mail send")
     Mailer().send(m)
