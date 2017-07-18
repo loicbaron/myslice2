@@ -50,10 +50,15 @@ def events_run(lock, qAuthorityEvents):
                     isSuccess = False
                     
                     if event.creatingObject() or event.updatingObject():
-                        logger.info("creating or updating the object authority {}".format(event.object.id)) 
-                        auth = Authority(event.data)
-                        auth.id = event.object.id
-                        isSuccess = auth.save(dbconnection)
+                        try:
+                            logger.info("creating or updating the object authority {}".format(event.object.id))
+                            auth = Authority(event.data)
+                        except Exception as e:
+                            logger.error("There has been an error while creating authority")
+                            logger.error(e, exc_info=True)
+                        else:
+                            auth.id = event.object.id
+                            isSuccess = auth.save(dbconnection)
                     else:
                         a = db.get(dbconnection, table='authorities', id=event.object.id)
                         if not a:
