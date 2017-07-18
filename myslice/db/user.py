@@ -36,6 +36,10 @@ class UserException(Exception):
 class User(myslicelibUser):
     
     def __init__(self, data = {}):
+        # initialize the object with its id
+        if isinstance(data, str):
+            data = db.users(id=data)
+
         data = data if data is not None else {}
         # Generate keys by default
         data['generate_keys'] = data.get('generate_keys', True)

@@ -23,6 +23,10 @@ class SliceWarningException(Exception):
 class Slice(myslicelibSlice):
 
     def __init__(self, data = {}):
+        # initialize the object with its id
+        if isinstance(data, str):
+            data = db.slices(id=data)
+
         data = data if data is not None else {}
         data['hasLeases'] = False
         if 'leases' in data and len(data['leases'])>0:
