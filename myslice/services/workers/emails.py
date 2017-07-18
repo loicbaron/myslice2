@@ -151,6 +151,10 @@ def emails_run(qEmails):
                                 for user in event.data['users']:
                                     if isinstance(user, dict):
                                         recipients.add(User({'email':user['email'], 'first_name':user['first_name'], 'last_name':user['last_name']}))
+                                    elif isinstance(user, str):
+                                        recipients.add(User(db.get(dbconnection, table='users', id=user)))
+                                    else:
+                                        logger.error("No users found, no email will be send")
                             else:
                                 for user in event.data['pi_users']:
                                     if isinstance(user, dict):
@@ -207,14 +211,11 @@ def sendEmail(event, recipients, subject, template, url, buttonLabel):
                     url = url,
                     buttonLabel = buttonLabel,
                     )
-    logger.debug("about mail body inline")
     # use premailer module to get CSS inline
     mail_body_inline = transform(mail_body.decode())
-    logger.debug("about mail Message")
     m = Message(mail_from=[s.email['sender']],
                 mail_to = mail_to,
                 subject = subject,
                 html_content = mail_body_inline
                 )
-    logger.debug("about mail send")
     Mailer().send(m)
