@@ -200,10 +200,10 @@ class Config(object):
     def auth(self):
         if self._config["main"].has_section("auth"):
             return {
-                "pkey": self._config["main"].get("auth", "pkey", fallback="/var/myslice/myslice.pkey"),
-                "cert": self._config["main"].get("auth", "cert", fallback="/var/myslice/myslice.cert"),
-                "hrn": self._config["main"].get("auth", "hrn", fallback="onelab.myslice"),
-                "email": self._config["main"].get("auth", "email", fallback="support@myslice.info"),
+                "pkey": self._config["main"].get("auth", "pkey", fallback="/var/myslice/rawfie.pkey"),
+                "cert": self._config["main"].get("auth", "cert", fallback="/var/myslice/rawfie.cert"),
+                "hrn": self._config["main"].get("auth", "hrn", fallback="rawfie.myslice"),
+                "email": self._config["main"].get("auth", "email", fallback="rawfie@onelab.eu"),
             }
         else:
             exit("no auth configuration section found in %s/main.cfg" % self._path)
