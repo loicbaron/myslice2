@@ -51,15 +51,13 @@ def confirmEmails(qConfirmEmails):
 
                     # Look for the user email in the Event
                     if event.object.type == ObjectType.USER:
-                        recipients.add(User({'email':event.data['email'], 'first_name':event.data['first_name'], 'last_name':event.data['last_name']}))
+                        recipients.add(User(event.data))
                     elif event.object.type == ObjectType.AUTHORITY:
                         for user in event.data['users']:
-                            if isinstance(user, dict):
-                                recipients.add(User({'email':user['email'], 'first_name':user['first_name'], 'last_name':user['last_name']}))
+                            recipients.add(User(user))
                     else:
                         for user in event.data['pi_users']:
-                            if isinstance(user, dict):
-                                recipients.add(User({'email':user['email'], 'first_name':user['first_name'], 'last_name':user['last_name']}))
+                            recipients.add(User(user))
 
                     url = url+'/confirm/'+event.id
                     subject, template = build_subject_and_template('confirm', event)
@@ -107,7 +105,7 @@ def emails_run(qEmails):
 
                 buttonLabel = "View details"
                 if event.object.type == ObjectType.PASSWORD:
-                    recipients.add(User(db.get(dbconnection, table='users', id=event.object.id)))
+                    recipients.add(User(event.object.id))
                     url = url+'/password/'+event.data['hashing']
                     subject, template = build_subject_and_template('password', event)
                     buttonLabel = "Change password"
@@ -133,8 +131,7 @@ def emails_run(qEmails):
                                     recipients.add(user)
                         else:
                             for pi_id in authority.pi_users:
-                                pi = User(db.get(dbconnection, table='users', id=pi_id))
-                                recipients.add(pi)
+                                recipients.add(User(pi_id))
 
                         if not recipients:
                             msg = 'Emails cannot be sent because no one is the PI of {}'.format(event.object.id)
@@ -142,19 +139,17 @@ def emails_run(qEmails):
                             event.logWarning('No recipients could be found for event {}, email not sent'.format(event.id))
                     else:
                         if event.user:
-                            recipients.add(User(db.get(dbconnection, table='users', id=event.user)))
+                            recipients.add(User(event.user))
                         else:
                             # Look for the user email in the Event
                             if event.object.type == ObjectType.USER:
                                 recipients.add(User({'email':event.data['email'], 'first_name':event.data['first_name'], 'last_name':event.data['last_name']}))
                             elif event.object.type == ObjectType.AUTHORITY:
                                 for user in event.data['users']:
-                                    if isinstance(user, dict):
-                                        recipients.add(User({'email':user['email'], 'first_name':user['first_name'], 'last_name':user['last_name']}))
+                                    recipients.add(User(user))
                             else:
                                 for user in event.data['pi_users']:
-                                    if isinstance(user, dict):
-                                        recipients.add(User({'email':user['email'], 'first_name':user['first_name'], 'last_name':user['last_name']}))
+                                    recipients.add(User(user))
 
                     if event.isPending():
                         subject, template = build_subject_and_template('request', event)
@@ -207,14 +202,11 @@ def sendEmail(event, recipients, subject, template, url, buttonLabel):
                     url = url,
                     buttonLabel = buttonLabel,
                     )
-    logger.debug("about mail body inline")
     # use premailer module to get CSS inline
     mail_body_inline = transform(mail_body.decode())
-    logger.debug("about mail Message")
     m = Message(mail_from=[s.email['sender']],
                 mail_to = mail_to,
                 subject = subject,
                 html_content = mail_body_inline
                 )
-    logger.debug("about mail send")
     Mailer().send(m)

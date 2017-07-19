@@ -21,6 +21,14 @@ class ProjectException(Exception):
 
 class Project(myslicelibProject):
 
+    def __init__(self, data = {}):
+        # initialize the object with its id
+        if isinstance(data, str):
+            data = db.projects(id=data)
+
+        data = data if data is not None else {}
+        super().__init__(data)
+
     def save(self, dbconnection, setup=None):
         # Get Project from local DB 
         # to update the pi_users after Save

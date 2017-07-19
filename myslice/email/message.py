@@ -29,7 +29,7 @@ class Message(object):
         self.mail_from = mail_from
 
         if not mail_to:
-            raise Exception('A Receiver of email meassge must be specified.')
+            raise Exception('No email adress provided, you need to specify an email address that you want to send message to.')
         self.mail_to = mail_to
         
         if not subject:

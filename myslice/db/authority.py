@@ -18,6 +18,10 @@ class AuthorityException(Exception):
 class Authority(myslicelibAuthority):
 
     def __init__(self, data = {}):
+        # initialize the object with its id
+        if isinstance(data, str):
+            data = db.authorities(id=data)
+
         data = data if data is not None else {}
         data['domains'] = data.get('domains',[])
         super(Authority, self).__init__(data)
