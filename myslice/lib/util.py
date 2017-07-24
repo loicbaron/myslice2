@@ -122,6 +122,7 @@ class Config(object):
                 self._config[c].read_file(open("{}/{}.cfg".format(self._path, c)))
             except FileNotFoundError:
                 exit("Configuration file {}.cfg not found".format(c))
+                pass
 
     @property
     def services(self):

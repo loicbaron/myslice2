@@ -63,6 +63,7 @@ def setup(hostname):
     except IOError:
         sftp.mkdir(remote_dir)  # Create remote_path
         sftp.chdir(remote_dir)
+        raise
 
     for file_name in glob.glob(local_dir + '/*.*'):
         local_file = os.path.join(local_dir, file_name)
@@ -102,14 +103,19 @@ def connect(hostname):
         ssh.connect(hostname=hostname, username="root", key_filename=rsa_private_key)
     except BadHostKeyException as e:
         print e
+        raise
     except AuthenticationException as e:
         print e
+        raise
     except SSHException as e:
         print e
+        raise
     except socket.error as e:
         print e
+        raise
     except IOError as e:
         print e
+        raise
 
     return ssh
 
