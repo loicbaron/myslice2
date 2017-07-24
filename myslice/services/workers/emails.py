@@ -33,6 +33,7 @@ def confirmEmails(qConfirmEmails):
         except Exception as e:
             logger.exception(e)
             logger.error("Problem with event: {}".format(e))
+            continue
         else:
             if event.notify:
                 # We try to send the email only once
@@ -70,6 +71,7 @@ def confirmEmails(qConfirmEmails):
                     msg = "Error in event {} while trying to send a confirmation email: {}".format(event.id, e)
                     logger.error(msg)
                     event.logWarning(msg)
+                    continue
                 finally:
                     dispatch(dbconnection, event)
 
@@ -85,6 +87,7 @@ def emails_run(qEmails):
             event = Event(qEmails.get())
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
+            continue
         else:
             if event.notify:
                 # We try to send the email only once
@@ -119,24 +122,29 @@ def emails_run(qEmails):
                             msg = 'Authority id not specified ({})'.format(event.id)
                             logger.error(msg)
                             event.logWarning('Authority not specified in event {}, email not sent'.format(event.id))
-
-                        authority = Authority(db.get(dbconnection, table='authorities', id=authority_id))
-                        if not authority:
-                            # get admin users
-                            users = db.get(dbconnection, table='users')
-                            for u in users:
-                                user = User(u)
-                                if user.isAdmin():
-                                    logger.debug("user %s is admin" % user.id)
-                                    recipients.add(user)
+                            pass
                         else:
-                            for pi_id in authority.pi_users:
-                                recipients.add(User(pi_id))
+                            authority = Authority(db.get(dbconnection, table='authorities', id=authority_id))
+                            if not authority:
+                                # get admin users
+                                users = db.get(dbconnection, table='users')
+                                for u in users:
+                                    user = User(u)
+                                    if user.isAdmin():
+                                        logger.debug("user %s is admin" % user.id)
+                                        recipients.add(user)
+                            else:
+                                for pi_id in authority.pi_users:
+                                    recipients.add(User(pi_id))
 
-                        if not recipients:
-                            msg = 'Emails cannot be sent because no one is the PI of {}'.format(event.object.id)
-                            logger.error(msg)
-                            event.logWarning('No recipients could be found for event {}, email not sent'.format(event.id))
+                            if not recipients:
+                                msg = 'Emails cannot be sent because no one is the PI of {}'.format(event.object.id)
+                                logger.error(msg)
+                                event.logWarning('No recipients could be found for event {}, email not sent'.format(event.id))
+                            
+                            subject, template = build_subject_and_template('request', event)
+                            buttonLabel = "Approve / Deny"
+                            url = url + '/activity'
                     else:
                         if event.user:
                             recipients.add(User(event.user))
@@ -151,16 +159,11 @@ def emails_run(qEmails):
                                 for user in event.data['pi_users']:
                                     recipients.add(User(user))
 
-                    if event.isPending():
-                        subject, template = build_subject_and_template('request', event)
-                        buttonLabel = "Approve / Deny"
-                        url = url+'/activity'
+                        if event.isSuccess():
+                            subject, template = build_subject_and_template('approve', event)
 
-                    elif event.isSuccess():
-                        subject, template = build_subject_and_template('approve', event)
-
-                    elif event.isDenied():
-                        subject, template = build_subject_and_template('deny', event)
+                        elif event.isDenied():
+                            subject, template = build_subject_and_template('deny', event)
 
                 try:
                     sendEmail(event, recipients, subject, template, url, buttonLabel)
@@ -170,6 +173,7 @@ def emails_run(qEmails):
                     msg = "Error in event {} while trying to send an email: {} {}".format(event.id, e, traceback.print_exc())
                     logger.error(msg)
                     event.logWarning(msg)
+                    continue
                 finally:
                     dispatch(dbconnection, event)
 
