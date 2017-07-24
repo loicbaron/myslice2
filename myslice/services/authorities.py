@@ -20,7 +20,7 @@ from myslice import config
 import zmq
 import pickle
 
-logger = logging.getLogger("authorities")
+logger = logging.getLogger()
 
 def receive_signal(signum, stack):
     logger.info('Received signal %s', signum)
@@ -59,8 +59,8 @@ def run():
     socket.connect("tcp://localhost:6002")
     logger.info("[authorities] Collecting updates from ZMQ bus for activity")
 
-    should_continue = True
-    while should_continue:
+
+    while True:
         logger.debug("[authorities]Change in authorities feed")
 
         topic, zmqmessage = socket.recv_multipart()
@@ -82,6 +82,7 @@ def run():
                 logger.error("[authorities] Problem with event: {}".format(activity['new_val']['id']))
             else:
                 logger.error("[authorities] Event is malformed: {}".format(activity))
+            continue
 
 
     logger.critical("[authorities] Service authorities stopped")

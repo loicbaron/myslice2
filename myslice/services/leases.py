@@ -64,8 +64,7 @@ def run():
     socket.connect("tcp://localhost:6002")
     logger.info("[leases] Collecting updates from ZMQ bus for activity")
 
-    should_continue = True
-    while should_continue:
+    while True:
         logger.debug("[leases]Change in leases feed")
 
         topic, zmqmessage = socket.recv_multipart()
@@ -82,7 +81,7 @@ def run():
             logger.exception(e)
             if 'new_val' in activity and 'id' in activity['new_val']:
                 logger.error("Problem with event: {}".format(activity['new_val']['id']))
-
+            continue
 
     logger.critical("Service leases stopped")
     # waits for the thread to finish

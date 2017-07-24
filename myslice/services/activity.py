@@ -55,8 +55,7 @@ def run():
     socket.connect("tcp://localhost:6002")
     logger.info("[activity] Collecting updates from ZMQ bus for activity")
 
-    should_continue = True
-    while should_continue:
+    while True:
         logger.debug("[activity]Change in activity feed")
 
         topic, zmqmessage = socket.recv_multipart()
@@ -78,6 +77,7 @@ def run():
             logger.exception(e)
             if 'new_val' in activity and 'id' in activity['new_val']:
                 logger.error("[activity] Problem with event: {}".format(activity['new_val']['id']))
+            continue
 
     logger.critical("Service activity stopped")
     # waits for the thread to finish
