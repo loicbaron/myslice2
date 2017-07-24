@@ -275,6 +275,7 @@ class Event(Dict):
             self['created'] = format_date(event['created'])
         except KeyError:
             self['created'] = format_date()
+            pass
 
         try:
             self.updated(format_date(event['updated']))
@@ -287,6 +288,7 @@ class Event(Dict):
             self.notify = event['notify']
         except KeyError:
             self.notify = False
+            pass
 
     @property
     def notify(self):

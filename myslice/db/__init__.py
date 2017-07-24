@@ -66,6 +66,7 @@ def setup():
         logger.info('MyOps2 database created successfully')
     except RqlRuntimeError:
         logger.info('MyOps2 database already exists')
+        pass
 
     for t in tables:
         try:
@@ -73,6 +74,7 @@ def setup():
             logger.info('table %s setup completed', t['name'])
         except RqlRuntimeError:
             logger.info('table %s already exists', t['name'])
+            pass
 
 def syncTestbeds(testbeds):
     """
@@ -97,6 +99,7 @@ def syncTestbeds(testbeds):
                 r.db(s.db['name']).table('testbeds').update(u.dict()).run(dbconnection)
             except Exception as e:
                 logger.error('{}'.format(str(e)))
+                continue
             # remove the element from the working set
             testbeds.remove(u)
         else:
@@ -106,6 +109,7 @@ def syncTestbeds(testbeds):
                 r.db(s.db['name']).table('testbeds').get(t['id']).delete().run(dbconnection)
             except Exception as e:
                 logger.error('{}'.format(str(e)))
+                continue
 
     # check new testbeds with the remaining elements
     for n in testbeds:
@@ -115,6 +119,7 @@ def syncTestbeds(testbeds):
             r.db(s.db['name']).table('testbeds').insert(n.dict(), conflict='update').run(dbconnection)
         except Exception as e:
             logger.error('{}'.format(str(e)))
+            continue
 
 def getTestbeds():
     """

@@ -27,6 +27,7 @@ def generate_RSA(bits=2048):
     except Exception as e:
         import traceback
         traceback.print_exc()
+        raise
     return private_key, public_key
 
 class UserException(Exception):
