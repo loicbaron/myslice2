@@ -88,6 +88,7 @@ class Slice(myslicelibSlice):
             db.users(dbconnection, user, u)
 
         # Update the Project of the slice
+        logger.debug("cooko slice: {}".format(self))
         project = db.get(dbconnection, table='projects', id=self.project)
         project['slices'] = project['slices'] + [self.id]
         db.projects(dbconnection, project)
