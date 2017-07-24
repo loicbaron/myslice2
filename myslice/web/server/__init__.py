@@ -32,7 +32,6 @@ from myslice.web.rest.resources import ResourcesHandler
 from myslice.web.rest.leases import LeasesHandler
 from myslice.web.rest.password import PasswordHandler
 
-from myslice.web.rest.finterop.sessions import SessionsHandler as FinteropSessionsHandler
 #from myslice.web.rest.finterop.resource import ResourceRepoHandler
 
 from myslice.web.rest.activity import ActivityHandler
