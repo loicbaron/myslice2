@@ -39,7 +39,6 @@ def events_run(lock, qLeasesEvents):
     dbconnection = connect()
 
     while True:
-
         try:
             event = Event(qLeasesEvents.get())
         except Exception as e:
@@ -47,6 +46,7 @@ def events_run(lock, qLeasesEvents):
             event.logError("Error in worker leases: {}".format(e))
             event.setError()
             db.dispatch(dbconnection, event)
+            continue
         else:
             logger.info("Processing event from user {}".format(event.user))
             try:
@@ -117,12 +117,14 @@ def events_run(lock, qLeasesEvents):
                     logger.error("Error in worker leases: {}".format(err))
                 # XXX TO BE REFINED
                 event.setError()
+                continue
 
             except SliceWarningException as e:
                 for err in e.stack:
                     event.logWarning(str(err))
                     logger.warning(str(err))
                 event.setWarning()
+                continue
 
             except Exception as e:
                 import traceback
@@ -130,6 +132,7 @@ def events_run(lock, qLeasesEvents):
                 logger.error("Problem with event {}: {}".format(event.id,e))
                 event.logError("Error in worker leases: {}".format(e))
                 event.setError()
+                continue
             else:
                 if isSuccess:
                     event.setSuccess()
@@ -152,7 +155,11 @@ def sync(lock):
     logger = logging.getLogger('myslice.leases')
     while True:
         logger.info("syncing Leases")
-        syncLeases()
+        try:
+            syncLeases()
+        except Exception as e:
+            logger.exception(e)
+            continue
         logger.info("sleeping")
 
         # sleep for 5 minutes
@@ -177,4 +184,5 @@ def syncLeases():
         #traceback.print_exc()
         logger.exception("Service does not seem to be available")
         logger.exception(str(e))
+        raise
 
