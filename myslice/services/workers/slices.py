@@ -53,7 +53,8 @@ def events_run(qSliceEvents):
             logger.error("Problem with event: {}".format(e))
             event.logError(str(e))
             event.setError()
-            dispatch(dbconnection, event)
+            db.dispatch(dbconnection, event)
+            continue
         else:
             logger.info("Processing event {} from user {}".format(event.id, event.user))
             
@@ -180,6 +181,7 @@ def events_run(qSliceEvents):
                             logger.debug(err)
                         event.setWarning()
                         #event.setError()
+                    continue
 
                 except Exception as e:
                     import traceback
@@ -187,6 +189,7 @@ def events_run(qSliceEvents):
                     logger.error("Problem with event: {}".format(e))
                     event.logError(str(e))
                     event.setError()
+                    continue
                 else:
                     if isSuccess:
                         event.setSuccess()
@@ -241,7 +244,11 @@ def sync():
     A thread that will sync slices with the local rethinkdb
     """
     while True:
-        syncSlices()
+        try:
+            syncSlices()
+        except Exception as e:
+            logger.exception(e)
+            continue
         # sleep
         time.sleep(86400)
 
@@ -292,6 +299,7 @@ def syncSlices(id=None):
                             traceback.print_exc()
                             logger.error("Problem with slice %s" % slice.id)
                             logger.exception(str(e))
+                            raise
                     else:
                         logger.info("slice %s has no users" % slice.hrn)
 
@@ -324,5 +332,6 @@ def syncSlices(id=None):
             import traceback
             traceback.print_exc()
             logger.exception(str(e))
+            raise
 
         logger.info("Worker slices finished period synchronization")
