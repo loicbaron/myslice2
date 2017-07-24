@@ -15,7 +15,11 @@ def run():
     """
     while True:
         logger.info("syncing")
-        syncResources()
+        try:
+            syncResources()
+        except Exception as e:
+            logger.exception(e)
+            continue
         logger.info("sleeping")
         time.sleep(86400)
 
@@ -34,5 +38,6 @@ def syncResources():
         import traceback
         traceback.print_exc()
         logger.exception("Service does not seem to be available")
+        raise
 
 
