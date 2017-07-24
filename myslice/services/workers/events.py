@@ -33,6 +33,7 @@ def run(q):
             event.logError("Error in worker activity: {}".format(e))
             event.setError()
             dispatch(dbconnection, event)
+            continue
         else:
             logger.debug("%s - Manage event".format(event.id))
             # TODO: if event.creatingObject()
@@ -48,6 +49,7 @@ def run(q):
                     logger.error("Error in processing Event (1): {}".format(event))
                     logger.error("Error while processing: {}".format(e))
                     event.logError(str(e))
+                    continue
 
 
             # Register a new object for a new user
@@ -63,6 +65,7 @@ def run(q):
                     logger.error("Error in processing Event (2): {}".format(event))
                     logger.error("Error while processing: {}".format(e))
                     event.logError(str(e))
+                    continue
 
             else:
                 try:
@@ -95,6 +98,7 @@ def run(q):
                     event.logError(str(e))
                     logger.error("Unable to fetch the user {} from db".format(event.user))
                     logger.exception(e)
+                    continue
 
             # dispatch the updated event
             dispatch(dbconnection, event)
