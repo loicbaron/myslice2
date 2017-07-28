@@ -28,11 +28,11 @@ if __name__ == '__main__':
 
     #define tests you want to run
     suites = [unittest.TestLoader().loadTestsFromTestCase(TestLogin),
-              #unittest.TestLoader().loadTestsFromTestCase(TestAuthority),
-              # unittest.TestLoader().loadTestsFromTestCase(TestProjects),
-              # unittest.TestLoader().loadTestsFromTestCase(TestUsers),
-              # unittest.TestLoader().loadTestsFromTestCase(TestSlices),
-              # unittest.TestLoader().loadTestsFromTestCase(TestLeases)
+              unittest.TestLoader().loadTestsFromTestCase(TestAuthority),
+              unittest.TestLoader().loadTestsFromTestCase(TestProjects),
+              unittest.TestLoader().loadTestsFromTestCase(TestUsers),
+              unittest.TestLoader().loadTestsFromTestCase(TestSlices),
+              unittest.TestLoader().loadTestsFromTestCase(TestLeases)
               ]
     testSuite = unittest.TestSuite(suites)
 
@@ -46,7 +46,7 @@ if __name__ == '__main__':
 
 
     #run tests and collect output
-    testResult = unittest.TextTestRunner(verbosity=0).run(unittest.TestSuite(suites))
+    testResult = unittest.TextTestRunner(verbosity=0, buffer=True).run(unittest.TestSuite(suites))
 
     if s['automate_test']:
 
@@ -58,11 +58,12 @@ if __name__ == '__main__':
         #send emails about errors
         unnoticedIssues = database.getListOfUnemailedIssues()
 
-        to = ['radomir.klacza@lip6.fr', ]
-        # 'pauline.gaudet-chardonnet@lip6.fr',
-        #               'radomir.klacza@lip6.fr',
-        #               'loic.baron@lip6.fr',
-        #               'amira.bradai@lip6.fr']
+        to = ['radomir.klacza@lip6.fr',
+		# ]
+         #'pauline.gaudet-chardonnet@lip6.fr',
+          #             'radomir.klacza@lip6.fr',
+                       'loic.baron@lip6.fr',
+                       'amira.bradai@lip6.fr']
 
         for issue in unnoticedIssues:
             subject = issue['server'] + " on " + issue['issue']
