@@ -45,7 +45,8 @@ def events_run(lock, qProjectEvents):
             logger.error("Problem with event: {}".format(e))
             event.logError(str(e))
             event.setError()
-            dispatch(dbconnection, event)
+            db.dispatch(dbconnection, event)
+            continue
         else:
             logger.info("Processing event: {} from user {}".format(event.id, event.user))
 
@@ -113,6 +114,7 @@ def events_run(lock, qProjectEvents):
                     logger.error("Problem with event {}: {}".format(event.id,e))
                     event.logError("Error in worker projects: {}, traceback: {}".format(e,traceback.print_exc()))
                     event.setError()
+                    continue
                 else:
                     if isSuccess:
                         event.setSuccess()
@@ -130,7 +132,11 @@ def sync(lock):
     A thread that will sync projects with the local rethinkdb
     """
     while True:
-        syncProjects(lock)
+        try:
+            syncProjects(lock)
+        except Exception as e:
+            logger.exception(e)
+            continue
         # sleep
         time.sleep(86400)
 

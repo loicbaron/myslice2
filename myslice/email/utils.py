@@ -16,11 +16,14 @@ class MessageID:
 
     def __init__(self, idstring=None):
         self.domain = DOMAIN
+
         try:
             pid = os.getpid()
         except AttributeError:
             # No getpid() in Jython.
             pid = 1
+            pass
+
         self.idstring = ".".join([str(idstring or randrange(10000)), str(pid)])
 
     def __call__(self):

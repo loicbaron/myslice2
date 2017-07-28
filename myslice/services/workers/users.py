@@ -41,7 +41,8 @@ def events_run(lock, qUserEvents):
             logger.error("Problem with event: {}".format(e))
             event.logError(str(e))
             event.setError()
-            dispatch(dbconnection, event)
+            db.dispatch(dbconnection, event)
+            continue
         else:
             logger.info("Processing event from user {}".format(event.user))
             with lock:
@@ -88,6 +89,7 @@ def events_run(lock, qUserEvents):
                     logger.error("Problem updating user: {} - {}".format(event.object.id, e))
                     event.logError(str(e))
                     event.setError()
+                    continue
 
                 if isSuccess:
                     event.setSuccess()
@@ -127,7 +129,11 @@ def sync(lock, email=None, job=True):
 
     if job:
         while True:
-            syncUsers(lock, email)
+            try:
+                syncUsers(lock, email)
+            except Exception as e:
+                logger.exception(e)
+                continue
 
             # sleep
             time.sleep(3600)
@@ -193,7 +199,7 @@ def syncUsers(lock, email=None):
                     except Exception as e:
                         logger.warning("Could not synchronize user %s" % lu['id'])
                         logger.exception(e)
-                        continue
+                        raise
 
             else:
                 logger.warning("Query users is empty, check myslicelib and the connection with SFA Registry")
@@ -201,5 +207,6 @@ def syncUsers(lock, email=None):
             import traceback
             traceback.print_exc()
             logger.exception(e)
+            raise 
 
         logger.info("Worker users finished period synchronization") 

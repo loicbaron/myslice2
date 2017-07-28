@@ -41,7 +41,8 @@ def events_run(lock, qPasswordEvents):
             logger.error("Problem with event: {}".format(e))
             event.logError(str(e))
             event.setError()
-            dispatch(dbconnection, event)
+            db.dispatch(dbconnection, event)
+            continue
         else:
             logger.info("Processing password event from user {}".format(event.user))
 
@@ -62,6 +63,7 @@ def events_run(lock, qPasswordEvents):
                     logger.error("Problem updating password of user: {} - {}".format(event.object.id, e))
                     event.logError(str(e))
                     event.setError()
+                    continue
                 else:
                     event.setSuccess()
                     event.logInfo("Event success")

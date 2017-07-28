@@ -39,7 +39,8 @@ class UserSetup(Setup):
         except Exception as e:
             import traceback
             traceback.print_exc()
-            logger.error("Problem authenticating with user %s" % user)
+            logger.exception("Problem authenticating with user %s" % user)
+            raise
 
     def setEndpoints(self, endpoints):
         self.endpoints = endpoints

@@ -46,6 +46,7 @@ class Log(object):
                 )
             except AttributeError:
                 handler = self.default_handler
+                pass
             handler.setFormatter(self.log_formatter)
             logger.setLevel(logging.DEBUG)
             logger.addHandler(handler)

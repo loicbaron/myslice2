@@ -123,6 +123,7 @@ class Config(object):
             except FileNotFoundError:
                 exit("Configuration file {}.cfg not found".format(c))
 
+
     @property
     def services(self):
         services = {}

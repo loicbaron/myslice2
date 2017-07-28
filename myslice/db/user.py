@@ -27,6 +27,7 @@ def generate_RSA(bits=2048):
     except Exception as e:
         import traceback
         traceback.print_exc()
+        raise
     return private_key, public_key
 
 class UserException(Exception):
@@ -36,6 +37,10 @@ class UserException(Exception):
 class User(myslicelibUser):
     
     def __init__(self, data = {}):
+        # initialize the object with its id
+        if isinstance(data, str):
+            data = db.users(id=data)
+
         data = data if data is not None else {}
         # Generate keys by default
         data['generate_keys'] = data.get('generate_keys', True)

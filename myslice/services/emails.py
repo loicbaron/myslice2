@@ -54,8 +54,7 @@ def run():
     socket.connect("tcp://localhost:6002")
     logger.info("[emails] Collecting updates from ZMQ bus for activity")
 
-    should_continue = True
-    while should_continue:
+    while True:
         logger.debug("[emails]Change in emails feed")
 
         topic, zmqmessage = socket.recv_multipart()
@@ -67,6 +66,7 @@ def run():
             event = Event(activity['new_val'])
         except Exception as e:
             logger.error("Problem with event: {}".format(e))
+            continue
         else:
             if event.isConfirm() and event.notify:
                 logger.debug("Add event %s to Confirm Email queue" % (event.id))

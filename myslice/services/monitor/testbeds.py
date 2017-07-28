@@ -14,7 +14,11 @@ def run():
     """
     while True:
         logger.info("syncing")
-        syncTestbeds()
+        try:
+            syncTestbeds()
+        except Exception as e:
+            logger.exception(e)
+            continue
         logger.info("sleeping")
         time.sleep(86400)
 
@@ -31,5 +35,6 @@ def syncTestbeds():
 
     except Exception as e:
         logger.exception("Service does not seem to be available")
+        raise
 
 

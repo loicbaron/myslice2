@@ -34,11 +34,11 @@ def events_run(lock, qAuthorityEvents):
     dbconnection = connect()
 
     while True:
-
         try:
             event = Event(qAuthorityEvents.get())
         except Exception as e:
-            logger.error("Problem with event: {}".format(e))
+            logger.exception("Problem with event: {}".format(e))
+            continue
         else:
             logger.info("Processing event {} from user {}".format(event.id, event.user))
             
@@ -50,10 +50,16 @@ def events_run(lock, qAuthorityEvents):
                     isSuccess = False
                     
                     if event.creatingObject() or event.updatingObject():
-                        logger.info("creating or updating the object authority {}".format(event.object.id)) 
-                        auth = Authority(event.data)
-                        auth.id = event.object.id
-                        isSuccess = auth.save(dbconnection)
+                        try:
+                            logger.info("creating or updating the object authority {}".format(event.object.id))
+                            auth = Authority(event.data)
+                        except Exception as e:
+                            logger.error("There has been an error while creating authority")
+                            logger.error(e, exc_info=True)
+                            raise
+                        else:
+                            auth.id = event.object.id
+                            isSuccess = auth.save(dbconnection)
                     else:
                         a = db.get(dbconnection, table='authorities', id=event.object.id)
                         if not a:
@@ -89,9 +95,10 @@ def events_run(lock, qAuthorityEvents):
                 except Exception as e:
                     import traceback
                     traceback.print_exc()
-                    logger.error("Problem with event {}: {}".format(event.id,e))
+                    logger.exception("Problem with event {}: {}".format(event.id,e))
                     event.logError("Error in worker authorities: {}".format(e))
                     event.setError()
+                    continue
 
                 if isSuccess:
                     event.setSuccess()
@@ -110,7 +117,10 @@ def sync(lock):
     """
 
     while True:
-        syncAuthorities(lock)
+        try:
+            syncAuthorities(lock)
+        except Exception as e:
+            continue
         # sleep
         time.sleep(86400)
 
